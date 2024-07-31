@@ -4,6 +4,7 @@ VSRC=$(shell ls vsrc/*.v)
 VCD_FILE=wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/V\1/g" )
 BUILD_DIR=./build
+OBJ_DIR=$(BUILD_DIR)/obj_dir
 
 all:
 	# @echo "Write this Makefile by your self."
@@ -12,7 +13,7 @@ all:
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self."
-	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(BUILD_DIR) $(VSRC) $(CSRC)
+	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 
 gtkwave: $(VCD_FILE)
