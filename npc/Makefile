@@ -13,7 +13,7 @@ VCD_FILE=wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=./build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
-BIN = $(BUILD_DIR)/$(TOPNAME)
+BIN=$(BUILD_DIR)/$(TOPNAME)
 
 
 $(shell mkdir -p $(BUILD_DIR))
@@ -40,7 +40,6 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 all: $(BIN)
 	# @echo "Write this Makefile by your self."
 	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
-
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self."
@@ -53,6 +52,12 @@ nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
+$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $(TOPNAME) $^ \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
@@ -60,8 +65,8 @@ gtkwave: $(VCD_FILE)
 $(VCD_FILE):sim
 	@$(ELF_FILE_NAME)
 
-run: nvboard
-	@$(BIN)
+run: $(BIN)
+	@$^
 
 .PHONY : all clean gtkwave sim nvboard run
 
