@@ -1,14 +1,14 @@
 #include <cstdio>
 #include <verilated.h>
 #include "verilated_vcd_c.h"
-#include "Vexample.h"
+#include "Vtop.h"
 
 int main(int argc, char **argv) {
     VerilatedContext *contextp = new VerilatedContext;
     contextp->commandArgs(argc, argv);
     VerilatedVcdC *tfp = new VerilatedVcdC;
     
-    Vexample *top = new Vexample(contextp);
+    Vtop *top = new Vtop(contextp);
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("wave.vcd");
