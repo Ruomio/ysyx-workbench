@@ -37,7 +37,7 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
 
 
-all: sim
+all: nvboard
 	# @echo "Write this Makefile by your self."
 	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 
@@ -47,6 +47,7 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
