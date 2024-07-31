@@ -9,7 +9,7 @@ OBJ_DIR=$(BUILD_DIR)/obj_dir
 
 $(shell mkdir -p $(BUILD_DIR))
 
-all:
+all: sim
 	# @echo "Write this Makefile by your self."
 	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 
