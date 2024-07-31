@@ -2,7 +2,7 @@ VERILATOR=verilator
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name ".cc") 
 VSRC=$(shell find $(abspath vsrc) -name "*.v") 
 VCD_FILE=wave.vcd
-ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dor\/V\1/g" )
+ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=./build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
 
