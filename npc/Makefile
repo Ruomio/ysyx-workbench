@@ -1,5 +1,6 @@
 VERILATOR=verilator
-VERILATOR_CFLAGS += -MMD --build -cc-O3 --x-assign fast --x-initial fast --noassert
+VERILATOR_CFLAGS += -MMD --build -cc  \
+					-O3 --x-assign fast --x-initial fast --noassert
 
 TOPNAME=top
 NXDC_FILES = constr/top.nxdc
@@ -12,6 +13,7 @@ VCD_FILE=wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=./build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
+BIN = $(BUILD_DIR)/$(TOPNAME)
 
 
 $(shell mkdir -p $(BUILD_DIR))
@@ -57,8 +59,10 @@ gtkwave: $(VCD_FILE)
 $(VCD_FILE):sim
 	@$(ELF_FILE_NAME)
 
+run:
+	@$(BIN)
 
-.PHONY : clean gtkwave sim nvboard
+.PHONY : clean gtkwave sim nvboard run
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
