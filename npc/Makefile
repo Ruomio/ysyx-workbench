@@ -18,6 +18,12 @@ BIN=$(BUILD_DIR)/$(TOPNAME)
 
 $(shell mkdir -p $(BUILD_DIR))
 
+all: $(BIN)
+	# @echo "Write this Makefile by your self."
+	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
+
+
+
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 $(SRC_AUTO_BIND): $(NXDC_FILES)
@@ -37,9 +43,6 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
 
 
-all:$(BIN)
-	# @echo "Write this Makefile by your self."
-	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self."
