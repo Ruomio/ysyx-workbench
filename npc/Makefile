@@ -37,7 +37,7 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
 
 
-all: nvboard
+all:nvboard
 	# @echo "Write this Makefile by your self."
 	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 
