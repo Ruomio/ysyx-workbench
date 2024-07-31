@@ -37,7 +37,7 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
 
 
-all:nvboard
+all: $(BIN)
 	# @echo "Write this Makefile by your self."
 	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 
@@ -60,10 +60,10 @@ gtkwave: $(VCD_FILE)
 $(VCD_FILE):sim
 	@$(ELF_FILE_NAME)
 
-run:
+run: nvboard
 	@$(BIN)
 
-.PHONY : clean gtkwave sim nvboard run
+.PHONY : all clean gtkwave sim nvboard run
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
