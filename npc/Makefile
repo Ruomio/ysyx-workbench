@@ -23,7 +23,7 @@ gtkwave: $(VCD_FILE)
 	gtkwave $^
 
 $(VCD_FILE):sim
-	@$(BUILD_DIR)/obj_dir/$(ELF_FILE_NAME)
+	@$(ELF_FILE_NAME)
 
 
 .PHONY : clean gtkwave sim
