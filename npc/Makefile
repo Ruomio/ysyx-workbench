@@ -6,6 +6,9 @@ ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/V\1/g" )
 BUILD_DIR=./build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
 
+
+$(shell mkdir -p $(BUILD_DIR))
+
 all:
 	# @echo "Write this Makefile by your self."
 	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
