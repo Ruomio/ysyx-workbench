@@ -20,7 +20,6 @@ $(shell mkdir -p $(BUILD_DIR))
 
 all: $(BIN)
 	# @echo "Write this Makefile by your self."
-	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 
 
 
@@ -76,4 +75,4 @@ run: $(BIN)
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
 
-# include ../Makefile
+include ../../Makefile
