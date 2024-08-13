@@ -1,0 +1,142 @@
+`timescale 1ns/1ns
+
+// `define shifter
+// `define barrel_shifter
+`define linear_feedback_shifter
+
+module testbench #(
+    parameter n=8
+)
+();
+
+`ifdef shifter
+    reg clk;
+    reg rst;
+    reg  [3:0] mode;
+    reg reg [n-1:0] in;
+    reg switch;
+    wire [n-1:0] out;
+    
+
+    always #1 clk = ~clk; 
+`endif
+
+
+
+
+`ifdef shifter
+    initial begin
+        clk = 1'b0;
+        rst = 1'b0;
+        #50;
+        rst = 1'b1;
+        mode = 4'b000;
+        #20;
+        in = {n{1'b0}}|1'b1;
+        mode = 4'b1000;
+        switch = 1'b1;
+        #20;
+        mode = 4'b0001;
+        #20;
+        mode = 4'b0011;
+        #20;
+        mode = 4'b0001;
+        #1;
+        mode = 4'b0010;
+        #20;
+        mode = 4'b0001;
+        #1;
+        mode = 4'b0100;
+        #20;
+        mode = 4'b0001;
+        #1;
+        mode = 4'b0101;
+        #20;
+        mode = 4'b0001;
+        #1;
+        mode = 4'b0110;
+        #20;
+        mode = 4'b0001;
+        #1;
+        mode = 4'b0111;
+        #20;
+    end
+
+    shifter #(.n(n)) u_shifter(clk, rst, mode, in, switch, out);
+
+`endif
+
+`ifdef barrel_shifter
+
+    reg [n-1:0] din;
+    reg [$clog2(n)-1:0] shamt;
+    reg l_r;
+    reg a_l;
+    wire [n-1:0] dout;
+
+    initial begin
+        din = 8'b00000000;
+        shamt = 4'b0;
+        l_r = 1'b0;
+        a_l = 1'b0;
+        #20;
+        din = 8'b00001111;
+        shamt = 4'd3;
+        l_r = 1'b0;
+        a_l = 1'b0;
+        #20;
+        din = 8'b00001111;
+        shamt = 4'd3;
+        l_r = 1'b1;
+        a_l = 1'b0;
+        #20;
+        din = 8'b10001111;
+        shamt = 4'd3;
+        l_r = 1'b0;
+        a_l = 1'b1;
+        #20;
+        din = 8'b10001111;
+        shamt = 4'd3;
+        l_r = 1'b1;
+        a_l = 1'b1;
+        #20;
+        
+
+    end
+
+    barrel_shifter u_barrel_shifter(din, shamt, l_r, a_l, dout);
+
+`endif
+
+`ifdef linear_feedback_shifter
+    reg clk;
+    reg rst;
+    reg [n-1:0] in;
+    wire [n-1:0] out;
+
+    always #1 clk = ~clk;
+    
+    initial begin
+       rst = 1'b0;
+       clk = 1'b0;
+       in = 8'b1;
+       #20;
+       rst = 1'b1;
+
+
+    end
+
+    linear_feedback_shifter u_linear_feedback_shifter(clk, rst, in, out);
+
+
+`endif
+
+    initial begin
+        $dumpfile("build/wave.vcd");
+        $dumpvars(0, testbench);
+        #1000;
+       	$finish;
+    end
+
+
+endmodule

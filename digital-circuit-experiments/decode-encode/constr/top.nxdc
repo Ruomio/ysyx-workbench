@@ -1,0 +1,13 @@
+top = top
+
+f (LD2, LD1, LD0)
+flag LD4
+
+
+x (SW7, SW6, SW5, SW4, SW3, SW2, SW1, SW0)
+
+rst SW8
+
+f (LD1, LD0)
+
+bcd (SEG0G, SEG0F, SEG0E, SEG0D, SEG0C, SEG0B, SEG0A)

@@ -1,0 +1,5 @@
+CompileFlags:
+  Add: [
+    -I/home/papillon/Documents/All_codes/ysyx-workbench/digital-circuit-experiments/selector/build/obj_dir,
+    -I/usr/share/verilator/include,
+  ]

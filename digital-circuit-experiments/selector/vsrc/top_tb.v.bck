@@ -1,0 +1,39 @@
+`timescale 1ns/1ns
+
+
+module testbench();
+    reg clk;
+    reg rst;
+    reg [7:0] x;
+    reg [1:0] y;
+    wire [1:0] f;
+
+    initial begin
+        x = 8'b11001100;
+        y = 2'b00;
+        clk = 1'b0;
+        rst = 1'b0;
+        #20;
+        rst = 1'b1;
+        y = 2'b01;
+        #20;
+        y = 2'b10;
+        #20;
+        y = 2'b11;
+    end
+
+    always #1 clk = ~clk; 
+
+    // top #(.NR_KEY(4), .KEY_LEN(2), .DATA_LEN(2)) u_top(rst, clk, x, y, f);
+    mux41d #(.NR_KEY(4), .KEY_LEN(2), .DATA_LEN(2)) u_mux41d(x, y, f);
+    // mux41b #(.NR_KEY(4), .KEY_LEN(2), .DATA_LEN(1)) u_mux41b(x, y, f);
+
+    initial begin
+        $dumpfile("build/wave.vcd");
+        $dumpvars(0, testbench);
+        #1000;
+       	$finish;
+    end
+
+
+endmodule

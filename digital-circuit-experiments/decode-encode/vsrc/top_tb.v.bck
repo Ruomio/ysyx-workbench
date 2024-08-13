@@ -1,0 +1,100 @@
+`timescale 1ns/1ns
+
+
+// `define encode
+// `define bcd7seg
+`define top
+
+module testbench();
+    reg clk;
+    reg rst;
+
+
+`ifdef decode
+    reg [2:0] x;
+    wire [7:0] y;
+    reg  en;
+    decode38 u_decode38(x, en, y);
+`endif
+
+`ifdef encode
+    reg [7:0] x;
+    wire [2:0] y;
+    reg  en;
+    encode83 u_encode83(x, en, y);
+
+    initial begin
+        en = 1'b0;
+        clk = 1'b0;
+        rst = 1'b0;
+        x = 8'b1;
+        #20;
+        en = 1'b1;
+        rst = 1'b1;
+        for(integer i=0; i<8; i++) begin 
+            x = x*2;
+            #20;
+        end
+    end
+`endif
+
+`ifdef bcd7seg
+
+
+    reg [3:0] b;
+    wire [6:0] h;
+
+    initial begin
+        b = 4'b0;
+        #20;
+        for(reg [4:0] i = 0; i < 16; i++) begin
+            b = b + 1'b1;
+            #20;
+        end
+
+    end
+
+    bcd7seg u_bcd7seg(b, h);
+
+`endif
+
+
+`ifdef top
+    reg [6:0] bcd;
+    reg [7:0] x;
+    wire [2:0] y;
+    wire flag;
+
+    initial begin
+        rst = 1'b0;
+        clk = 1'b0;
+        bcd = 7'b1111111;
+        x = 8'b0;
+        #20;
+        rst = 1'b1;
+        x = 8'b1;
+        #20;
+        for(reg [2:0] i=0; i<8; i++) begin 
+            x = x*2;
+            #20;
+        end
+
+
+    end
+
+    top u_top(.rst(rst), .clk(clk), .x(x), .f(y), .flag(flag));
+
+`endif
+
+    always #1 clk = ~clk; 
+
+
+    initial begin
+        $dumpfile("build/wave.vcd");
+        $dumpvars(0, testbench);
+        #1000;
+       	$finish;
+    end
+
+
+endmodule

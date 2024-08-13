@@ -1,0 +1,59 @@
+`timescale 1ns/1ns
+
+module testbench();
+    reg clk;
+    reg rst;
+
+    reg [7:0] op_code;
+    reg [7:0] imm1;
+    reg [7:0] imm2;
+    reg cin = 1'b0;
+    wire [7:0] res;
+    wire is_carry;
+    wire is_overflow;
+    wire is_zero;
+
+    
+    reg signed [4:0] i,j;
+
+    always #1 clk = ~clk; 
+
+    initial begin
+        clk = 1'b0;
+        rst = 1'b0;
+        cin = 1'b0;
+        imm1 = 1'b0;
+        imm2 = 1'b0;
+        #20;
+        i = -8;
+        for(j = -8; j < 8; j = j+1) begin
+            imm1 = i;
+            imm2 = j;
+            #10;
+        end
+    end
+
+    alu #(.n(8)) u_alu(.op_code(4'b001), .imm1(imm1), .imm2(imm2), .cin(cin), .res(res), .is_overflow(is_overflow), .is_carry(is_carry), .is_zero(is_zero));
+
+    // task check;  //测试任务
+    // input [3:0] results;  //ALU的结果预期正确输出
+    // input resultof, resultc, resultz;  //ALU的预期溢出，进位，零位
+    // begin
+    //     if(outputs!=results)  //比较预期结果和测试单元输出的outputs
+    //     begin               //出错时显示
+    //         $display("Error:x=%h,y=%h,ctrl=%b,s should be %h, \
+    //         get %h", inputa, inputb, inputaluop, results, outputs);
+    //     end
+    //     //自行添加溢出，进位和零位的比较
+    // end
+    // endtask
+
+    initial begin
+        $dumpfile("build/wave.vcd");
+        $dumpvars(0, testbench);
+        #1000;
+       	$finish;
+    end
+
+
+endmodule
