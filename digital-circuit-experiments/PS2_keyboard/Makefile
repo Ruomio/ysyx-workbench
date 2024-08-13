@@ -19,9 +19,7 @@ BIN=$(BUILD_DIR)/$(TOPNAME)
 $(shell mkdir -p $(BUILD_DIR))
 
 all: $(BIN)
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self."
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 
 
 
