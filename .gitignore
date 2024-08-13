@@ -12,5 +12,4 @@
 !init.sh
 /fceux-am
 /nvboard
-!digital-circuit-experiments/**
-digital-circuit-experiments/*/build
+!digital-circuit-experiments/*

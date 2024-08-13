@@ -19,8 +19,9 @@ BIN=$(BUILD_DIR)/$(TOPNAME)
 $(shell mkdir -p $(BUILD_DIR))
 
 all: $(BIN)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self."
-	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 
 
 
@@ -76,4 +77,4 @@ run: $(BIN)
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
 
-# include ../Makefile
+include ../../Makefile
