@@ -161,7 +161,17 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_si(char *args) {
+    /* extract the first argumment */
+    char *arg = strtok(NULL, " ");
 
+    if(arg == NULL) {
+        // no parameter, default parameter is 1
+        cpu_exec(1);
+    }
+    else {
+        int i = atoi(arg);
+        cpu_exec(i);
+    }
     return 0;
 }
 
