@@ -19,6 +19,9 @@
 #include <readline/history.h>
 #include "sdb.h"
 
+
+#define NR_CMD ARRLEN(cmd_table)
+
 static int is_batch_mode = false;
 
 void init_regex();
@@ -42,17 +45,15 @@ static char* rl_gets() {
   return line_read;
 }
 
-static int cmd_c(char *args) {
-  cpu_exec(-1);
-  return 0;
-}
-
-
-static int cmd_q(char *args) {
-  return -1;
-}
-
 static int cmd_help(char *args);
+static int cmd_c(char *args);
+static int cmd_q(char *args);
+static int cmd_si(char *args);
+static int cmd_info(char *args);
+static int cmd_x(char *args);
+static int cmd_p(char *args);
+static int cmd_w(char *args);
+static int cmd_d(char *args);
 
 static struct {
   const char *name;
@@ -64,10 +65,15 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
+  { "si", "Step program until it reaches a different source line.", cmd_si},
+  { "info", "Generic command for showing things about the program being debugged.", cmd_info},
+  { "x", "Examine memory: x/FMT ADDRESS.", cmd_x},
+  { "p", "Print value of expression EXP.", cmd_p},
+  { "w", "Temporarily set SETTING to VALUE, run COMMAND, and restore SETTING.", cmd_w},
+  { "d", "Delete all or some breakpoints.", cmd_d},
 
 };
 
-#define NR_CMD ARRLEN(cmd_table)
 
 static int cmd_help(char *args) {
   /* extract the first argument */
@@ -140,4 +146,46 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+}
+
+
+
+static int cmd_c(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+
+static int cmd_q(char *args) {
+  return -1;
+}
+
+static int cmd_si(char *args) {
+
+    return 0;
+}
+
+static int cmd_info(char *args) {
+
+    return 0;
+}
+
+static int cmd_x(char *args) {
+
+    return 0;
+}
+
+static int cmd_p(char *args) {
+
+    return 0;
+}
+
+static int cmd_w(char *args) {
+
+    return 0;
+}
+
+static int cmd_d(char *args) {
+
+    return 0;
 }
