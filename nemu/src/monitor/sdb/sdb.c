@@ -103,7 +103,7 @@ static int cmd_x(char *args) {
     uint32_t hex_num = 0;
     sscanf(arg, "0x%x", &hex_num);
     for(int i=0; i<size; i++) {
-      printf("0x%x:\t0lx%x\n", hex_num+i*4, paddr_read(hex_num+i*4, 4));
+      printf("0x%x:\t0x%x\n", hex_num+i*4, paddr_read(hex_num+i*4, 4));
     }
   }
   return 0;
