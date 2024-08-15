@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 #include "utils.h"
 
 static int is_batch_mode = false;
@@ -83,6 +84,29 @@ static int cmd_info(char *info) {
   return 0;
 }
 
+static int cmd_x(char *args) {
+  char *arg = strtok(NULL, " ");
+
+  uint32_t size = 0;
+  if(arg == NULL) {
+    printf("command 'x': need two paramter, but get none\n");
+  }
+  else {
+    // first parameter
+    size = atoi(arg);
+    Assert(size>0, "command 'x': could not get size\n");
+
+    // second parameter: such as 0x8000 0000
+    arg = strtok(NULL, " ");
+    uint32_t hex_num = 0;
+    sscanf(arg, "0x%x", &hex_num);
+    for(int i=0; i<size; i++) {
+      printf("0x%x:\t0x%08x\n", hex_num+i*4, paddr_read(hex_num+i*4, 4));
+    }
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -95,6 +119,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "Instruction level single step, stepping into calls.", cmd_si },
   { "info", "Instruction level single step, stepping into calls.", cmd_info },
+  { "x", "Instruction level single step, stepping into calls.", cmd_x },
 
   /* TODO: Add more commands */
 
