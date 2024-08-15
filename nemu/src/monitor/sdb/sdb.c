@@ -100,7 +100,7 @@ static int cmd_x(char *args) {
 
     // second parameter
     arg = strtok(NULL, " ");
-    char *num = arg + 2; // remove '0x' prefix
+    // char *num = arg + 2; // remove '0x' prefix
     
     
     // for(int i=0; i<strlen(num); i++) {
@@ -125,7 +125,7 @@ static int cmd_x(char *args) {
     //   }
     // }
     uint32_t hex_num = 0;
-    sscanf(num, "%x", &hex_num);
+    sscanf(arg, "0x%x", &hex_num);
     for(int i=0; i<size; i++) {
       printf("0x%x:\t0lx%x\n", hex_num+i*4, paddr_read(hex_num+i*4, 4));
     }
