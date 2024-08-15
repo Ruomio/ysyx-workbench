@@ -157,6 +157,7 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
+  // elegantly exit  
   nemu_state.state = NEMU_QUIT;
   return -1;
 }
@@ -194,7 +195,43 @@ static int cmd_info(char *args) {
     return 0;
 }
 
+extern uint8_t* guest_to_host(paddr_t paddr);
 static int cmd_x(char *args) {
+    char *arg = strtok(NULL, " ");
+
+    if(arg == NULL) {
+        // error input
+        printf("please input a mem addr\n");
+        return -1;
+    }
+    else {
+        // char* -> unsigned int
+        // remove "0x" prefix
+        char *num = arg+2;
+        uint32_t addr = 0;
+        for(int i=0; i<strlen(num); i++) {
+            switch(arg[i]) {
+                case '0': addr += num[i] - '0'; break;
+                case '1': addr += num[i] - '0'; break;
+                case '2': addr += num[i] - '0'; break;
+                case '3': addr += num[i] - '0'; break;
+                case '4': addr += num[i] - '0'; break;
+                case '5': addr += num[i] - '0'; break;
+                case '6': addr += num[i] - '0'; break;
+                case '7': addr += num[i] - '0'; break;
+                case '8': addr += num[i] - '0'; break;
+                case '9': addr += num[i] - '0'; break;
+                case 'a': addr += num[i] - 'a' + 10; break;
+                case 'b': addr += num[i] - 'a' + 10; break;
+                case 'c': addr += num[i] - 'a' + 10; break;
+                case 'd': addr += num[i] - 'a' + 10; break;
+                case 'e': addr += num[i] - 'a' + 10; break;
+                default: break;
+            }
+            addr = addr * 16;
+        }
+        printf("%s:\t\t%s\n",arg, guest_to_host(addr));
+    }
 
     return 0;
 }
