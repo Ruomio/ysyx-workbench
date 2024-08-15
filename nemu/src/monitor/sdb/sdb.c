@@ -123,7 +123,7 @@ static int cmd_x(char *args) {
       }
     }
     
-    printf("%s:\t0x%x\n",args, paddr_read(total, size));
+    printf("%s:\t0x%x\n",num-2, paddr_read(total, size));
   }
   return 0;
 }
