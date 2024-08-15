@@ -122,8 +122,9 @@ static int cmd_x(char *args) {
         default: break;
       }
     }
-    
-    printf("%s:\t0lx%x\n",num-2, paddr_read(total, size));
+    while(size--) {
+      printf("%s:\t0lx%x\n",num-2, paddr_read(total, 4));
+    }
   }
   return 0;
 }
