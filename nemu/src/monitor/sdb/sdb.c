@@ -210,6 +210,7 @@ static int cmd_x(char *args) {
         char *num = arg+2;
         uint32_t addr = 0;
         for(int i=0; i<strlen(num); i++) {
+            addr = addr * 16;
             switch(num[i]) {
                 case '0': addr += num[i] - '0'; break;
                 case '1': addr += num[i] - '0'; break;
@@ -228,7 +229,6 @@ static int cmd_x(char *args) {
                 case 'e': addr += num[i] - 'a' + 10; break;
                 default: break;
             }
-            addr = addr * 16;
         }
         printf("%s:\t\t%s\n",arg, guest_to_host(addr));
     }
