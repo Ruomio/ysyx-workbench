@@ -67,6 +67,22 @@ static int cmd_si(char *args) {
   return 0;
 }
 
+static int cmd_info(char *info) {
+  char *arg = strtok(NULL, " ");
+
+  if(strcmp(arg, "r") == 0) {
+    isa_reg_display();
+  }
+  else if(strcmp(arg, "w") == 0) {
+
+  }
+  else {
+    printf("Unknown command 'info %s'\n", arg);
+  }
+
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -78,6 +94,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Instruction level single step, stepping into calls.", cmd_si },
+  { "info", "Instruction level single step, stepping into calls.", cmd_info },
 
   /* TODO: Add more commands */
 
