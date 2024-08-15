@@ -25,11 +25,9 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
-    printf("reg name\treg addr\t\treg val\n");
+    printf("reg name\treg val\n");
     for(int i=0; i<sizeof(regs)/sizeof(regs[0]); i++) {
-        uint32_t *addr_32 = &gpr(i);
-        uint8_t *addr_8 = (uint8_t *)addr_32;
-        printf("%s:\t\t%0x%0x%0x%0x\t\t%08x\n", regs[i], host_to_guest(addr_8),host_to_guest(addr_8+1),host_to_guest(addr_8+2),host_to_guest(addr_8+3), gpr(i) );
+        printf("%s:\t\t%0x08x\n", regs[i], gpr(i) );
     }
 }
 
