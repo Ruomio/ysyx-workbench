@@ -98,32 +98,8 @@ static int cmd_x(char *args) {
     size = atoi(arg);
     Assert(size>0, "command 'x': could not get size\n");
 
-    // second parameter
+    // second parameter: such as 0x8000 0000
     arg = strtok(NULL, " ");
-    // char *num = arg + 2; // remove '0x' prefix
-    
-    
-    // for(int i=0; i<strlen(num); i++) {
-    //   total *= 16;
-    //   switch(num[i]) {
-    //     case '0': total += num[i] - '0'; break;
-    //     case '1': total += num[i] - '0'; break;
-    //     case '2': total += num[i] - '0'; break;
-    //     case '3': total += num[i] - '0'; break;
-    //     case '4': total += num[i] - '0'; break;
-    //     case '5': total += num[i] - '0'; break;
-    //     case '6': total += num[i] - '0'; break;
-    //     case '7': total += num[i] - '0'; break;
-    //     case '8': total += num[i] - '0'; break;
-    //     case '9': total += num[i] - '0'; break;
-    //     case 'a': total += num[i] - 'a' + 10; break;
-    //     case 'b': total += num[i] - 'a' + 10; break;
-    //     case 'c': total += num[i] - 'a' + 10; break;
-    //     case 'd': total += num[i] - 'a' + 10; break;
-    //     case 'e': total += num[i] - 'a' + 10; break;
-    //     default: break;
-    //   }
-    // }
     uint32_t hex_num = 0;
     sscanf(arg, "0x%x", &hex_num);
     for(int i=0; i<size; i++) {
