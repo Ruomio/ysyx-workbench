@@ -122,8 +122,8 @@ static int cmd_x(char *args) {
         default: break;
       }
     }
-    while(size--) {
-      printf("%s:\t0lx%x\n",num-2, paddr_read(total, 4));
+    for(int i=0; i<size; i++) {
+      printf("0x%x:\t0lx%x\n",atoi(num)+i*4, paddr_read(total+i*4, 4));
     }
   }
   return 0;
