@@ -18,6 +18,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include "debug.h"
+#include <memory/paddr.h>
 #include "utils.h"
 
 static int is_batch_mode = false;
@@ -83,6 +85,49 @@ static int cmd_info(char *info) {
   return 0;
 }
 
+static int cmd_x(char *args) {
+  char *arg = strtok(NULL, " ");
+
+  uint32_t size = 0, total = 0;
+  if(arg == NULL) {
+    printf("command 'x': need two paramter, but get none\n");
+  }
+  else {
+    // first parameter
+    size = atoi(arg);
+    Assert(size>0, "command 'x': could not get size\n");
+
+    // second parameter
+    arg = strtok(NULL, " ");
+    char *num = arg + 2; // remove '0x' prefix
+    
+    for(int i=0; i<strlen(num); i++) {
+      total *= 16;
+      switch(num[i]) {
+        case '0': total += num[i] - '0'; break;
+        case '1': total += num[i] - '0'; break;
+        case '2': total += num[i] - '0'; break;
+        case '3': total += num[i] - '0'; break;
+        case '4': total += num[i] - '0'; break;
+        case '5': total += num[i] - '0'; break;
+        case '6': total += num[i] - '0'; break;
+        case '7': total += num[i] - '0'; break;
+        case '8': total += num[i] - '0'; break;
+        case '9': total += num[i] - '0'; break;
+        case 'a': total += num[i] - 'a' + 10; break;
+        case 'b': total += num[i] - 'a' + 10; break;
+        case 'c': total += num[i] - 'a' + 10; break;
+        case 'd': total += num[i] - 'a' + 10; break;
+        case 'e': total += num[i] - 'a' + 10; break;
+        default: break;
+      }
+    }
+    
+    printf("%s:\t0x%x",args, paddr_read(total, size));
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -95,6 +140,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "Instruction level single step, stepping into calls.", cmd_si },
   { "info", "Instruction level single step, stepping into calls.", cmd_info },
+  { "x", "Instruction level single step, stepping into calls.", cmd_x },
 
   /* TODO: Add more commands */
 
