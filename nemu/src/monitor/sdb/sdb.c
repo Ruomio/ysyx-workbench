@@ -89,7 +89,7 @@ static int cmd_info(char *info) {
 static int cmd_x(char *args) {
   char *arg = strtok(NULL, " ");
 
-  uint32_t size = 0, total = 0;
+  uint32_t size = 0;
   if(arg == NULL) {
     printf("command 'x': need two paramter, but get none\n");
   }
@@ -102,31 +102,32 @@ static int cmd_x(char *args) {
     arg = strtok(NULL, " ");
     char *num = arg + 2; // remove '0x' prefix
     
-    for(int i=0; i<strlen(num); i++) {
-      total *= 16;
-      switch(num[i]) {
-        case '0': total += num[i] - '0'; break;
-        case '1': total += num[i] - '0'; break;
-        case '2': total += num[i] - '0'; break;
-        case '3': total += num[i] - '0'; break;
-        case '4': total += num[i] - '0'; break;
-        case '5': total += num[i] - '0'; break;
-        case '6': total += num[i] - '0'; break;
-        case '7': total += num[i] - '0'; break;
-        case '8': total += num[i] - '0'; break;
-        case '9': total += num[i] - '0'; break;
-        case 'a': total += num[i] - 'a' + 10; break;
-        case 'b': total += num[i] - 'a' + 10; break;
-        case 'c': total += num[i] - 'a' + 10; break;
-        case 'd': total += num[i] - 'a' + 10; break;
-        case 'e': total += num[i] - 'a' + 10; break;
-        default: break;
-      }
-    }
+    
+    // for(int i=0; i<strlen(num); i++) {
+    //   total *= 16;
+    //   switch(num[i]) {
+    //     case '0': total += num[i] - '0'; break;
+    //     case '1': total += num[i] - '0'; break;
+    //     case '2': total += num[i] - '0'; break;
+    //     case '3': total += num[i] - '0'; break;
+    //     case '4': total += num[i] - '0'; break;
+    //     case '5': total += num[i] - '0'; break;
+    //     case '6': total += num[i] - '0'; break;
+    //     case '7': total += num[i] - '0'; break;
+    //     case '8': total += num[i] - '0'; break;
+    //     case '9': total += num[i] - '0'; break;
+    //     case 'a': total += num[i] - 'a' + 10; break;
+    //     case 'b': total += num[i] - 'a' + 10; break;
+    //     case 'c': total += num[i] - 'a' + 10; break;
+    //     case 'd': total += num[i] - 'a' + 10; break;
+    //     case 'e': total += num[i] - 'a' + 10; break;
+    //     default: break;
+    //   }
+    // }
     uint32_t hex_num = 0;
     sscanf(num, "%x", &hex_num);
     for(int i=0; i<size; i++) {
-      printf("0x%x:\t0lx%x\n", hex_num+i*4, paddr_read(total+i*4, 4));
+      printf("0x%x:\t0lx%x\n", hex_num+i*4, paddr_read(hex_num+i*4, 4));
     }
   }
   return 0;
