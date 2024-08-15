@@ -24,7 +24,7 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
-    printf("reg name\treg addr\treg val\n");
+    printf("reg name\treg addr\t\treg val\n");
     for(int i=0; i<sizeof(regs)/sizeof(regs[0]); i++) {
         printf("%s:\t\t%p\t\t0x%08x\n", regs[i], &gpr(i), gpr(i) );
     }
