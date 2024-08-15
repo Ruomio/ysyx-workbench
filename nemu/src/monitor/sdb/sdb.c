@@ -20,6 +20,7 @@
 #include "sdb.h"
 #include "debug.h"
 #include <memory/paddr.h>
+#include <stdint.h>
 #include "utils.h"
 
 static int is_batch_mode = false;
@@ -122,8 +123,10 @@ static int cmd_x(char *args) {
         default: break;
       }
     }
+    uint32_t hex_num = 0;
+    sscanf(num, "%x", &hex_num);
     for(int i=0; i<size; i++) {
-      printf("0x%x:\t0lx%x\n",atoi(num)+i*4, paddr_read(total+i*4, 4));
+      printf("0x%x:\t0lx%x\n", hex_num+i*4, paddr_read(total+i*4, 4));
     }
   }
   return 0;
