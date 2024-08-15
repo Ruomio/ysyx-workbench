@@ -202,7 +202,6 @@ static int cmd_x(char *args) {
     if(arg == NULL) {
         // error input
         printf("please input a mem addr\n");
-        return -1;
     }
     else {
         printf("arg == %s", arg);
