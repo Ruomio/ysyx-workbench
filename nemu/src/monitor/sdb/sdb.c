@@ -211,7 +211,7 @@ static int cmd_x(char *args) {
         char *num = arg+2;
         uint32_t addr = 0;
         for(int i=0; i<strlen(num); i++) {
-            switch(arg[i]) {
+            switch(num[i]) {
                 case '0': addr += num[i] - '0'; break;
                 case '1': addr += num[i] - '0'; break;
                 case '2': addr += num[i] - '0'; break;
