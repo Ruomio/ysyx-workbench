@@ -199,11 +199,20 @@ extern uint8_t* guest_to_host(paddr_t paddr);
 static int cmd_x(char *args) {
     char *arg = strtok(NULL, " ");
 
+    int size = 0;
+
     if(arg == NULL) {
         // error input
-        printf("please input a mem addr\n");
+        printf("please input size amd mem addr\n");
     }
     else {
+        size = atoi(arg);
+
+        arg = strtok(NULL, " ");
+        if(arg == NULL) {
+            printf("please input mem addr\n");
+            return 0;
+        }
         printf("arg == %s", arg);
         // char* -> unsigned int
         // remove "0x" prefix
@@ -230,7 +239,9 @@ static int cmd_x(char *args) {
                 default: break;
             }
         }
-        printf("%s:\t\t%s\n",arg, guest_to_host(addr));
+        char buff[256] = {0};
+        strncpy(buff, (const char*)guest_to_host(addr), size);
+        printf("%s:\t\t%s\n",arg, buff);
     }
 
     return 0;
