@@ -15,7 +15,6 @@
 
 #include <isa.h>
 #include "local-include/reg.h"
-#include <memory/paddr.h>
 
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -25,11 +24,6 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
-    printf("reg name\treg val\n");
-    for(int i=0; i<sizeof(regs)/sizeof(regs[0]); i++) {
-        printf("%s:\t\t0x%08x\n", regs[i], gpr(i) );
-    }
-    printf("pc:\t\t0x%08x\n", cpu.pc );
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {

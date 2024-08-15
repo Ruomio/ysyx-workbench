@@ -18,9 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-
-
-#define NR_CMD ARRLEN(cmd_table)
+#include "utils.h"
 
 static int is_batch_mode = false;
 
@@ -45,15 +43,18 @@ static char* rl_gets() {
   return line_read;
 }
 
+static int cmd_c(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+
+static int cmd_q(char *args) {
+  nemu_state.state = NEMU_QUIT;
+  return -1;
+}
+
 static int cmd_help(char *args);
-static int cmd_c(char *args);
-static int cmd_q(char *args);
-static int cmd_si(char *args);
-static int cmd_info(char *args);
-static int cmd_x(char *args);
-static int cmd_p(char *args);
-static int cmd_w(char *args);
-static int cmd_d(char *args);
 
 static struct {
   const char *name;
@@ -65,15 +66,33 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-  { "si", "Step program until it reaches a different source line.", cmd_si},
-  { "info", "Generic command for showing things about the program being debugged.", cmd_info},
-  { "x", "Examine memory: x/FMT ADDRESS.", cmd_x},
-  { "p", "Print value of expression EXP.", cmd_p},
-  { "w", "Temporarily set SETTING to VALUE, run COMMAND, and restore SETTING.", cmd_w},
-  { "d", "Delete all or some breakpoints.", cmd_d},
 
 };
 
+#define NR_CMD ARRLEN(cmd_table)
+
+static int cmd_help(char *args) {
+  /* extract the first argument */
+  char *arg = strtok(NULL, " ");
+  int i;
+
+  if (arg == NULL) {
+    /* no argument given */
+    for (i = 0; i < NR_CMD; i ++) {
+      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+    }
+  }
+  else {
+    for (i = 0; i < NR_CMD; i ++) {
+      if (strcmp(arg, cmd_table[i].name) == 0) {
+        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+        return 0;
+      }
+    }
+    printf("Unknown command '%s'\n", arg);
+  }
+  return 0;
+}
 
 void sdb_set_batch_mode() {
   is_batch_mode = true;
@@ -123,141 +142,4 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
-}
-
-
-
-static int cmd_help(char *args) {
-  /* extract the first argument */
-  char *arg = strtok(NULL, " ");
-  int i;
-
-  if (arg == NULL) {
-    /* no argument given */
-    for (i = 0; i < NR_CMD; i ++) {
-      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-    }
-  }
-  else {
-    for (i = 0; i < NR_CMD; i ++) {
-      if (strcmp(arg, cmd_table[i].name) == 0) {
-        printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
-        return 0;
-      }
-    }
-    printf("Unknown command '%s'\n", arg);
-  }
-  return 0;
-}
-
-static int cmd_c(char *args) {
-  cpu_exec(-1);
-  return 0;
-}
-
-
-static int cmd_q(char *args) {
-  // elegantly exit  
-  nemu_state.state = NEMU_QUIT;
-  return -1;
-}
-
-static int cmd_si(char *args) {
-    /* extract the first argumment */
-    char *arg = strtok(NULL, " ");
-
-    if(arg == NULL) {
-        // no parameter, default parameter is 1
-        cpu_exec(1);
-    }
-    else {
-        int i = atoi(arg);
-        cpu_exec(i);
-    }
-    return 0;
-}
-
-static int cmd_info(char *args) {
-    char *arg = strtok(NULL, " ");
-
-    if(strcmp(arg, "r") == 0) {
-        // info register
-        isa_reg_display();
-    }
-    else if(strcmp(arg, "w") == 0) {
-        // info watchpoint
-    
-    }
-    else {
-        printf("Unknown command 'info %s'\n", arg);
-    }
-
-    return 0;
-}
-
-extern uint8_t* guest_to_host(paddr_t paddr);
-static int cmd_x(char *args) {
-    char *arg = strtok(NULL, " ");
-
-    int size = 0;
-
-    if(arg == NULL) {
-        // error input
-        printf("please input size amd mem addr\n");
-    }
-    else {
-        size = atoi(arg);
-
-        arg = strtok(NULL, " ");
-        if(arg == NULL) {
-            printf("please input mem addr\n");
-            return 0;
-        }
-        // printf("arg == %s", arg);
-        // char* -> unsigned int
-        // remove "0x" prefix
-        char *num = arg+2;
-        uint32_t addr = 0;
-        for(int i=0; i<strlen(num); i++) {
-            addr = addr * 16;
-            switch(num[i]) {
-                case '0': addr += num[i] - '0'; break;
-                case '1': addr += num[i] - '0'; break;
-                case '2': addr += num[i] - '0'; break;
-                case '3': addr += num[i] - '0'; break;
-                case '4': addr += num[i] - '0'; break;
-                case '5': addr += num[i] - '0'; break;
-                case '6': addr += num[i] - '0'; break;
-                case '7': addr += num[i] - '0'; break;
-                case '8': addr += num[i] - '0'; break;
-                case '9': addr += num[i] - '0'; break;
-                case 'a': addr += num[i] - 'a' + 10; break;
-                case 'b': addr += num[i] - 'a' + 10; break;
-                case 'c': addr += num[i] - 'a' + 10; break;
-                case 'd': addr += num[i] - 'a' + 10; break;
-                case 'e': addr += num[i] - 'a' + 10; break;
-                default: break;
-            }
-        }
-        char buff[256] = {0};
-        strncpy(buff, (const char*)guest_to_host(addr), size);
-        printf("%s:\t\t%s\n",arg, buff);
-    }
-
-    return 0;
-}
-
-static int cmd_p(char *args) {
-
-    return 0;
-}
-
-static int cmd_w(char *args) {
-
-    return 0;
-}
-
-static int cmd_d(char *args) {
-
-    return 0;
 }
