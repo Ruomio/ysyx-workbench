@@ -205,6 +205,7 @@ static int cmd_x(char *args) {
         return -1;
     }
     else {
+        printf("arg == %s", arg);
         // char* -> unsigned int
         // remove "0x" prefix
         char *num = arg+2;
