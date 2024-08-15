@@ -95,7 +95,7 @@ static int cmd_x(char *args) {
     // first parameter
     size = atoi(arg);
     if(size <= 0) {
-      printf("command 'x': could not get size\n");
+      printf("command 'x': could not be '0' or not get size\n");
       return 0;
     }
 
