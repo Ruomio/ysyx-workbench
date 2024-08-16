@@ -149,7 +149,7 @@ static bool make_token(char *e) {
   return true;
 }
 
-static int eval(Token *tokens, uint8_t s, uint8_t e);
+static uint32_t eval(Token *tokens, uint8_t s, uint8_t e);
 static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e);
 static int get_op_pos(Token *tokens, uint8_t s, uint8_t e);
 static int get_op_priority(char op);
@@ -168,7 +168,7 @@ word_t expr(char *e, bool *success) {
   // return 0;
 }
 
-static int eval(Token *tokens, uint8_t s, uint8_t e) {
+static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
   if(s > e) {
     panic("bad expression\n");
   }
