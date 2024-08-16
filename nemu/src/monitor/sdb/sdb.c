@@ -94,7 +94,10 @@ static int cmd_x(char *args) {
   else {
     // first parameter
     size = atoi(arg);
-    Assert(size>0, "command 'x': could not get size\n");
+    if(size <= 0) {
+      printf("command 'x': first parameter could not be '0' or not get size\n");
+      return 0;
+    }
 
     // second parameter: such as 0x8000 0000
     arg = strtok(NULL, " ");
