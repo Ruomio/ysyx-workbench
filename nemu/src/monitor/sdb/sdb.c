@@ -101,6 +101,7 @@ static int cmd_x(char *args) {
       return 0;
     }
 
+    printf("str = %s\n", rl_gets());
     int index = strlen(arg) + 1;
     // second parameter: such as 0x8000 0000
     arg = strtok(NULL, " ");
@@ -171,7 +172,6 @@ void sdb_mainloop() {
 
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
-    printf("str = %s\n", str);
 
     /* extract the first token as the command */
     char *cmd = strtok(str, " ");
