@@ -19,6 +19,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdint.h>
 #include "common.h"
 #include "debug.h"
 
@@ -172,7 +173,7 @@ static int eval(Token *tokens, uint8_t s, uint8_t e) {
     panic("bad expression\n");
   }
   else if(s == e) {
-    int res=0;
+    uint32_t res=0;
     switch(tokens[s].type) {
       case TK_DECNUM: { sscanf(tokens[s].str, "%4d", &res); break; }
       case TK_HEXNUM: { sscanf(tokens[s].str, "0x%4x", &res); break; }
