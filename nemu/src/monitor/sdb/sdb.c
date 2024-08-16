@@ -109,7 +109,6 @@ static int cmd_x(char *args) {
     while(arg2  != NULL) {
       strcpy(buff+index, arg2);
       index += strlen(arg2);
-      buff[index++] = ' ';
       arg2 = strtok(NULL, " ");
     }
     bool success = false;
