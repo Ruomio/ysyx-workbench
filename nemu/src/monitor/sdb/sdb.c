@@ -104,7 +104,7 @@ static int cmd_x(char *args) {
     arg = strtok(NULL, " ");
     bool success = false;
     printf("expr = %x.\n", expr(arg, &success));
-    if(!success) return 0;
+    if(success == false) return 0;
     uint32_t hex_num = 0;
     sscanf(arg, "0x%x", &hex_num);
     for(int i=0; i<size; i++) {
