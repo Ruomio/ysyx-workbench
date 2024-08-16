@@ -191,8 +191,8 @@ static int eval(Token *tokens, uint8_t s, uint8_t e) {
   }
   else {
     int op = get_op_pos(tokens, s, e );
-    int val1 = eval(tokens, s, op-1);
-    int val2 = eval(tokens, op+1, e);
+    uint32_t val1 = eval(tokens, s, op-1);
+    uint32_t val2 = eval(tokens, op+1, e);
 
     switch(tokens[op].type) {
       case TK_PLUS: return val1 + val2;
