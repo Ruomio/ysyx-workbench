@@ -249,7 +249,7 @@ static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
     }
   }
 
-  Assert(index>=0, "index not update.\n");
+  Assert(index>=0, "index not update index = %d.\n", index);
   return index;
 }
 
