@@ -60,7 +60,7 @@ static struct rule {
   {"[0-9]+", TK_DECNUM},
   {"0x[0-9a-e]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
-  {"\\*\\$[0-9a-z]+", TK_DEREFRENCE},
+  // {"\\*\\$[0-9a-z]+", TK_DEREFRENCE},
 };
 
 #define NR_REGEX ARRLEN(rules)
