@@ -101,12 +101,14 @@ static int cmd_x(char *args) {
       return 0;
     }
 
-    printf("str = %s\n", rl_gets());
-    int index = strlen(arg) + 1;
     // second parameter: such as 0x8000 0000
+    // char buff[1024] = {0};
+    while(strtok(NULL, " ") != NULL) {
+
+    }
     arg = strtok(NULL, " ");
     bool success = false;
-    printf("expr = %x.\n", expr(args + index, &success));
+    printf("expr = %x.\n", expr(arg, &success));
     if(success == false) return 0;
     uint32_t hex_num = 0;
     sscanf(arg, "0x%x", &hex_num);
