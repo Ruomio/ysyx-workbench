@@ -19,6 +19,8 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include "common.h"
+#include "debug.h"
 
 enum {
   TK_NOTYPE = 256, TK_EQ,
@@ -30,10 +32,11 @@ enum {
   TK_DIV,
   TK_LBRACK,
   TK_RBRACK,
+  TK_DECNUM,
   TK_HEXNUM,
   TK_BINNUM,
   TK_REG,
-
+  TK_DEREFRENCE,
 };
 
 static struct rule {
@@ -53,9 +56,11 @@ static struct rule {
   {"/", TK_DIV},
   {"\\(", TK_LBRACK},
   {"\\)", TK_RBRACK},
-  {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7]|)", TK_REG},
+  {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,\\)2}|a[0-7]|)", TK_REG},
+  {"[0-9]+", TK_DECNUM},
   {"0x[0-9a-e]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
+  {"\\*\\$[0-9a-z]+", TK_DEREFRENCE},
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -112,7 +117,22 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          default: TODO();
+          case TK_NOTYPE: break;
+          default: {
+            if(nr_token > 31) {
+              printf("array tokens is already full.\n");
+              return false;
+            }
+            if(substr_len>32) {
+              printf("substr is too long, over 32 byte.\n");
+              return false;
+            }
+
+            tokens[nr_token].type = rules[i].token_type;
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+
+            nr_token++;
+          };
         }
 
         break;
@@ -128,6 +148,10 @@ static bool make_token(char *e) {
   return true;
 }
 
+static int eval(Token *tokens, uint8_t s, uint8_t e);
+static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e);
+static int get_op_pos(Token *tokens, uint8_t s, uint8_t e);
+static int get_op_priority(char op);
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -137,6 +161,107 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   TODO();
+  return eval(tokens, 0, nr_token);
 
-  return 0;
+  // return 0;
+}
+
+static int eval(Token *tokens, uint8_t s, uint8_t e) {
+  if(s > e) {
+    panic("bad expression\n");
+  }
+  else if(s == e) {
+    int res=0;
+    switch(tokens[s].type) {
+      case TK_DECNUM: { sscanf(tokens[s].str, "%4d", &res); break; }
+      case TK_HEXNUM: { sscanf(tokens[s].str, "0x%4x", &res); break; }
+      case TK_BINNUM: { res = strtoul(tokens[s].str+2, NULL, 2); break; }
+      case TK_REG: {
+        // reg save mem address 
+        break; 
+      }
+      default: break;
+    }
+    return res;
+  }
+  else if( check_parentheses(tokens, s, e) ) {
+    return eval(tokens, s+1, e-1);
+  }
+  else {
+    int op = get_op_pos(tokens, s, e );
+    int val1 = eval(tokens, s, op-1);
+    int val2 = eval(tokens, op+1, e);
+
+    switch(tokens[op].type) {
+      case TK_PLUS: return val1 + val2;
+      case TK_SUB: return val1 - val2;
+      case TK_MULTIP: return val1 * val2;
+      case TK_DIV: {
+        Assert(val2 != 0, "error: divisor could not be zero.\n");
+      }
+      case TK_EQ: return val1 == val2;
+      default: {
+        // printf("operater not support.\n");
+        Assert(0, "operater not support.\n");
+        return 0;
+      }
+    }
+  }
+
+} 
+
+static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e) {
+  int top = 0;
+  for(int i=s; i<e; i++) {
+    if(tokens[i].str[0] == '(') {
+      top++;
+    }
+    else if(tokens[i].str[0] == ')') {
+      top--;
+      if(top < 0) return false;
+    }
+  }
+  if(tokens[s].str[0] == '(' && \
+    tokens[e].str[0] == ')' && \
+    top == 0 ) 
+  {
+    return true;
+  }
+  return false;
+}
+
+static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
+  int lowest_priority = -1;
+  int index = -1;
+  int paren_cnt = 0;
+
+  for(int i=s; i<e; i++) {
+    char c = tokens[i].str[0];
+    int priority = get_op_priority(c);
+    if(c == '(') paren_cnt++;
+    else if(c == ')') paren_cnt--;
+    else if(paren_cnt ==0 && \
+      priority > lowest_priority)
+    {
+      lowest_priority = priority;
+      index = i;
+    }
+  }
+
+  Assert(index>=0, "index not update.\n");
+  return index;
+}
+
+// the smaller value, the bigger priority
+static int get_op_priority(char op) {
+  switch (op) {
+    case '[': return 1;
+    case '(': return 1;
+    case '*': return 3;
+    case '/': return 3;
+    case '%': return 3;
+    case '+': return 4;
+    case '-': return 4;
+    default: return -1;
+  }
 }
