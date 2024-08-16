@@ -103,9 +103,9 @@ static int cmd_x(char *args) {
 
     // second parameter: such as 0x8000 0000
     // char buff[1024] = {0};
-    while(strtok(NULL, " ") != NULL) {
+    // while(strtok(NULL, " ") != NULL) {
 
-    }
+    // }
     arg = strtok(NULL, " ");
     bool success = false;
     printf("expr = %x.\n", expr(arg, &success));
