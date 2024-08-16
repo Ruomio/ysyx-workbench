@@ -175,8 +175,8 @@ static int eval(Token *tokens, uint8_t s, uint8_t e) {
   else if(s == e) {
     uint32_t res=0;
     switch(tokens[s].type) {
-      case TK_DECNUM: { sscanf(tokens[s].str, "%4d", &res); break; }
-      case TK_HEXNUM: { sscanf(tokens[s].str, "0x%4x", &res); break; }
+      case TK_DECNUM: { sscanf(tokens[s].str, "%d", &res); break; }
+      case TK_HEXNUM: { sscanf(tokens[s].str, "0x%x", &res); break; }
       case TK_BINNUM: { res = strtoul(tokens[s].str+2, NULL, 2); break; }
       case TK_REG: {
         // reg save mem address 
