@@ -20,6 +20,7 @@
 #include "sdb.h"
 #include <memory/paddr.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "utils.h"
 
 static int is_batch_mode = false;
@@ -100,10 +101,11 @@ static int cmd_x(char *args) {
       return 0;
     }
 
+    int index = strlen(arg) + 1;
     // second parameter: such as 0x8000 0000
     arg = strtok(NULL, " ");
     bool success = false;
-    printf("expr = %x.\n", expr(arg, &success));
+    printf("expr = %x.\n", expr(args + index, &success));
     if(success == false) return 0;
     uint32_t hex_num = 0;
     sscanf(arg, "0x%x", &hex_num);
