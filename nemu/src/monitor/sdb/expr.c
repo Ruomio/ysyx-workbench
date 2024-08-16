@@ -57,8 +57,8 @@ static struct rule {
   {"\\(", TK_LBRACK},
   {"\\)", TK_RBRACK},
   {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG},
+  {"0x[0-9a-fA-F]+", TK_HEXNUM},
   {"[0-9]+", TK_DECNUM},
-  {"0x[0-9a-e]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
   {"\\*\\$[0-9a-z]+", TK_DEREFRENCE},
 };
