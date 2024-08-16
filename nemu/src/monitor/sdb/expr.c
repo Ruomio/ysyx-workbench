@@ -236,8 +236,8 @@ static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
   int lowest_priority = -1;
   int index = -1;
   int paren_cnt = 0;
-
-  for(int i=s; i<e; i++) {
+  int i = 0;
+  for(i=s; i<e; i++) {
     char c = tokens[i].str[0];
     int priority = get_op_priority(c);
     if(c == '(') paren_cnt++;
