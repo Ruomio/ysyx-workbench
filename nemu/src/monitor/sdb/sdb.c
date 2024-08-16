@@ -102,13 +102,16 @@ static int cmd_x(char *args) {
     }
 
     // second parameter: such as 0x8000 0000
-    // char buff[1024] = {0};
-    // while(strtok(NULL, " ") != NULL) {
-
-    // }
     arg = strtok(NULL, " ");
+    char *arg2 = arg;
+    char buff[1024] = {0};
+    int index = 0;
+    while((arg2 = strtok(NULL, " ")) != NULL) {
+      strcpy(buff+index, arg2);
+      index += strlen(arg2);
+    }
     bool success = false;
-    printf("expr = %x.\n", expr(arg, &success));
+    printf("expr = %x.\n", expr(arg2, &success));
     if(success == false) return 0;
     uint32_t hex_num = 0;
     sscanf(arg, "0x%x", &hex_num);
