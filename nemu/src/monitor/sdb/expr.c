@@ -162,7 +162,7 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   *success = true;
-  return eval(tokens, 0, nr_token);
+  return eval(tokens, 0, nr_token-1);
 
   // return 0;
 }
