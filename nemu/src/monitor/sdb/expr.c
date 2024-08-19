@@ -117,7 +117,7 @@ static struct rule {
   {">=", TK_BEQ},
   {"<", TK_LT},
   {"<=", TK_LEQ},
-  {"?", TK_CONDI},
+  {"\\?", TK_CONDI},
   {"=", TK_ASSIGN},
   {"+=", TK_PLUS_ASSIGN},
   {"-=", TK_SUB_ASSIGN},
