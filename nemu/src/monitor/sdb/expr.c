@@ -24,23 +24,55 @@
 #include "debug.h"
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,
+  TK_NOTYPE = 256,
 
   /* TODO: Add more token types */
   TK_PLUS,
   TK_SUB,
   TK_MULTIP,
   TK_DIV,
-  TK_COMPLE,
+  TK_COMPLE,        // %
   TK_LBRACK,
   TK_RBRACK,
-  TK_LMBRACK,
-  TK_RMBRACK,
+  TK_LMBRACK,       // [
+  TK_RMBRACK,       // ]
   TK_DECNUM,
   TK_HEXNUM,
   TK_BINNUM,
   TK_REG,
-  TK_DEREFRENCE,
+  TK_DEREFRENCE,    // *
+  TK_DOT,           // .
+  TK_ARROW,         // ->
+  TK_DPLUS,         // ++
+  TK_DSUB,         // --
+  TK_LSHIFT,         // <<
+  TK_RSHIFT,         // >>
+  TK_BT,         // >
+  TK_BEQ,         // >=
+  TK_LT,         // <
+  TK_LEQ,         // <=
+  TK_EQ,         // ==
+  TK_NEQ,        // !=
+  TK_AND,
+  TK_OR,
+  TK_XOR,
+  TK_COUNT,     // ~
+  TK_NOT,     // ~
+  TK_LAND,      // &&
+  TK_LOR,       // ||
+  TK_CONDI,       // ?:
+  TK_ASSIGN,       // =
+  TK_PLUS_ASSIGN,       // +=
+  TK_SUB_ASSIGN,       // -=
+  TK_MULTIP_ASSIGN,       // *=
+  TK_DIV_ASSIGN,       // /=
+  TK_COMPLE_ASSIGN,       // %=
+  TK_LSHIFT_ASSIGN,       // <<=
+  TK_RSHIFT_ASSIGN,       // >>=
+  TK_AND_ASSIGN,       // &=
+  TK_OR_ASSIGN,       // |=
+  TK_XOR_ASSIGN,       // ^=
+  TK_COMMA,       // ,
 };
 
 static struct rule {
@@ -54,8 +86,11 @@ static struct rule {
 
   {" +", TK_NOTYPE},    // spaces
   {"\\+", TK_PLUS},         // plus
+  {"\\+\\+", TK_DPLUS},         // double plus
   {"==", TK_EQ},        // equal
+  {"!=", TK_NEQ},        // equal
   {"-", TK_SUB},
+  {"--", TK_DSUB},
   {"\\*",TK_MULTIP},
   {"/", TK_DIV},
   {"%", TK_COMPLE},
@@ -67,7 +102,33 @@ static struct rule {
   {"0x[0-9a-fA-F]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
   {"[0-9]+", TK_DECNUM},
-  {"\\*\\$[0-9a-z]+", TK_DEREFRENCE},
+  {"\\.", TK_DOT},
+  {"->", TK_ARROW},
+  {"~", TK_COUNT},
+  {"&", TK_AND},
+  {"|", TK_OR},
+  {"^", TK_XOR},
+  {"!", TK_NOT},
+  {"&&", TK_LAND},
+  {"||", TK_LOR},
+  {"<<", TK_LSHIFT},
+  {">>", TK_LSHIFT},
+  {">", TK_BT},
+  {">=", TK_BEQ},
+  {"<", TK_LT},
+  {"<=", TK_LEQ},
+  {"?", TK_CONDI},
+  {"=", TK_ASSIGN},
+  {"+=", TK_PLUS_ASSIGN},
+  {"-=", TK_SUB_ASSIGN},
+  {"*=", TK_MULTIP_ASSIGN},
+  {"/=", TK_DIV_ASSIGN},
+  {"%=", TK_COMPLE_ASSIGN},
+  {"<<=", TK_LSHIFT_ASSIGN},
+  {">>=", TK_RSHIFT_ASSIGN},
+  {"&=", TK_AND_ASSIGN},
+  {"|=", TK_OR_ASSIGN},
+  {"^=", TK_XOR_ASSIGN},
 };
 
 #define NR_REGEX ARRLEN(rules)
