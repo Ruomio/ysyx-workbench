@@ -88,12 +88,12 @@ static struct rule {
   {"\\+\\+", TK_DPLUS},         // double plus
   {"==", TK_EQ},        // equal
   {"!=", TK_NEQ},        // equal
-  {"-", TK_SUB},
+  {"[a-zA-Z0-9]+->[a-zA-Z0-9]+", TK_ARROW},
   {"--", TK_DSUB},
-  {"\\*[a-zA-Z]+[0-9]*", TK_DEREFRENCE},
+  {"-", TK_SUB},
+  {"\\*[a-zA-Z]+[0-9]*$", TK_DEREFRENCE},
   {"&[a-zA-Z]+[0-9]*", TK_ADDRESSOF},
   {"[a-zA-Z0-9]+\\.[a-zA-Z0-9]+", TK_DOT},
-  {"[a-zA-Z0-9]+->[a-zA-Z0-9]+", TK_ARROW},
   {"\\*",TK_MULTIP},
   {"/", TK_DIV},
   {"%", TK_COMPLE},
