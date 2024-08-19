@@ -399,4 +399,6 @@ void test_expr() {
 
     line++;
   }
+
+  fclose(fp);
 }
