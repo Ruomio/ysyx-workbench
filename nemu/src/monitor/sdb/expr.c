@@ -190,7 +190,7 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           default: {
-            if(nr_token > 31) {
+            if(nr_token > TOKENS_SIZE-1) {
               printf("array tokens is already full.\n");
               return false;
             }
