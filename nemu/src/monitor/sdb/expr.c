@@ -21,6 +21,8 @@
 #include <regex.h>
 #include "common.h"
 
+#define TOKENS_SIZE 1024
+
 enum {
   TK_NOTYPE = 256,
 
@@ -158,7 +160,7 @@ typedef struct token {
   char str[32];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
+static Token tokens[TOKENS_SIZE] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
