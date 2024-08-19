@@ -232,6 +232,8 @@ word_t expr(char *e, bool *success) {
   // TODO();
   *success = true;
   int res= eval(tokens, 0, nr_token-1);
+
+  memset(tokens, 0, sizeof(tokens));
   nr_token = 0;
 
   return res;
