@@ -89,6 +89,7 @@ static struct rule {
   {"!=", TK_NEQ},        // equal
   {"-", TK_SUB},
   {"--", TK_DSUB},
+  {"(\\*)[a-zA-Z0-9]+", TK_DEREFRENCE},
   {"\\*",TK_MULTIP},
   {"/", TK_DIV},
   {"%", TK_COMPLE},
@@ -127,7 +128,6 @@ static struct rule {
   {"&=", TK_AND_ASSIGN},
   {"|=", TK_OR_ASSIGN},
   {"^=", TK_XOR_ASSIGN},
-  {"(\\*)[a-zA-Z0-9]+", TK_DEREFRENCE},
 };
 
 #define NR_REGEX ARRLEN(rules)
