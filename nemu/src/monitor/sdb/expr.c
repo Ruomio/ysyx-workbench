@@ -119,7 +119,7 @@ static struct rule {
   {"<=", TK_LEQ},
   {"\\?", TK_CONDI},
   {"=", TK_ASSIGN},
-  {"+=", TK_PLUS_ASSIGN},
+  {"\\+=", TK_PLUS_ASSIGN},
   {"-=", TK_SUB_ASSIGN},
   {"*=", TK_MULTIP_ASSIGN},
   {"/=", TK_DIV_ASSIGN},
