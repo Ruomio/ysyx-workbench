@@ -70,7 +70,8 @@ enum {
   TK_OR_ASSIGN,       // |=
   TK_XOR_ASSIGN,       // ^=
   TK_COMMA,       // ,
-  TK_DEREFRENCE,
+  TK_DEREFRENCE,    // *p_param
+  TK_ADDRESSOF,    // &param
 };
 
 static struct rule {
@@ -89,7 +90,10 @@ static struct rule {
   {"!=", TK_NEQ},        // equal
   {"-", TK_SUB},
   {"--", TK_DSUB},
-  {"(\\*)[a-zA-Z0-9]+", TK_DEREFRENCE},
+  {"\\*[a-zA-Z]+[0-9]*", TK_DEREFRENCE},
+  {"&[a-zA-Z]+[0-9]*", TK_ADDRESSOF},
+  {"[a-zA-Z0-9]+\\.[a-zA-Z0-9]+", TK_DOT},
+  {"[a-zA-Z0-9]+->[a-zA-Z0-9]+", TK_ARROW},
   {"\\*",TK_MULTIP},
   {"/", TK_DIV},
   {"%", TK_COMPLE},
@@ -101,8 +105,6 @@ static struct rule {
   {"0x[0-9a-fA-F]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
   {"[0-9]+", TK_DECNUM},
-  {"\\.", TK_DOT},
-  {"->", TK_ARROW},
   {"~", TK_COUNT},
   {"&", TK_AND},
   {"|", TK_OR},
