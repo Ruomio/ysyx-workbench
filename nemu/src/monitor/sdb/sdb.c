@@ -99,12 +99,20 @@ static int cmd_x(char *args) {
       return 0;
     }
 
-    // second parameter: such as 0x8000 0000
+    // second parameter: such as: 0x80000000+1*(2+2 )
     arg = strtok(NULL, " ");
-    uint32_t hex_num = 0;
-    sscanf(arg, "0x%x", &hex_num);
+    char buff[1024] = {0};
+    int index = 0;
+    while(arg  != NULL) {
+      strcpy(buff+index, arg);
+      index += strlen(arg);
+      arg = strtok(NULL, " ");
+    }
+    bool success = false;
+    uint32_t res = expr(buff, &success);
+    if(success == false) return 0;
     for(int i=0; i<size; i++) {
-      printf("0x%x:\t0x%08x\n", hex_num+i*4, paddr_read(hex_num+i*4, 4));
+      printf("0x%x:\t0x%08x\n", res+i*4, paddr_read(res+i*4, 4));
     }
   }
   return 0;
