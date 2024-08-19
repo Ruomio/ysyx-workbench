@@ -267,7 +267,7 @@ static int get_op_priority(int token_type) {
     case TK_LBRACK: return 1;
     case TK_MULTIP: return 3;
     case TK_DIV: return 3;
-    case '%': return 3;
+    case TK_COMPLE: return 3;
     case TK_PLUS: return 4;
     case TK_SUB: return 4;
     default: return -1;
