@@ -19,12 +19,57 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include "common.h"
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,
+  TK_NOTYPE = 256,
 
   /* TODO: Add more token types */
-
+  TK_PLUS,
+  TK_SUB,
+  TK_MULTIP,
+  TK_DIV,
+  TK_COMPLE,        // %
+  TK_LBRACK,
+  TK_RBRACK,
+  TK_LMBRACK,       // [
+  TK_RMBRACK,       // ]
+  TK_DECNUM,
+  TK_HEXNUM,
+  TK_BINNUM,
+  TK_REG,
+  TK_DOT,           // .
+  TK_ARROW,         // ->
+  TK_DPLUS,         // ++
+  TK_DSUB,         // --
+  TK_LSHIFT,         // <<
+  TK_RSHIFT,         // >>
+  TK_BT,         // >
+  TK_BEQ,         // >=
+  TK_LT,         // <
+  TK_LEQ,         // <=
+  TK_EQ,         // ==
+  TK_NEQ,        // !=
+  TK_AND,
+  TK_OR,
+  TK_XOR,
+  TK_COUNT,     // ~
+  TK_NOT,     // ~
+  TK_LAND,      // &&
+  TK_LOR,       // ||
+  TK_CONDI,       // ?:
+  TK_ASSIGN,       // =
+  TK_PLUS_ASSIGN,       // +=
+  TK_SUB_ASSIGN,       // -=
+  TK_MULTIP_ASSIGN,       // *=
+  TK_DIV_ASSIGN,       // /=
+  TK_COMPLE_ASSIGN,       // %=
+  TK_LSHIFT_ASSIGN,       // <<=
+  TK_RSHIFT_ASSIGN,       // >>=
+  TK_AND_ASSIGN,       // &=
+  TK_OR_ASSIGN,       // |=
+  TK_XOR_ASSIGN,       // ^=
+  TK_COMMA,       // ,
 };
 
 static struct rule {
@@ -37,8 +82,50 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
+  {"\\+", TK_PLUS},         // plus
+  {"\\+\\+", TK_DPLUS},         // double plus
   {"==", TK_EQ},        // equal
+  {"!=", TK_NEQ},        // equal
+  {"-", TK_SUB},
+  {"--", TK_DSUB},
+  {"\\*",TK_MULTIP},
+  {"/", TK_DIV},
+  {"%", TK_COMPLE},
+  {"\\(", TK_LBRACK},
+  {"\\)", TK_RBRACK},
+  {"\\[", TK_LMBRACK},
+  {"\\]", TK_LMBRACK},
+  {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG},
+  {"0x[0-9a-fA-F]+", TK_HEXNUM},
+  {"0b[0-1]+", TK_BINNUM},
+  {"[0-9]+", TK_DECNUM},
+  {"\\.", TK_DOT},
+  {"->", TK_ARROW},
+  {"~", TK_COUNT},
+  {"&", TK_AND},
+  {"|", TK_OR},
+  {"^", TK_XOR},
+  {"!", TK_NOT},
+  {"&&", TK_LAND},
+  {"||", TK_LOR},
+  {"<<", TK_LSHIFT},
+  {">>", TK_LSHIFT},
+  {">", TK_BT},
+  {">=", TK_BEQ},
+  {"<", TK_LT},
+  {"<=", TK_LEQ},
+  {"\\?", TK_CONDI},
+  {"=", TK_ASSIGN},
+  {"\\+=", TK_PLUS_ASSIGN},
+  {"-=", TK_SUB_ASSIGN},
+  {"\\*=", TK_MULTIP_ASSIGN},
+  {"/=", TK_DIV_ASSIGN},
+  {"%=", TK_COMPLE_ASSIGN},
+  {"<<=", TK_LSHIFT_ASSIGN},
+  {">>=", TK_RSHIFT_ASSIGN},
+  {"&=", TK_AND_ASSIGN},
+  {"|=", TK_OR_ASSIGN},
+  {"^=", TK_XOR_ASSIGN},
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -119,7 +206,143 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  // TODO();
+  *success = true;
+  return eval(tokens, 0, nr_token-1);
 
-  return 0;
+  // return 0;
+}
+
+static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
+  if(s > e) {
+    panic("bad expression\n");
+  }
+  else if(s == e) {
+    uint32_t res=0;
+    switch(tokens[s].type) {
+      case TK_DECNUM: { sscanf(tokens[s].str, "%d", &res); break; }
+      case TK_HEXNUM: { sscanf(tokens[s].str, "0x%x", &res); break; }
+      case TK_BINNUM: { res = strtoul(tokens[s].str+2, NULL, 2); break; }
+      case TK_REG: {
+        // reg save mem address 
+        break; 
+      }
+      default: break;
+    }
+    return res;
+  }
+  else if( check_parentheses(tokens, s, e) ) {
+    return eval(tokens, s+1, e-1);
+  }
+  else {
+    int op = get_op_pos(tokens, s, e );
+    uint32_t val1 = eval(tokens, s, op-1);
+    uint32_t val2 = eval(tokens, op+1, e);
+
+    switch(tokens[op].type) {
+      case TK_PLUS: return val1 + val2;
+      case TK_SUB: return val1 - val2;
+      case TK_MULTIP: return val1 * val2;
+      case TK_DIV: {
+        Assert(val2 != 0, "error: divisor could not be zero.\n");
+      }
+      case TK_EQ: return val1 == val2;
+      default: {
+        // printf("operater not support.\n");
+        Assert(0, "operater not support.\n");
+        return 0;
+      }
+    }
+  }
+
+} 
+
+static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e) {
+  int top = 0;
+  for(int i=s; i<=e; i++) {
+    if(tokens[i].str[0] == '(') {
+      top++;
+    }
+    else if(tokens[i].str[0] == ')') {
+      top--;
+      if(top < 0) return false;
+    }
+  }
+  if(tokens[s].str[0] == '(' && \
+    tokens[e].str[0] == ')' && \
+    top == 0 ) 
+  {
+    return true;
+  }
+  return false;
+}
+
+static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
+  int lowest_priority = -1;
+  int index = -1;
+  int paren_cnt = 0;
+  int i = 0;
+  for(i=s; i<e; i++) {
+    int token_type = tokens[i].type;
+    int priority = get_op_priority(token_type);
+    if(token_type == TK_LBRACK) paren_cnt++;
+    else if(token_type == TK_RBRACK) paren_cnt--;
+    else if(paren_cnt ==0 && \
+      priority > lowest_priority)
+    {
+      lowest_priority = priority;
+      index = i;
+    }
+  }
+
+  Assert(index>=0, "index not update index = %d.\n", index);
+  return index;
+}
+
+// the smaller value, the bigger priority
+static int get_op_priority(int token_type) {
+  switch (token_type) {
+    case TK_LMBRACK: return 1;        // [
+    case TK_LBRACK: return 1;         // (
+    case TK_DOT: return 1;         // .
+    case TK_ARROW: return 1;         // ->
+    case TK_NOT: return 2;
+    case TK_DPLUS: return 2;
+    case TK_DSUB: return 2;
+    case TK_MULTIP: return 3;
+    case TK_DIV: return 3;
+    case TK_COMPLE: return 3;
+    case TK_PLUS: return 4;
+    case TK_SUB: return 4;
+    case TK_LSHIFT: return 5;
+    case TK_RSHIFT: return 5;
+    case TK_BT: return 6;
+    case TK_BEQ: return 6;
+    case TK_LT: return 6;
+    case TK_LEQ: return 6;
+    case TK_EQ: return 7;
+    case TK_NEQ: return 7;
+
+    case TK_AND: return 8;
+    case TK_XOR: return 9;
+    case TK_OR: return 10;
+    case TK_LAND: return 11;
+    case TK_LOR: return 12;
+    case TK_CONDI: return 13;
+
+    case TK_ASSIGN: return 14;
+    case TK_PLUS_ASSIGN: return 14;
+    case TK_SUB_ASSIGN: return 14;
+    case TK_MULTIP_ASSIGN: return 14;
+    case TK_DIV_ASSIGN: return 14;
+    case TK_COMPLE_ASSIGN: return 14;
+    case TK_LSHIFT_ASSIGN: return 14;
+    case TK_RSHIFT_ASSIGN: return 14;
+    case TK_AND_ASSIGN: return 14;
+    case TK_OR_ASSIGN: return 14;
+    case TK_XOR_ASSIGN: return 14;
+
+    case TK_COMMA: return 15;
+    default: return -1;
+  }
 }
