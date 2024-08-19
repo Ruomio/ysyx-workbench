@@ -19,9 +19,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <stdint.h>
 #include "common.h"
-#include "debug.h"
 
 enum {
   TK_NOTYPE = 256,
@@ -40,7 +38,6 @@ enum {
   TK_HEXNUM,
   TK_BINNUM,
   TK_REG,
-  TK_DEREFRENCE,    // *
   TK_DOT,           // .
   TK_ARROW,         // ->
   TK_DPLUS,         // ++
@@ -73,6 +70,7 @@ enum {
   TK_OR_ASSIGN,       // |=
   TK_XOR_ASSIGN,       // ^=
   TK_COMMA,       // ,
+  TK_DEREFRENCE,
 };
 
 static struct rule {
@@ -129,6 +127,7 @@ static struct rule {
   {"&=", TK_AND_ASSIGN},
   {"|=", TK_OR_ASSIGN},
   {"^=", TK_XOR_ASSIGN},
+  {"(\\*)[a-zA-Z0-9]+", TK_DEREFRENCE},
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -230,9 +229,10 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   *success = true;
-  return eval(tokens, 0, nr_token-1);
+  int res= eval(tokens, 0, nr_token-1);
+  nr_token = 0;
 
-  // return 0;
+  return res;
 }
 
 static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
@@ -324,13 +324,47 @@ static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
 // the smaller value, the bigger priority
 static int get_op_priority(int token_type) {
   switch (token_type) {
-    case TK_LMBRACK: return 1;
-    case TK_LBRACK: return 1;
+    case TK_LMBRACK: return 1;        // [
+    case TK_LBRACK: return 1;         // (
+    case TK_DOT: return 1;         // .
+    case TK_ARROW: return 1;         // ->
+    case TK_NOT: return 2;
+    case TK_DPLUS: return 2;
+    case TK_DSUB: return 2;
     case TK_MULTIP: return 3;
     case TK_DIV: return 3;
     case TK_COMPLE: return 3;
     case TK_PLUS: return 4;
     case TK_SUB: return 4;
+    case TK_LSHIFT: return 5;
+    case TK_RSHIFT: return 5;
+    case TK_BT: return 6;
+    case TK_BEQ: return 6;
+    case TK_LT: return 6;
+    case TK_LEQ: return 6;
+    case TK_EQ: return 7;
+    case TK_NEQ: return 7;
+
+    case TK_AND: return 8;
+    case TK_XOR: return 9;
+    case TK_OR: return 10;
+    case TK_LAND: return 11;
+    case TK_LOR: return 12;
+    case TK_CONDI: return 13;
+
+    case TK_ASSIGN: return 14;
+    case TK_PLUS_ASSIGN: return 14;
+    case TK_SUB_ASSIGN: return 14;
+    case TK_MULTIP_ASSIGN: return 14;
+    case TK_DIV_ASSIGN: return 14;
+    case TK_COMPLE_ASSIGN: return 14;
+    case TK_LSHIFT_ASSIGN: return 14;
+    case TK_RSHIFT_ASSIGN: return 14;
+    case TK_AND_ASSIGN: return 14;
+    case TK_OR_ASSIGN: return 14;
+    case TK_XOR_ASSIGN: return 14;
+
+    case TK_COMMA: return 15;
     default: return -1;
   }
 }
