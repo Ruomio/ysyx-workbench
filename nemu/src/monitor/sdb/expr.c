@@ -121,7 +121,7 @@ static struct rule {
   {"=", TK_ASSIGN},
   {"\\+=", TK_PLUS_ASSIGN},
   {"-=", TK_SUB_ASSIGN},
-  {"*=", TK_MULTIP_ASSIGN},
+  {"\\*=", TK_MULTIP_ASSIGN},
   {"/=", TK_DIV_ASSIGN},
   {"%=", TK_COMPLE_ASSIGN},
   {"<<=", TK_LSHIFT_ASSIGN},
