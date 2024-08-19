@@ -390,6 +390,9 @@ void test_expr() {
     if(value != atoi(res)) {
       Log("test error at line %d.\n", line);
     }
+    else {
+      Log("test success at line %d.\n", line);
+    }
 
     line++;
   }
