@@ -289,12 +289,13 @@ static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
 static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e) {
   int top = 0;
   for(int i=s; i<=e; i++) {
-    if(tokens[i].str[0] == '(') {
+    if(tokens[i].type == TK_LBRACK) {
       top++;
     }
-    else if(tokens[i].str[0] == ')') {
+    else if(tokens[i].type == TK_RBRACK) {
       top--;
       if(top < 0) return false;
+      if(top == 0 && i != e) return false;
     }
   }
   if(tokens[s].str[0] == '(' && \
