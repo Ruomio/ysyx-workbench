@@ -88,7 +88,7 @@ static struct rule {
   {"\\+\\+", TK_DPLUS},         // double plus
   {"==", TK_EQ},        // equal
   {"!=", TK_NEQ},        // equal
-  {"[a-zA-Z0-9]+->", TK_ARROW},
+  {"[a-zA-Z0-9]+->[a-zA-Z0-9]+", TK_ARROW},
   {"--", TK_DSUB},
   {"-", TK_SUB},
   {"\\*[a-zA-Z]+[0-9]*[^->]", TK_DEREFRENCE},
