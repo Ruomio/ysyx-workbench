@@ -381,17 +381,17 @@ void test_expr() {
   char str[1024] = {};
   int line = 0;
   bool success = false;
-  while((fscanf(fp, "%[^\n]", str))) {
+  while((fscanf(fp, "%[^\n]", str)) != EOF) {
     char *res = strtok(str, " ");
     char *expr_str = str + strlen(res) + 1;
 
     word_t value = expr(expr_str, &success);
 
     if(value != atoi(res)) {
-      Log("test error at line %d.\n", line);
+      printf("test error at line %d.\n", line);
     }
     else {
-      Log("test success at line %d.\n", line);
+      printf("test success at line %d.\n", line);
     }
 
     line++;
