@@ -31,8 +31,11 @@ enum {
   TK_SUB,
   TK_MULTIP,
   TK_DIV,
+  TK_COMPLE,
   TK_LBRACK,
   TK_RBRACK,
+  TK_LMBRACK,
+  TK_RMBRACK,
   TK_DECNUM,
   TK_HEXNUM,
   TK_BINNUM,
@@ -55,8 +58,11 @@ static struct rule {
   {"-", TK_SUB},
   {"\\*",TK_MULTIP},
   {"/", TK_DIV},
+  {"%", TK_COMPLE},
   {"\\(", TK_LBRACK},
   {"\\)", TK_RBRACK},
+  {"\\[", TK_LMBRACK},
+  {"\\]", TK_LMBRACK},
   {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG},
   {"0x[0-9a-fA-F]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
@@ -152,7 +158,7 @@ static bool make_token(char *e) {
 static uint32_t eval(Token *tokens, uint8_t s, uint8_t e);
 static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e);
 static int get_op_pos(Token *tokens, uint8_t s, uint8_t e);
-static int get_op_priority(char op);
+static int get_op_priority(int token_type);
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -238,10 +244,10 @@ static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
   int paren_cnt = 0;
   int i = 0;
   for(i=s; i<e; i++) {
-    char c = tokens[i].str[0];
-    int priority = get_op_priority(c);
-    if(c == '(') paren_cnt++;
-    else if(c == ')') paren_cnt--;
+    int token_type = tokens[i].type;
+    int priority = get_op_priority(token_type);
+    if(token_type == TK_LBRACK) paren_cnt++;
+    else if(token_type == TK_RBRACK) paren_cnt--;
     else if(paren_cnt ==0 && \
       priority > lowest_priority)
     {
@@ -255,15 +261,15 @@ static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
 }
 
 // the smaller value, the bigger priority
-static int get_op_priority(char op) {
-  switch (op) {
-    case '[': return 1;
-    case '(': return 1;
-    case '*': return 3;
-    case '/': return 3;
+static int get_op_priority(int token_type) {
+  switch (token_type) {
+    case TK_LMBRACK: return 1;
+    case TK_LBRACK: return 1;
+    case TK_MULTIP: return 3;
+    case TK_DIV: return 3;
     case '%': return 3;
-    case '+': return 4;
-    case '-': return 4;
+    case TK_PLUS: return 4;
+    case TK_SUB: return 4;
     default: return -1;
   }
 }
