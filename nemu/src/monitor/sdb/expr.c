@@ -182,7 +182,22 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          default: TODO();
+          case TK_NOTYPE: break;
+          default: {
+            if(nr_token > 31) {
+              printf("array tokens is already full.\n");
+              return false;
+            }
+            if(substr_len>32) {
+              printf("substr is too long, over 32 byte.\n");
+              return false;
+            }
+
+            tokens[nr_token].type = rules[i].token_type;
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+
+            nr_token++;
+          };
         }
 
         break;
@@ -198,6 +213,10 @@ static bool make_token(char *e) {
   return true;
 }
 
+static uint32_t eval(Token *tokens, uint8_t s, uint8_t e);
+static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e);
+static int get_op_pos(Token *tokens, uint8_t s, uint8_t e);
+static int get_op_priority(int token_type);
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
