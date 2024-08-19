@@ -384,7 +384,7 @@ void test_expr() {
   char str[1024] = {};
   int line = 0;
   bool success = false;
-  while((fscanf(fp, "%[^\n]", str)) != EOF) {
+  while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
     char *res = strtok(str, " ");
     char *expr_str = str + strlen(res) + 1;
 
