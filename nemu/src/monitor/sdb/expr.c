@@ -227,9 +227,10 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   *success = true;
-  return eval(tokens, 0, nr_token-1);
+  int res= eval(tokens, 0, nr_token-1);
+  nr_token = 0;
 
-  // return 0;
+  return res;
 }
 
 static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
