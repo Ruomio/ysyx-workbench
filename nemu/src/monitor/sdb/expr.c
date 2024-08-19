@@ -268,7 +268,10 @@ static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
       case TK_SUB: return val1 - val2;
       case TK_MULTIP: return val1 * val2;
       case TK_DIV: {
-        Assert(val2 != 0, "error: divisor could not be zero.\n");
+        if(val2 == 0) {
+          Assert(val2 != 0, "error: divisor could not be zero.\n");
+        }
+        return val1 / val2;
       }
       case TK_EQ: return val1 == val2;
       default: {
