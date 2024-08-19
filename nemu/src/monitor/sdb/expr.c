@@ -370,3 +370,27 @@ static int get_op_priority(int token_type) {
     default: return -1;
   }
 }
+
+
+void test_expr() {
+  FILE *fp = fopen("$NVBOARD_HOME/../nemu/tools/gen-expr/build/input", "r");
+  if(!fp) {
+    Log("can not open the input file.\n");
+    return;
+  }
+  char str[1024] = {};
+  int line = 0;
+  bool success = false;
+  while((fscanf(fp, "%[^\n]", str))) {
+    char *res = strtok(str, " ");
+    char *expr_str = str + strlen(res) + 1;
+
+    word_t value = expr(expr_str, &success);
+
+    if(value != atoi(res)) {
+      Log("test error at line %d.\n", line);
+    }
+
+    line++;
+  }
+}
