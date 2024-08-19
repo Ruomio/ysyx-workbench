@@ -112,12 +112,10 @@ static int cmd_x(char *args) {
       arg2 = strtok(NULL, " ");
     }
     bool success = false;
-    printf("expr = %x.\n", expr(buff, &success));
+    uint32_t res = expr(buff, &success);
     if(success == false) return 0;
-    uint32_t hex_num = 0;
-    sscanf(arg, "0x%x", &hex_num);
     for(int i=0; i<size; i++) {
-      printf("0x%x:\t0x%08x\n", hex_num+i*4, paddr_read(hex_num+i*4, 4));
+      printf("0x%x:\t0x%08x\n", res+i*4, paddr_read(res+i*4, 4));
     }
   }
   return 0;
