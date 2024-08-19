@@ -19,8 +19,6 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/paddr.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include "utils.h"
 
 static int is_batch_mode = false;
@@ -101,15 +99,14 @@ static int cmd_x(char *args) {
       return 0;
     }
 
-    // second parameter: such as 0x8000 0000
+    // second parameter: such as: 0x80000000+1*(2+2 )
     arg = strtok(NULL, " ");
-    char *arg2 = arg;
     char buff[1024] = {0};
     int index = 0;
-    while(arg2  != NULL) {
-      strcpy(buff+index, arg2);
-      index += strlen(arg2);
-      arg2 = strtok(NULL, " ");
+    while(arg  != NULL) {
+      strcpy(buff+index, arg);
+      index += strlen(arg);
+      arg = strtok(NULL, " ");
     }
     bool success = false;
     uint32_t res = expr(buff, &success);
