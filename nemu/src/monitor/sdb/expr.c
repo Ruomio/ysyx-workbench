@@ -19,7 +19,6 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <stdint.h>
 #include "common.h"
 
 #define TOKENS_SIZE 1024
@@ -179,8 +178,8 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-        //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+            i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -268,7 +267,6 @@ static uint32_t eval(Token *tokens, int s, int e) {
     int op = get_op_pos(tokens, s, e );
     uint32_t val1 = eval(tokens, s, op-1);
     uint32_t val2 = eval(tokens, op+1, e);
-
     uint32_t ret = 0;
 
     switch(tokens[op].type) {
