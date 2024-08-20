@@ -19,6 +19,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdint.h>
 #include "common.h"
 
 #define TOKENS_SIZE 1024
@@ -234,7 +235,7 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   *success = true;
-  int res= eval(tokens, 0, nr_token-1);
+  uint32_t res= eval(tokens, 0, nr_token-1);
 
   memset(tokens, 0, sizeof(tokens));
   nr_token = 0;
