@@ -269,23 +269,28 @@ static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
     uint32_t val1 = eval(tokens, s, op-1);
     uint32_t val2 = eval(tokens, op+1, e);
 
+    uint32_t ret = 0;
+
     switch(tokens[op].type) {
-      case TK_PLUS: return val1 + val2;
-      case TK_SUB: return val1 - val2;
-      case TK_MULTIP: return val1 * val2;
+      case TK_PLUS: ret = val1 + val2; break;
+      case TK_SUB: ret = val1 - val2; break;
+      case TK_MULTIP: ret = val1 * val2; break;
       case TK_DIV: {
         if(val2 == 0) {
           Assert(val2 != 0, "error: divisor could not be zero.\n");
         }
-        return val1 / val2;
+        ret = val1 / val2;
+        break;
       }
-      case TK_EQ: return val1 == val2;
+      case TK_EQ: ret = val1 == val2; break;
       default: {
         // printf("operater not support.\n");
         Assert(0, "operater not support.\n");
-        return 0;
+        ret = 0;
+        break;
       }
     }
+    return ret;
   }
 
 } 
