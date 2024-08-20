@@ -277,9 +277,10 @@ static uint32_t eval(Token *tokens, int s, int e) {
       case TK_MULTIP: ret = val1 * val2; break;
       case TK_DIV: {
         if(val2 == 0) {
-          Assert(val2 != 0, "error: divisor could not be zero. divisor position is %d\n", op);
+          // Assert(val2 != 0, "error: divisor could not be zero. divisor position is %d\n", op);
+          printf("error: divisor could not be zero. divisor position is %d\n", op);
         }
-        ret = val1 / val2;
+        ret = 0;
         break;
       }
       case TK_EQ: ret = val1 == val2; break;
