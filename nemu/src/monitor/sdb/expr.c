@@ -327,7 +327,7 @@ static int get_op_pos(Token *tokens, int s, int e) {
     if(token_type == TK_LBRACK) paren_cnt++;
     else if(token_type == TK_RBRACK) paren_cnt--;
     else if(paren_cnt ==0 && \
-      priority > lowest_priority)
+      priority >= lowest_priority)
     {
       lowest_priority = priority;
       index = i;
