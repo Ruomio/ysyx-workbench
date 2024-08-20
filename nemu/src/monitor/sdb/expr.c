@@ -279,8 +279,9 @@ static uint32_t eval(Token *tokens, int s, int e) {
         if(val2 == 0) {
           // Assert(val2 != 0, "error: divisor could not be zero. divisor position is %d\n", op);
           printf("error: divisor could not be zero. divisor position is %d\n", op);
+          ret = 0;
         }
-        ret = 0;
+        ret = val1 / val2;
         break;
       }
       case TK_EQ: ret = val1 == val2; break;
