@@ -21,6 +21,9 @@
 #include <regex.h>
 #include "common.h"
 
+#define TOKENS_SIZE 1024
+#define TOKEN_STR_SIZE 32
+
 enum {
   TK_NOTYPE = 256,
 
@@ -155,10 +158,10 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[32];
+  char str[TOKEN_STR_SIZE];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
+static Token tokens[TOKENS_SIZE] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
@@ -188,11 +191,11 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           default: {
-            if(nr_token > 31) {
+            if(nr_token > TOKENS_SIZE-1) {
               printf("array tokens is already full.\n");
               return false;
             }
-            if(substr_len>32) {
+            if(substr_len > TOKEN_STR_SIZE-1) {
               printf("substr is too long, over 32 byte.\n");
               return false;
             }
