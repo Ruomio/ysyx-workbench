@@ -221,9 +221,9 @@ static bool make_token(char *e) {
   return true;
 }
 
-static uint32_t eval(Token *tokens, uint8_t s, uint8_t e);
-static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e);
-static int get_op_pos(Token *tokens, uint8_t s, uint8_t e);
+static uint32_t eval(Token *tokens, int s, int e);
+static bool check_parentheses(Token *tokens, int s, int e);
+static int get_op_pos(Token *tokens, int s, int e);
 static int get_op_priority(int token_type);
 
 word_t expr(char *e, bool *success) {
@@ -243,7 +243,7 @@ word_t expr(char *e, bool *success) {
   return res;
 }
 
-static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
+static uint32_t eval(Token *tokens, int s, int e) {
   if(s > e) {
     panic("bad expression\n");
   }
@@ -295,7 +295,7 @@ static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
 
 } 
 
-static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e) {
+static bool check_parentheses(Token *tokens, int s, int e) {
   int top = 0;
   for(int i=s; i<=e; i++) {
     if(tokens[i].type == TK_LBRACK) {
@@ -316,7 +316,7 @@ static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e) {
   return false;
 }
 
-static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
+static int get_op_pos(Token *tokens, int s, int e) {
   int lowest_priority = -1;
   int index = -1;
   int paren_cnt = 0;
