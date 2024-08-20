@@ -388,7 +388,7 @@ void test_expr() {
     return;
   }
   char str[1024] = {};
-  int line = 0;
+  int line = 1;
   bool success = false;
   while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
     char *res = strtok(str, " ");
