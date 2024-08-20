@@ -21,9 +21,6 @@
 #include <regex.h>
 #include "common.h"
 
-#define TOKENS_SIZE 1024
-#define TOKEN_STR_SIZE 32
-
 enum {
   TK_NOTYPE = 256,
 
@@ -158,10 +155,10 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[TOKEN_STR_SIZE];
+  char str[32];
 } Token;
 
-static Token tokens[TOKENS_SIZE] __attribute__((used)) = {};
+static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
@@ -191,11 +188,11 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
           default: {
-            if(nr_token > TOKENS_SIZE-1) {
+            if(nr_token > 31) {
               printf("array tokens is already full.\n");
               return false;
             }
-            if(substr_len > TOKEN_STR_SIZE-1) {
+            if(substr_len>32) {
               printf("substr is too long, over 32 byte.\n");
               return false;
             }
@@ -220,9 +217,9 @@ static bool make_token(char *e) {
   return true;
 }
 
-static uint32_t eval(Token *tokens, int s, int e);
-static bool check_parentheses(Token *tokens, int s, int e);
-static int get_op_pos(Token *tokens, int s, int e);
+static uint32_t eval(Token *tokens, uint8_t s, uint8_t e);
+static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e);
+static int get_op_pos(Token *tokens, uint8_t s, uint8_t e);
 static int get_op_priority(int token_type);
 
 word_t expr(char *e, bool *success) {
@@ -234,15 +231,13 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   *success = true;
-  uint32_t res= eval(tokens, 0, nr_token-1);
-
-  memset(tokens, 0, sizeof(tokens));
+  int res= eval(tokens, 0, nr_token-1);
   nr_token = 0;
 
   return res;
 }
 
-static uint32_t eval(Token *tokens, int s, int e) {
+static uint32_t eval(Token *tokens, uint8_t s, uint8_t e) {
   if(s > e) {
     panic("bad expression\n");
   }
@@ -267,44 +262,34 @@ static uint32_t eval(Token *tokens, int s, int e) {
     int op = get_op_pos(tokens, s, e );
     uint32_t val1 = eval(tokens, s, op-1);
     uint32_t val2 = eval(tokens, op+1, e);
-    uint32_t ret = 0;
 
     switch(tokens[op].type) {
-      case TK_PLUS: ret = val1 + val2; break;
-      case TK_SUB: ret = val1 - val2; break;
-      case TK_MULTIP: ret = val1 * val2; break;
+      case TK_PLUS: return val1 + val2;
+      case TK_SUB: return val1 - val2;
+      case TK_MULTIP: return val1 * val2;
       case TK_DIV: {
-        if(val2 == 0) {
-          // Assert(val2 != 0, "error: divisor could not be zero. divisor position is %d\n", op);
-          printf("error: divisor could not be zero. divisor position is %d\n", op);
-          ret = 0;
-        }
-        ret = val1 / val2;
-        break;
+        Assert(val2 != 0, "error: divisor could not be zero.\n");
       }
-      case TK_EQ: ret = val1 == val2; break;
+      case TK_EQ: return val1 == val2;
       default: {
         // printf("operater not support.\n");
         Assert(0, "operater not support.\n");
-        ret = 0;
-        break;
+        return 0;
       }
     }
-    return ret;
   }
 
 } 
 
-static bool check_parentheses(Token *tokens, int s, int e) {
+static bool check_parentheses(Token *tokens, uint8_t s, uint8_t e) {
   int top = 0;
   for(int i=s; i<=e; i++) {
-    if(tokens[i].type == TK_LBRACK) {
+    if(tokens[i].str[0] == '(') {
       top++;
     }
-    else if(tokens[i].type == TK_RBRACK) {
+    else if(tokens[i].str[0] == ')') {
       top--;
       if(top < 0) return false;
-      if(top == 0 && i != e) return false;
     }
   }
   if(tokens[s].str[0] == '(' && \
@@ -316,7 +301,7 @@ static bool check_parentheses(Token *tokens, int s, int e) {
   return false;
 }
 
-static int get_op_pos(Token *tokens, int s, int e) {
+static int get_op_pos(Token *tokens, uint8_t s, uint8_t e) {
   int lowest_priority = -1;
   int index = -1;
   int paren_cnt = 0;
@@ -327,7 +312,7 @@ static int get_op_pos(Token *tokens, int s, int e) {
     if(token_type == TK_LBRACK) paren_cnt++;
     else if(token_type == TK_RBRACK) paren_cnt--;
     else if(paren_cnt ==0 && \
-      priority >= lowest_priority)
+      priority > lowest_priority)
     {
       lowest_priority = priority;
       index = i;
