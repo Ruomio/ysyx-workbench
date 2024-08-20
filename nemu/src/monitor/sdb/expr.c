@@ -370,3 +370,32 @@ static int get_op_priority(int token_type) {
     default: return -1;
   }
 }
+
+
+void test_expr() {
+  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/tools/gen-expr/build/input2", "r");
+  if(!fp) {
+    Log("can not open the input file.\n");
+    return;
+  }
+  char str[1024] = {};
+  int line = 1;
+  bool success = false;
+  while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
+    char *res = strtok(str, " ");
+    char *expr_str = str + strlen(res) + 1;
+
+    word_t value = expr(expr_str, &success);
+
+    if(value != atoi(res)) {
+      printf("\033[0;31mtest error at line %d.\n", line);
+    }
+    else {
+      printf("\033[0;32mtest success at line %d.\n", line);
+    }
+
+    line++;
+  }
+
+  fclose(fp);
+}
