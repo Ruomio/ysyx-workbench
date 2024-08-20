@@ -390,7 +390,7 @@ static int get_op_priority(int token_type) {
 
 
 void test_expr() {
-  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
+  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/tools/gen-expr/build/input2", "r");
   if(!fp) {
     Log("can not open the input file.\n");
     return;
