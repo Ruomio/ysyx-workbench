@@ -19,6 +19,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdint.h>
 #include "common.h"
 
 #define TOKENS_SIZE 1024
@@ -178,8 +179,8 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+        //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -223,7 +224,7 @@ static bool make_token(char *e) {
 static uint32_t eval(Token *tokens, int s, int e);
 static bool check_parentheses(Token *tokens, int s, int e);
 static int get_op_pos(Token *tokens, int s, int e);
-static int get_op_priority(int token_type);
+static int get_op_priority(Token *tokens, int index);
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -264,10 +265,28 @@ static uint32_t eval(Token *tokens, int s, int e) {
     return eval(tokens, s+1, e-1);
   }
   else {
+    uint32_t val1=0, val2=0, ret=0;
     int op = get_op_pos(tokens, s, e );
-    uint32_t val1 = eval(tokens, s, op-1);
-    uint32_t val2 = eval(tokens, op+1, e);
-    uint32_t ret = 0;
+
+    if(s == e-1) {
+      return -eval(tokens, s+1, e);
+    }
+    else {
+      val1 = eval(tokens, s, op-1);
+    }
+    if(tokens[op+1].type == TK_SUB) {
+      // minus
+      val2 = -eval(tokens, op+2, e);
+    }
+    else if(tokens[op+1].type == TK_MULTIP) {
+      // derefence
+    }
+    else if(tokens[op+1].type == TK_AND) {
+
+    }
+    else {
+      val2 = eval(tokens, op+1, e);
+    }
 
     switch(tokens[op].type) {
       case TK_PLUS: ret = val1 + val2; break;
@@ -323,7 +342,7 @@ static int get_op_pos(Token *tokens, int s, int e) {
   int i = 0;
   for(i=s; i<e; i++) {
     int token_type = tokens[i].type;
-    int priority = get_op_priority(token_type);
+    int priority = get_op_priority(tokens, i);
     if(token_type == TK_LBRACK) paren_cnt++;
     else if(token_type == TK_RBRACK) paren_cnt--;
     else if(paren_cnt ==0 && \
@@ -339,8 +358,8 @@ static int get_op_pos(Token *tokens, int s, int e) {
 }
 
 // the smaller value, the bigger priority
-static int get_op_priority(int token_type) {
-  switch (token_type) {
+static int get_op_priority(Token *tokens, int index) {
+  switch (tokens[index].type) {
     case TK_LMBRACK: return 1;        // [
     case TK_LBRACK: return 1;         // (
     case TK_DOT: return 1;         // .
@@ -352,7 +371,19 @@ static int get_op_priority(int token_type) {
     case TK_DIV: return 3;
     case TK_COMPLE: return 3;
     case TK_PLUS: return 4;
-    case TK_SUB: return 4;
+    case TK_SUB: {
+      if( index == 0 \
+        || tokens[index-1].type == TK_PLUS \
+        || tokens[index-1].type == TK_SUB \
+        || tokens[index-1].type == TK_MULTIP \
+        || tokens[index-1].type == TK_DIV \
+      ) {
+        return 2;
+      }
+      else {
+        return 4;
+      }
+    }
     case TK_LSHIFT: return 5;
     case TK_RSHIFT: return 5;
     case TK_BT: return 6;
@@ -388,7 +419,7 @@ static int get_op_priority(int token_type) {
 
 
 void test_expr() {
-  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/tools/gen-expr/build/input2", "r");
+  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
   if(!fp) {
     Log("can not open the input file.\n");
     return;
@@ -403,10 +434,10 @@ void test_expr() {
     word_t value = expr(expr_str, &success);
 
     if(value != atoi(res)) {
-      printf("\033[0;31mtest error at line %d.\n", line);
+      printf("\033[0;31mtest error at line %d.\033[0m\n", line);
     }
     else {
-      printf("\033[0;32mtest success at line %d.\n", line);
+      printf("\033[0;32mtest success at line %d.\033[0m\n", line);
     }
 
     line++;
