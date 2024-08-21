@@ -319,6 +319,7 @@ static uint32_t eval(Token *tokens, int s, int e) {
           // Assert(val2 != 0, "error: divisor could not be zero. divisor position is %d\n", op);
           printf("\033[0;31merror: divisor could not be zero. divisor position is %d\033[0m\n", op);
           ret = 0;
+          break;
         }
         ret = val1 / val2;
         break;
