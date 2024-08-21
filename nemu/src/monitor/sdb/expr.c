@@ -19,8 +19,9 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <stdint.h>
+#include <stdbool.h>
 #include "common.h"
+#include "memory/paddr.h"
 
 #define TOKENS_SIZE 1024
 #define TOKEN_STR_SIZE 32
@@ -95,7 +96,7 @@ static struct rule {
   {"[a-zA-Z0-9]+->[a-zA-Z0-9]+", TK_ARROW},
   {"--", TK_DSUB},
   {"-", TK_SUB},
-  {"\\*[a-zA-Z]+[0-9]*[^->*]", TK_DEREFRENCE},
+  // {"\\*[a-zA-Z]+[0-9]*[^->*]", TK_DEREFRENCE},
   {"&[a-zA-Z]+[0-9]*", TK_ADDRESSOF},
   {"[a-zA-Z0-9]+\\.[a-zA-Z0-9]+", TK_DOT},
   {"\\*",TK_MULTIP},
@@ -105,7 +106,8 @@ static struct rule {
   {"\\)", TK_RBRACK},
   {"\\[", TK_LMBRACK},
   {"\\]", TK_LMBRACK},
-  {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG},
+  // {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG},
+  {"\\$", TK_REG},
   {"0x[0-9a-fA-F]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
   {"[0-9]+", TK_DECNUM},
@@ -268,21 +270,41 @@ static uint32_t eval(Token *tokens, int s, int e) {
     uint32_t val1=0, val2=0, ret=0;
     int op = get_op_pos(tokens, s, e );
 
+    // assign val1
     if(s == e-1) {
+      switch(tokens[s].type) {
+        case TK_SUB: return -eval(tokens, s+1, e); break;
+        case TK_MULTIP: return paddr_read(eval(tokens, s+1, e), 1); break;
+        case TK_REG: {
+          bool flag = false;
+          word_t ret = isa_reg_str2val(tokens[s+1].str, &flag);
+          return flag ? ret : 0;
+        }
+      }
       return -eval(tokens, s+1, e);
     }
     else {
       val1 = eval(tokens, s, op-1);
     }
+
+    // assign val2
     if(tokens[op+1].type == TK_SUB) {
       // minus
       val2 = -eval(tokens, op+2, e);
     }
     else if(tokens[op+1].type == TK_MULTIP) {
       // derefence
+      val2 = paddr_read(eval(tokens, op+2, e), 1);
     }
     else if(tokens[op+1].type == TK_AND) {
+      // address of
 
+    }
+    else if(tokens[op+1].type == TK_REG) {
+      word_t ret = 0;
+      bool flag = false;
+      ret = isa_reg_str2val(tokens[op+2].str, &flag);
+      val2 = flag ? ret : 0;
     }
     else {
       val2 = eval(tokens, op+1, e);
@@ -295,7 +317,7 @@ static uint32_t eval(Token *tokens, int s, int e) {
       case TK_DIV: {
         if(val2 == 0) {
           // Assert(val2 != 0, "error: divisor could not be zero. divisor position is %d\n", op);
-          printf("error: divisor could not be zero. divisor position is %d\n", op);
+          printf("\033[0;31merror: divisor could not be zero. divisor position is %d\033[0m\n", op);
           ret = 0;
         }
         ret = val1 / val2;
@@ -364,10 +386,27 @@ static int get_op_priority(Token *tokens, int index) {
     case TK_LBRACK: return 1;         // (
     case TK_DOT: return 1;         // .
     case TK_ARROW: return 1;         // ->
+    case TK_REG: return 2;
     case TK_NOT: return 2;
     case TK_DPLUS: return 2;
     case TK_DSUB: return 2;
-    case TK_MULTIP: return 3;
+    case TK_MULTIP: {
+      if( index == 0 \
+        || tokens[index-1].type == TK_PLUS \
+        || tokens[index-1].type == TK_SUB \
+        || tokens[index-1].type == TK_MULTIP \
+        || tokens[index-1].type == TK_DIV \
+        || tokens[index-1].type == TK_COMPLE \
+        || tokens[index-1].type == TK_LSHIFT \
+        || tokens[index-1].type == TK_RSHIFT \
+        
+      ) {
+        return 2;
+      }
+      else {
+        return 3;
+      }
+    }
     case TK_DIV: return 3;
     case TK_COMPLE: return 3;
     case TK_PLUS: return 4;
@@ -377,6 +416,9 @@ static int get_op_priority(Token *tokens, int index) {
         || tokens[index-1].type == TK_SUB \
         || tokens[index-1].type == TK_MULTIP \
         || tokens[index-1].type == TK_DIV \
+        || tokens[index-1].type == TK_COMPLE \
+        || tokens[index-1].type == TK_LSHIFT \
+        || tokens[index-1].type == TK_RSHIFT \
       ) {
         return 2;
       }
