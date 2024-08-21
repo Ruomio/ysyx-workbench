@@ -19,6 +19,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdint.h>
 #include "common.h"
 
 #define TOKENS_SIZE 1024
@@ -264,10 +265,22 @@ static uint32_t eval(Token *tokens, int s, int e) {
     return eval(tokens, s+1, e-1);
   }
   else {
+    uint32_t val1=0, val2=0, ret=0;
     int op = get_op_pos(tokens, s, e );
-    uint32_t val1 = eval(tokens, s, op-1);
-    uint32_t val2 = eval(tokens, op+1, e);
-    uint32_t ret = 0;
+    val1 = eval(tokens, s, op-1);
+    if(tokens[op+1].type == TK_SUB) {
+      // minus
+      val2 = -eval(tokens, op+2, e);
+    }
+    else if(tokens[op+1].type == TK_MULTIP) {
+      // derefence
+    }
+    else if(tokens[op+1].type == TK_AND) {
+
+    }
+    else {
+      val2 = eval(tokens, op+1, e);
+    }
 
     switch(tokens[op].type) {
       case TK_PLUS: ret = val1 + val2; break;
