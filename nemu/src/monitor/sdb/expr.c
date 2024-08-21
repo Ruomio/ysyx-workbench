@@ -366,15 +366,13 @@ static int get_op_priority(Token *tokens, int index) {
     case TK_COMPLE: return 3;
     case TK_PLUS: return 4;
     case TK_SUB: {
-      if(index == 0) {
-        return 2;
-      }
-      else if( tokens[index-1].type == TK_PLUS \
+      if( index == 0 \
+        || tokens[index-1].type == TK_PLUS \
         || tokens[index-1].type == TK_SUB \
         || tokens[index-1].type == TK_MULTIP \
         || tokens[index-1].type == TK_DIV \
       ) {
-        return get_op_priority(tokens, index-1);
+        return 2;
       }
       else {
         return 4;
