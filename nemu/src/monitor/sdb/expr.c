@@ -269,7 +269,7 @@ static uint32_t eval(Token *tokens, int s, int e) {
     int op = get_op_pos(tokens, s, e );
 
     if(s == e-1) {
-      val1 = -eval(tokens, s+1, e);
+      return -eval(tokens, s+1, e);
     }
     else {
       val1 = eval(tokens, s, op-1);
