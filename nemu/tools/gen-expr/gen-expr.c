@@ -69,14 +69,8 @@ static void gen(char ch) {
 static void gen_rand_op() {
   if(buf_index >= 65535-1) return;
   int op = rand()%4;
-  char ch = '+';
-  switch(op) {
-    case 0: ch = '-'; break;
-    case 1: ch = '*'; break;
-    case 2: ch = '/'; break;
-    default: ch = '+'; break;
-  }
-  sprintf(buf+buf_index, "%c", ch);
+  char ch[] = {'+', '-', '*', '/'};
+  sprintf(buf+buf_index, "%c", ch[op]);
   buf_index += strlen(buf+buf_index);
   // space
   for(int i=0; i<rand()%2; i++) {
