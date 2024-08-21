@@ -19,7 +19,6 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <stdint.h>
 #include "common.h"
 
 #define TOKENS_SIZE 1024
