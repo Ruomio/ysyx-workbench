@@ -267,7 +267,13 @@ static uint32_t eval(Token *tokens, int s, int e) {
   else {
     uint32_t val1=0, val2=0, ret=0;
     int op = get_op_pos(tokens, s, e );
-    val1 = eval(tokens, s, op-1);
+
+    if(s == e-1) {
+      val1 = -eval(tokens, s+1, e);
+    }
+    else {
+      val1 = eval(tokens, s, op-1);
+    }
     if(tokens[op+1].type == TK_SUB) {
       // minus
       val2 = -eval(tokens, op+2, e);
