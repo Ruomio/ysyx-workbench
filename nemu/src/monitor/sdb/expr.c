@@ -224,7 +224,7 @@ static bool make_token(char *e) {
 static uint32_t eval(Token *tokens, int s, int e);
 static bool check_parentheses(Token *tokens, int s, int e);
 static int get_op_pos(Token *tokens, int s, int e);
-static int get_op_priority(int token_type);
+static int get_op_priority(Token *tokens, int index);
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -336,7 +336,7 @@ static int get_op_pos(Token *tokens, int s, int e) {
   int i = 0;
   for(i=s; i<e; i++) {
     int token_type = tokens[i].type;
-    int priority = get_op_priority(token_type);
+    int priority = get_op_priority(tokens, i);
     if(token_type == TK_LBRACK) paren_cnt++;
     else if(token_type == TK_RBRACK) paren_cnt--;
     else if(paren_cnt ==0 && \
@@ -352,8 +352,8 @@ static int get_op_pos(Token *tokens, int s, int e) {
 }
 
 // the smaller value, the bigger priority
-static int get_op_priority(int token_type) {
-  switch (token_type) {
+static int get_op_priority(Token *tokens, int index) {
+  switch (tokens[index].type) {
     case TK_LMBRACK: return 1;        // [
     case TK_LBRACK: return 1;         // (
     case TK_DOT: return 1;         // .
@@ -365,7 +365,21 @@ static int get_op_priority(int token_type) {
     case TK_DIV: return 3;
     case TK_COMPLE: return 3;
     case TK_PLUS: return 4;
-    case TK_SUB: return 4;
+    case TK_SUB: {
+      if(index == 0) {
+        return 2;
+      }
+      else if( tokens[index-1].type == TK_PLUS \
+        || tokens[index-1].type == TK_SUB \
+        || tokens[index-1].type == TK_MULTIP \
+        || tokens[index-1].type == TK_DIV \
+      ) {
+        return get_op_priority(tokens, index-1);
+      }
+      else {
+        return 4;
+      }
+    }
     case TK_LSHIFT: return 5;
     case TK_RSHIFT: return 5;
     case TK_BT: return 6;
