@@ -178,8 +178,8 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+        //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -388,7 +388,7 @@ static int get_op_priority(int token_type) {
 
 
 void test_expr() {
-  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/tools/gen-expr/build/input2", "r");
+  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
   if(!fp) {
     Log("can not open the input file.\n");
     return;
