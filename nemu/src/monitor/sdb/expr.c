@@ -473,8 +473,8 @@ static void update_op_type() {
     if(i ==0 || is_certain_type(tokens[i-1].type)) {
       switch(tokens[i].type) {
         case TK_MULTIP: tokens[i].type = TK_DEREFRENCE; break;
-        case TK_SUB: tokens[i].type = TK_MINUS;
-        case TK_AND: tokens[i].type = TK_ADDRESSOF;
+        case TK_SUB: tokens[i].type = TK_MINUS; break;
+        case TK_AND: tokens[i].type = TK_ADDRESSOF; break;
         default: break;
       }
     }
