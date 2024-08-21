@@ -403,10 +403,10 @@ void test_expr() {
     word_t value = expr(expr_str, &success);
 
     if(value != atoi(res)) {
-      printf("\033[0;31mtest error at line %d.\n", line);
+      printf("\033[0;31mtest error at line %d.\033[0m\n", line);
     }
     else {
-      printf("\033[0;32mtest success at line %d.\n", line);
+      printf("\033[0;32mtest success at line %d.\033[0m\n", line);
     }
 
     line++;
