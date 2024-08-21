@@ -305,9 +305,21 @@ static uint32_t eval(Token *tokens, int s, int e) {
         break;
       }
       case TK_EQ: ret = val1 == val2; break;
+      case TK_NEQ: ret = val1 != val2; break;
+      case TK_LSHIFT: ret = val1 << val2; break;
+      case TK_RSHIFT: ret = val1 >> val2; break;
+      case TK_BT: ret = val1 > val2; break;
+      case TK_BEQ: ret = val1 >= val2; break;
+      case TK_LT: ret = val1 < val2; break;
+      case TK_LEQ: ret = val1 <= val2; break;
+      case TK_AND: ret = val1 & val2;
+      case TK_OR: ret = val1 | val2;
+      case TK_XOR: ret = val1 ^ val2;
+      case TK_LAND: ret = val1 && val2;
+      case TK_LOR: ret = val1 || val2;
       default: {
-        // printf("operater not support.\n");
-        Assert(0, "operater not support.\n");
+        printf("\033[0;31moperater not support.\033[0m\n");
+        // Assert(0, "operater not support.\n");
         ret = 0;
         break;
       }
