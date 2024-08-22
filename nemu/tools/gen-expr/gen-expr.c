@@ -51,8 +51,8 @@ static void gen_num() {
   buf_index += strlen(buf+buf_index);
   
   // add 'u'suffix to promise only unsigned opreation
-  sprintf(buf+buf_index, "%c", 'u'); 
-  buf_index += 1;
+  // sprintf(buf+buf_index, "%c", 'u'); 
+  // buf_index += 1;
 
   // space
   for(int i=0; i<rand()%2; i++) {

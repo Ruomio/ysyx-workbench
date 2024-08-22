@@ -23,5 +23,6 @@ word_t expr(char *e, bool *success);
 void test_expr();
 
 bool new_wp_interface(char *s);
-void print_watchpoint();
+bool free_wp_by_no_interface(int no);
+void print_watchpoint(bool *is_change);
 #endif

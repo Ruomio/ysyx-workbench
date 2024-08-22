@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/paddr.h>
+#include <stdbool.h>
 #include "utils.h"
 
 static int is_batch_mode = false;
@@ -75,7 +76,8 @@ static int cmd_info(char *info) {
     isa_reg_display();
   }
   else if(strcmp(arg, "w") == 0) {
-    print_watchpoint();
+    bool is_change = false;
+    print_watchpoint(&is_change);
   }
   else {
     printf("Unknown command 'info %s'\n", arg);
@@ -135,6 +137,14 @@ static int cmd_w(char *args) {
   }
 }
 
+static int cmd_d(char *args) {
+  char *arg = strtok(NULL, " ");
+  int no = atoi(arg);
+  bool ret = free_wp_by_no_interface(no);
+  if(!ret) return -1;
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -149,6 +159,7 @@ static struct {
   { "info", "Instruction level single step, stepping into calls.", cmd_info },
   { "x", "Instruction level single step, stepping into calls.", cmd_x },
   { "w", "Set a watchpoint for EXPRESSION.", cmd_w },
+  { "d", "Delete a watchpoint by NO.", cmd_d },
 
   /* TODO: Add more commands */
 

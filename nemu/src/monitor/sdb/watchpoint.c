@@ -115,10 +115,22 @@ void free_wp(WP *wp) {
 }
 
 
-void print_watchpoint() {
+bool free_wp_by_no_interface(int no) {
+  for(WP *p = head; p != NULL; p = p->next) {
+    if(p->NO == no) {
+      free_wp(p);
+    }
+  }
+  return false;
+}
+
+
+void print_watchpoint(bool *is_change) {
+  static word_t last = 0;
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
     word_t ret = expr(p->str, &success);
+    if(ret != last) last = ret;
     if(success) {
       printf("%d\t\t%s\t\t%u\n", p->NO, p->str, ret);
     }

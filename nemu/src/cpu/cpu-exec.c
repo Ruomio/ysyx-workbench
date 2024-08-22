@@ -17,7 +17,6 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-#include <stdio.h>
 
 #include "../../src/monitor/sdb/sdb.h"
 /* The assembly code of instructions executed is only output to the screen
@@ -42,7 +41,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
   // scan and print all watch point
-  print_watchpoint(); 
+  bool is_chang = false;
+  print_watchpoint(&is_chang);
+  if(is_chang) nemu_state.state = NEMU_STOP;
 
 }
 
