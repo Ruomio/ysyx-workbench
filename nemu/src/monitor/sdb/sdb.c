@@ -128,7 +128,7 @@ static int cmd_w(char *args) {
     index += strlen(arg);
     arg = strtok(NULL, " ");
   }
-  if(new_wp_interface(buff)) {
+  if(new_wp_interface(buff, WP_TYPE)) {
     return 0;
   }
   else {
@@ -153,7 +153,9 @@ static int cmd_b(char *args) {
     index += strlen(arg);
     arg = strtok(NULL, " ");
   }
-  break_at_addr(buff);
+  if(new_wp_interface(buff, BA_TYPE)) {
+    return -1;
+  }
   return 0;
 }
 

@@ -21,10 +21,6 @@
 #define NR_BA 32
 #define STR_SIZE 64
 
-enum WP_TYPE {
-  WP_TYPE = 0,
-  BA_TYPE,
-};
 
 typedef struct watchpoint {
   int NO;
@@ -54,7 +50,7 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
-WP *new_wp(char *s) {
+WP *new_wp(char *s, int type) {
   if(!free_) { 
     printf("\033[0;31mfree_ is already empty.\033[0m\n");
     return NULL; 
@@ -65,6 +61,7 @@ WP *new_wp(char *s) {
     free_ = free_->next;
     new->next = NULL;
     strcpy(new->str, s);
+    new->type = type;
 
     if(!head) head = new;
     else {
@@ -81,8 +78,8 @@ WP *new_wp(char *s) {
 
 }
 
-bool new_wp_interface(char *s) {
-  WP *ret = new_wp(s);
+bool new_wp_interface(char *s, int type) {
+  WP *ret = new_wp(s, type);
   if(ret) {
     return true;
   }
@@ -146,12 +143,12 @@ void print_watchpoint(bool *is_change, bool *is_break) {
       printf("\033[0;31mexpr fail.\033[0m\n");
       return;
     }
-    if(ret == cpu.pc) {
+    if(ret == cpu.pc && p->type == BA_TYPE) {
       *is_break = true;
       printf("break point at 0x%x\n", ret);
       return;
     }
-    if(ret != last[p->NO]) {
+    if(ret != last[p->NO] && p->type == WP_TYPE) {
       *is_change = true;
       printf("watch point %d: %s\n", p->NO, p->str);
       printf("Old value = 0x%x\n", last[p->NO]);
@@ -160,16 +157,4 @@ void print_watchpoint(bool *is_change, bool *is_break) {
       last[p->NO] = ret;
     }
   }
-}
-
-word_t break_at_addr(char *str) {
-  WP *p = new_wp(str);
-  bool success = false;
-  word_t ret = expr(p->str, &success);
-  
-  return ret;
-}
-
-bool check_break() {
-  return false;
 }
