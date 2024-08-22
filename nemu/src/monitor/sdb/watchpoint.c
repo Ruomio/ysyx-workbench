@@ -130,7 +130,10 @@ void print_watchpoint(bool *is_change) {
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
     word_t ret = expr(p->str, &success);
-    if(ret != last) last = ret;
+    if(ret != last) {
+      *is_change = true;
+      last = ret;
+    }
     if(success) {
       printf("%d\t\t%s\t\t%u\n", p->NO, p->str, ret);
     }
