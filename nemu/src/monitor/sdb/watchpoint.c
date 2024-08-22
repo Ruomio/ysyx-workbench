@@ -136,7 +136,7 @@ bool free_wp_by_no_interface(int no) {
 
 void scan_watchpoint(bool *is_change, bool *is_break) {
   static word_t last[NR_WP] = {0};
-  static bool is_first[NR_WP] = {true};
+  static bool is_first[NR_WP] = {};
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
     word_t ret = expr(p->str, &success);
