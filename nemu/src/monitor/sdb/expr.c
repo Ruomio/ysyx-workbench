@@ -20,6 +20,7 @@
  */
 #include <regex.h>
 #include "common.h"
+#include "memory/paddr.h"
 
 #define TOKENS_SIZE 1024
 #define TOKEN_STR_SIZE 32
@@ -30,6 +31,7 @@ enum {
   /* TODO: Add more token types */
   TK_PLUS,
   TK_SUB,
+  TK_MINUS,
   TK_MULTIP,
   TK_DIV,
   TK_COMPLE,        // %
@@ -94,7 +96,7 @@ static struct rule {
   {"[a-zA-Z0-9]+->[a-zA-Z0-9]+", TK_ARROW},
   {"--", TK_DSUB},
   {"-", TK_SUB},
-  {"\\*[a-zA-Z]+[0-9]*[^->*]", TK_DEREFRENCE},
+  // {"\\*[a-zA-Z]+[0-9]*[^->*]", TK_DEREFRENCE},
   {"&[a-zA-Z]+[0-9]*", TK_ADDRESSOF},
   {"[a-zA-Z0-9]+\\.[a-zA-Z0-9]+", TK_DOT},
   {"\\*",TK_MULTIP},
@@ -104,7 +106,8 @@ static struct rule {
   {"\\)", TK_RBRACK},
   {"\\[", TK_LMBRACK},
   {"\\]", TK_LMBRACK},
-  {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG},
+  {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7]|pc)", TK_REG},
+  // {"\\$", TK_REG},
   {"0x[0-9a-fA-F]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
   {"[0-9]+", TK_DECNUM},
@@ -224,6 +227,7 @@ static uint32_t eval(Token *tokens, int s, int e);
 static bool check_parentheses(Token *tokens, int s, int e);
 static int get_op_pos(Token *tokens, int s, int e);
 static int get_op_priority(Token *tokens, int index);
+static void update_op_type();
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -233,6 +237,7 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
+  update_op_type();
   *success = true;
   uint32_t res= eval(tokens, 0, nr_token-1);
 
@@ -254,6 +259,9 @@ static uint32_t eval(Token *tokens, int s, int e) {
       case TK_BINNUM: { res = strtoul(tokens[s].str+2, NULL, 2); break; }
       case TK_REG: {
         // reg save mem address 
+        bool flag = false;
+        word_t ret = isa_reg_str2val(tokens[s].str+1, &flag);
+        if(flag) res = ret;
         break; 
       }
       default: break;
@@ -267,23 +275,20 @@ static uint32_t eval(Token *tokens, int s, int e) {
     uint32_t val1=0, val2=0, ret=0;
     int op = get_op_pos(tokens, s, e );
 
+    // special op code
     if(s == e-1) {
-      return -eval(tokens, s+1, e);
+      switch(tokens[s].type) {
+        case TK_MINUS: return -eval(tokens, s+1, e); break;
+        case TK_DEREFRENCE: return paddr_read(eval(tokens, s+1, e), 1); break;
+        case TK_REG: {
+
+          break;
+        }
+        default: break;
+      }
     }
     else {
       val1 = eval(tokens, s, op-1);
-    }
-    if(tokens[op+1].type == TK_SUB) {
-      // minus
-      val2 = -eval(tokens, op+2, e);
-    }
-    else if(tokens[op+1].type == TK_MULTIP) {
-      // derefence
-    }
-    else if(tokens[op+1].type == TK_AND) {
-
-    }
-    else {
       val2 = eval(tokens, op+1, e);
     }
 
@@ -294,16 +299,29 @@ static uint32_t eval(Token *tokens, int s, int e) {
       case TK_DIV: {
         if(val2 == 0) {
           // Assert(val2 != 0, "error: divisor could not be zero. divisor position is %d\n", op);
-          printf("error: divisor could not be zero. divisor position is %d\n", op);
+          printf("\033[0;31merror: divisor could not be zero. divisor position is %d\033[0m\n", op);
           ret = 0;
+          break;
         }
         ret = val1 / val2;
         break;
       }
       case TK_EQ: ret = val1 == val2; break;
+      case TK_NEQ: ret = val1 != val2; break;
+      case TK_LSHIFT: ret = val1 << val2; break;
+      case TK_RSHIFT: ret = val1 >> val2; break;
+      case TK_BT: ret = val1 > val2; break;
+      case TK_BEQ: ret = val1 >= val2; break;
+      case TK_LT: ret = val1 < val2; break;
+      case TK_LEQ: ret = val1 <= val2; break;
+      case TK_AND: ret = val1 & val2;
+      case TK_OR: ret = val1 | val2;
+      case TK_XOR: ret = val1 ^ val2;
+      case TK_LAND: ret = val1 && val2;
+      case TK_LOR: ret = val1 || val2;
       default: {
-        // printf("operater not support.\n");
-        Assert(0, "operater not support.\n");
+        printf("\033[0;31moperater not support.\033[0m\n");
+        // Assert(0, "operater not support.\n");
         ret = 0;
         break;
       }
@@ -363,6 +381,10 @@ static int get_op_priority(Token *tokens, int index) {
     case TK_LBRACK: return 1;         // (
     case TK_DOT: return 1;         // .
     case TK_ARROW: return 1;         // ->
+    case TK_REG: return 2;
+    case TK_MINUS: return 2;
+    case TK_DEREFRENCE: return 2;
+    case TK_ADDRESSOF: return 2;
     case TK_NOT: return 2;
     case TK_DPLUS: return 2;
     case TK_DSUB: return 2;
@@ -370,19 +392,7 @@ static int get_op_priority(Token *tokens, int index) {
     case TK_DIV: return 3;
     case TK_COMPLE: return 3;
     case TK_PLUS: return 4;
-    case TK_SUB: {
-      if( index == 0 \
-        || tokens[index-1].type == TK_PLUS \
-        || tokens[index-1].type == TK_SUB \
-        || tokens[index-1].type == TK_MULTIP \
-        || tokens[index-1].type == TK_DIV \
-      ) {
-        return 2;
-      }
-      else {
-        return 4;
-      }
-    }
+    case TK_SUB: return 4;
     case TK_LSHIFT: return 5;
     case TK_RSHIFT: return 5;
     case TK_BT: return 6;
@@ -443,4 +453,44 @@ void test_expr() {
   }
 
   fclose(fp);
+}
+static bool is_certain_type(int type) {
+  bool ret = false;
+  switch( type ) {
+    case TK_PLUS: ret = true; break;
+    case TK_SUB: ret = true; break;
+    case TK_MULTIP: ret = true; break;
+    case TK_DIV: ret = true; break;
+    case TK_COMPLE: ret = true; break;
+    case TK_LSHIFT: ret = true; break;
+    case TK_RSHIFT: ret = true; break;
+    case TK_BT: ret = true; break;
+    case TK_BEQ: ret = true; break;
+    case TK_LT: ret = true; break;
+    case TK_LEQ: ret = true; break;
+    case TK_EQ: ret = true; break;
+    case TK_NEQ: ret = true; break;
+    case TK_AND: ret = true; break;
+    case TK_XOR: ret = true; break;
+    case TK_OR: ret = true; break;
+    case TK_LOR: ret = true; break;
+    case TK_LAND: ret = true; break;
+    
+    default:
+      ret = false;
+  }
+  return ret;
+}
+
+static void update_op_type() {
+  for(int i=0; i < nr_token; i++) {
+    if(i ==0 || is_certain_type(tokens[i-1].type)) {
+      switch(tokens[i].type) {
+        case TK_MULTIP: tokens[i].type = TK_DEREFRENCE; break;
+        case TK_SUB: tokens[i].type = TK_MINUS; break;
+        case TK_AND: tokens[i].type = TK_ADDRESSOF; break;
+        default: break;
+      }
+    }
+  }
 }
