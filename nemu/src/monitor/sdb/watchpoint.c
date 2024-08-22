@@ -136,6 +136,7 @@ bool free_wp_by_no_interface(int no) {
 
 void scan_watchpoint(bool *is_change, bool *is_break) {
   static word_t last[NR_WP] = {0};
+  static bool is_first = true;
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
     word_t ret = expr(p->str, &success);
@@ -148,14 +149,15 @@ void scan_watchpoint(bool *is_change, bool *is_break) {
       printf("break point at 0x%x\n", ret);
       return;
     }
-    if(ret != last[p->NO] && p->type == WP_TYPE) {
+    if(ret != last[p->NO] && p->type == WP_TYPE && !is_first) {
       *is_change = true;
       printf("watch point %d: %s\n", p->NO, p->str);
       printf("Old value = 0x%x\n", last[p->NO]);
       printf("New value = 0x%x\n", ret);
 
-      last[p->NO] = ret;
     }
+    is_first = false;
+    last[p->NO] = ret;
   }
 }
 
