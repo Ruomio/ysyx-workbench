@@ -33,9 +33,8 @@ typedef struct watchpoint {
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
-// static word_t break_address[NR_BA] = {};
+static word_t last[NR_WP] = {0};
 
-// static int ba_index = 0;
 
 void init_wp_pool() {
   int i;
@@ -62,6 +61,10 @@ WP *new_wp(char *s, int type) {
     new->next = NULL;
     strcpy(new->str, s);
     new->type = type;
+    bool success = false;
+    word_t ret = expr(s, &success);
+    last[new->NO] = ret;
+
 
     if(!head) head = new;
     else {
@@ -135,8 +138,6 @@ bool free_wp_by_no_interface(int no) {
 
 
 void scan_watchpoint(bool *is_change, bool *is_break) {
-  static word_t last[NR_WP] = {0};
-  static bool is_not_first[NR_WP] = {};
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
     word_t ret = expr(p->str, &success);
@@ -149,14 +150,13 @@ void scan_watchpoint(bool *is_change, bool *is_break) {
       printf("break point at 0x%x\n", ret);
       return;
     }
-    if(ret != last[p->NO] && p->type == WP_TYPE && is_not_first[p->NO]) {
+    if(ret != last[p->NO] && p->type == WP_TYPE ) {
       *is_change = true;
       printf("watch point %d: %s\n", p->NO, p->str);
       printf("Old value = 0x%x\n", last[p->NO]);
       printf("New value = 0x%x\n", ret);
 
     }
-    is_not_first[p->NO] = true;
     last[p->NO] = ret;
   }
 }
