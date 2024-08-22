@@ -18,7 +18,18 @@
 
 #include <common.h>
 
+enum WP_TYPE {
+  WP_TYPE = 0,
+  BA_TYPE,
+};
+
 word_t expr(char *e, bool *success);
 
 void test_expr();
+
+bool new_wp_interface(char *s, int type);
+bool free_wp_by_no_interface(int no);
+void scan_watchpoint(bool *is_change, bool *is_break);
+void print_watchpoint();
+
 #endif
