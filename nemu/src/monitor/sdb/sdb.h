@@ -29,6 +29,7 @@ void test_expr();
 
 bool new_wp_interface(char *s, int type);
 bool free_wp_by_no_interface(int no);
-void print_watchpoint(bool *is_change, bool *is_break);
+void scan_watchpoint(bool *is_change, bool *is_break);
+void print_watchpoint();
 
 #endif

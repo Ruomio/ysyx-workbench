@@ -74,9 +74,7 @@ static int cmd_info(char *info) {
     isa_reg_display();
   }
   else if(strcmp(arg, "w") == 0) {
-    bool is_change = false;
-    bool is_break = false;
-    print_watchpoint(&is_change, &is_break);
+    print_watchpoint();
   }
   else {
     printf("Unknown command 'info %s'\n", arg);

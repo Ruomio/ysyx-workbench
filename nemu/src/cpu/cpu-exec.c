@@ -44,7 +44,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   // scan and print all watch point
   bool is_chang = false;
   bool is_break = false;
-  print_watchpoint(&is_chang, &is_break);
+  scan_watchpoint(&is_chang, &is_break);
   if((is_chang || is_break) && nemu_state.state == NEMU_RUNNING) nemu_state.state = NEMU_STOP;
 
   // break point

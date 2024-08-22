@@ -134,7 +134,7 @@ bool free_wp_by_no_interface(int no) {
 }
 
 
-void print_watchpoint(bool *is_change, bool *is_break) {
+void scan_watchpoint(bool *is_change, bool *is_break) {
   static word_t last[NR_WP] = {0};
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
@@ -156,5 +156,17 @@ void print_watchpoint(bool *is_change, bool *is_break) {
 
       last[p->NO] = ret;
     }
+  }
+}
+
+void print_watchpoint() {
+  for(WP *p = head; p != NULL; p = p->next) {
+    bool success = false;
+    word_t ret = expr(p->str, &success);
+    if(!success) {
+      printf("\033[0;31mexpr fail.\033[0m\n");
+      return;
+    }
+    printf("watch point %d: %s\t\t0x%x\n", p->NO, p->str, ret);
   }
 }
