@@ -144,17 +144,17 @@ void print_watchpoint(bool *is_change, bool *is_break) {
       printf("\033[0;31mexpr fail.\033[0m\n");
       return;
     }
+    if(ret == cpu.pc) {
+      *is_break = true;
+      printf("break point at 0x%x\n", ret);
+      return;
+    }
     if(ret != last[p->NO]) {
-      if(ret == cpu.pc) {
-        *is_break = true;
-        printf("break point at 0x%x\n", ret);
-      }
-      else {
-        *is_change = true;
-        printf("watch point %d: %s\n", p->NO, p->str);
-        printf("Old value = 0x%x\n", last[p->NO]);
-        printf("New value = 0x%x\n", ret);
-      }
+      *is_change = true;
+      printf("watch point %d: %s\n", p->NO, p->str);
+      printf("Old value = 0x%x\n", last[p->NO]);
+      printf("New value = 0x%x\n", ret);
+
       last[p->NO] = ret;
     }
   }
