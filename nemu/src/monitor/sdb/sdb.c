@@ -154,9 +154,9 @@ static int cmd_b(char *args) {
     arg = strtok(NULL, " ");
   }
   if(new_wp_interface(buff, BA_TYPE)) {
-    return -1;
+    return 0;
   }
-  return 0;
+  return -1;
 }
 
 static int cmd_help(char *args);
