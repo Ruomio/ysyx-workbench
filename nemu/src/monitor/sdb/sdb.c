@@ -147,7 +147,7 @@ static struct {
   { "si", "Instruction level single step, stepping into calls.", cmd_si },
   { "info", "Instruction level single step, stepping into calls.", cmd_info },
   { "x", "Instruction level single step, stepping into calls.", cmd_x },
-  { "w", "Instruction level single step, stepping into calls.", cmd_w },
+  { "w", "Set a watchpoint for EXPRESSION.", cmd_w },
 
   /* TODO: Add more commands */
 
