@@ -135,7 +135,7 @@ void print_watchpoint(bool *is_change) {
       last = ret;
     }
     if(success) {
-      printf("%d\t\t%s\t\t%u\n", p->NO, p->str, ret);
+      printf("%d\t\t%s\t\t0x%x\n", p->NO, p->str, ret);
     }
     else {
       printf("\033[0;31mexpr fail.\033[0m\n");
