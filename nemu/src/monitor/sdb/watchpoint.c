@@ -129,6 +129,7 @@ bool free_wp_by_no_interface(int no) {
   for(WP *p = head; p != NULL; p = p->next) {
     if(p->NO == no) {
       free_wp(p);
+      return true;
     }
   }
   return false;
