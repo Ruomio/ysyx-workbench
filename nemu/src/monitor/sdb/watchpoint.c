@@ -147,7 +147,7 @@ void print_watchpoint(bool *is_change, bool *is_break) {
     if(ret != last[p->NO]) {
       if(ret == cpu.pc) {
         *is_break = true;
-        printf("break point at 0x%x", ret);
+        printf("break point at 0x%x\n", ret);
       }
       else {
         *is_change = true;
