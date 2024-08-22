@@ -46,6 +46,7 @@ void init_wp_pool() {
   for (i = 0; i < NR_WP; i ++) {
     wp_pool[i].NO = i;
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
+    memset(wp_pool[i].str, 0, STR_SIZE);
   }
 
   head = NULL;
