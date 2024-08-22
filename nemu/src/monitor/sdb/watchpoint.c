@@ -135,8 +135,8 @@ void print_watchpoint(bool *is_change) {
     }
     if(success) {
       printf("watch point %d: %s\n", p->NO, p->str);
-      printf("Old value = %u\n", last[p->NO]);
-      printf("New value = %u\n", ret);
+      printf("Old value = 0x%x\n", last[p->NO]);
+      printf("New value = 0x%x\n", ret);
     }
     else {
       printf("\033[0;31mexpr fail.\033[0m\n");
