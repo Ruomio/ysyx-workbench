@@ -107,8 +107,8 @@ static struct rule {
   {"\\)", TK_RBRACK},
   {"\\[", TK_LMBRACK},
   {"\\]", TK_LMBRACK},
-  // {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7])", TK_REG},
-  {"\\$", TK_REG},
+  {"\\$(\\$0|ra|sp|gp|tp|t[0-6]|s[0-9]{1,2}|a[0-7]|pc)", TK_REG},
+  // {"\\$", TK_REG},
   {"0x[0-9a-fA-F]+", TK_HEXNUM},
   {"0b[0-1]+", TK_BINNUM},
   {"[0-9]+", TK_DECNUM},
@@ -260,6 +260,9 @@ static uint32_t eval(Token *tokens, int s, int e) {
       case TK_BINNUM: { res = strtoul(tokens[s].str+2, NULL, 2); break; }
       case TK_REG: {
         // reg save mem address 
+        bool flag = false;
+        word_t ret = isa_reg_str2val(tokens[s+1].str, &flag);
+        return flag ? ret : 0;
         break; 
       }
       default: break;
@@ -279,9 +282,6 @@ static uint32_t eval(Token *tokens, int s, int e) {
         case TK_MINUS: return -eval(tokens, s+1, e); break;
         case TK_DEREFRENCE: return paddr_read(eval(tokens, s+1, e), 1); break;
         case TK_REG: {
-          bool flag = false;
-          word_t ret = isa_reg_str2val(tokens[s+1].str, &flag);
-          return flag ? ret : 0;
         }
       }
     }
