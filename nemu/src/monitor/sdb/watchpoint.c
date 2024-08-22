@@ -134,12 +134,12 @@ void print_watchpoint(bool *is_change) {
       return;
     }
     if(ret != last[p->NO]) {
-      *is_change = true;
-      last[p->NO] = ret;
-
       printf("watch point %d: %s\n", p->NO, p->str);
       printf("Old value = 0x%x\n", last[p->NO]);
       printf("New value = 0x%x\n", ret);
+
+      *is_change = true;
+      last[p->NO] = ret;
     }
   }
 }
