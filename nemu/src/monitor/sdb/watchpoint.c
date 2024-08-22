@@ -127,17 +127,12 @@ bool free_wp_by_no_interface(int no) {
 
 void print_watchpoint(bool *is_change) {
   static word_t last = 0;
-  static bool is_first = true;
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
     word_t ret = expr(p->str, &success);
     if(ret != last) {
       *is_change = true;
       last = ret;
-    }
-    if(is_first) {
-      *is_change = false;
-      is_first = false;
     }
     if(success) {
       printf("%d\t\t%s\t\t0x%x\n", p->NO, p->str, ret);
