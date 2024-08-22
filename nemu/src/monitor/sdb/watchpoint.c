@@ -13,22 +13,33 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "common.h"
 #include "sdb.h"
-#include <stdbool.h>
+#include "isa.h"
 
 #define NR_WP 32
+#define NR_BA 32
 #define STR_SIZE 64
+
+enum WP_TYPE {
+  WP_TYPE = 0,
+  BA_TYPE,
+};
 
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
 
   /* TODO: Add more members if necessary */
+  int type;
   char str[STR_SIZE];
 } WP;
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
+// static word_t break_address[NR_BA] = {};
+
+// static int ba_index = 0;
 
 void init_wp_pool() {
   int i;
@@ -124,7 +135,7 @@ bool free_wp_by_no_interface(int no) {
 }
 
 
-void print_watchpoint(bool *is_change) {
+void print_watchpoint(bool *is_change, bool *is_break) {
   static word_t last[NR_WP] = {0};
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
@@ -134,11 +145,16 @@ void print_watchpoint(bool *is_change) {
       return;
     }
     if(ret != last[p->NO]) {
-      printf("watch point %d: %s\n", p->NO, p->str);
-      printf("Old value = 0x%x\n", last[p->NO]);
-      printf("New value = 0x%x\n", ret);
-
-      *is_change = true;
+      if(ret == cpu.pc) {
+        *is_break = true;
+        printf("break point at 0x%x", ret);
+      }
+      else {
+        *is_change = true;
+        printf("watch point %d: %s\n", p->NO, p->str);
+        printf("Old value = 0x%x\n", last[p->NO]);
+        printf("New value = 0x%x\n", ret);
+      }
       last[p->NO] = ret;
     }
   }
@@ -148,6 +164,7 @@ word_t break_at_addr(char *str) {
   WP *p = new_wp(str);
   bool success = false;
   word_t ret = expr(p->str, &success);
+  
   return ret;
 }
 

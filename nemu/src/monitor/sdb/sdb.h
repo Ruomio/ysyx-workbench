@@ -24,7 +24,7 @@ void test_expr();
 
 bool new_wp_interface(char *s);
 bool free_wp_by_no_interface(int no);
-void print_watchpoint(bool *is_change);
+void print_watchpoint(bool *is_change, bool *is_break);
 
 word_t break_at_addr(char *str);
 #endif
