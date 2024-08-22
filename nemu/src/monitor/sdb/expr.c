@@ -304,7 +304,7 @@ static uint32_t eval(Token *tokens, int s, int e) {
         ret = val1 / val2;
         break;
       }
-      case TK_EQ: ret = val1 == val2 ? val1 : 0; break;
+      case TK_EQ: ret = val1 == val2; break;
       case TK_NEQ: ret = val1 != val2; break;
       case TK_LSHIFT: ret = val1 << val2; break;
       case TK_RSHIFT: ret = val1 >> val2; break;
