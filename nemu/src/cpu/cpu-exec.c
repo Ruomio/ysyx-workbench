@@ -19,6 +19,7 @@
 #include <locale.h>
 
 #include "../../src/monitor/sdb/sdb.h"
+#include "utils.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -34,16 +35,16 @@ static bool g_print_step = false;
 void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-  // scan and print all watch point
-  bool is_chang = false;
-  print_watchpoint(&is_chang);
-  if(is_chang) nemu_state.state = NEMU_STOP;
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
+  // scan and print all watch point
+  bool is_chang = false;
+  print_watchpoint(&is_chang);
+  if(is_chang && nemu_state.state == NEMU_RUNNING) nemu_state.state = NEMU_STOP;
 
 }
 
