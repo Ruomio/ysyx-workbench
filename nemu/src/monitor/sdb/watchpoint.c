@@ -13,7 +13,6 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "common.h"
 #include "sdb.h"
 #include <stdbool.h>
 
@@ -126,19 +125,32 @@ bool free_wp_by_no_interface(int no) {
 
 
 void print_watchpoint(bool *is_change) {
-  static word_t last = 0;
+  static word_t last[NR_WP] = {0};
   for(WP *p = head; p != NULL; p = p->next) {
     bool success = false;
     word_t ret = expr(p->str, &success);
-    if(ret != last) {
+    if(ret != last[p->NO]) {
       *is_change = true;
-      last = ret;
+      last[p->NO] = ret;
     }
     if(success) {
-      printf("NO:%d\t\t%s\t\t0x%x\n", p->NO, p->str, ret);
+      printf("watch point %d: %s\n", p->NO, p->str);
+      printf("Old value = %u\n", last[p->NO]);
+      printf("New value = %u\n", ret);
     }
     else {
       printf("\033[0;31mexpr fail.\033[0m\n");
     }
   }
+}
+
+word_t break_at_addr(char *str) {
+  WP *p = new_wp(str);
+  bool success = false;
+  word_t ret = expr(p->str, &success);
+  return ret;
+}
+
+bool check_break() {
+  return false;
 }

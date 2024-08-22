@@ -19,8 +19,6 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/paddr.h>
-#include <stdbool.h>
-#include "utils.h"
 
 static int is_batch_mode = false;
 
@@ -112,7 +110,7 @@ static int cmd_x(char *args) {
     }
     bool success = false;
     uint32_t res = expr(buff, &success);
-    if(success == false) return 0;
+    if(success == false) return -1;
     for(int i=0; i<size; i++) {
       printf("0x%x:\t0x%08x\n", res+i*4, paddr_read(res+i*4, 4));
     }
@@ -145,6 +143,19 @@ static int cmd_d(char *args) {
   return 0;
 }
 
+static int cmd_b(char *args) {
+  char *arg = strtok(NULL, " ");
+  char buff[1024] = {0};
+  int index = 0;
+  while(arg  != NULL) {
+    strcpy(buff+index, arg);
+    index += strlen(arg);
+    arg = strtok(NULL, " ");
+  }
+  break_at_addr(buff);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -160,6 +171,7 @@ static struct {
   { "x", "Instruction level single step, stepping into calls.", cmd_x },
   { "w", "Set a watchpoint for EXPRESSION.", cmd_w },
   { "d", "Delete a watchpoint by NO.", cmd_d },
+  { "b", "Set a breakpoint for EXPRESSION.", cmd_b },
 
   /* TODO: Add more commands */
 
