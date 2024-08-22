@@ -261,8 +261,8 @@ static uint32_t eval(Token *tokens, int s, int e) {
       case TK_REG: {
         // reg save mem address 
         bool flag = false;
-        word_t ret = isa_reg_str2val(tokens[s+1].str, &flag);
-        return flag ? ret : 0;
+        word_t ret = isa_reg_str2val(tokens[s].str+1, &flag);
+        if(flag) res = ret;
         break; 
       }
       default: break;
