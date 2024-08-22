@@ -49,10 +49,6 @@ static void gen_num() {
   uint32_t num = rand()%100;
   sprintf(buf+buf_index, "%u", num);
   buf_index += strlen(buf+buf_index);
-  
-  // add 'u'suffix to promise only unsigned opreation
-  // sprintf(buf+buf_index, "%c", 'u'); 
-  // buf_index += 1;
 
   // space
   for(int i=0; i<rand()%2; i++) {
