@@ -75,7 +75,6 @@ static int cmd_info(char *info) {
     isa_reg_display();
   }
   else if(strcmp(arg, "w") == 0) {
-
   }
   else {
     printf("Unknown command 'info %s'\n", arg);
@@ -118,6 +117,23 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_w(char *args) {
+  char *arg = strtok(NULL, " ");
+  char buff[1024] = {0};
+  int index = 0;
+  while(arg  != NULL) {
+    strcpy(buff+index, arg);
+    index += strlen(arg);
+    arg = strtok(NULL, " ");
+  }
+  if(new_wp_interface(buff)) {
+    return 0;
+  }
+  else {
+    return -1;
+  }
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -131,6 +147,7 @@ static struct {
   { "si", "Instruction level single step, stepping into calls.", cmd_si },
   { "info", "Instruction level single step, stepping into calls.", cmd_info },
   { "x", "Instruction level single step, stepping into calls.", cmd_x },
+  { "w", "Instruction level single step, stepping into calls.", cmd_w },
 
   /* TODO: Add more commands */
 

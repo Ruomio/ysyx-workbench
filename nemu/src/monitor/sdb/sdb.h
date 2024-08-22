@@ -18,22 +18,10 @@
 
 #include <common.h>
 
-#define NR_WP 32
-#define STR_SIZE 64
-
-typedef struct watchpoint {
-  int NO;
-  struct watchpoint *next;
-
-  /* TODO: Add more members if necessary */
-  char str[STR_SIZE];
-} WP;
-
 word_t expr(char *e, bool *success);
 
 void test_expr();
 
-WP *new_wp(bool *success);
-void free_wp(WP *wp);
-
+bool new_wp_interface(char *s);
+void print_watchpoint();
 #endif

@@ -13,9 +13,20 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "common.h"
 #include "sdb.h"
+#include <stdbool.h>
 
+#define NR_WP 32
+#define STR_SIZE 64
 
+typedef struct watchpoint {
+  int NO;
+  struct watchpoint *next;
+
+  /* TODO: Add more members if necessary */
+  char str[STR_SIZE];
+} WP;
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
@@ -32,25 +43,39 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
-WP *new_wp(bool *success) {
+WP *new_wp(char *s) {
   if(!free_) { 
     printf("\033[0;31mfree_ is already empty.\033[0m\n");
-    *success = false;
     return NULL; 
   }
 
-  WP *new = free_;
-  free_ = free_->next;
-  new->next = NULL;
+  if(strlen(s) < STR_SIZE) {
+    WP *new = free_;
+    free_ = free_->next;
+    new->next = NULL;
+    strcpy(new->str, s);
 
-  if(!head) head = new;
+    if(!head) head = new;
+    else {
+      new->next = head;
+      head = new;
+    }
+
+    return new;
+  }
   else {
-    new->next = head;
-    head = new;
+    printf("\033[0;31mexpr str is too long, over WP->str size\033[0m\n");
+    return NULL;
   }
 
-  *success = true;
-  return new;
+}
+
+bool new_wp_interface(char *s) {
+  WP *ret = new_wp(s);
+  if(ret) {
+    return true;
+  }
+  return false;
 }
 
 void free_wp(WP *wp) {
@@ -64,12 +89,14 @@ void free_wp(WP *wp) {
     assert(0);
   }
   else if(head == wp) {
+    memset(head->str, 0, STR_SIZE);
     head = head->next;
   }
   else {
     WP *p = head, *q = head->next;
     while(q) {
       if(q == wp) {
+        memset(q->str, 0, STR_SIZE);
         p->next = q->next;
         break;
       }
@@ -87,3 +114,16 @@ void free_wp(WP *wp) {
   }
 }
 
+
+void print_watchpoint() {
+  for(WP *p = head; p != NULL; p = p->next) {
+    bool success = false;
+    word_t ret = expr(p->str, &success);
+    if(success) {
+      printf("%d\t\t%s\t\t%u\n", p->NO, p->str, ret);
+    }
+    else {
+      printf("\033[0;31mexpr fail.\033[0m\n");
+    }
+  }
+}
