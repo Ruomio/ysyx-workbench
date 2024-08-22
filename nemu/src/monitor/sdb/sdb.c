@@ -75,6 +75,7 @@ static int cmd_info(char *info) {
     isa_reg_display();
   }
   else if(strcmp(arg, "w") == 0) {
+    print_watchpoint();
   }
   else {
     printf("Unknown command 'info %s'\n", arg);
