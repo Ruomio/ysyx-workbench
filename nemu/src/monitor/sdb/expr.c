@@ -19,7 +19,6 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <stdbool.h>
 #include "common.h"
 #include "memory/paddr.h"
 
@@ -282,7 +281,10 @@ static uint32_t eval(Token *tokens, int s, int e) {
         case TK_MINUS: return -eval(tokens, s+1, e); break;
         case TK_DEREFRENCE: return paddr_read(eval(tokens, s+1, e), 1); break;
         case TK_REG: {
+
+          break;
         }
+        default: break;
       }
     }
     else {

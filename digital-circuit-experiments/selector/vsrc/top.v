@@ -12,18 +12,15 @@ module top
 
     mux41d #(.NR_KEY(NR_KEY), .KEY_LEN(KEY_LEN), .DATA_LEN(DATA_LEN)) u_mux41d (x, y, f);
 
-    always @(posedge clk or negedge clk) begin
+    always @(posedge clk) begin
         if(!rst) begin
             cnt <= 32'b0;
         end
+        else if(cnt == 32'b11111111) begin
+            cnt <=  32'b0;
+        end
         else begin
-            if(cnt == 32'b1111_1111) begin
-                cnt <=  32'b0;
-            end
-            else begin
-                cnt <= cnt + 1'b1;
-                
-            end
+            cnt <= cnt + 1'b1;
         end
     end
 
