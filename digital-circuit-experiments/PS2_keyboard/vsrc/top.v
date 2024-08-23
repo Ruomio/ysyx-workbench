@@ -29,7 +29,7 @@ module top(
 
     // ps2_keyboard u_ps2_keyboard(clk, clrn, ps2_clk, ps2_data, nextdata_n, data, ready, overflow);
 
-    // key_to_ascii u_key_to_ascii(data, ascii_code);
+    key_to_ascii u_key_to_ascii(data, ascii_code);
 
     always@(data, clrn, nextdata_n) begin
         if(clrn == 0) begin
@@ -46,10 +46,10 @@ module top(
         end
     end
 
-    bcd7seg u_bcd7seg_1(data[3:0], bcd0);
-    bcd7seg u_bcd7seg_2(data[7:4], bcd1);
-    // bcd7seg u_bcd7seg_3(ascii_code[3:0], bcd2);
-    // bcd7seg u_bcd7seg_4(ascii_code[7:4], bcd3);
+    // bcd7seg u_bcd7seg_1(data[3:0], bcd0);
+    // bcd7seg u_bcd7seg_2(data[7:4], bcd1);
+    bcd7seg u_bcd7seg_3(ascii_code[3:0], bcd2);
+    bcd7seg u_bcd7seg_4(ascii_code[7:4], bcd3);
     bcd7seg u_bcd7seg_5(cnt[3:0], bcd4);
     bcd7seg u_bcd7seg_6(cnt[7:4], bcd5);
     
