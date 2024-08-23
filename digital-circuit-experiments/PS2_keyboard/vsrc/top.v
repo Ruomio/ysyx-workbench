@@ -29,7 +29,7 @@ module top(
 
     ps2_keyboard u_ps2_keyboard(clk, clrn, ps2_clk, ps2_data, nextdata_n, data, ready, overflow);
 
-    key_to_ascii u_key_to_ascii(data, ascii_code);
+    // key_to_ascii u_key_to_ascii(data, ascii_code);
 
     always@(data, clrn, nextdata_n) begin
         if(clrn == 0) begin
