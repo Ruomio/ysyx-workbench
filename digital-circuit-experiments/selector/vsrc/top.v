@@ -20,7 +20,6 @@ module top
         end
         else if(cnt == 32'b11111111) begin
             cnt <=  32'b0;
-            f <= ~f;
         end
         else begin
             cnt <= cnt + 1'b1;
