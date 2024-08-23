@@ -67,6 +67,7 @@ module ps2_model(
     output reg ps2_clk,
     output reg ps2_data
 );
+    parameter [7:0] clk_period = 60;
 
     reg [3:0] i;
     reg [7:0] wait_time;
@@ -96,7 +97,6 @@ module ps2_model(
     function automatic gen_ps2_clk();
         input [10:0] buffer; 
         reg[3:0] i;
-        parameter [7:0] clk_period = 60;
         for(i = 4'd0; i<4'd11; i = i+1 ) begin
             ps2_data = buffer[i];
             wait_time = clk_period/2;
