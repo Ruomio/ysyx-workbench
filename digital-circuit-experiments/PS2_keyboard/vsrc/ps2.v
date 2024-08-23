@@ -40,7 +40,7 @@ module ps2_keyboard(
 
             if(sampling) begin
                 if(count == 4'b1010) begin
-                    if((buffer[0] == 0) && ps2_data && (^buffer[9:1])) begin
+                    if((buffer[0] == 0) && ps2_data && (^buffer[9:1]) && (w_ptr+1 != r_ptr)) begin
                         fifo[w_ptr] <= buffer[8:1];
                         w_ptr <= w_ptr + 3'b1;
                         ready <= 1'b1;
