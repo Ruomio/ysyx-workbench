@@ -35,7 +35,7 @@ module top(
         if(clrn == 0) begin
             last_data = 8'b0;
             cnt = 8'b0;
-        end
+    end
         else if(nextdata_n && data != last_data && data != 8'hf0) begin
             cnt = cnt + 1;
             last_data = data;

@@ -62,53 +62,34 @@ module ps2_keyboard(
 endmodule
 
 
-module ps2_model(
-    input [7:0] code,
-    output reg ps2_clk,
-    output reg ps2_data
-);
-    parameter [7:0] clk_period = 60;
-
-    reg [3:0] i;
-    reg [7:0] wait_time;
-    reg [10:0] buffer;
-
-    always @(code) begin
-        buffer[0] = 1'b0;
-        buffer[8:1] = code;
-        buffer[9] = ~(^code);
-        buffer[10] = 1'b1;
-
-        ps2_clk = gen_ps2_clk(buffer);
-        // for(i = 4'd0; i<4'd11; i = i+1 ) begin
-        //     ps2_data = buffer[i];
-        //     wait_time = clk_period/2;
-        //     while(wait_time > 0) wait_time = wait_time - 8'b1;
-        //     ps2_clk = 1'b0;
-        //     wait_time = clk_period/2;
-        //     while(wait_time > 0) wait_time = wait_time - 8'b1;
-        //     ps2_clk = 1'b1;
-
-        // end
-
-    end
-
-
-    function automatic gen_ps2_clk();
-        input [10:0] buffer; 
-        reg[3:0] i;
-        for(i = 4'd0; i<4'd11; i = i+1 ) begin
-            ps2_data = buffer[i];
-            wait_time = clk_period/2;
-            while(wait_time > 0) wait_time = wait_time - 8'b1;
-            ps2_clk = 1'b0;
-            wait_time = clk_period/2;
-            while(wait_time > 0) wait_time = wait_time - 8'b1;
-            ps2_clk = 1'b1;
-
-        end
-
-    endfunction
-
-
-endmodule
+// module ps2_model(
+//     input [7:0] code,
+//     output reg ps2_clk,
+//     output reg ps2_data
+// );
+//     parameter [7:0] clk_period = 60;
+// 
+//     reg [3:0] i;
+//     reg [7:0] wait_time;
+//     reg [10:0] buffer;
+// 
+//     always @(code) begin
+//         buffer[0] = 1'b0;
+//         buffer[8:1] = code;
+//         buffer[9] = ~(^code);
+//         buffer[10] = 1'b1;
+// 
+//         for(i = 4'd0; i<4'd11; i = i+1 ) begin
+//             ps2_data = buffer[i];
+//             wait_time = clk_period/2;
+//             while(wait_time > 0) wait_time = wait_time - 8'b1;
+//             ps2_clk = 1'b0;
+//             wait_time = clk_period/2;
+//             while(wait_time > 0) wait_time = wait_time - 8'b1;
+//             ps2_clk = 1'b1;
+// 
+//         end
+// 
+//     end
+// 
+// endmodule
