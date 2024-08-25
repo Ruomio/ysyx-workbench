@@ -119,9 +119,13 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
 
-    int ret = system("gcc -Wall -Werror /tmp/.code.c -o /tmp/.expr");
-    if (ret != 0) continue;
-
+    int ret = system("gcc -Wno-overflow -Werror=div-by-zero /tmp/.code.c -o /tmp/.expr");
+    if (ret != 0) {
+      buf_index = 0;
+      memset(buf, 0, 65536);
+      memset(code_buf, 0, 65536+128);
+      continue;
+    }
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
@@ -133,6 +137,7 @@ int main(int argc, char *argv[]) {
     
     buf_index = 0;
     memset(buf, 0, 65536);
+    memset(code_buf, 0, 65536+128);
   }
   return 0;
 }
