@@ -438,7 +438,7 @@ void test_expr() {
   bool success = false;
   while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
     char *res = strtok(str, " ");
-    if(res == NULL) {
+    if(strcmp(res,"") == 0) {
       line++;
       continue;
     }
