@@ -22,7 +22,7 @@
 #include "common.h"
 #include "memory/paddr.h"
 
-#define TOKENS_SIZE 65535
+#define TOKENS_SIZE 1024
 #define TOKEN_STR_SIZE 32
 
 enum {

@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
 
-    int ret = system("gcc -Werror=div-by-zero /tmp/.code.c -o /tmp/.expr");
+    int ret = system("gcc -Wno-overflow -Werror=div-by-zero /tmp/.code.c -o /tmp/.expr");
     if (ret != 0) {
       buf_index = 0;
       memset(buf, 0, 65536);
