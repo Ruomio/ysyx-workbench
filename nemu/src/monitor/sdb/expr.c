@@ -438,6 +438,10 @@ void test_expr() {
   bool success = false;
   while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
     char *res = strtok(str, " ");
+    if(res == NULL) {
+      line++;
+      continue;
+    }
     char *expr_str = str + strlen(res) + 1;
 
     word_t value = expr(expr_str, &success);
