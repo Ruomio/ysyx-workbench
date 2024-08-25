@@ -117,6 +117,26 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+
+  char *arg = strtok(NULL, " ");
+  if(arg == NULL) {
+    printf("\033[0;31mCommand 'p': need expr parameter.\033[0m\n");
+  }
+  char buff[1024] = {0};
+  int index = 0;
+  while(arg  != NULL) {
+    strcpy(buff+index, arg);
+    index += strlen(arg);
+    arg = strtok(NULL, " ");
+  }
+  bool success = false;
+  uint32_t res = expr(buff, &success);
+  if(success == false) return -1;
+  printf("0x%08x\n", res);
+  return 0;
+}
+
 static int cmd_w(char *args) {
   char *arg = strtok(NULL, " ");
   char buff[1024] = {0};
@@ -170,6 +190,7 @@ static struct {
   { "si", "Instruction level single step, stepping into calls.", cmd_si },
   { "info", "Instruction level single step, stepping into calls.", cmd_info },
   { "x", "Instruction level single step, stepping into calls.", cmd_x },
+  { "p", "Instruction level single step, stepping into calls.", cmd_p },
   { "w", "Set a watchpoint for EXPRESSION.", cmd_w },
   { "d", "Delete a watchpoint by NO.", cmd_d },
   { "b", "Set a breakpoint for EXPRESSION.", cmd_b },
