@@ -437,7 +437,7 @@ void test_expr() {
   int line = 1;
   bool success = false;
   while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
-    if(strcmp(str,"") == 0) {
+    if(strlen(str) == 0) {
       assert(0);
       line++;
       continue;
