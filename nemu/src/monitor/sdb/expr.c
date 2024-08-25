@@ -437,11 +437,11 @@ void test_expr() {
   int line = 1;
   bool success = false;
   while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
-    char *res = strtok(str, " ");
-    if(strcmp(res,"") == 0) {
+    if(strcmp(str,"") == 0) {
       line++;
       continue;
     }
+    char *res = strtok(str, " ");
     char *expr_str = str + strlen(res) + 1;
 
     word_t value = expr(expr_str, &success);
