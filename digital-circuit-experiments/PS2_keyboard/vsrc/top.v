@@ -6,7 +6,12 @@ module top(
     output reg [7:0] data,
     output reg ready,
     output reg overflow,
-    output reg [6:0] bcd[5:0],
+    output reg [6:0] bcd0,
+    output reg [6:0] bcd1,
+    output reg [6:0] bcd2,
+    output reg [6:0] bcd3,
+    output reg [6:0] bcd4,
+    output reg [6:0] bcd5,
     output reg [7:0] cnt
 
 );
@@ -30,7 +35,7 @@ module top(
         if(clrn == 0) begin
             last_data = 8'b0;
             cnt = 8'b0;
-        end
+    end
         else if(nextdata_n && data != last_data && data != 8'hf0) begin
             cnt = cnt + 1;
             last_data = data;
@@ -41,12 +46,12 @@ module top(
         end
     end
 
-    bcd7seg u_bcd7seg_1(data[3:0], bcd[0]);
-    bcd7seg u_bcd7seg_2(data[7:4], bcd[1]);
-    bcd7seg u_bcd7seg_3(ascii_code[3:0], bcd[2]);
-    bcd7seg u_bcd7seg_4(ascii_code[7:4], bcd[3]);
-    bcd7seg u_bcd7seg_5(cnt[3:0], bcd[4]);
-    bcd7seg u_bcd7seg_6(cnt[7:4], bcd[5]);
+    bcd7seg u_bcd7seg_1(data[3:0], bcd0);
+    bcd7seg u_bcd7seg_2(data[7:4], bcd1);
+    bcd7seg u_bcd7seg_3(ascii_code[3:0], bcd2);
+    bcd7seg u_bcd7seg_4(ascii_code[7:4], bcd3);
+    bcd7seg u_bcd7seg_5(cnt[3:0], bcd4);
+    bcd7seg u_bcd7seg_6(cnt[7:4], bcd5);
     
     // reg [31:0] cnt = 32'b0;
 
