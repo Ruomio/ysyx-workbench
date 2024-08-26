@@ -439,6 +439,11 @@ void test_expr() {
   bool success = false;
   while(fgets(str, 1024, fp) != NULL) {
     // remove '\n'
+    if(str[strlen(str)-1] != '\n') {
+      printf("\033[0;32mtest skip: %d row is too long, over 1024 byte\033[0m\n", line);
+      line++;
+      continue;
+    }
     str[strlen(str)-1] = '\0';
     if(strcmp(str, "") == 0) {
       printf("\033[0;32mtest skip: %d row is null line\033[0m\n", line);
