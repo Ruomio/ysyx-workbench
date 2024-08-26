@@ -249,7 +249,7 @@ word_t expr(char *e, bool *success) {
 
 static uint32_t eval(Token *tokens, int s, int e) {
   if(s > e) {
-    panic("bad expression\n");
+    panic("bad expression. s = %d, e = %d\n", s, e);
   }
   else if(s == e) {
     uint32_t res=0;
