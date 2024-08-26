@@ -41,6 +41,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
 #ifdef CONFIG_WATCHPOINT_COND
+  if(WATCHPOINT_COND) {
+    printf("\n");
+  }
   // scan and print all watch point and break point
   bool is_chang = false;
   bool is_break = false;
