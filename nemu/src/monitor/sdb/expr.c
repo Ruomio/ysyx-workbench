@@ -450,7 +450,7 @@ void test_expr() {
     word_t value = expr(expr_str, &success);
 
     if(value != atoi(res)) {
-      printf("\033[0;31mtest error at line %d: It should be %u, but be %u.\033[0m\n", line, atoi(res), value);
+      printf("\033[0;31mtest error at line %d: It should be %lu, but be %u.\033[0m\n", line, strtoul(res, NULL, 10), value);
     }
     else {
       printf("\033[0;32mtest success at line %d.\033[0m\n", line);
