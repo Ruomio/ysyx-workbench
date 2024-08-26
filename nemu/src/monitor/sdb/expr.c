@@ -436,7 +436,7 @@ void test_expr() {
   char str[1024] = {};
   int line = 1;
   bool success = false;
-  while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
+  while((fscanf(fp, "%s\n", str)) != EOF) {
     if(strlen(str) == 0) {
       // assert(0);
       line++;
