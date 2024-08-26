@@ -341,6 +341,7 @@ static bool check_parentheses(Token *tokens, int s, int e) {
       top--;
       if(top < 0) return false;
       if(top == 0 && i != e) return false;
+      else if(top == 0 && i == e) return true;
     }
   }
   if(tokens[s].str[0] == '(' && \
