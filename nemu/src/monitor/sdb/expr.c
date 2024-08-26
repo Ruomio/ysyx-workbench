@@ -434,10 +434,11 @@ void test_expr() {
     Log("can not open the input file.\n");
     return;
   }
-  char str[1024] = {};
+  #define STR_SIZE 65536
+  char str[STR_SIZE] = {};
   int line = 1;
   bool success = false;
-  while(fgets(str, 1024, fp) != NULL) {
+  while(fgets(str, STR_SIZE, fp) != NULL) {
     // remove '\n'
     if(str[strlen(str)-1] != '\n') {
       printf("\033[0;32mtest skip: %d row is too long, over 1024 byte\033[0m\n", line);
