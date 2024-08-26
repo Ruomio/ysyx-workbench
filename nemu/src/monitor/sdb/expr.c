@@ -249,7 +249,7 @@ word_t expr(char *e, bool *success) {
 
 static uint32_t eval(Token *tokens, int s, int e) {
   if(s > e) {
-    panic("bad expression\n");
+    panic("bad expression. s = %d, e = %d\n", s, e);
   }
   else if(s == e) {
     uint32_t res=0;
@@ -433,17 +433,30 @@ void test_expr() {
     Log("can not open the input file.\n");
     return;
   }
-  char str[1024] = {};
+  #define STR_SIZE 65536
+  char str[STR_SIZE] = {};
   int line = 1;
   bool success = false;
-  while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
+  while(fgets(str, STR_SIZE, fp) != NULL) {
+    // remove '\n'
+    if(str[strlen(str)-1] != '\n') {
+      printf("\033[0;32mtest skip: %d row is too long, over 1024 byte\033[0m\n", line);
+      line++;
+      continue;
+    }
+    str[strlen(str)-1] = '\0';
+    if(strcmp(str, "") == 0) {
+      printf("\033[0;32mtest skip: %d row is null line\033[0m\n", line);
+      line++;
+      continue;
+    }
     char *res = strtok(str, " ");
     char *expr_str = str + strlen(res) + 1;
 
     word_t value = expr(expr_str, &success);
 
     if(value != atoi(res)) {
-      printf("\033[0;31mtest error at line %d.\033[0m\n", line);
+      printf("\033[0;31mtest error at line %d: It should be %lu, but be %u.\033[0m\n", line, strtoul(res, NULL, 10), value);
     }
     else {
       printf("\033[0;32mtest success at line %d.\033[0m\n", line);
