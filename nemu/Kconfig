@@ -149,6 +149,9 @@ config ITRACE_COND
   string "Only trace instructions when the condition is true"
   default "true"
 
+config CONFIG_WATCHPOINT
+  bool "Enable watchpoint"
+  default n
 
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
