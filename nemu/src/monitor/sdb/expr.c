@@ -440,7 +440,7 @@ void test_expr() {
     // remove '\n'
     str[strlen(str)-1] = '\0';
     if(strcmp(str, "") == 0) {
-      printf("test skip: %d row is null line\n", line);
+      printf("\033[0;32mtest skip: %d row is null line\033[0m\n", line);
       line++;
       continue;
     }
