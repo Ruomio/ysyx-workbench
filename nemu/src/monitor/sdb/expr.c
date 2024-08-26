@@ -439,7 +439,7 @@ void test_expr() {
   while(fgets(str, 1024, fp) != NULL) {
   // while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
     str[strlen(str)-1] = '\0';
-    if(strcmp(str, "\n") == 0) {
+    if(strcmp(str, "") == 0) {
       // assert(0);
       line++;
       continue;
