@@ -437,10 +437,10 @@ void test_expr() {
   int line = 1;
   bool success = false;
   while(fgets(str, 1024, fp) != NULL) {
-  // while((fscanf(fp, "%[^\n]\n", str)) != EOF) {
+    // remove '\n'
     str[strlen(str)-1] = '\0';
     if(strcmp(str, "") == 0) {
-      // assert(0);
+      printf("test skip: %d row is null line\n", line);
       line++;
       continue;
     }
@@ -450,7 +450,7 @@ void test_expr() {
     word_t value = expr(expr_str, &success);
 
     if(value != atoi(res)) {
-      printf("\033[0;31mtest error at line %d.\033[0m\n", line);
+      printf("\033[0;31mtest error at line %d: It should be %u, but be %u.\033[0m\n", line, atoi(res), value);
     }
     else {
       printf("\033[0;32mtest success at line %d.\033[0m\n", line);
