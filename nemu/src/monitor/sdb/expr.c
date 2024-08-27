@@ -77,7 +77,6 @@ enum {
   TK_COMMA,       // ,
   TK_DEREFRENCE,    // *p_param
   TK_ADDRESSOF,    // &param
-  TK_UNKNOWN,    // &param
 };
 
 static struct rule {
