@@ -122,6 +122,7 @@ static int cmd_p(char *args) {
   char *arg = strtok(NULL, " ");
   if(arg == NULL) {
     printf("\033[0;31mCommand 'p': need expr parameter.\033[0m\n");
+    return 0;
   }
   char buff[1024] = {0};
   int index = 0;
