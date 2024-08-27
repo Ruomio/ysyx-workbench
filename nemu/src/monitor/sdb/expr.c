@@ -135,8 +135,8 @@ static struct rule {
   {"<<=", TK_LSHIFT_ASSIGN},
   {">>=", TK_RSHIFT_ASSIGN},
   {"&=", TK_AND_ASSIGN},
-  {"|=", TK_OR_ASSIGN},
-  {"^=", TK_XOR_ASSIGN},
+  {"\\|=", TK_OR_ASSIGN},
+  {"\\^=", TK_XOR_ASSIGN},
   // {".*", TK_UNKNOWN},
 };
 
