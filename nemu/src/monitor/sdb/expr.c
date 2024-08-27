@@ -101,7 +101,7 @@ static struct rule {
   {"[a-zA-Z0-9]+\\.[a-zA-Z0-9]+", TK_DOT},
   {"\\*",TK_MULTIP},
   {"/", TK_DIV},
-  {"\\%", TK_COMPLE},
+  {"%", TK_COMPLE},
   {"\\(", TK_LBRACK},
   {"\\)", TK_RBRACK},
   {"\\[", TK_LMBRACK},
