@@ -115,7 +115,7 @@ static struct rule {
   {"~", TK_COUNT},
   {"&", TK_AND},
   {"\\|", TK_OR},
-  {"^", TK_XOR},
+  {"\\^", TK_XOR},
   {"!", TK_NOT},
   {"&&", TK_LAND},
   {"||", TK_LOR},
