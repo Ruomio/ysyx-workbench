@@ -118,7 +118,7 @@ static struct rule {
   {"\\^", TK_XOR},
   {"!", TK_NOT},
   {"&&", TK_LAND},
-  {"||", TK_LOR},
+  {"\\|\\|", TK_LOR},
   {"<<", TK_LSHIFT},
   {">>", TK_LSHIFT},
   {">", TK_BT},
