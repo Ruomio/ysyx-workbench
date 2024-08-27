@@ -137,7 +137,7 @@ static struct rule {
   {"&=", TK_AND_ASSIGN},
   {"|=", TK_OR_ASSIGN},
   {"^=", TK_XOR_ASSIGN},
-  {".*", TK_UNKNOWN},
+  // {".*", TK_UNKNOWN},
 };
 
 #define NR_REGEX ARRLEN(rules)
