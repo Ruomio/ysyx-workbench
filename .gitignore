@@ -14,3 +14,4 @@
 /nvboard
 !digital-circuit-experiments/*
 /yosys-sta
+/am-kernels
