@@ -320,6 +320,7 @@ static uint32_t eval(Token *tokens, int s, int e) {
       case TK_XOR: ret = val1 ^ val2; break;
       case TK_LAND: ret = val1 && val2; break;
       case TK_LOR: ret = val1 || val2; break;
+      case TK_COMPLE: ret = val1 % val2; break;
       default: {
         printf("\033[0;31moperater not support.\033[0m\n");
         // Assert(0, "operater not support.\n");
