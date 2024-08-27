@@ -40,11 +40,13 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
+#ifdef CONFIG_WATCHPOINT_COND
   // scan and print all watch point and break point
   bool is_chang = false;
   bool is_break = false;
   scan_watchpoint(&is_chang, &is_break);
   if((is_chang || is_break) && nemu_state.state == NEMU_RUNNING) nemu_state.state = NEMU_STOP;
+#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
