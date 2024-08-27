@@ -77,6 +77,7 @@ enum {
   TK_COMMA,       // ,
   TK_DEREFRENCE,    // *p_param
   TK_ADDRESSOF,    // &param
+  TK_UNKNOWN,    // &param
 };
 
 static struct rule {
@@ -113,7 +114,7 @@ static struct rule {
   {"[0-9]+", TK_DECNUM},
   {"~", TK_COUNT},
   {"&", TK_AND},
-  {"|", TK_OR},
+  {"\\|", TK_OR},
   {"^", TK_XOR},
   {"!", TK_NOT},
   {"&&", TK_LAND},
@@ -136,6 +137,7 @@ static struct rule {
   {"&=", TK_AND_ASSIGN},
   {"|=", TK_OR_ASSIGN},
   {"^=", TK_XOR_ASSIGN},
+  {".*", TK_UNKNOWN},
 };
 
 #define NR_REGEX ARRLEN(rules)
