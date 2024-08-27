@@ -114,7 +114,7 @@ static struct rule {
   {"[0-9]+", TK_DECNUM},
   {"~", TK_COUNT},
   {"&", TK_AND},
-  {"\\|", TK_OR},
+  {"|", TK_OR},
   {"^", TK_XOR},
   {"!", TK_NOT},
   {"&&", TK_LAND},
