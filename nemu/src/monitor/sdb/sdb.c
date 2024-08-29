@@ -165,6 +165,10 @@ static int cmd_d(char *args) {
 
 static int cmd_b(char *args) {
   char *arg = strtok(NULL, " ");
+  if(arg == NULL) {
+    printf("\033[0;31mCommand 'b': need expr parameter.\033[0m\n");
+    return 0;
+  }
   char buff[1024] = {0};
   int index = 0;
   while(arg  != NULL) {
