@@ -277,7 +277,7 @@ static uint32_t eval(Token *tokens, int s, int e) {
     int op = get_op_pos(tokens, s, e );
 
     // special op code
-    if(s == e-1) {
+    if(s == e-1 || op == s) {
       switch(tokens[s].type) {
         case TK_MINUS: return -eval(tokens, s+1, e); break;
         case TK_DEREFRENCE: return paddr_read(eval(tokens, s+1, e), 1); break;
