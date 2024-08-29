@@ -280,7 +280,7 @@ static uint32_t eval(Token *tokens, int s, int e) {
     if(s == e-1 || op == s) {
       switch(tokens[s].type) {
         case TK_MINUS: return -eval(tokens, s+1, e); break;
-        case TK_DEREFRENCE: return paddr_read(eval(tokens, s+1, e), 1); break;
+        case TK_DEREFRENCE: return paddr_read(eval(tokens, s+1, e), 4); break;
         case TK_REG: {
 
           break;
