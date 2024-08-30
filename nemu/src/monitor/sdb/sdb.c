@@ -279,5 +279,5 @@ void init_sdb() {
   init_wp_pool();
 
   // test_expr();
-  sdb_set_batch_mode();
+  // sdb_set_batch_mode();
 }
