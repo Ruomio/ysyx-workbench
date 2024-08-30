@@ -62,16 +62,8 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 }
 
 void *memset(void *s, int c, size_t n) {
-  uint8_t *tmp = s;
-  for(int i=0; i<n/4; i++) {
-    memcpy(tmp, (void *)&c, 4);
-    tmp += 4;
-  }
-  for(int i=0; i<n%4; i++) {
-    int c_tmp = c >> (8 * i);
-    memcpy(tmp, (void *)&c_tmp, 1);
-    tmp += 1;
-  }
+  uint8_t c_tmp = (uint8_t)c;
+  memcpy(s, (void *)&c_tmp, n);
 
   return s;
 }
