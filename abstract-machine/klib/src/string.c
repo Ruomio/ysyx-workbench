@@ -89,7 +89,7 @@ void *memcpy(void *out, const void *in, size_t n) {
   // src and out not overlap
   size_t idx = 0;
   while(idx < n) {
-    *((char*)out + idx) = *((char *)in + idx);
+    *((uint8_t*)out + idx) = *((uint8_t *)in + idx);
     idx++;
   }
   return out;
