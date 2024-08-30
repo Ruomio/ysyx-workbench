@@ -1,47 +1,115 @@
+#include "am.h"
 #include <klib.h>
 #include <klib-macros.h>
 #include <stdint.h>
+#include <assert.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
+#define NK (1)
+#define BF_SIZE (NK * (1u << 10))
+
 size_t strlen(const char *s) {
-  panic("Not implemented");
+  size_t len = 0;
+  while(s[len++] != '\0');
+  len--;
+  return len;
 }
 
 char *strcpy(char *dst, const char *src) {
-  panic("Not implemented");
+  size_t len = strlen(src);
+
+  memcpy(dst, src, len);
+
+  // promise dst end as '\0'
+  dst[len] = '\0'; 
+  return dst;
 }
 
 char *strncpy(char *dst, const char *src, size_t n) {
-  panic("Not implemented");
+  size_t dlen;
+  dlen = strlen(src);
+
+  memset((memcpy(dst, src, dlen) + dlen), 0, n-dlen);
+  return dst;
 }
 
 char *strcat(char *dst, const char *src) {
-  panic("Not implemented");
+  strcpy(dst + strlen(dst), src);
+  return dst;
 }
 
 int strcmp(const char *s1, const char *s2) {
-  panic("Not implemented");
+  for(int i=0; s1[i] != '\0' || s2[i] != '\0' ; i++) {
+    if(s1[i] == '\0') return s2[i];
+    else if(s2[i] == '\0') return s1[1];
+    else if(*((uint8_t *)s1 + i) != *((uint8_t *)s2 + i)) {
+      return *((uint8_t *)s1 + i) - *((uint8_t *)s2 + i);
+    }
+  }
+  return 0;
 }
 
 int strncmp(const char *s1, const char *s2, size_t n) {
-  panic("Not implemented");
+  for(int i=0; (i < n) && (s1[i] != '\0' || s2[i] != '\0') ; i++) {
+    if(s1[i] == '\0') return s2[i];
+    else if(s2[i] == '\0') return s1[1];
+    else if(*((uint8_t *)s1 + i) != *((uint8_t *)s2 + i)) {
+      return *((uint8_t *)s1 + i) - *((uint8_t *)s2 + i);
+    }
+  }
+  return 0;
 }
 
 void *memset(void *s, int c, size_t n) {
-  panic("Not implemented");
+  uint8_t *tmp = s;
+  for(int i=0; i<n/4; i++) {
+    memcpy(tmp, (void *)&c, 4);
+    tmp += 4;
+  }
+  for(int i=0; i<n%4; i++) {
+    int c_tmp = c >> (8 * i);
+    memcpy(tmp, (void *)&c_tmp, 1);
+    tmp += 1;
+  }
+
+  return s;
 }
 
 void *memmove(void *dst, const void *src, size_t n) {
-  panic("Not implemented");
+  // src and out is overlap
+  size_t idx = 0;
+  uint8_t buf[BF_SIZE] = {};
+  while(idx < n) {
+    assert(idx < BF_SIZE);
+    buf[idx] = *((char *)src + idx);
+    idx++;
+  }
+  idx = 0;
+  while(idx < n) {
+    *((uint8_t *)dst + idx) = buf[idx];
+    idx++;
+  }
+  return dst;
 }
 
 void *memcpy(void *out, const void *in, size_t n) {
-  panic("Not implemented");
+  // src and out not overlap
+  size_t idx = 0;
+  while(idx < n) {
+    *((char*)out + idx) = *((char *)in + idx);
+    idx++;
+  }
+  return out;
 }
 
 int memcmp(const void *s1, const void *s2, size_t n) {
-  panic("Not implemented");
+  for(int i=0; i<n; i++) {
+    if(*((uint8_t *)s1 + i) != *((uint8_t *)s2 + i)) {
+      return *((uint8_t *)s1 + i) - *((uint8_t *)s2 + i);
+    }
+  }
+  return 0;
 }
 
 #endif
