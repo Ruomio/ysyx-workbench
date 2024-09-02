@@ -75,7 +75,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   char tmp[NR_SIZE] = {};
   va_list p_next = ap;
 
-  for(p = out; fmt != NULL; fmt++) {
+  for(p = out; *fmt != '\0'; fmt++) {
     if(*fmt != '%') {
       *p++ = *fmt;
       continue;
@@ -128,6 +128,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
     // clear tmp
     memset(tmp, 0, NR_SIZE);
   }
+  *p++ = '\0';
   
   return p - out;
 }
