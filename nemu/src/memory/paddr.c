@@ -24,6 +24,37 @@ static uint8_t *pmem = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
 
+#ifdef CONFIG_MTRACE_COND
+  struct MtraceBuf {
+    uint8_t m_buffer[64][64];
+    int idx;
+  }MtraceBuf = {.m_buffer={}, .idx = 0};
+
+  void MtraceBuf_write(paddr_t addr, int len, word_t data) {
+    int idx = MtraceBuf.idx;
+    memset(MtraceBuf.m_buffer[idx], 0, 64);
+    memset(MtraceBuf.m_buffer[idx], ' ', 3);
+    sprintf((char *)MtraceBuf.m_buffer[idx]+3, "0x%08x    %d    0x%08x", addr, len, data);
+    MtraceBuf.idx = (idx+1)%64;
+  }
+
+  void MtraceBuf_add_arrow() {
+    int idx = (MtraceBuf.idx + 63) % 64;
+    memcpy(MtraceBuf.m_buffer[idx], "-> ", 3);
+  }
+
+  void MtraceBuf_save() {
+    FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/mtrace-log.txt", "w");
+    for(int i=0; i<MtraceBuf.idx; i++) {
+      if(strlen((char *)MtraceBuf.m_buffer[i]) != 0) {
+        fprintf(fp, "%s\n", MtraceBuf.m_buffer[i]);
+      }
+    }
+    fclose(fp);
+  }
+
+#endif
+
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
@@ -37,6 +68,7 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 }
 
 static void out_of_bound(paddr_t addr) {
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_add_arrow(); MtraceBuf_save());
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
@@ -57,6 +89,7 @@ void init_mem() {
 }
 
 word_t paddr_read(paddr_t addr, int len) {
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
@@ -64,6 +97,7 @@ word_t paddr_read(paddr_t addr, int len) {
 }
 
 void paddr_write(paddr_t addr, int len, word_t data) {
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, data));
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
