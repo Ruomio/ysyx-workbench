@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/paddr.h>
+#include "ringbuffer.h"
 
 static int is_batch_mode = false;
 
@@ -280,4 +281,5 @@ void init_sdb() {
 
   // test_expr();
   // sdb_set_batch_mode();
+  RingBuffer_create();
 }
