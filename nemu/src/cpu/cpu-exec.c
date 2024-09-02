@@ -135,6 +135,6 @@ void cpu_exec(uint64_t n) {
           nemu_state.halt_pc);
       // fall through
     case NEMU_QUIT: statistic(); 
-    // RingBuffer_add_arrow(); RingBuffer_print();
+    RingBuffer_add_arrow(); RingBuffer_print();
   }
 }
