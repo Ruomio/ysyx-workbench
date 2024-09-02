@@ -20,6 +20,7 @@
 
 #include "../../src/monitor/sdb/sdb.h"
 #include "ringbuffer.h"
+#include "utils.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -134,7 +135,7 @@ void cpu_exec(uint64_t n) {
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
 
-    RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file();
+    if(nemu_state.state == NEMU_ABORT) {RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file();}
       // fall through
     case NEMU_QUIT: statistic();
   }
