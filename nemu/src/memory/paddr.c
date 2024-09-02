@@ -70,7 +70,7 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 }
 
 static void out_of_bound(paddr_t addr) {
-  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_save());
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_add_arrow(); MtraceBuf_save());
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
