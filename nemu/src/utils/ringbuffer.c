@@ -55,6 +55,6 @@ void RingBuffer_print() {
 
 int RingBuffer_add_arrow() {
     char *str = buffer->buf[buffer->idx-1];
-    memcpy(str, "-->", 3);
+    memcpy(str, "-> ", 3);
     return 0;
 }
