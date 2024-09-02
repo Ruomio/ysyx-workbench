@@ -53,8 +53,8 @@ void RingBuffer_print() {
     }
 }
 
-int RingBuffer_add_arrow(int idx) {
-    char *str = buffer->buf[idx];
+int RingBuffer_add_arrow() {
+    char *str = buffer->buf[buffer->idx];
     memcpy(str, "-->", 3);
     return 0;
 }

@@ -26,7 +26,7 @@ int RingBuffer_write(char *data, int length);
 
 void RingBuffer_print();
 
-int RingBuffer_add_arrow(int idx);
+int RingBuffer_add_arrow();
 
 // for test
 void echo();
