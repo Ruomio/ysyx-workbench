@@ -47,6 +47,13 @@ static int itoa(int val, char *buf, char type) {
       else *tmp_buf++ = val%16 - 10 + 'A';
       break;
     }
+    case 'o': {
+      if(val/8 != 0) {
+        tmp_buf += itoa(val/8, tmp_buf, 'o');
+      }
+      *tmp_buf++ = val%8 + '0';
+      break;
+    }
 
     default: {
       #define MSG "Unknown format.\n"
