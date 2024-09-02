@@ -9,7 +9,6 @@ typedef struct RingBuffer {
     int idx;
 }RingBuffer;
 
-RingBuffer *buffer = NULL;
 
 RingBuffer *RingBuffer_create();
 int RingBuffer_destory();

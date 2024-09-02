@@ -5,6 +5,7 @@
 #include "ringbuffer.h"
 #include "debug.h"
 
+static RingBuffer *buffer = NULL;
 
 //for test
 void echo() {
