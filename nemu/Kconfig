@@ -194,6 +194,9 @@ config WATCHPOINT_COND
   bool "Enable watchpoint"
   default n
 
+config MTRACE_COND
+  bool "Enable memory trace"
+  default n
 endmenu
 
 if MODE_SYSTEM
