@@ -34,7 +34,7 @@ int RingBuffer_write(char *data, int length) {
     Assert(length <= 125, "RingBuffer's buf is smaller than data.\n");
     memset(buffer->buf[buffer->idx], 0, 128);
     memset(buffer->buf[buffer->idx], ' ', 3);
-    strcpy(buffer->buf[(buffer->idx++)%buffer->length]+3, data);
+    strncpy(buffer->buf[(buffer->idx++)%buffer->length]+3, data, length);
     return 0;
 }
 
