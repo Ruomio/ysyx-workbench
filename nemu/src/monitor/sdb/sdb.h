@@ -17,6 +17,7 @@
 #define __SDB_H__
 
 #include <common.h>
+#include "ringbuffer.h"
 
 enum WP_TYPE {
   WP_TYPE = 0,

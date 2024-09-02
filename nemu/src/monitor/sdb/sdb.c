@@ -280,4 +280,5 @@ void init_sdb() {
 
   // test_expr();
   // sdb_set_batch_mode();
+  IFDEF(CONFIG_ITRACE, RingBuffer_create());
 }
