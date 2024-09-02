@@ -19,7 +19,6 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/paddr.h>
-#include "ringbuffer.h"
 
 static int is_batch_mode = false;
 
