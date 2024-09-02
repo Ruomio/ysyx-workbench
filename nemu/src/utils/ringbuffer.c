@@ -46,7 +46,7 @@ int RingBuffer_read(char *target, int idx) {
 void RingBuffer_print() {
     assert(buffer);
     for(int i=0; i<buffer->length; i++) {
-        if(strlen(buffer->buf[i]) != 0) {
+        if(strcmp(buffer->buf[i], "") != 0) {
             printf("%s\n", buffer->buf[i]);
         }
     }
