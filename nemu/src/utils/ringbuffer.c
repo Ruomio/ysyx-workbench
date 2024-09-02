@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-
+#include <common.h>
 #include "ringbuffer.h"
-#include "debug.h"
 
 static RingBuffer *buffer = NULL;
 

@@ -19,8 +19,6 @@
 #include <locale.h>
 
 #include "../../src/monitor/sdb/sdb.h"
-#include "ringbuffer.h"
-#include "utils.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -79,6 +77,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
+  RingBuffer_write(s->logbuf, strlen(s->logbuf));
 #endif
 }
 
@@ -86,7 +85,6 @@ static void execute(uint64_t n) {
   Decode s;
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
-    RingBuffer_write(s.logbuf, strlen(s.logbuf));
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
