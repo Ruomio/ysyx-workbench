@@ -77,6 +77,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
+  RingBuffer_write(s->logbuf, strlen(s->logbuf));
 #endif
 }
 
@@ -131,6 +132,8 @@ void cpu_exec(uint64_t n) {
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
+
+    if(nemu_state.state == NEMU_ABORT) {RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file();}
       // fall through
     case NEMU_QUIT: statistic();
   }
