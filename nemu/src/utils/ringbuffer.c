@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "ringbuffer.h"
 #include "debug.h"
@@ -66,7 +67,9 @@ void RingBuffer_save_file() {
     FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ringbuffer-log.txt", "w");
 
     for(int i=0; i<buffer->length; i++) {
-
+        if(strlen(buffer->buf[i]) != 0) {
+            fprintf(fp, "%s", buffer->buf[i]);
+        }
     }
 
     fclose(fp);
