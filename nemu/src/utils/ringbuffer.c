@@ -68,7 +68,7 @@ void RingBuffer_save_file() {
 
     for(int i=0; i<buffer->length; i++) {
         if(strlen(buffer->buf[i]) != 0) {
-            fprintf(fp, "%s", buffer->buf[i]);
+            fprintf(fp, "%s\n", buffer->buf[i]);
         }
     }
 
