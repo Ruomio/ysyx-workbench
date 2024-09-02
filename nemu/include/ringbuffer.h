@@ -28,6 +28,7 @@ void RingBuffer_print();
 
 int RingBuffer_add_arrow();
 
+void RingBuffer_save_file();
 // for test
 void echo();
 

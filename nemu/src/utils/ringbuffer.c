@@ -50,7 +50,7 @@ int RingBuffer_read(char *target, int idx) {
 void RingBuffer_print() {
     assert(buffer);
     for(int i=0; i<buffer->length; i++) {
-        if(strlen(buffer->buf[i]+3) != 0) {
+        if(strlen(buffer->buf[i]) != 0) {
             puts(buffer->buf[i]);
         }
     }
@@ -60,4 +60,14 @@ int RingBuffer_add_arrow() {
     char *str = buffer->buf[buffer->idx-1];
     memcpy(str, "-> ", 3);
     return 0;
+}
+
+void RingBuffer_save_file() {
+    FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ringbuffer-log.txt", "w");
+
+    for(int i=0; i<buffer->length; i++) {
+
+    }
+
+    fclose(fp);
 }
