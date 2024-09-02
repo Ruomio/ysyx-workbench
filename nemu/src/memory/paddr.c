@@ -36,7 +36,7 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
     int idx = MtraceBuf.idx;
     memset(MtraceBuf.m_buffer[idx], 0, 64);
     memset(MtraceBuf.m_buffer[idx], ' ', 3);
-    sprintf((char *)MtraceBuf.m_buffer[idx]+3, "0x%08x    %d    %u", addr, len, data);
+    sprintf((char *)MtraceBuf.m_buffer[idx]+3, "0x%08x    %d    0x%08x", addr, len, data);
     MtraceBuf.idx = (idx+1)%64;
   }
 
