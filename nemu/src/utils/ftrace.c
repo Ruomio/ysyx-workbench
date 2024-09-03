@@ -137,6 +137,7 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
     }
   }
   fprintf(out, "%s\n", str);
+  printf("%s\n", str);
 
   return 0;
 }
