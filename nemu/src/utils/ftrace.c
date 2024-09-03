@@ -110,7 +110,7 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
       // pc
       sscanf(str+idx, "0x%x: ", &pc);
       idx += strlen(str+idx);
-      printf("%s\n", str);
+      // printf("%s\n", str);
       
       // space
       for(int i=0; i<2*top; i++) {
