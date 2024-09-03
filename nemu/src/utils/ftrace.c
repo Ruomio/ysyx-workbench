@@ -44,9 +44,9 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   int strtab_index = -1;
 
   for (int i = 0; i < ehdr.e_shnum; i++) {
-    if (shdrs[i].sh_type == 2 && symtab_index != -1) { // SHT_SYMTAB
+    if (shdrs[i].sh_type == 2 && symtab_index == -1) { // SHT_SYMTAB
       symtab_index = i;
-    } else if (shdrs[i].sh_type == 3 && strtab_index != -1) { // SHT_STRTAB
+    } else if (shdrs[i].sh_type == 3 && strtab_index == -1) { // SHT_STRTAB
       strtab_index = i;
     }
   }
