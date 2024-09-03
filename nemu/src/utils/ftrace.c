@@ -53,7 +53,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
     }
   }
   printf("%d %d \n", symtab_index, strtab_index);
-
+  strtab_index -= 1;
   // 读取符号表
   Elf32_Sym *symbols = malloc(shdrs[symtab_index].sh_size);
   fseek(file, shdrs[symtab_index].sh_offset, SEEK_SET);
