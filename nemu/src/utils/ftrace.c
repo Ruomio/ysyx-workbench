@@ -19,7 +19,9 @@
 
 void init_ftrace(const char *img_file, const char *ftrace_file) {
   if(!img_file) return;
-  memcpy((char *)(img_file+strlen(img_file)-3), "elf", 3);
+  char *elf_file = calloc(1, strlen(img_file) + 1);
+  strcpy(elf_file, img_file);
+  memcpy((char *)(elf_file+strlen(elf_file)-3), "elf", 3);
   Log("entry init_ftrace, %s\n", img_file);
 
   if(!ftrace_file) {
@@ -69,6 +71,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
     free(symbols);
     free(strtab);
     fclose(file);
+    free(elf_file);
 
   Log("leave init_ftrace");
 }
