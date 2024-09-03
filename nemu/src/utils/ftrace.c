@@ -16,6 +16,21 @@
 
 #include <common.h>
 #include <elf.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+
+#define NR_FT (1024)
+
+struct Ftrace_struct{
+  uint32_t addr;
+  char name[64];
+  size_t size;
+}Ftrace_tab[NR_FT];
+
+
+static FILE *out = NULL;
 
 void init_ftrace(const char *img_file, const char *ftrace_file) {
   if(!img_file) return;
@@ -25,9 +40,13 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
 
   Log("Get function name and address from %s", elf_file);
 
+
   if(!ftrace_file) {
     ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ftrace-log.txt";
   }
+  FILE *ftrace_log = fopen(ftrace_file, "w");
+  out = ftrace_log;
+
   FILE *file = fopen(elf_file, "rb");
   assert(file);
 
@@ -61,10 +80,14 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   fseek(file, shdrs[strtab_index].sh_offset, SEEK_SET);
   fread(strtab, shdrs[strtab_index].sh_size, 1, file);
 
+  memset(Ftrace_tab, 0, sizeof(Ftrace_tab));
   // 打印函数名和地址
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
     if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
-      printf("Function: %10s, Address: 0x%x    \n",(strtab + symbols[i].st_name), symbols[i].st_value);
+      // printf("Function: %10s, Address: 0x%x    \n",(strtab + symbols[i].st_name), symbols[i].st_value);
+      strcpy(Ftrace_tab[i].name, strtab + symbols[i].st_name);
+      Ftrace_tab[i].addr = symbols[i].st_value;
+      Ftrace_tab[i].size = symbols[i].st_size; 
     }
   }
 
@@ -73,4 +96,46 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   free(strtab);
   fclose(file);
   free(elf_file);
+}
+
+
+int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
+  static int top = 0;
+
+  char str[512] = {};
+  char *tmp = str;
+
+  for(int i=0; i<NR_FT; i++) {
+    if(addr == Ftrace_tab[i].addr) {
+      // pc
+      sscanf(tmp, "0x%x: ", &pc);
+      tmp += strlen(tmp);
+      
+      // space
+      for(int i=0; i<2*top; i++) {
+        sscanf(tmp, " ");
+        tmp += 1;
+      }
+
+      // type: call or ret
+      if(rs1 == 1u && rd == 0) {
+        top--;
+        sscanf(tmp, "ret  ");
+        tmp += strlen(tmp);
+      }
+      else {
+        top ++;
+        sscanf(tmp, "call ");
+        tmp += strlen(tmp);
+      }
+
+      // function name
+      sscanf(tmp, "[%s@0x%x]", Ftrace_tab[i].name, &addr);
+
+
+    }
+  }
+  fprintf(out, "%s\n", str);
+
+  return 0;
 }
