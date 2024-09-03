@@ -14,6 +14,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "memory/paddr.h"
 #include <common.h>
 #include <elf.h>
 
@@ -63,7 +64,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   // 打印函数名和地址
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
     if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
-      printf("Offset: %x, Index: %u ,Function: %10p, Address: 0x%x    \n",symbols[i].st_size, symbols[i].st_name, strtab + symbols[i].st_name, symbols[i].st_value);
+      printf("Offset: %x, Index: %u ,Function: %10s, Address: 0x%x    \n",symbols[i].st_size, symbols[i].st_name, (strtab + symbols[i].st_name), symbols[i].st_value);
     }
   }
 
