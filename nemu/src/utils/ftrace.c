@@ -16,10 +16,6 @@
 
 #include <common.h>
 #include <elf.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-
 
 #define NR_FT (1024)
 
