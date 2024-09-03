@@ -27,7 +27,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   if(!ftrace_file) {
     ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ftrace-log.txt";
   }
-  FILE *file = fopen(img_file, "rb");
+  FILE *file = fopen(elf_file, "rb");
   assert(file);
 
   Elf32_Ehdr ehdr;
