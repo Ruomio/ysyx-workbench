@@ -22,7 +22,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   char *elf_file = calloc(1, strlen(img_file) + 1);
   strcpy(elf_file, img_file);
   memcpy((char *)(elf_file+strlen(elf_file)-3), "elf", 3);
-  Log("entry init_ftrace, %s\n", img_file);
+  Log("entry init_ftrace, %s\n", elf_file);
 
   if(!ftrace_file) {
     ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ftrace-log.txt";
