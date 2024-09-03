@@ -80,7 +80,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   // 打印函数名和地址
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
     if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
-      printf("Function: %10s, Address: 0x%x  Size: %d  \n",(strtab + symbols[i].st_name), symbols[i].st_value, symbols[i].st_size);
+      // printf("Function: %10s, Address: 0x%x  Size: %d  \n",(strtab + symbols[i].st_name), symbols[i].st_value, symbols[i].st_size);
       strcpy(Ftrace_tab[i].name, strtab + symbols[i].st_name);
       Ftrace_tab[i].addr = symbols[i].st_value;
       Ftrace_tab[i].size = symbols[i].st_size; 
@@ -95,15 +95,13 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
 }
 
 
-int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
+int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
   static int top = 0;
 
   char str[512] = {};
   int idx=0;
 
-
-  printf("rs1 = %x, rd = %x\n", rs1, rd);
-
+  // printf("rs1 = %x, rd = %x\n", rs1, rd);
   for(int i=0; i<NR_FT; i++) {
     if(addr >= Ftrace_tab[i].addr && addr < Ftrace_tab[i].addr + Ftrace_tab[i].size) {
       // pc
@@ -137,6 +135,14 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
   }
   fprintf(out, "%s\n", str);
   printf("%s\n", str);
+
+  return 0;
+}
+
+int close_ftrace() {
+  if(out) {
+    fclose(out);
+  }
 
   return 0;
 }
