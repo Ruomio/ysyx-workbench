@@ -109,7 +109,7 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
   printf("rs1 = %x, rd = %x\n", rs1, rd);
 
   for(int i=0; i<NR_FT; i++) {
-    if(addr == Ftrace_tab[i].addr) {
+    if(addr >= Ftrace_tab[i].addr && addr < Ftrace_tab[i].addr + Ftrace_tab[i].size) {
       // pc
       sprintf(str+idx, "0x%x: ", pc);
       idx += strlen(str+idx);
@@ -133,7 +133,7 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
       }
 
       // function name
-      sprintf(str+idx, "[%s@0x%x]", Ftrace_tab[i].name, addr);
+      sprintf(str+idx, "[%s@0x%x]", Ftrace_tab[i].name, Ftrace_tab[i].addr);
       idx += strlen(str+idx);
 
 
