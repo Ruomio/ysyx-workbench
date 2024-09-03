@@ -23,7 +23,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   strcpy(elf_file, img_file);
   memcpy((char *)(elf_file+strlen(elf_file)-3), "elf", 3);
 
-  Log("Get function name and address from %s\n", elf_file);
+  Log("Get function name and address from %s", elf_file);
 
   if(!ftrace_file) {
     ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ftrace-log.txt";
