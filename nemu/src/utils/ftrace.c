@@ -18,7 +18,7 @@
 #include <elf.h>
 
 void init_ftrace(const char *img_file, const char *ftrace_file) {
-  assert(img_file);
+  if(!img_file) return;
   if(!ftrace_file) {
     ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ftrace-log.txt";
   }
