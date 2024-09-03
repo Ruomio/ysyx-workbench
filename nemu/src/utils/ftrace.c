@@ -105,6 +105,9 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
   char str[512] = {};
   int idx=0;
 
+
+  printf("rs1 = %x, rd = %x\n", rs1, rd);
+
   for(int i=0; i<NR_FT; i++) {
     if(addr == Ftrace_tab[i].addr) {
       // pc
@@ -117,7 +120,6 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
         idx += strlen(str+idx);
       }
 
-      printf("rs1 = %x, rd = %x\n", rs1, rd);
       // type: call or ret
       if(rs1 == 0 && rd == 0) {
         top--;
