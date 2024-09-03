@@ -13,8 +13,6 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-#ifdef CONFIG_FTRACE_COND
-
 #include <common.h>
 #include <elf.h>
 
@@ -147,5 +145,3 @@ int close_ftrace() {
 
   return 0;
 }
-
-#endif
