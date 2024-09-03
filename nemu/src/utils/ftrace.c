@@ -19,7 +19,7 @@
 
 void init_ftrace(const char *img_file, const char *ftrace_file) {
   if(!img_file) return;
-  memcpy((char *)(img_file+strlen(img_file)-4), "elf", 3);
+  memcpy((char *)(img_file+strlen(img_file)-3), "elf", 3);
   Log("entry init_ftrace, %s\n", img_file);
 
   if(!ftrace_file) {
