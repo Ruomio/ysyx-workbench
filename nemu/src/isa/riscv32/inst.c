@@ -38,8 +38,8 @@ enum {
 #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS(i, 30, 21) << 1) | (BITS(i, 20, 20) << 11) | (BITS(i, 19, 12) << 12); } while(0)
 #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1) | (BITS(i, 7, 7) << 11); } while(0)
 
-int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd);
-int close_ftrace();
+IFDEF(CONFIG_FTRACE_COND, int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd));
+IFDEF(CONFIG_FTRACE_COND, int close_ftrace());
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;
@@ -71,8 +71,8 @@ static int decode_exec(Decode *s) {
   /* RV32I */
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, R(rd) = s->pc + imm);
-  INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, R(rd) = s->snpc; s->dnpc = s->pc + imm; update_ftrace(s->pc, s->dnpc, rand()%UINT32_MAX, BITS(s->isa.inst.val, 11, 7)));
-  INSTPAT("??????? ????? ????? ??? ????? 11001 11", jalr   , I, R(rd) = s->snpc; s->dnpc = (src1 + imm)&~1u; update_ftrace(s->pc, s->dnpc, BITS(s->isa.inst.val, 19, 15), BITS(s->isa.inst.val, 11, 7)));
+  INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, R(rd) = s->snpc; s->dnpc = s->pc + imm; IFDEF(CONFIG_FTRACE_COND, update_ftrace(s->pc, s->dnpc, rand()%UINT32_MAX, BITS(s->isa.inst.val, 11, 7))));
+  INSTPAT("??????? ????? ????? ??? ????? 11001 11", jalr   , I, R(rd) = s->snpc; s->dnpc = (src1 + imm)&~1u; IFDEF(CONFIG_FTRACE_COND, update_ftrace(s->pc, s->dnpc, BITS(s->isa.inst.val, 19, 15), BITS(s->isa.inst.val, 11, 7))));
 
   INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, (src1 == src2) ? (s->dnpc = s->pc + imm) : 0);
   INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, (src1 != src2) ? (s->dnpc = s->pc + imm) : 0); 
@@ -118,7 +118,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 00000 00000 001 00000 00011 11", fence.i, N, );       // sync insts
 
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, ); 
-  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10)); close_ftrace()); // R(10) is $a0
+  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10)); IFDEF(CONFIG_FTRACE_COND, close_ftrace())); // R(10) is $a0
   INSTPAT("??????? ????? ????? 001 00000 11100 11", csrrw  , I, ); 
   INSTPAT("??????? ????? ????? 010 00000 11100 11", csrrs  , I, ); 
   INSTPAT("??????? ????? ????? 011 00000 11100 11", csrrc  , I, ); 
