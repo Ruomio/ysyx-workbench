@@ -31,47 +31,47 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   assert(file);
 
   Elf32_Ehdr ehdr;
-    fread(&ehdr, sizeof(ehdr), 1, file);
-    
-    // 读取节头
-    fseek(file, ehdr.e_shoff, SEEK_SET);
-    Elf32_Shdr *shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
-    fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, file);
+  fread(&ehdr, sizeof(ehdr), 1, file);
+  
+  // 读取节头
+  fseek(file, ehdr.e_shoff, SEEK_SET);
+  Elf32_Shdr *shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
+  fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, file);
 
-    // 找到符号表和字符串表
-    int symtab_index = -1;
-    int strtab_index = -1;
+  // 找到符号表和字符串表
+  int symtab_index = -1;
+  int strtab_index = -1;
 
-    for (int i = 0; i < ehdr.e_shnum; i++) {
-        if (shdrs[i].sh_type == 2) { // SHT_SYMTAB
-            symtab_index = i;
-        } else if (shdrs[i].sh_type == 3) { // SHT_STRTAB
-            strtab_index = i;
-        }
+  for (int i = 0; i < ehdr.e_shnum; i++) {
+    if (shdrs[i].sh_type == 2) { // SHT_SYMTAB
+      symtab_index = i;
+    } else if (shdrs[i].sh_type == 3) { // SHT_STRTAB
+      strtab_index = i;
     }
+  }
 
-    // 读取符号表
-    Elf32_Sym *symbols = malloc(shdrs[symtab_index].sh_size);
-    fseek(file, shdrs[symtab_index].sh_offset, SEEK_SET);
-    fread(symbols, shdrs[symtab_index].sh_size, 1, file);
+  // 读取符号表
+  Elf32_Sym *symbols = malloc(shdrs[symtab_index].sh_size);
+  fseek(file, shdrs[symtab_index].sh_offset, SEEK_SET);
+  fread(symbols, shdrs[symtab_index].sh_size, 1, file);
 
-    // 读取字符串表
-    char *strtab = malloc(shdrs[strtab_index].sh_size);
-    fseek(file, shdrs[strtab_index].sh_offset, SEEK_SET);
-    fread(strtab, shdrs[strtab_index].sh_size, 1, file);
+  // 读取字符串表
+  char *strtab = malloc(shdrs[strtab_index].sh_size);
+  fseek(file, shdrs[strtab_index].sh_offset, SEEK_SET);
+  fread(strtab, shdrs[strtab_index].sh_size, 1, file);
 
-    // 打印函数名和地址
-    for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
-        if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
-            printf("Function: %s, Address: 0x%x\n", strtab + symbols[i].st_name, symbols[i].st_value);
-        }
+  // 打印函数名和地址
+  for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
+    if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
+      printf("Function: %s, Address: 0x%x\n", strtab + symbols[i].st_name, symbols[i].st_value);
     }
+  }
 
-    free(shdrs);
-    free(symbols);
-    free(strtab);
-    fclose(file);
-    free(elf_file);
+  free(shdrs);
+  free(symbols);
+  free(strtab);
+  fclose(file);
+  free(elf_file);
 
   Log("leave init_ftrace");
 }
