@@ -13,7 +13,7 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-#if CONFIG_FTRACE_COND
+#ifdef CONFIG_FTRACE_COND
 
 #include <common.h>
 #include <elf.h>
