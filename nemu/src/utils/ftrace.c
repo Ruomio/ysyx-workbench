@@ -108,36 +108,35 @@ int ftrace_update(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
   for(int i=0; i<NR_FT; i++) {
     if(addr == Ftrace_tab[i].addr) {
       // pc
-      sscanf(str+idx, "0x%x: ", &pc);
+      sprintf(str+idx, "0x%x: ", pc);
       idx += strlen(str+idx);
-      // printf("%s\n", str);
       
       // space
       for(int i=0; i<2*top; i++) {
-        sscanf(str+idx, " ");
+        sprintf(str+idx, " ");
         idx += strlen(str+idx);
       }
 
       // type: call or ret
       if(rs1 == 1u && rd == 0) {
         top--;
-        sscanf(str+idx, "ret  ");
+        sprintf(str+idx, "ret  ");
         idx += strlen(str+idx);
       }
       else {
         top ++;
-        sscanf(str+idx, "call ");
+        sprintf(str+idx, "call ");
         idx += strlen(str+idx);
       }
 
       // function name
-      sscanf(str+idx, "[%s@0x%x]", Ftrace_tab[i].name, &addr);
+      sprintf(str+idx, "[%s@0x%x]", Ftrace_tab[i].name, addr);
       idx += strlen(str+idx);
 
 
     }
   }
-  // fprintf(out, "%s\n", str);
+  fprintf(out, "%s\n", str);
 
   return 0;
 }
