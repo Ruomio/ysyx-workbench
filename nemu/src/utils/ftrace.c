@@ -56,9 +56,23 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   fread(symbols, shdrs[symtab_index].sh_size, 1, file);
 
   // 读取字符串表
-  char *strtab = malloc(shdrs[strtab_index].sh_size);
-  fseek(file, shdrs[strtab_index].sh_offset, SEEK_SET);
-  fread(strtab, shdrs[strtab_index].sh_size, 1, file);
+  // char *strtab = malloc(shdrs[strtab_index].sh_size);
+  // fseek(file, shdrs[strtab_index].sh_offset, SEEK_SET);
+  // fread(strtab, shdrs[strtab_index].sh_size, 1, file);
+
+   // 读取字符串表
+    char *strtab = NULL;
+    if (strtab_index != -1) {
+        strtab = malloc(shdrs[strtab_index].sh_size);
+        fseek(file, shdrs[strtab_index].sh_offset, SEEK_SET);
+        fread(strtab, shdrs[strtab_index].sh_size, 1, file);
+    } else {
+        fprintf(stderr, "String table not found.\n");
+        free(shdrs);
+        free(symbols);
+        fclose(file);
+        return;
+    }
 
   // 打印函数名和地址
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
