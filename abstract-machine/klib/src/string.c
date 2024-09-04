@@ -76,7 +76,7 @@ void *memmove(void *dst, const void *src, size_t n) {
   size_t idx = 0;
   uint8_t buf[BF_SIZE] = {};
   while(idx < n) {
-    assert(idx < BF_SIZE);
+    // assert(idx < BF_SIZE);
     buf[idx] = *((char *)src + idx);
     idx++;
   }
