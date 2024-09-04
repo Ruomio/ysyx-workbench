@@ -106,20 +106,25 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
       sprintf(str+idx, "0x%x: ", pc);
       idx += strlen(str+idx);
       
-      // space
-      for(int i=0; i<2*top; i++) {
-        sprintf(str+idx, " ");
-        idx += strlen(str+idx);
-      }
 
       // type: call or ret
       if(rs1 == 1 && rd == 0) {
-        top -= 2;
+        top--;
+        // space
+        for(int i=0; i<2*top; i++) {
+          sprintf(str+idx, " ");
+          idx += strlen(str+idx);
+        }
         sprintf(str+idx, "ret  ");
         idx += strlen(str+idx);
       }
       else {
         top ++;
+        // space
+        for(int i=0; i<2*top; i++) {
+          sprintf(str+idx, " ");
+          idx += strlen(str+idx);
+        }
         sprintf(str+idx, "call ");
         idx += strlen(str+idx);
       }
