@@ -100,7 +100,7 @@ void *memcpy(void *out, const void *in, size_t n) {
 
 int memcmp(const void *s1, const void *s2, size_t n) {
   for(int i=0; (i<n) && (*((uint8_t*)s1 + i) != '\0' || *((uint8_t*)s2 + i) != '\0') ; i++) {
-    if(*((uint8_t*)s1 + i) == '\0') return *((uint8_t*)s2 + i);
+    if(*((uint8_t*)s1 + i) == '\0') return -*((uint8_t*)s2 + i);
     else if(*((uint8_t*)s2 + i) == '\0') return *((uint8_t*)s1 + i);
     else if(*((uint8_t *)s1 + i) != *((uint8_t *)s2 + i)) {
       return *((uint8_t *)s1 + i) - *((uint8_t *)s2 + i);

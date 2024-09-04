@@ -1,25 +1,40 @@
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
-#include <stdarg.h>
+#include <stdint.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 #define NR_SIZE 1024
 
-static int itoa(int val, char *buf, char type);
+static int itoa(double val, char *buf, char type);
 
-static int itoa_recur(int val, char *buf, char type) {
+static int itoa_recur(double val, char *buf, char type, int align, int zero_pad, int width, int precision) {
   char *tmp_buf = buf;
   tmp_buf += itoa(val, buf, type);
   *tmp_buf++ = '\0';
+  if(tmp_buf - buf -1 < width) {
+    if(align == 0) { // right align default
+      int len = strlen(buf);
+      memmove((buf+width-len), buf, len+1);
+      if(zero_pad) memset(buf, '0', width-len);
+      else memset(buf, ' ', width-len);
+    } 
+    else {  // left align, zero_pad is invalid
+      int len = strlen(buf);
+      memset(buf+len, ' ', width - len + 1);
+      buf[width] = '\0';
+    }
+  }
   return tmp_buf - buf;
 }
 
-static int itoa(int val, char *buf, char type) {
+static int itoa(double ival, char *buf, char type) {
   char *tmp_buf = buf;
+  uint32_t uval = (uint32_t)ival;
+  int32_t val = (int32_t)ival;
   // static bool is_prefix = false;
-  if(val < 0) {
+  if(val < 0 && (type = 'd' || type == 'i')) {
     *tmp_buf++ = '-';
     val = -val;
   }
@@ -31,27 +46,44 @@ static int itoa(int val, char *buf, char type) {
       *tmp_buf++ = val%10 + '0';
       break;
     }
-    case 'x': {
-      if(val/16 != 0) {
-        tmp_buf += itoa(val/16, tmp_buf, 'x');
+    case 'i': {
+      if(val/10 != 0) {
+        tmp_buf += itoa(val/10, tmp_buf, 'i');
       }
-      if(val%16 <= 9) *tmp_buf++ = val%16 + '0';
-      else *tmp_buf++ = val%16 - 10 + 'a';
+      *tmp_buf++ = val%10 + '0';
+      break;
+    }
+    case 'x': {
+      if(uval/16 != 0) {
+        tmp_buf += itoa(uval/16, tmp_buf, 'x');
+      }
+      if(uval%16 <= 9) *tmp_buf++ = uval%16 + '0';
+      else *tmp_buf++ = uval%16 - 10 + 'a';
       break;
     }
     case 'X': {
-      if(val/16 != 0) {
-        tmp_buf += itoa(val/16, tmp_buf, 'X');
+      if(uval/16 != 0) {
+        tmp_buf += itoa(uval/16, tmp_buf, 'X');
       }
-      if(val%16 <= 9) *tmp_buf++ = val%16 + '0';
-      else *tmp_buf++ = val%16 - 10 + 'A';
+      if(uval%16 <= 9) *tmp_buf++ = uval%16 + '0';
+      else *tmp_buf++ = uval%16 - 10 + 'A';
       break;
     }
     case 'o': {
-      if(val/8 != 0) {
-        tmp_buf += itoa(val/8, tmp_buf, 'o');
+      if(uval/8 != 0) {
+        tmp_buf += itoa(uval/8, tmp_buf, 'o');
       }
-      *tmp_buf++ = val%8 + '0';
+      *tmp_buf++ = uval%8 + '0';
+      break;
+    }
+    case 'f': {
+      int32_t integ = (int32_t)ival;
+      float decimal = ival - integ;
+      while(decimal != (int32_t)decimal) decimal *= 10;
+      int32_t decimal_to_integ = (int32_t)decimal;
+      tmp_buf += itoa(ival, tmp_buf, 'i');
+      *tmp_buf++ = '.';
+      tmp_buf += itoa(decimal_to_integ, tmp_buf, 'i');
       break;
     }
 
@@ -80,7 +112,8 @@ int printf(const char *fmt, ...) {
 int vsprintf(char *out, const char *fmt, va_list ap) {
   char *p = NULL;
   char tmp[NR_SIZE] = {};
-  va_list p_next = ap;
+  va_list p_next;
+  va_copy(p_next, ap);
 
   for(p = out; *fmt != '\0'; fmt++) {
     if(*fmt != '%') {
@@ -89,25 +122,62 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
     }
 
     fmt++;
+    // 初始化标志和格式参数
+    int align = 0;
+    int zero_pad = 0;
+    int width = 0;
+    int precision = -1; // 默认精度为 -1（表示不指定）
+
+    if(*fmt == '-') {
+      align = 1;
+    }
+    if(*fmt == '0') {
+      zero_pad = 1;
+    }
+    while(*fmt>= '0' && *fmt <= '9') {
+      width = width*10 + (*fmt-'0');
+      fmt++;
+    }
+
+    if(*fmt == '.') {
+      fmt++;
+      while(*fmt >= '0' && *fmt <= '9') {
+        precision = precision*10 + (*fmt - '0');
+      }
+    }
 
     switch(*fmt) {
       case 'd': {
         int val = va_arg(p_next, int);
-        itoa_recur(val, tmp, 'd'); 
+        itoa_recur(val, tmp, 'd', align, zero_pad, width, precision); 
+        strcpy(p, tmp);
+        p += strlen(tmp);
+        break;
+      } 
+      case 'i': {
+        int val = va_arg(p_next, int);
+        itoa_recur(val, tmp, 'i', align, zero_pad, width, precision); 
+        strcpy(p, tmp);
+        p += strlen(tmp);
+        break;
+      } 
+      case 'o': {
+        int val = va_arg(p_next, int);
+        itoa_recur(val, tmp, 'o', align, zero_pad, width, precision); 
         strcpy(p, tmp);
         p += strlen(tmp);
         break;
       } 
       case 'x': {
         int val = va_arg(p_next, int);
-        itoa_recur(val, tmp, 'x');
+        itoa_recur(val, tmp, 'x', align, zero_pad, width, precision);
         strcpy(p, tmp);
         p += strlen(tmp);
         break;
       }
       case 'X': {
         int val = va_arg(p_next, int);
-        itoa_recur(val, tmp, 'X');
+        itoa_recur(val, tmp, 'X', align, zero_pad, width, precision);
         strcpy(p, tmp);
         p += strlen(tmp);
         break;
@@ -121,6 +191,14 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         char *s = va_arg(p_next, char *);
         strcpy(p, s);
         p += strlen(s);
+        break;
+      }
+
+      case 'f': {
+        float val = va_arg(p_next, double);
+        itoa_recur(val, tmp, 'f', align, zero_pad, width, precision);
+        strcpy(p, tmp);
+        p += strlen(tmp);
         break;
       }
 
