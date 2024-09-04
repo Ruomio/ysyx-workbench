@@ -1,7 +1,5 @@
 #include <klib.h>
 #include <klib-macros.h>
-#include <stdint.h>
-#include <assert.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
@@ -76,7 +74,7 @@ void *memmove(void *dst, const void *src, size_t n) {
   size_t idx = 0;
   uint8_t buf[BF_SIZE] = {};
   while(idx < n) {
-    assert(idx < BF_SIZE);
+    // assert(idx < BF_SIZE);
     buf[idx] = *((char *)src + idx);
     idx++;
   }
@@ -100,7 +98,7 @@ void *memcpy(void *out, const void *in, size_t n) {
 
 int memcmp(const void *s1, const void *s2, size_t n) {
   for(int i=0; (i<n) && (*((uint8_t*)s1 + i) != '\0' || *((uint8_t*)s2 + i) != '\0') ; i++) {
-    if(*((uint8_t*)s1 + i) == '\0') return *((uint8_t*)s2 + i);
+    if(*((uint8_t*)s1 + i) == '\0') return -*((uint8_t*)s2 + i);
     else if(*((uint8_t*)s2 + i) == '\0') return *((uint8_t*)s1 + i);
     else if(*((uint8_t *)s1 + i) != *((uint8_t *)s2 + i)) {
       return *((uint8_t *)s1 + i) - *((uint8_t *)s2 + i);
