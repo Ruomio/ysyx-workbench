@@ -114,7 +114,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
 
       // type: call or ret
       if(rs1 == 1 && rd == 0) {
-        top--;
+        top -= 2;
         sprintf(str+idx, "ret  ");
         idx += strlen(str+idx);
       }
