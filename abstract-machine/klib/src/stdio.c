@@ -48,28 +48,28 @@ static int itoa(double ival, char *buf, char type) {
   uint32_t uval = (uint32_t)ival;
   int32_t val = (int32_t)ival;
   // static bool is_prefix = false;
-  if(val < 0 && (type = 'd' || type == 'i')) {
+  if(val < 0 && (type == 'd' || type == 'i')) {
     *tmp_buf++ = '-';
     val = -val;
   }
   switch(type) {
     case 'd': {
       if(val/10 != 0) {
-        tmp_buf += itoa(val/10, tmp_buf, 'd');
+        tmp_buf += itoa((int32_t)(val/10), tmp_buf, 'd');
       }
       *tmp_buf++ = val%10 + '0';
       break;
     }
     case 'i': {
       if(val/10 != 0) {
-        tmp_buf += itoa(val/10, tmp_buf, 'i');
+        tmp_buf += itoa((int32_t)(val/10), tmp_buf, 'i');
       }
       *tmp_buf++ = val%10 + '0';
       break;
     }
     case 'x': {
       if(uval/16 != 0) {
-        tmp_buf += itoa(uval/16, tmp_buf, 'x');
+        tmp_buf += itoa((uint32_t)(uval/16), tmp_buf, 'x');
       }
       if(uval%16 <= 9) *tmp_buf++ = uval%16 + '0';
       else *tmp_buf++ = uval%16 - 10 + 'a';
@@ -77,7 +77,7 @@ static int itoa(double ival, char *buf, char type) {
     }
     case 'X': {
       if(uval/16 != 0) {
-        tmp_buf += itoa(uval/16, tmp_buf, 'X');
+        tmp_buf += itoa((uint32_t)(uval/16), tmp_buf, 'X');
       }
       if(uval%16 <= 9) *tmp_buf++ = uval%16 + '0';
       else *tmp_buf++ = uval%16 - 10 + 'A';
@@ -85,7 +85,7 @@ static int itoa(double ival, char *buf, char type) {
     }
     case 'o': {
       if(uval/8 != 0) {
-        tmp_buf += itoa(uval/8, tmp_buf, 'o');
+        tmp_buf += itoa((uint32_t)(uval/8), tmp_buf, 'o');
       }
       *tmp_buf++ = uval%8 + '0';
       break;
@@ -100,6 +100,16 @@ static int itoa(double ival, char *buf, char type) {
       tmp_buf += itoa(decimal_to_integ, tmp_buf, 'd');
       break;
     }
+    case 'p': {
+      long valh = (long long)ival >> 32;
+      long vall = (long)ival;
+      *tmp_buf++ = '0'; 
+      *tmp_buf++ = 'x'; 
+      tmp_buf += itoa(valh, tmp_buf, 'x');
+      tmp_buf += itoa(vall, tmp_buf, 'x');
+      break;
+    }
+
 
     default: {
       #define MSG "Unknown format.\n"
@@ -209,10 +219,16 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         p += strlen(s);
         break;
       }
-
       case 'f': {
         double val = va_arg(p_next, double);
         itoa_recur(val, tmp, 'f', align, zero_pad, width, precision);
+        strcpy(p, tmp);
+        p += strlen(tmp);
+        break;
+      }
+      case 'p': {
+        long long val = va_arg(p_next, long long);
+        itoa_recur(val, tmp, 'p', align, zero_pad, width, precision);
         strcpy(p, tmp);
         p += strlen(tmp);
         break;
