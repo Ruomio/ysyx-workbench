@@ -101,12 +101,17 @@ static int itoa(double ival, char *buf, char type) {
       break;
     }
     case 'p': {
-      long valh = (long long)ival >> 32;
-      long vall = (long)ival;
       *tmp_buf++ = '0'; 
       *tmp_buf++ = 'x'; 
-      tmp_buf += itoa(valh, tmp_buf, 'x');
-      tmp_buf += itoa(vall, tmp_buf, 'x');
+      #if defined (__ISA_RISCV32__) || defined (__ISA_MIPS32__) || defined (__ISA_X86__)|| defined (__ISA_LONNGARCH32R__)
+        long vall = (long)ival;
+        tmp_buf += itoa(vall, tmp_buf, 'x');
+      #else
+        long valh = (long long)ival >> 32;
+        long vall = (long)ival;
+        tmp_buf += itoa(valh, tmp_buf, 'x');
+        tmp_buf += itoa(vall, tmp_buf, 'x');
+      #endif
       break;
     }
 
@@ -227,7 +232,12 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         break;
       }
       case 'p': {
+        #if defined (__ISA_RISCV32__) || defined (__ISA_MIPS32__) || defined (__ISA_X86__)|| defined (__ISA_LONNGARCH32R__)
+        long val = va_arg(p_next, long);
+        #else /* 64 bit */
         long long val = va_arg(p_next, long long);
+        #endif
+        
         itoa_recur(val, tmp, 'p', align, zero_pad, width, precision);
         strcpy(p, tmp);
         p += strlen(tmp);
