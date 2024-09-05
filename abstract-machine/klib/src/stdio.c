@@ -46,7 +46,7 @@ static int itoa_recur(double val, char *buf, char type, int align, int zero_pad,
 static int itoa(double ival, char *buf, char type) {
   char *tmp_buf = buf;
   uint32_t uval = (uint32_t)ival;
-  int32_t val = (int32_t)ival;
+  int64_t val = (int64_t)ival;
   // static bool is_prefix = false;
   if(val < 0 && (type == 'd' || type == 'i')) {
     *tmp_buf++ = '-';
