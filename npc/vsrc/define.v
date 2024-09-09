@@ -14,6 +14,6 @@
 `define ysyx_24080020_EBREAK 7'b1110011
 
 // I-TYPE
-`define ysyx_24080020_I_TYPE 7'b0000011
+`define ysyx_24080020_I_TYPE 7'b0010011
 `define ysyx_24080020_IMM_I 31:20
 `define ysyx_24080020_ADDI 3'b000
