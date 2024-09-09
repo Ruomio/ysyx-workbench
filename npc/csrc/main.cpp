@@ -8,7 +8,7 @@
 #include "Vtop__Dpi.h"
 
 
-void ebreak() {/* return; */}
+void ebreak() {return;}
 
 
 int main(int argc, char **argv) {
