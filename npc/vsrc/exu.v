@@ -14,7 +14,7 @@ module ysyx_24080020_EXU
     output reg wen
 
     // out pc
-    output reg [`ysyx_24080020_WIDT-1:0] pc
+    output reg [`ysyx_24080020_WIDTH-1:0] pc
 
     // out mem
 );
