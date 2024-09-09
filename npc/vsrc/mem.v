@@ -1,5 +1,5 @@
 `include "vsrc/define.v"
-module ysyx_24080020_MEM(
+module ysyx_24080020_memory(
     input clk,
     input rst,
     input [`ysyx_24080020_WIDTH-1:0] maddr,
@@ -11,21 +11,21 @@ module ysyx_24080020_MEM(
 
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_reg;
 
-    reg [`ysyx_24080020_WIDTH-1:0] mem[32:0];     // 4KB
+    reg [`ysyx_24080020_WIDTH-1:0] memory[32:0];     // 4KB
 
     always @(posedge clk) begin
         if(!clk) begin
-            mem[0] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            mem[1] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            mem[2] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            mem[3] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            mem[4] = 32'h00010073; //  ebreak;
+            memory[0] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[1] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[2] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[3] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[4] = 32'h00010073; //  ebreak;
         end
         else if(wen) begin
-            mem[maddr - `ysyx_24080020_MBASE] <= mdata;
+            memory[maddr - `ysyx_24080020_MBASE] <= mdata;
         end
         else begin
-            mrdata_reg <= mem[maddr - `ysyx_24080020_MBASE];
+            mrdata_reg <= memory[maddr - `ysyx_24080020_MBASE];
         end
 
     end
