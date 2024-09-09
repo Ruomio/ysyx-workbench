@@ -22,7 +22,6 @@ module ysyx_24080020_IDU (
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 imm = {{8{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
-                break;
             end
 
             `ysyx_24080020_EBREAK: begin
