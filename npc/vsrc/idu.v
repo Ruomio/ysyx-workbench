@@ -11,7 +11,6 @@ module ysyx_24080020_IDU #(
     output reg [6:0] funct7
 
 );
-    `include "vsrc/define.v"
 
     wire [9:0] control;
 
