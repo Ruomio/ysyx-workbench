@@ -22,13 +22,12 @@ int main(int argc, char **argv) {
     tfp->open("build/wave.vcd");
 
     top->rst = 0;
-    top->clk = 0;
     top->eval();
     top->rst = 1;
     top->eval();
     
     while(!contextp->gotFinish()) {
-        top->clk = ~top->clk;
+        top->clk ^= 1;
         static int i = 0;
         if(i++>1000) break;
         top->eval();
