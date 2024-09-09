@@ -5,31 +5,29 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] maddr,
     input [`ysyx_24080020_WIDTH-1:0] mdata,
     input wen,
-    output [`ysyx_24080020_WIDTH-1:0] mrdata
+    output reg [`ysyx_24080020_WIDTH-1:0] mrdata
 
 );
 
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata_reg;
 
-    reg [`ysyx_24080020_WIDTH-1:0] memory[32:0];     // 4KB
+    reg [`ysyx_24080020_WIDTH-1:0] memory[1023:0];     // 4KB
 
     always @(posedge clk) begin
-        if(!clk) begin
-            memory[0] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            memory[1] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            memory[2] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            memory[3] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            memory[4] = 32'h00010073; //  ebreak;
+        if(clk) begin
+            memory[0] <= 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[1] <= 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[2] <= 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[3] <= 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            memory[4] <= 32'h00010073; //  ebreak;
         end
         else if(wen) begin
             memory[maddr - `ysyx_24080020_MBASE] <= mdata;
         end
         else begin
-            mrdata_reg <= memory[maddr - `ysyx_24080020_MBASE];
+            mrdata <= memory[maddr - `ysyx_24080020_MBASE];
         end
 
     end
 
-    assign mrdata = mrdata_reg;
 
 endmodule
