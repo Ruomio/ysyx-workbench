@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
     tfp->open("wave.vcd");
 
     while(!contextp->gotFinish()) {
+        top->rst = 1;
         static int i = 0;
         if(i++>6000) break;
         top->eval();
