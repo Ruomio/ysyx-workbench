@@ -27,7 +27,7 @@ module ysyx_24080020_IDU #(
                 imm = {{20{1'b0}}, inst[`ysyx_24080020_IMM_I]};
             end
 
-            default: ;
+            default: imm = {WIDTH{1'b0}};
         endcase
 
 
