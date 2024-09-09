@@ -14,6 +14,7 @@ static void single_cycle() {
     dut.clk = 1;
     dut.clk = 0;
     dut.eval();
+    printf("pc = 0x%x\n", dut.pc);
 }
 
 static void reset(int n) {
