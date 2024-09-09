@@ -34,7 +34,7 @@ module ysyx_24080020_NPC(
 
     assign pc = snpc;
 
-    ysyx_24080020_MEM mem(.clk(clk), .rst(rst), .maddr(maddr), .mdata(mdata), .wen(mwen), .mrdata(inst));
+    ysyx_24080020_MEM u_mem(.clk(clk), .rst(rst), .maddr(maddr), .mdata(mdata), .wen(mwen), .mrdata(inst));
     
     ysyx_24080020_IFU ifu(.clk(clk), .rst(rst), .pc(pc), .len(`ysyx_24080020_LEN), .snpc(snpc), .maddr(maddr));
 
