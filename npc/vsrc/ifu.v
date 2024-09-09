@@ -1,17 +1,14 @@
-module ysyx_24080020_IFU #(
-    parameter  WIDTH = 32,
-    parameter DEPTH = 8 
-)
-(
+`include "vsrc/define.v"
+module ysyx_24080020_IFU (
     input clk,
     input rst,
-    input [WIDTH-1:0] pc,
+    input [`ysyx_24080020_WIDTH-1:0] pc,
     input [3:0] len,
-    output [WIDTH-1:0] snpc
+    output [`ysyx_24080020_WIDTH-1:0] snpc
     // output reg [WIDTH-1:0] inst,
 );
 
-    reg [WIDTH-1:0] snpc_reg;
+    reg [`ysyx_24080020_WIDTH-1:0] snpc_reg;
 
 
     always @(posedge clk) begin
