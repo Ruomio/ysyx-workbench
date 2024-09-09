@@ -11,7 +11,7 @@ module ysyx_24080020_EXU
     // out reg
     output [4:0] waddr,
     output reg[`ysyx_24080020_WIDTH-1:0] wdata,
-    output reg wen
+    output reg wen,
 
     // out pc
     output reg [`ysyx_24080020_WIDTH-1:0] pc
