@@ -22,14 +22,12 @@ int main(int argc, char **argv) {
     tfp->open("build/wave.vcd");
 
     top->rst = 0;
-    top->eval();
-    top->rst = 1;
-    top->eval();
     
     while(!contextp->gotFinish()) {
         top->clk ^= 1;
         static int i = 0;
         if(i++>1000) break;
+        if(i>20) top->rst = 1;
         top->eval();
         printf("pc  = 0x%x\n",top->pc);
 
