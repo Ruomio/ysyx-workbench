@@ -11,8 +11,8 @@ module ysyx_24080020_REG #(
     input [31:0] waddr,
     input [31:0] wdata,
 
-    output reg [31:0] val_raddr1,
-    output reg [31:0] val_raddr2
+    output reg [4:0] val_raddr1,
+    output reg [4:0] val_raddr2
 );
 
     reg [WIDTH-1:0] regs[WIDTH-1:0];

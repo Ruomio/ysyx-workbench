@@ -12,7 +12,7 @@ module ysyx_24080020_NPC(
     reg [2:0] funct3;
     reg [4:0] rs1;
     reg [4:0] rs2;
-    reg [19:0] imm;
+    reg [`ysyx_24080020_WIDTH-1:0] imm;
     reg [6:0] funct7;
 
     reg wen;

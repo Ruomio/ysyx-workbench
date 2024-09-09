@@ -34,4 +34,4 @@ int main() {
 }
 
 
-int ebreak() {return 0;}
+void ebreak() {return;}
