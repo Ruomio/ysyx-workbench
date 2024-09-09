@@ -1,3 +1,4 @@
+`include "vsrc/define.v"
 module ysyx_24080020_REG #(
     parameter WIDTH = 32
 ) (
