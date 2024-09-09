@@ -20,7 +20,7 @@ module ysyx_24080020_MEM(
             memory[3] <= 32'hFFFFFEB7; //  lui   x23, 0xFFF;
             memory[4] <= 32'h00010073; //  ebreak;
 
-            mrdata <= 32'b100;
+            mrdata <= 32'b0;
         end
         else if(wen) begin
             memory[maddr - `ysyx_24080020_MBASE] <= mdata;
