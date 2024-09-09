@@ -8,8 +8,6 @@
 #include "verilated_vcd_c.h"
 
 
-static TOP_NAME dut;
-
 void ebreak() {return;}
 
 
