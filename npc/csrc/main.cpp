@@ -7,8 +7,12 @@
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
 
+static bool run_flag=0;
 
-void ebreak() {return;}
+void ebreak() {
+    run_flag = 1;
+    return;
+}
 
 
 int main(int argc, char **argv) {
@@ -24,6 +28,7 @@ int main(int argc, char **argv) {
     top->rst = 0;
     
     while(!contextp->gotFinish()) {
+        if(run_flag) break;
         top->clk ^= 1;
         static int i = 0;
         if(i++>1000) break;
