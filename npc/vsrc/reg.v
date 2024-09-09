@@ -6,7 +6,6 @@ module ysyx_24080020_REG (
     input [31:0] res,
     output reg [31:0] val
 );
-    `include "define.v"
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[`ysyx_24080020_WIDTH-1:0];
 

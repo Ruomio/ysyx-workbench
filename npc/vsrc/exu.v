@@ -10,7 +10,6 @@ module ysyx_24080020_EXU #(
     input [6:0] funct7,
     output reg [WIDTH-1:0] result
 );
-    `include "define.v"
 
 
     always @(opcode or funct3) begin

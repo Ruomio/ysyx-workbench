@@ -1,5 +1,3 @@
-`include "define.v"
-
 module ysyx_24080020_IDU #(
     parameter WIDTH = 32
 )(

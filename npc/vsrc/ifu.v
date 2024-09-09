@@ -10,7 +10,6 @@ module ysyx_24080020_IFU #(
     output [WIDTH-1:0] snpc
     // output reg [WIDTH-1:0] inst,
 );
-    `include "define.v"
 
     reg [WIDTH-1:0] snpc_reg;
 

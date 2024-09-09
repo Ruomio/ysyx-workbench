@@ -4,7 +4,6 @@ module ysyx_24080020_NPC(
     input [31:0] inst,
     output [31:0] pc
 );
-    `include "define.v"
     //`include "ifu.v"
 
     reg [`ysyx_24080020_WIDTH-1:0] snpc;
