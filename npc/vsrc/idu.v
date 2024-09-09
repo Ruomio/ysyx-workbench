@@ -25,6 +25,7 @@ module ysyx_24080020_IDU #(
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 imm = {{20{1'b0}}, inst[`ysyx_24080020_IMM_I]};
+                break;
             end
 
             default: imm = {WIDTH{1'b0}};
