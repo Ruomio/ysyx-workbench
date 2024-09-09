@@ -1,4 +1,3 @@
-`include "vsrc/define.v"
 module ysyx_24080020_IDU #(
     parameter WIDTH = 32
 )(
@@ -12,6 +11,7 @@ module ysyx_24080020_IDU #(
     output reg [6:0] funct7
 
 );
+    `include "vsrc/define.v"
 
     wire [9:0] control;
 
