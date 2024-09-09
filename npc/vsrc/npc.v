@@ -32,11 +32,11 @@ module ysyx_24080020_NPC(
     reg [`ysyx_24080020_WIDTH-1:0] mrdata;
 
 
+    assign pc = snpc;
 
     ysyx_24080020_MEM mem(.clk(clk), .rst(rst), .maddr(maddr), .mdata(mdata), .wen(mwen), .mrdata(inst));
     
     ysyx_24080020_IFU ifu(.clk(clk), .rst(rst), .pc(pc), .len(`ysyx_24080020_LEN), .snpc(snpc), .maddr(maddr));
-    assign pc = snpc;
 
     ysyx_24080020_IDU idu(.inst(inst), .opcode(opcode), .rd(rd), .funct3(funct3), .rs1(rs1), .rs2(rs2), .imm(imm), .funct7(funct7));
 

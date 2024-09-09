@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
     top->rst = 0;
     top->clk = 0;
     top->rst = 1;
+    top->pc = 0x80000000;
     while(!contextp->gotFinish()) {
         top->clk = ~top->clk;
         static int i = 0;
