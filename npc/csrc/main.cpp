@@ -6,6 +6,7 @@
 static TOP_NAME dut;
 
 void nvboard_bind_all_pins(TOP_NAME *top);
+void ebreak() {return;}
 
 static void single_cycle() {
     dut.clk = 1;
@@ -33,5 +34,3 @@ int main() {
     // nvboard_quit();
 }
 
-
-void ebreak() {return;}
