@@ -24,6 +24,7 @@ module ysyx_24080020_EXU
                 case(funct3)
                     `ysyx_24080020_ADDI: begin
                         wdata <= val_raddr1 + imm;
+                        wen = 1'b1;
                     end
 
                 default: wdata <= 0;
