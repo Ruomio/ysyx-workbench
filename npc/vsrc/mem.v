@@ -1,5 +1,5 @@
 `include "vsrc/define.v"
-module ysyx_24080020_mem(
+module ysyx_24080020_MEM(
     input clk,
     input rst,
     input [`ysyx_24080020_WIDTH-1:0] maddr,
