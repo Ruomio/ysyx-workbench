@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     contextp->commandArgs(argc, argv);
     VerilatedVcdC *tfp = new VerilatedVcdC;
     
-    Vexample *top = new Vexample(contextp);
+    Vtop *top = new Vtop(contextp);
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("wave.vcd");
