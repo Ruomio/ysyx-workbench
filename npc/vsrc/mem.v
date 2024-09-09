@@ -5,9 +5,11 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] maddr,
     input [`ysyx_24080020_WIDTH-1:0] mdata,
     input wen,
-    output reg [`ysyx_24080020_WIDTH-1:0] mrdata
+    output [`ysyx_24080020_WIDTH-1:0] mrdata
 
 );
+
+    reg [`ysyx_24080020_WIDTH-1:0] mrdata_reg;
 
     reg [`ysyx_24080020_WIDTH-1:0] mem [32:0];     // 4KB
 
@@ -20,9 +22,11 @@ module ysyx_24080020_MEM(
             mem[maddr - `ysyx_24080020_MBASE] <= mdata;
         end
         else begin
-            mrdata <= mem[maddr - `ysyx_24080020_MBASE];
+            mrdata_reg <= mem[maddr - `ysyx_24080020_MBASE];
         end
 
     end
+
+    assign mrdata = mrdata_reg;
 
 endmodule
