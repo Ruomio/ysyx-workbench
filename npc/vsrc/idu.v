@@ -10,7 +10,7 @@ module ysyx_24080020_IDU (
     output reg [6:0] funct7
 
 );
-    import "DPI-C" function void ebreak();
+    // import "DPI-C" function void ebreak();
 
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
