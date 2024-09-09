@@ -3,7 +3,7 @@
 #include <nvboard.h>
 #include "Vtop.h"
 #include "svdpi.h"
-#include "Vtop__Dpi.h"`
+#include "Vtop__Dpi.h"
 
 static TOP_NAME dut;
 
