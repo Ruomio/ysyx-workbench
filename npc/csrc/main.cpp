@@ -1,39 +1,37 @@
 
+#include <cstdio>
 #include <climits>
-#include <nvboard.h>
 #include "Vtop.h"
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
 
 static TOP_NAME dut;
 
-void nvboard_bind_all_pins(TOP_NAME *top);
 void ebreak() {return;}
 
-static void single_cycle() {
-    dut.clk = 1;
-    dut.clk = 0;
-    dut.eval();
-    printf("pc = 0x%x\n", dut.pc);
-}
 
-static void reset(int n) {
-    dut.rst = 0;
-    while(n-- > 0) single_cycle();
-    dut.rst = 1;
-}
-
-int main() {
-    nvboard_bind_all_pins(&dut);
-    nvboard_init();
+int main(int argc, char **argv) {
+    VerilatedContext *contextp = new VerilatedContext;
+    contextp->commandArgs(argc, argv);
+    VerilatedVcdC *tfp = new VerilatedVcdC;
     
-    reset(10);
+    Vexample *top = new Vexample(contextp);
+    contextp->traceEverOn(true);
+    top->trace(tfp, 0);
+    tfp->open("wave.vcd");
 
-    while (1) {
-        nvboard_update();
-        single_cycle();
+    while(!contextp->gotFinish()) {
+        static int i = 0;
+        if(i++>6000) break;
+        top->eval();
+        printf("pc  = 0x%x\n",top->pc);
+
+        tfp->dump(contextp->time());
+        contextp->timeInc(1);
     }
-
-    // nvboard_quit();
+    top->final();
+    delete top;
+    tfp->close();
+    delete contextp;
+    return 0;
 }
-
