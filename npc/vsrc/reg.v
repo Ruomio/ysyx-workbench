@@ -1,3 +1,4 @@
+`include "define.v"
 module ysyx_24080020_REG (
     input clk,
     input rst,
