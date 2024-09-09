@@ -29,7 +29,7 @@ module ysyx_24080020_REG #(
             regs[waddr] <= wdata;
         end
         else begin
-            val <= regs[idx];
+            regs[0] <= 32'b0;
         end
     end
 

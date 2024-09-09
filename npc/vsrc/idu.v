@@ -1,6 +1,6 @@
 `include "vsrc/define.v"
 module ysyx_24080020_IDU (
-    input [WIDTH-1:0] inst,
+    input [`ysyx_24080020_WIDTH-1:0] inst,
     output reg [6:0] opcode,
     output reg [4:0] rd,
     output reg [2:0] funct3,
