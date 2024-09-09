@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     while(!contextp->gotFinish()) {
         top->clk = ~top->clk;
         static int i = 0;
-        if(i++>100) break;
+        if(i++>1000) break;
         top->eval();
         printf("pc  = 0x%x\n",top->pc);
 
