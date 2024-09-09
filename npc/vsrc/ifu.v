@@ -19,7 +19,7 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            snpc_reg <= pc;
+            snpc_reg <= `ysyx_24080020_MBASE;
         end
         else begin
             snpc_reg <= pc + {{28{1'b0}}, llen};
