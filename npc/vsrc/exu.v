@@ -26,6 +26,8 @@ module ysyx_24080020_EXU
                         wdata <= val_raddr1 + imm;
                     end
 
+                default: wdata <= 0;
+
                 endcase
             end
 
