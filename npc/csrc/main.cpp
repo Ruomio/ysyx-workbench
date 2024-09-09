@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
         if(i++>1000) break;
         if(i>20) top->rst = 1;
         top->eval();
-        printf("pc  = 0x%x\n",top->pc);
+        // printf("pc  = 0x%x\n",top->pc);
 
         tfp->dump(contextp->time());
         contextp->timeInc(1);
