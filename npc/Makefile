@@ -25,9 +25,9 @@ all: $(BIN)
 
 
 # constraint file
-SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
-$(SRC_AUTO_BIND): $(NXDC_FILES)
-	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+# SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
+# $(SRC_AUTO_BIND): $(NXDC_FILES)
+# 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
