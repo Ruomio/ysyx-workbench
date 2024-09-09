@@ -1,10 +1,10 @@
+`include "vsrc/ifu.v"
 module ysyx_24080020_NPC(
     input clk,
     input rst,
     input [31:0] inst,
     output [31:0] pc
 );
-    `include "vsrc/ifu.v"
 
     reg [`ysyx_24080020_WIDTH-1:0] snpc;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
