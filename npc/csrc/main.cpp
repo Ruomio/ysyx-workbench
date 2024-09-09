@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     tfp->open("build/wave.vcd");
 
     top->rst = 0;
-    top->rst = 0;
+    top->clk = 0;
     top->rst = 1;
     while(!contextp->gotFinish()) {
         top->clk = ~top->clk;
