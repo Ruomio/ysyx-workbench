@@ -24,9 +24,9 @@ module ysyx_24080020_EXU
             `ysyx_24080020_I_TYPE: begin
                 case(funct3)
                     `ysyx_24080020_ADDI: begin
-                        wdata <= val_raddr1 + imm;
-                        wen <= 1'b1;
-                        waddr <= rd;
+                        wdata = val_raddr1 + imm;
+                        wen = 1'b1;
+                        waddr = rd;
                     end
 
                 default: wdata <= 0;
