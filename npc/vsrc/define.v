@@ -1,6 +1,7 @@
 `define ysyx_24080020_MBASE 32'h80000000
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
+`define ysyx_24080020_MEM 10
 
 
 `define ysyx_24080020_OPCODE 6:0
