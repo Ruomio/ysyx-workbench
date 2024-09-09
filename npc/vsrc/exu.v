@@ -4,10 +4,11 @@ module ysyx_24080020_EXU
     input [2:0] funct3,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
+    input [4:0] rd,
     input [`ysyx_24080020_WIDTH-1:0] imm,
 
     // out reg
-    output [4:0] waddr,
+    output reg [4:0] waddr,
     output reg[`ysyx_24080020_WIDTH-1:0] wdata,
     output reg wen,
 
@@ -24,7 +25,8 @@ module ysyx_24080020_EXU
                 case(funct3)
                     `ysyx_24080020_ADDI: begin
                         wdata <= val_raddr1 + imm;
-                        wen = 1'b1;
+                        wen <= 1'b1;
+                        waddr <= rd;
                     end
 
                 default: wdata <= 0;
