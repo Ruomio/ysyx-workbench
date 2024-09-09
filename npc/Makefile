@@ -19,7 +19,7 @@ BIN=$(BUILD_DIR)/$(TOPNAME)
 $(shell mkdir -p $(BUILD_DIR))
 
 all: $(BIN)
-	# @echo "Write this Makefile by your self.."
+	# @echo "Write this Makefile by your self."
 	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 
 
@@ -45,7 +45,7 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	# @echo "Write this Makefile by your self."
+	# @echo "Write this Makefile by your self.!"
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
