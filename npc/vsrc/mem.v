@@ -11,7 +11,7 @@ module ysyx_24080020_MEM(
 
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_reg;
 
-    reg [`ysyx_24080020_WIDTH-1:0] mem [32:0];     // 4KB
+    reg [`ysyx_24080020_WIDTH-1:0] mem[32:0];     // 4KB
 
     always @(posedge clk) begin
         if(!clk) begin
