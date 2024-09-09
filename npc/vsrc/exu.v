@@ -31,7 +31,7 @@ module ysyx_24080020_EXU
                 endcase
             end
 
-            default: result <= 32'b0;
+            default: wdata <= 32'b0;
         endcase
 
 

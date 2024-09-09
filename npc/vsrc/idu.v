@@ -27,7 +27,7 @@ module ysyx_24080020_IDU (
             `ysyx_24080020_EBREAK: begin
                 ebreak();
             end
-            default: imm = {WIDTH{1'b0}};
+            default: imm = {`ysyx_24080020_WIDTH{1'b0}};
         endcase
 
 

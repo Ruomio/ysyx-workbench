@@ -26,14 +26,14 @@ module ysyx_24080020_REG #(
             end
         end
         else if(wen && (waddr != 0)) begin
-            regs[idx] <= res;
+            regs[waddr] <= wdata;
         end
         else begin
             val <= regs[idx];
         end
     end
 
-    assign val_raddr1 = raddr1 != 5'b0 ? regs[radd1] : 32'b0;
-    assign val_raddr2 = raddr2 != 5'b0 ? regs[radd2] : 32'b0;
+    assign val_raddr1 = raddr1 != 5'b0 ? regs[raddr1] : 32'b0;
+    assign val_raddr2 = raddr2 != 5'b0 ? regs[raddr2] : 32'b0;
 
 endmodule
