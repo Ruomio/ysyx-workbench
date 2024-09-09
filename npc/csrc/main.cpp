@@ -3,9 +3,9 @@
 #include <climits>
 #include <verilated.h>
 #include "Vtop.h"
+#include "verilated_vcd_c.h"
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
-#include "verilated_vcd_c.h"
 
 
 void ebreak() {return;}
