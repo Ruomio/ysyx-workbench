@@ -15,8 +15,11 @@ module ysyx_24080020_MEM(
 
     always @(posedge clk) begin
         if(!clk) begin
-            mem[0] <= 32'hFFFFFEB7; //  lui   x23, 0xFFF;
-            mem[1] <= 32'h00010073; //  ebreak;
+            mem[0] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            mem[1] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            mem[2] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            mem[3] = 32'hFFFFFEB7; //  lui   x23, 0xFFF;
+            mem[4] = 32'h00010073; //  ebreak;
         end
         else if(wen) begin
             mem[maddr - `ysyx_24080020_MBASE] <= mdata;
