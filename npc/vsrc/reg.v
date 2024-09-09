@@ -1,5 +1,6 @@
-`include "define.v"
-module ysyx_24080020_REG (
+module ysyx_24080020_REG #(
+    parameter WIDTH = 32
+) (
     input clk,
     input rst,
     input wen,
@@ -8,7 +9,7 @@ module ysyx_24080020_REG (
     output reg [31:0] val
 );
 
-    reg [`ysyx_24080020_WIDTH-1:0] regs[`ysyx_24080020_WIDTH-1:0];
+    reg [WIDTH-1:0] regs[WIDTH-1:0];
 
     integer  i;
 
