@@ -16,7 +16,7 @@ module ysyx_24080020_NPC(
     reg [6:0] funct7;
 
     reg wen;
-    reg [`ysyx_24080020_WIDTH-1:0] waddr;
+    reg [4:0] waddr;
     reg [`ysyx_24080020_WIDTH-1:0] wdata;
     reg [`ysyx_24080020_WIDTH-1:0] src1;
     reg [`ysyx_24080020_WIDTH-1:0] src2;
