@@ -1,4 +1,4 @@
-`include "vsrc/ifu.v"
+`include "vsrc/define.v"
 module ysyx_24080020_NPC(
     input clk,
     input rst,
