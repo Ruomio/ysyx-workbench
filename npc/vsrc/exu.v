@@ -29,12 +29,12 @@ module ysyx_24080020_EXU
                         waddr = rd;
                     end
 
-                default: wdata <= 0;
+                default: wdata = 0;
 
                 endcase
             end
 
-            default: wdata <= 32'b0;
+            default: wdata = 32'b0;
         endcase
 
 
