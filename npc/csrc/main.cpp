@@ -4,6 +4,9 @@
 #include "Vtop.h"
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
+#include <verilated.h>
+#include "verilated_vcd_c.h"
+
 
 static TOP_NAME dut;
 
