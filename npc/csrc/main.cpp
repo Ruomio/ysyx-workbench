@@ -2,6 +2,8 @@
 #include <climits>
 #include <nvboard.h>
 #include "Vtop.h"
+#include "svdpi.h"
+#include "Vour__Dpi.h"`
 
 static TOP_NAME dut;
 
