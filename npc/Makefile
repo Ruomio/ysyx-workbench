@@ -4,7 +4,7 @@ VERILATOR_CFLAGS += -MMD --build -cc  \
 
 TOPNAME=top
 NXDC_FILES = constr/top.nxdc
-INC_PATH ?=	vsrc
+INC_PATH ?=
 
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name ".cc") 
