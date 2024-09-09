@@ -14,7 +14,7 @@ module ysyx_24080020_IFU (
 
     wire [3:0] llen = len/4;
 
-    assign maddr = pc;
+    assign maddr = snpc_reg;
 
 
     always @(posedge clk) begin
