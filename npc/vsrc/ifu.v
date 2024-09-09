@@ -12,6 +12,8 @@ module ysyx_24080020_IFU (
 
     reg [`ysyx_24080020_WIDTH-1:0] snpc_reg;
 
+    wire [3:0] llen = len/4;
+
     assign maddr = pc;
 
 
@@ -20,7 +22,7 @@ module ysyx_24080020_IFU (
             snpc_reg <= pc;
         end
         else begin
-            snpc_reg <= pc + {{28{1'b0}}, len/4};
+            snpc_reg <= pc + {{28{1'b0}}, llen};
         end
     end
 
