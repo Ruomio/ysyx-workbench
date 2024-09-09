@@ -19,7 +19,7 @@ module ysyx_24080020_EXU
 );
 
 
-    always @(opcode or funct3) begin
+    always @(*) begin
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 case(funct3)
