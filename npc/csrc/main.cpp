@@ -21,8 +21,11 @@ int main(int argc, char **argv) {
     top->trace(tfp, 0);
     tfp->open("build/wave.vcd");
 
+    top->rst = 0;
+    top->rst = 0;
+    top->rst = 1;
     while(!contextp->gotFinish()) {
-        top->rst = 1;
+        top->clk = ~top->clk;
         static int i = 0;
         if(i++>6000) break;
         top->eval();

@@ -65,7 +65,7 @@ $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 gtkwave: $(VCD_FILE)
 	gtkwave $^
 
-$(VCD_FILE):sim
+$(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
