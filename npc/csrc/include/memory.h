@@ -2,8 +2,9 @@
 #define __MEMORY_H__
 
 #include <stdint.h>
+#include "svdpi.h"
 
-void init_memory(int memory[]);
+void init_memory(svBitVecVal* memory);
 
 
 #endif
