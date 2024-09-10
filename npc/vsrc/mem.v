@@ -16,11 +16,12 @@ module ysyx_24080020_MEM(
 
     always @(posedge clk) begin
         if(!rst) begin
-            memory[0] <= 32'hFFF00093; //  addi   x1, x0, -1;
-            memory[1] <= 32'hFFF00113; //  addi   x2, x0, -1;
-            memory[2] <= 32'hFFF00193; //  addi   x3, x0. -1;
-            memory[3] <= 32'hFFF00203; //  addi   x4, 0x, -1;
-            memory[4] <= 32'h00010073; //  ebreak;
+            // memory[0] <= 32'hFFF00093; //  addi   x1, x0, -1;
+            // memory[1] <= 32'hFFF00113; //  addi   x2, x0, -1;
+            // memory[2] <= 32'hFFF00193; //  addi   x3, x0. -1;
+            // memory[3] <= 32'hFFF00203; //  addi   x4, 0x, -1;
+            // memory[4] <= 32'h00010073; //  ebreak;
+            init_memory(memory);
 
             mrdata <= 32'b0;
         end

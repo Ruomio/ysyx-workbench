@@ -14,7 +14,7 @@ void init_memory(int memory[]) {
 
   FILE *fp = fopen(img_file, "rb");
   assert(fp);
-  printf("Can not open '%s'", img_file);
+  // printf("Can not open '%s'", img_file);
 
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
