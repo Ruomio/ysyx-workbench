@@ -8,7 +8,11 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     uintptr_t ecode = 0;
+<<<<<<< HEAD
+    switch (ecode) {
+=======
     switch (ccode) {
+>>>>>>> 838c9d7 (add am to main branch)
       default: ev.event = EVENT_ERROR; break;
     }
 
