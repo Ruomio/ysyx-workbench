@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "svdpi.h"
 
-void init_memory(svBitVecVal* memory);
+extern void init_memory(svBitVecVal* memory);
 
 
 #endif
