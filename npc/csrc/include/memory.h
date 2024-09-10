@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "svdpi.h"
+#include "Vtop__Dpi.h"
 
 extern void init_memory(svBitVecVal* memory);
 
