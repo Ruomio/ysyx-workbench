@@ -5,27 +5,27 @@
 extern bool run_flag;
 extern char *img_file;
 
-// void init_memory(int memory[]) {
-  // if (img_file == NULL) {
-    // printf("No image is given. Use the default build-in image.");
-    // run_flag = true;
-    // return; // built-in image size
-  // }
+void init_memory(int memory[]) {
+  if (img_file == NULL) {
+    printf("No image is given. Use the default build-in image.");
+    run_flag = true;
+    return; // built-in image size
+  }
 
-  // FILE *fp = fopen(img_file, "rb");
-  // assert(fp);
-  // // printf("Can not open '%s'", img_file);
+  FILE *fp = fopen(img_file, "rb");
+  assert(fp);
+  // printf("Can not open '%s'", img_file);
 
-  // fseek(fp, 0, SEEK_END);
-  // long size = ftell(fp);
+  fseek(fp, 0, SEEK_END);
+  long size = ftell(fp);
 
-  // assert(size <= 4*8*1024); // 4kB
-  // printf("The image is %s, size = %ld", img_file, size);
+  assert(size <= 4*8*1024); // 4kB
+  printf("The image is %s, size = %ld", img_file, size);
 
-  // fseek(fp, 0, SEEK_SET);
-  // int ret = fread(memory, size, 1, fp);
-  // assert(ret == 1);
+  fseek(fp, 0, SEEK_SET);
+  int ret = fread(memory, size, 1, fp);
+  assert(ret == 1);
 
-  // fclose(fp);
-  // return;
-// }
+  fclose(fp);
+  return;
+}
