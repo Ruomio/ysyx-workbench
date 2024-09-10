@@ -33,6 +33,7 @@ all: $(BIN)
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 CSRCS += $(SRC_AUTO_BIND)
+ARGS +=
 
 # rules for NVBoard
 #include $(NVBOARD_HOME)/scripts/nvboard.mk
@@ -69,7 +70,7 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
-	@$^
+	@$^ $(ARGS)
 
 .PHONY : all clean gtkwave sim nvboard run
 

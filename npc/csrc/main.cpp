@@ -19,8 +19,12 @@ void ebreak() {
     return;
 }
 
+static int parse_args(int argc, char *argv[]);
 
 int main(int argc, char **argv) {
+
+    parse_args(argc, argv);
+
     VerilatedContext *contextp = new VerilatedContext;
     contextp->commandArgs(argc, argv);
     VerilatedVcdC *tfp = new VerilatedVcdC;
