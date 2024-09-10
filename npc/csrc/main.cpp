@@ -7,7 +7,11 @@
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
 
+#include "include/define.h"
+
 static bool run_flag=0;
+
+static uint8_t memory[MSIZE];
 
 void ebreak() {
     run_flag = 1;
