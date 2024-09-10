@@ -36,6 +36,7 @@ CSRCS += $(SRC_AUTO_BIND)
 
 # parameters 
 ARGS +=
+IMG +=
 
 # rules for NVBoard
 #include $(NVBOARD_HOME)/scripts/nvboard.mk
@@ -72,7 +73,7 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
-	@$^ $(ARGS)
+	@$^ $(ARGS) $(IMG)
 
 .PHONY : all clean gtkwave sim nvboard run
 
