@@ -1,13 +1,10 @@
 module top(
-    input a,
-    input b,
-    output f
+    input clk,
+    input rst,
+    output [31:0] pc
 );
-    assign f = a ^ b;
 
-    initial begin
-        $display("Hello Verilator");
-        //$finish;
-    end
+    ysyx_24080020_NPC u_npc(.clk(clk), .rst(rst), .pc(pc));
+
 
 endmodule
