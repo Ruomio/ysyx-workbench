@@ -30,7 +30,7 @@ module ysyx_24080020_IDU (
             end
 
             `ysyx_24080020_JAL: begin
-                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30,21], 1'b0};
+                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
             end
 
             `ysyx_24080020_EBREAK: begin
