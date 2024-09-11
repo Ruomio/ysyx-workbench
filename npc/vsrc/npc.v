@@ -27,6 +27,7 @@ module ysyx_24080020_NPC(
 
     // memory
     reg mwen;
+    reg [3:0] mlen;
     reg [`ysyx_24080020_WIDTH-1:0] maddr;
     reg [`ysyx_24080020_WIDTH-1:0] mdata;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata;
@@ -34,9 +35,9 @@ module ysyx_24080020_NPC(
 
     assign pc = snpc;
 
-    ysyx_24080020_MEM u_mem(.clk(clk), .rst(rst), .maddr(maddr), .mdata(mdata), .wen(mwen), .mrdata(inst));
+    ysyx_24080020_MEM u_mem(.clk(clk), .rst(rst), .maddr(maddr), .mlen(mlen), .mdata(mdata), .wen(mwen), .mrdata(inst));
     
-    ysyx_24080020_IFU ifu(.clk(clk), .rst(rst), .pc(pc), .len(`ysyx_24080020_LEN), .snpc(snpc), .maddr(maddr));
+    ysyx_24080020_IFU ifu(.clk(clk), .rst(rst), .pc(pc), .len(`ysyx_24080020_LEN), .snpc(snpc), .maddr(maddr), .mlen(mlen));
 
     ysyx_24080020_IDU idu(.inst(inst), .opcode(opcode), .rd(rd), .funct3(funct3), .rs1(rs1), .rs2(rs2), .imm(imm), .funct7(funct7));
 

@@ -2,36 +2,28 @@
 module ysyx_24080020_MEM(
     input clk,
     input rst,
+    input [3:0] mlen,
     input [`ysyx_24080020_WIDTH-1:0] maddr,
     input [`ysyx_24080020_WIDTH-1:0] mdata,
     input wen,
     output reg [`ysyx_24080020_WIDTH-1:0] mrdata
 
 );
-    import "DPI-C" function void init_memory(input reg[31:0] memory);
-    // import "DPI-C" function void write_memory(output uint32_t *memory);
+    // import "DPI-C" function void init_memory(input int memory[]);
+    import "DPI-C" function void write_memory(input int addr, input int len, input int data);
+    import "DPI-C" function int read_memory(input int addr, input int len);
    
-    reg flag = 1'b0;
-
-    reg [`ysyx_24080020_WIDTH-1:0] memory[0:1023];     // 4KB
+    // reg [`ysyx_24080020_WIDTH-1:0] memory[0:1023];     // 4KB
 
     always @(posedge clk) begin
-        if(!rst && !flag) begin
-            // memory[0] <= 32'hFFF00093; //  addi   x1, x0, -1;
-            // memory[1] <= 32'hFFF00113; //  addi   x2, x0, -1;
-            // memory[2] <= 32'hFFF00193; //  addi   x3, x0. -1;
-            // memory[3] <= 32'hFFF00203; //  addi   x4, 0x, -1;
-            // memory[4] <= 32'h00010073; //  ebreak;
-            init_memory(memory);
-
+        if(!rst) begin
             mrdata <= 32'b0;
-            flag <= 1'b1;
         end
         else if(wen) begin
-            memory[maddr - `ysyx_24080020_MBASE] <= mdata;
+            write_memory(maddr, mlen, mdata);
         end
         else begin
-            mrdata <= memory[maddr - `ysyx_24080020_MBASE];
+            mrdata = read_memory(maddr, mlen);
         end
 
     end

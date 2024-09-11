@@ -2,6 +2,8 @@ module ysyx_24080020_EXU
 (
     input [6:0] opcode,
     input [2:0] funct3,
+
+    // reg
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     input [4:0] rd,
