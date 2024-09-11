@@ -32,7 +32,7 @@ void init_memory(const svOpenArrayHandle memory) {
     printf("mem_ptr is NULL\n");
     assert(0);
   }
-  int ret = fread((uint8_t *)mem_ptr, size, 1, fp);
+  int ret = fread((uint8_t *)memory, size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
