@@ -15,7 +15,7 @@ char *img_file = NULL;
 
 
 void ebreak() {
-    run_flag = 1;
+    run_flag = true;
     return;
 }
 
