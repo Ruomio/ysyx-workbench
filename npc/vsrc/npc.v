@@ -45,7 +45,7 @@ module ysyx_24080020_NPC(
 
     ysyx_24080020_REG u_reg(.clk(clk), .rst(rst), .raddr1(rs1), .raddr2(rs2), .wen(wen), .waddr(waddr), .wdata(wdata), .val_raddr1(src1), .val_raddr2(src2));
 
-    ysyx_24080020_EXU exu(.opcode(opcode), .pc(pc), .funct3(funct3), .val_raddr1(src1), .val_raddr2(src2), .rd(rd), .imm(imm), .waddr(waddr), .wdata(wdata), .wen(wen), .is_dnpc(is_dnpc), .dnpc(dnpc));
+    ysyx_24080020_EXU exu(.opcode(opcode), .pc(pc), .funct3(funct3), .val_raddr1(src1), .val_raddr2(src2), .rd(rd), .imm(imm), .waddr(waddr), .wdata(wdata), .wen(wen), .is_dnpc(is_dnpc), .dnpc(dnpc), .maddr(maddr), .mdata(mdata), .mwen(mwen));
 
 
 endmodule

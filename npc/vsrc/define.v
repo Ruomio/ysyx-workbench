@@ -38,6 +38,12 @@
 `define ysyx_24080020_BGEU 3'b111
 
 
+// S-TYPE
+`define ysyx_24080020_S_TYPE 7'b0100011
+`define ysyx_24080020_SB 3'b000
+`define ysyx_24080020_SH 3'b001
+`define ysyx_24080020_SW 3'b010
+
 // OTHER
 `define ysyx_24080020_LUI 7'b0110111 
 `define ysyx_24080020_AUIPC 7'b0010111 
