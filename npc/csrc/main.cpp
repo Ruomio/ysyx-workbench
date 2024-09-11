@@ -13,7 +13,6 @@
 bool run_flag = false;
 char *img_file = NULL;
 
-// static uint8_t memory[MSIZE];
 
 void ebreak() {
     run_flag = 1;

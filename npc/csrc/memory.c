@@ -1,4 +1,5 @@
 #include "include/memory.h"
+#include "include/define.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
@@ -6,7 +7,20 @@
 extern bool run_flag;
 extern char *img_file;
 
-void init_memory(const svLogicVecVal* memory) {
+
+
+int read_memory(int addr, int len) {
+  return host_read(guest_to_host(addr), len);
+}
+
+void write_memory(int addr, int len, int data) {
+  host_write(guest_to_host(addr), len, data);
+}
+
+
+
+
+void init_memory() {
   if (img_file == NULL) {
     printf("No image is given. Use the default build-in image.");
     run_flag = true;
@@ -20,18 +34,16 @@ void init_memory(const svLogicVecVal* memory) {
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
 
-  assert(size <= 4*8*1024); // 4kB
+  assert(size <= MSIZE); 
   printf("The image is %s, size = %ld\n", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
 
   printf("memory addr is %p\n", memory);
-  // 将 svOpenArrayHandle 转换为指针类型
-  // unsigned int *memory_ptr = (unsigned int *)svGetArrayPtr(memory);
-  // assert(memory_ptr != NULL);
-  int ret = fread((void *)memory, size, 1, fp);
+  int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
   return;
 }
+

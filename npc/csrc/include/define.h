@@ -3,6 +3,7 @@
 
 #include <getopt.h>
 
+#define MBASE 0x80000000
 #define MSIZE 0x40000000     // 4G 2^31
 
 
