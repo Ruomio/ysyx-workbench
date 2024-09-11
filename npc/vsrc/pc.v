@@ -3,6 +3,7 @@ module ysyx_24080020_PC (
     input clk,
     input rst,
     input [`ysyx_24080020_WIDTH-1:0] snpc,
+    input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     output [`ysyx_24080020_WIDTH-1:0] pc
@@ -15,7 +16,7 @@ module ysyx_24080020_PC (
         if(!rst) begin
             tmp_pc <= `ysyx_24080020_MBASE;
         end
-        else if(snpc != dnpc) begin
+        else if(is_dnpc) begin
             tmp_pc <= dnpc; 
         end
         else begin

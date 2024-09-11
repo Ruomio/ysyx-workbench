@@ -16,13 +16,21 @@ module ysyx_24080020_EXU
     output reg wen,
 
     // out pc
+    output reg is_dnpc,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc
 
     // out mem
 );
 
+    reg flag;
+
+    assign is_dnpc = flag;
 
     always @(*) begin
+        // initial
+        waddr = 32'b0;
+        wen = 1'b0;
+        flag = 1'b0;
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 case(funct3)
@@ -51,12 +59,14 @@ module ysyx_24080020_EXU
                 wen = 1'b1;
                 waddr = rd;
                 dnpc = pc - 4 + imm;
+                flag = 1'b1;
             end
             `ysyx_24080020_JALR: begin
                 wdata = pc;
                 wen = 1'b1;
                 waddr = rd;
                 dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
+                flag = 1'b1;
             end
 
             default: begin
