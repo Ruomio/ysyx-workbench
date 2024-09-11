@@ -78,7 +78,7 @@ run: $(BIN)
 
 gdb: $(BIN)
 	$(call git_commit, "gdb NPC")
-	gdb -s $(BIN) --args $(ARGS) $(IMG)
+	gdb -s $(BIN) --args $(BIN) $(ARGS) $(IMG)
 
 .PHONY : all clean gtkwave sim nvboard run
 
