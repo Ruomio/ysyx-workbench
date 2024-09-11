@@ -26,7 +26,7 @@ void init_memory(const svOpenArrayHandle memory) {
   fseek(fp, 0, SEEK_SET);
 
   printf("memory addr is %p\n", memory);
-  int ret = fread((uint8_t *)memory, size, 1, fp);
+  int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
