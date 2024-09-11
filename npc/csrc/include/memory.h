@@ -5,7 +5,7 @@
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
 
-extern void init_memory(svBitVecVal* memory);
+extern void init_memory(const svOpenArrayHandle memory);
 
 
 #endif

@@ -5,7 +5,7 @@
 extern bool run_flag;
 extern char *img_file;
 
-void init_memory(svBitVecVal* memory) {
+void init_memory(const svOpenArrayHandle memory) {
   if (img_file == NULL) {
     printf("No image is given. Use the default build-in image.");
     run_flag = true;
