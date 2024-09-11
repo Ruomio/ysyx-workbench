@@ -28,6 +28,7 @@ void init_memory(const svOpenArrayHandle memory) {
   // 获取数组的指针
   svBitVecVal* mem_ptr = (svBitVecVal*)svGetArrayPtr(memory);
   if(mem_ptr == NULL) {
+    printf("memory addr is %p\n", memory);
     printf("mem_ptr is NULL\n");
     assert(0);
   }
