@@ -27,7 +27,10 @@ module ysyx_24080020_IDU (
             `ysyx_24080020_EBREAK: begin
                 ebreak();
             end
-            default: imm = {32{1'b0}};
+            default: begin
+                imm = {32{1'b0}};
+                ebreak();
+            end
         endcase
 
 
