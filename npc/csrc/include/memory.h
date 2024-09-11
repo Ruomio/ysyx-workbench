@@ -13,8 +13,7 @@ typedef  uint32_t paddr_t;
 
 static uint8_t memory[MSIZE];
 
-uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - MBASE; }
-paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + MBASE; }
+
 
 static inline word_t host_read(void *addr, int len) {
   switch (len) {

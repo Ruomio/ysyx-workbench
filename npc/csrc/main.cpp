@@ -7,6 +7,7 @@
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
 
+#include "include/memory.h"
 #include "include/define.h"
 
 bool run_flag = false;
