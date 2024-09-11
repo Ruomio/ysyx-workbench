@@ -35,11 +35,11 @@ module ysyx_24080020_NPC(
     reg [`ysyx_24080020_WIDTH-1:0] mrdata;
 
 
-    ysyx_24080020_PC u_pc(.clk(clk), .rst(rst), .snpc(snpc), .is_dnpc(is_dnpc), .dnpc(dnpc), .pc(pc));
+    ysyx_24080020_PC u_pc(.clk(clk), .rst(rst), .snpc(snpc), .is_dnpc(is_dnpc), .dnpc(dnpc), .pc(pc), .maddr(maddr), .mlen(mlen));
 
     ysyx_24080020_MEM u_mem(.clk(clk), .rst(rst), .maddr(maddr), .mlen(mlen), .mdata(mdata), .wen(mwen), .mrdata(inst));
     
-    ysyx_24080020_IFU ifu(.clk(clk), .rst(rst), .pc(pc), .len(`ysyx_24080020_LEN), .snpc(snpc), .maddr(maddr), .mlen(mlen));
+    ysyx_24080020_IFU ifu(.clk(clk), .rst(rst), .pc(pc), .len(`ysyx_24080020_LEN), .snpc(snpc));
 
     ysyx_24080020_IDU idu(.inst(inst), .opcode(opcode), .rd(rd), .funct3(funct3), .rs1(rs1), .rs2(rs2), .imm(imm), .funct7(funct7));
 

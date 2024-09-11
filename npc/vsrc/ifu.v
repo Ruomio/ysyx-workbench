@@ -4,9 +4,7 @@ module ysyx_24080020_IFU (
     input rst,
     input [`ysyx_24080020_WIDTH-1:0] pc,
     input [3:0] len,
-    output [`ysyx_24080020_WIDTH-1:0] snpc,
-    output [`ysyx_24080020_WIDTH-1:0] maddr,
-    output [3:0] mlen
+    output [`ysyx_24080020_WIDTH-1:0] snpc
     //output reg [`ysyx_24080020_WIDTH-1:0] inst
 
 );
@@ -14,14 +12,9 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] snpc_reg;
 
 
-    assign maddr = snpc_reg;
-
-    assign mlen = len;
-
-
     always @(posedge clk) begin
         if(!rst) begin
-            snpc_reg <= `ysyx_24080020_MBASE;
+            snpc_reg <= pc;
         end
         else begin
             snpc_reg <= pc + {{28{1'b0}}, len};
