@@ -73,7 +73,12 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
+	$(call git_commit, "run NPC")
 	@$^ $(ARGS) $(IMG)
+
+gdb: $(BIN)
+	$(call git_commit, "gdb NPC")
+	gdb -s $(BIN) --args $(ARGS) $(IMG)
 
 .PHONY : all clean gtkwave sim nvboard run
 
