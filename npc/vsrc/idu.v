@@ -47,6 +47,7 @@ module ysyx_24080020_IDU (
                 imm = 32'b0;
             end
             default: begin
+                imm = 32'b0;
                 invalid_inst();
             end
         endcase
