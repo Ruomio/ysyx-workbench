@@ -11,6 +11,7 @@ module ysyx_24080020_IDU (
 
 );
     import "DPI-C" function void ebreak();
+    import "DPI-C" function void invalid_inst();
 
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
@@ -20,16 +21,23 @@ module ysyx_24080020_IDU (
 
     always @(opcode or funct3) begin
         case(opcode)
-            `ysyx_24080020_I_TYPE: begin
+            `ysyx_24080020_I_TYPE, `ysyx_24080020_JALR: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+            end
+
+            `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
+                imm = {inst[`ysyx_24080020_IMM_U], {12{1'b0}}};
+            end
+
+            `ysyx_24080020_JAL: begin
+                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30,21], 1'b0};
             end
 
             `ysyx_24080020_EBREAK: begin
                 ebreak();
             end
             default: begin
-                imm = {32{1'b0}};
-                ebreak();
+                invalid_inst();
             end
         endcase
 

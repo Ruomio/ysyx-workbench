@@ -19,6 +19,11 @@ void ebreak() {
     return;
 }
 
+void invalid_inst() {
+  run_flag = true;
+  printf("Unknown inst.\n");
+}
+
 static int parse_args(int argc, char *argv[]);
 
 int main(int argc, char **argv) {

@@ -35,8 +35,33 @@ module ysyx_24080020_EXU
 
                 endcase
             end
+            `ysyx_24080020_AUIPC: begin
+                wdata = pc - 4 + imm;
+                wen = 1'b1;
+                waddr = rd;
+            end
+            `ysyx_24080020_LUI: begin
+                wdata = imm;
+                wen = 1'b1;
+                waddr = rd;
+            end
+            `ysyx_24080020_JAL: begin
+                wdata = pc;
+                wen = 1'b1;
+                waddr = rd;
+                pc = pc + imm;
+            end
+            `ysyx_24080020_JALR: begin
+                wdata = pc;
+                wen = 1'b1;
+                waddr = rd;
+                pc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
+            end
 
-            default: wdata = 32'b0;
+            default: begin
+                wdata = 32'b0;
+                wen = 1'b0;
+            end
         endcase
 
 
