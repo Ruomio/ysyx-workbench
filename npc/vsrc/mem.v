@@ -10,8 +10,8 @@ module ysyx_24080020_MEM(
 
 );
     // import "DPI-C" function void init_memory(input int memory[]);
-    import "DPI-C" function void write_memory(input int addr, input reg[3:0] len, input int data);
-    import "DPI-C" function int read_memory(input int addr, input reg[3:0] len);
+    import "DPI-C" function void write_memory(input int addr, input int len, input int data);
+    import "DPI-C" function int read_memory(input int addr, input int len);
    
     // reg [`ysyx_24080020_WIDTH-1:0] memory[0:1023];     // 4KB
 
@@ -20,10 +20,10 @@ module ysyx_24080020_MEM(
             mrdata <= 32'b0;
         end
         else if(wen) begin
-            write_memory(maddr, mlen, mdata);
+            write_memory(maddr, {32{1;b0}}|mlen, mdata);
         end
         else begin
-            mrdata <= read_memory(maddr, mlen);
+            mrdata <= read_memory(maddr, {32{1;b0}}|mlen);
         end
 
     end
