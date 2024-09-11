@@ -3,6 +3,7 @@ module ysyx_24080020_EXU
     input [6:0] opcode,
     input [2:0] funct3,
 
+    input [`ysyx_24080020_WIDTH-1:0] pc,
     // reg
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
@@ -15,7 +16,7 @@ module ysyx_24080020_EXU
     output reg wen,
 
     // out pc
-    output reg [`ysyx_24080020_WIDTH-1:0] pc
+    output reg [`ysyx_24080020_WIDTH-1:0] dnpc
 
     // out mem
 );
@@ -49,13 +50,13 @@ module ysyx_24080020_EXU
                 wdata = pc;
                 wen = 1'b1;
                 waddr = rd;
-                pc = pc + imm;
+                dnpc = pc - 4 + imm;
             end
             `ysyx_24080020_JALR: begin
                 wdata = pc;
                 wen = 1'b1;
                 waddr = rd;
-                pc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
+                dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
             end
 
             default: begin
