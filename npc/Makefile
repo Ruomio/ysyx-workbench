@@ -80,6 +80,10 @@ gdb: $(BIN)
 	$(call git_commit, "gdb NPC")
 	gdb -s $(BIN) --args $(BIN) $(ARGS) $(IMG)
 
+lldb: $(BIN)
+	$(call git_commit, "lldb NPC")
+	lldb -- $(BIN) $(ARGS) $(IMG)
+
 .PHONY : all clean gtkwave sim nvboard run
 
 clean:
