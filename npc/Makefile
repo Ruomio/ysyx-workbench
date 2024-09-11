@@ -73,8 +73,8 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
-	$(call git_commit, "run NPC")
 	@$^ $(ARGS) $(IMG)
+	$(call git_commit, "run NPC")
 
 gdb: $(BIN)
 	$(call git_commit, "gdb NPC")
