@@ -23,7 +23,7 @@ module ysyx_24080020_MEM(
             write_memory(maddr, mlen, mdata);
         end
         else begin
-            mrdata = read_memory(maddr, mlen);
+            mrdata <= read_memory(maddr, mlen);
         end
 
     end
