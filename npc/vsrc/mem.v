@@ -8,12 +8,13 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] mrdata
 
 );
-    import "DPI-C" function void init_memory(input int memory[]);
+    import "DPI-C" function void init_memory(input char memory[]);
     // import "DPI-C" function void write_memory(output uint32_t *memory);
    
     reg flag = 1'b0;
 
-    reg [`ysyx_24080020_WIDTH-1:0] memory[0:1023];     // 4KB
+    //reg [`ysyx_24080020_WIDTH-1:0] memory[0:1023];     // 4KB
+    reg [7:0] memory[0:1023];     // 4KB
 
     always @(posedge clk) begin
         if(!rst && !flag) begin
