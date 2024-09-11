@@ -1,0 +1,28 @@
+`include "vsrc/define.v"
+module ysyx_24080020_PC (
+    input clk,
+    input rst,
+    input [`ysyx_24080020_WIDTH-1:0] snpc,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc,
+
+    output [`ysyx_24080020_WIDTH-1:0] pc
+);
+    reg [`ysyx_24080020_WIDTH-1:0] tmp_pc;
+
+    assign pc = tmp_pc;
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            tmp_pc <= `ysyx_24080020_MBASE;
+        end
+        else if(snpc != dnpc) begin
+            tmp_pc <= dnpc; 
+        end
+        else begin
+            tmp_pc <= snpc;
+        end
+
+    end
+
+
+endmodule

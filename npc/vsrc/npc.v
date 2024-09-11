@@ -34,7 +34,7 @@ module ysyx_24080020_NPC(
     reg [`ysyx_24080020_WIDTH-1:0] mrdata;
 
 
-    assign pc = snpc;
+    ysyx_24080020_PC u_pc(.clk(clk), .rst(rst), .snpc(snpc), .dnpc(dnpc), .pc(pc));
 
     ysyx_24080020_MEM u_mem(.clk(clk), .rst(rst), .maddr(maddr), .mlen(mlen), .mdata(mdata), .wen(mwen), .mrdata(inst));
     
@@ -47,5 +47,4 @@ module ysyx_24080020_NPC(
     ysyx_24080020_EXU exu(.opcode(opcode), .pc(pc), .funct3(funct3), .val_raddr1(src1), .val_raddr2(src2), .rd(rd), .imm(imm), .waddr(waddr), .wdata(wdata), .wen(wen), .dnpc(dnpc));
 
 
-    assign pc = dnpc;
 endmodule
