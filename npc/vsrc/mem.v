@@ -20,10 +20,10 @@ module ysyx_24080020_MEM(
             mrdata <= 32'b0;
         end
         else if(wen) begin
-            write_memory(maddr, {32{1'b0}}|mlen, mdata);
+            write_memory(maddr, {{28{1'b0}},mlen}, mdata);
         end
         else begin
-            mrdata <= read_memory(maddr, {32{1'b0}}|mlen);
+            mrdata <= read_memory(maddr, {{28{1'b0}}, mlen});
         end
 
     end
