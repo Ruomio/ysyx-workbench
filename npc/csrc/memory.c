@@ -27,8 +27,8 @@ void init_memory(const svOpenArrayHandle memory) {
 
   printf("memory addr is %p\n", memory);
   // 将 svOpenArrayHandle 转换为指针类型
-  unsigned int *memory_ptr = (unsigned int *)svGetArrayPtr(memory);
-  assert(memory_ptr != NULL);
+  // unsigned int *memory_ptr = (unsigned int *)svGetArrayPtr(memory);
+  // assert(memory_ptr != NULL);
   int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
 
