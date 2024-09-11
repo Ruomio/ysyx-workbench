@@ -1,4 +1,5 @@
 #include "include/memory.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -23,7 +24,10 @@ void init_memory(const svOpenArrayHandle memory) {
   printf("The image is %s, size = %ld", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
-  int ret = fread((int *)memory, size, 1, fp);
+
+  // 获取数组的指针
+  svBitVecVal* mem_ptr = (svBitVecVal*)svGetArrayPtr(memory);
+  int ret = fread((uint8_t *)mem_ptr, size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
