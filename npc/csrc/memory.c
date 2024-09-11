@@ -21,7 +21,7 @@ void init_memory(const svOpenArrayHandle memory) {
   long size = ftell(fp);
 
   assert(size <= 4*8*1024); // 4kB
-  printf("The image is %s, size = %ld", img_file, size);
+  printf("The image is %s, size = %ld\n", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
 
