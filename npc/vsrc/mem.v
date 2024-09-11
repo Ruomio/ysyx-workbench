@@ -13,7 +13,7 @@ module ysyx_24080020_MEM(
    
     reg flag = 1'b0;
 
-    reg [`ysyx_24080020_WIDTH-1:0] memory[1023:0];     // 4KB
+    reg [`ysyx_24080020_WIDTH-1:0] memory[0:1023];     // 4KB
 
     always @(posedge clk) begin
         if(!rst && !flag) begin
