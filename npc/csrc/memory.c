@@ -6,7 +6,7 @@
 extern bool run_flag;
 extern char *img_file;
 
-void init_memory(const svOpenArrayHandle memory) {
+void init_memory(const svLogicVecVal* memory) {
   if (img_file == NULL) {
     printf("No image is given. Use the default build-in image.");
     run_flag = true;
@@ -27,9 +27,9 @@ void init_memory(const svOpenArrayHandle memory) {
 
   printf("memory addr is %p\n", memory);
   // 将 svOpenArrayHandle 转换为指针类型
-  unsigned int *memory_ptr = (unsigned int *)svGetArrayPtr(memory);
-  assert(memory_ptr != NULL);
-  int ret = fread(memory, 16, 1, fp);
+  // unsigned int *memory_ptr = (unsigned int *)svGetArrayPtr(memory);
+  // assert(memory_ptr != NULL);
+  int ret = fread((void *)memory, size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
