@@ -19,7 +19,7 @@ module ysyx_24080020_IDU (
     assign rs1 = inst[`ysyx_24080020_RS1];
     assign rs2 = inst[`ysyx_24080020_RS2];
 
-    always @(opcode or funct3) begin
+    always @(*) begin
         case(opcode)
             `ysyx_24080020_I_TYPE, `ysyx_24080020_JALR: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
