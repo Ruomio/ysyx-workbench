@@ -52,7 +52,7 @@
 void assert_fail_msg() {
   // isa_reg_display();
   // statistic();
-  printf("%serror%s\n", ANSI_BG_RED, ANSI_NONE);
+  printf("\033[0;31merror\n\033[0m]");
 }
 
 #endif
