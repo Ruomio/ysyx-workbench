@@ -6,7 +6,7 @@ TOPNAME=top
 NXDC_FILES = constr/top.nxdc
 
 
-CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name ".cc") 
+CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name ".cc" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./csrc) -type d -name "include")
 VSRC=$(shell find $(abspath vsrc) -name "*.v") 
 VCD_FILE=build/wave.vcd
