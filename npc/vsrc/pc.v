@@ -13,7 +13,7 @@ module ysyx_24080020_PC (
     reg [`ysyx_24080020_WIDTH-1:0] tmp_pc;
 
     assign pc = tmp_pc;
-    assign maddr = pc;
+    assign maddr = tmp_pc;
     assign mlen = 4'b100;
 
     always @(posedge clk) begin
