@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-#include <memory/paddr.h>
+#include <memory/memory.h>
 #include <stdio.h>
 #include <debug.h>
 
@@ -33,7 +33,7 @@ static void welcome() {
         "to record the trace. This may lead to a large log file. "
         "If it is not necessary, you can disable it in menuconfig"));
   Log("Build time: %s, %s", __TIME__, __DATE__);
-  printf("Welcome to %s-NEMU!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
+  printf("Welcome to %s-NPC!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
   printf("For help, type \"help\"\n");
  //  Log("Exercise: Please remove me in the source code and compile NEMU again.");
   assert(1);
@@ -46,33 +46,39 @@ void sdb_set_batch_mode();
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
-static char *img_file = NULL;
 static int difftest_port = 1234;
 static char *ftrace_file = NULL;
+extern char *img_file;
+extern npc_state u_npc_state;
 
-static long load_img() {
+void init_memory() {
   if (img_file == NULL) {
-    Log("No image is given. Use the default build-in image.");
-    return 4096; // built-in image size
+    printf("No image is given. \n");
+    u_npc_state.state = NPC_STOP;
+    u_npc_state.ret = true;
+    return; // built-in image size
   }
 
   FILE *fp = fopen(img_file, "rb");
-  Assert(fp, "Can not open '%s'", img_file);
+  assert(fp);
 
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
 
-  Log("The image is %s, size = %ld", img_file, size);
+  assert(size <= MSIZE); 
+  printf("The image is %s, size = %ld\n", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+
+  printf("memory addr is %p\n", memory);
+  int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
-  return size;
+  return;
 }
 
-static int parse_args(int argc, char *argv[]) {
+int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
     {"log"      , required_argument, NULL, 'l'},
@@ -85,11 +91,11 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhf:l:d:p:", table, NULL)) != -1) {
     switch (o) {
-      case 'b': sdb_set_batch_mode(); break;
-      case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      case 'l': log_file = optarg; break;
-      case 'd': diff_so_file = optarg; break;
-      case 'f': ftrace_file = optarg; break;
+      // case 'b': sdb_set_batch_mode(); break;
+      // case 'p': sscanf(optarg, "%d", &difftest_port); break;
+      // case 'l': log_file = optarg; break;
+      // case 'd': diff_so_file = optarg; break;
+      // case 'f': ftrace_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -104,6 +110,7 @@ static int parse_args(int argc, char *argv[]) {
   }
   return 0;
 }
+
 
 void init_monitor(int argc, char *argv[]) {
   /* Perform some global initialization. */
@@ -130,10 +137,10 @@ void init_monitor(int argc, char *argv[]) {
   init_isa();
 
   /* Load the image to memory. This will overwrite the built-in image. */
-  long img_size = load_img();
+  // long img_size = load_img();
 
   /* Initialize differential testing. */
-  init_difftest(diff_so_file, img_size, difftest_port);
+  // init_difftest(diff_so_file, img_size, difftest_port);
 
   /* Initialize the simple debugger. */
   init_sdb();
