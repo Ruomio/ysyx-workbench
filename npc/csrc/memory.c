@@ -24,7 +24,8 @@ void write_memory(int addr, int len, int data) {
 void init_memory() {
   if (img_file == NULL) {
     printf("No image is given. \n");
-    run_flag = true;
+    u_npc_state.state = NPC_STOP;
+    u_npc_state.ret = true;
     return; // built-in image size
   }
 
