@@ -52,8 +52,8 @@ OBJS = $(CSRCS:%.c=$(OBJ_DIR)/%.o)
 $(OBJ_DIR)/%.o: %.c
 	gcc $(CFLAGS) -c $< -o $@
 
-# $(OBJ_DIR)/%.o: %.cpp
-# 	g++ $(CXXFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: %.cpp
+	g++ $(CXXFLAGS) -c $< -o $@
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!

@@ -15,8 +15,10 @@
 
 #include <isa.h>
 // #include <cpu/cpu.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+extern "C" {
+  #include <readline/readline.h>
+  #include <readline/history.h>
+}
 #include "sdb.h"
 #include <memory/memory.h>
 #include "stdio.h"
