@@ -149,3 +149,9 @@ void am_init_monitor() {
   welcome();
 }
 #endif
+
+void assert_fail_msg() {
+  // isa_reg_display();
+  // statistic();
+  printf("\033[0;31merror\n\033[0m]");
+}

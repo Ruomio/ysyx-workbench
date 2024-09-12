@@ -49,10 +49,6 @@
 //   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 // }
 
-void assert_fail_msg() {
-  // isa_reg_display();
-  // statistic();
-  printf("\033[0;31merror\n\033[0m]");
-}
+
 
 #endif
