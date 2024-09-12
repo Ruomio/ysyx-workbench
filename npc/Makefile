@@ -49,7 +49,7 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 OBJS = $(CSRCS:%.c=$(OBJ_DIR)/%.o)
 
 $(OBJ_DIR)/%.o: %.c
-	gcc $(CFLAGS) $< -o $@
+	gcc $(CFLAGS) -c $< -o $@
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
