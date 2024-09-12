@@ -46,7 +46,9 @@ void init_memory() {
   int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
 
-  // printf("memory len = %lu\n", strlen((char *)memory));
+  for(int i =0; i < size; i++) {
+    printf("memory [%d] = 0x%x\n", i, memory[i]);
+  }
 
   fclose(fp);
   return;
