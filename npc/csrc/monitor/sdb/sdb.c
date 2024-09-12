@@ -242,6 +242,8 @@ void sdb_set_batch_mode() {
 }
 
 void sdb_mainloop() {
+  init_npc();
+
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
@@ -277,6 +279,8 @@ void sdb_mainloop() {
 
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
+
+  free_npc();
 }
 
 void init_sdb() {
