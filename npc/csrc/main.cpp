@@ -3,6 +3,7 @@
 #include <climits>
 #include <verilated.h>
 #include "Vtop.h"
+#include "Vtop___024root.h"
 #include "verilated_vcd_c.h"
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
@@ -40,6 +41,8 @@ void check_trap(npc_state u_npc_state) {
 
 extern int parse_args(int argc, char *argv[]);
 
+Vtop *top = NULL;
+
 int main(int argc, char **argv) {
 
   parse_args(argc, argv);
@@ -50,7 +53,7 @@ int main(int argc, char **argv) {
   contextp->commandArgs(argc, argv);
   VerilatedVcdC *tfp = new VerilatedVcdC;
   
-  Vtop *top = new Vtop(contextp);
+  top = new Vtop(contextp);
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
@@ -62,6 +65,7 @@ int main(int argc, char **argv) {
         u_npc_state.pc = top->pc;
         break;
       }
+      // int re = top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[0];
       top->clk ^= 1;
       static int i = 0;
       if(i++>1000) break;
