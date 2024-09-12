@@ -30,11 +30,16 @@ void init_npc() {
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
 
+  top->clk = 0;
   top->rst = 0;
   top->eval();
   tfp->dump(contextp->time());
   contextp->timeInc(1);
   top->rst = 1;
+  top->clk ^= 1;
+  top->eval();
+  tfp->dump(contextp->time());
+  contextp->timeInc(1);
 }
 
 void exec_once_npc(uint32_t pc) {
