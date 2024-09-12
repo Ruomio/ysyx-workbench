@@ -2,7 +2,7 @@
 #define __RANG_BUFFER__H
 
 #include <string.h>
-#include <cassert>
+#include "debug.h"
 
 typedef struct RingBuffer {
     char buf[20][128];
@@ -34,7 +34,7 @@ void RingBuffer_save_file();
 void echo();
 
 // macro
-#define RingBuffer_puts(B, D) (RingBuffer_write((B), (D), strlen(D))
+#define RingBuffer_puts(B, D) RingBuffer_write((B), (D), strlen(D))
 
 
 #endif
