@@ -1,5 +1,5 @@
-#include "include/memory.h"
-#include "include/define.h"
+#include "memory.h"
+#include "define.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>

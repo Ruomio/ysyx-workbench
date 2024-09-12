@@ -5,7 +5,6 @@ module ysyx_24080020_IFU (
     input [`ysyx_24080020_WIDTH-1:0] pc,
     input [3:0] len,
     output [`ysyx_24080020_WIDTH-1:0] snpc
-    //output reg [`ysyx_24080020_WIDTH-1:0] inst
 
 );
 
@@ -23,5 +22,4 @@ module ysyx_24080020_IFU (
 
     assign snpc = snpc_reg;
 
-    // assign inst = pmem_read[pc - 32'h80000000];
 endmodule
