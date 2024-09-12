@@ -19,13 +19,25 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/memory.h>
+#include <stdint.h>
 #include "stdio.h"
 
 static int is_batch_mode = false;
 extern npc_state u_npc_state;
 
-extern void init_regex();
-extern void init_wp_pool();
+void init_regex();
+void init_wp_pool();
+
+extern "C"{
+  void init_npc();
+  void free_npc();
+  void exec_once_npc(uint32_t pc);
+  void exec_all_npc();
+  void exec_npc(int n);
+} 
+
+extern int init_npc();
+extern int free_npc();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
