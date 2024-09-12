@@ -6,6 +6,8 @@ module ysyx_24080020_NPC(
 );
 
     reg [`ysyx_24080020_WIDTH-1:0] snpc;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc;
+    reg is_dnpc;
 
     // inst
     reg [`ysyx_24080020_WIDTH-1:0] inst;
@@ -27,22 +29,76 @@ module ysyx_24080020_NPC(
 
     // memory
     reg mwen;
-    reg [`ysyx_24080020_WIDTH-1:0] maddr;
+    reg [3:0] mlen;
+    reg [`ysyx_24080020_WIDTH-1:0] mraddr;
+    reg [`ysyx_24080020_WIDTH-1:0] mwaddr;
     reg [`ysyx_24080020_WIDTH-1:0] mdata;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata;
 
 
-    assign pc = snpc;
+    ysyx_24080020_PC u_pc(.clk(clk), 
+        .rst(rst), 
+        .snpc(snpc), 
+        .is_dnpc(is_dnpc), 
+        .dnpc(dnpc), .pc(pc), 
+        .maddr(mraddr), 
+        .mlen(mlen)
+    );
 
-    ysyx_24080020_MEM u_mem(.clk(clk), .rst(rst), .maddr(maddr), .mdata(mdata), .wen(mwen), .mrdata(inst));
+    ysyx_24080020_MEM u_mem(.clk(clk), 
+        .rst(rst), 
+        .mraddr(mraddr), 
+        .mwaddr(mwaddr), 
+        .mlen(mlen), 
+        .mdata(mdata), 
+        .wen(mwen), 
+        .mrdata(inst)
+    );
     
-    ysyx_24080020_IFU ifu(.clk(clk), .rst(rst), .pc(pc), .len(`ysyx_24080020_LEN), .snpc(snpc), .maddr(maddr));
+    ysyx_24080020_IFU ifu(.clk(clk), 
+        .rst(rst), 
+        .pc(pc), 
+        .len(`ysyx_24080020_LEN), 
+        .snpc(snpc)
+    );
 
-    ysyx_24080020_IDU idu(.inst(inst), .opcode(opcode), .rd(rd), .funct3(funct3), .rs1(rs1), .rs2(rs2), .imm(imm), .funct7(funct7));
+    ysyx_24080020_IDU idu(.inst(inst), 
+        .opcode(opcode), 
+        .rd(rd), 
+        .funct3(funct3), 
+        .rs1(rs1), 
+        .rs2(rs2), 
+        .imm(imm), 
+        .funct7(funct7)
+    );
 
-    ysyx_24080020_REG u_reg(.clk(clk), .rst(rst), .raddr1(rs1), .raddr2(rs2), .wen(wen), .waddr(waddr), .wdata(wdata), .val_raddr1(src1), .val_raddr2(src2));
+    ysyx_24080020_REG u_reg(.clk(clk), 
+        .rst(rst), 
+        .raddr1(rs1), 
+        .raddr2(rs2), 
+        .wen(wen), 
+        .waddr(waddr), 
+        .wdata(wdata), 
+        .val_raddr1(src1), 
+        .val_raddr2(src2)
+    );
 
-    ysyx_24080020_EXU exu(.opcode(opcode), .funct3(funct3), .val_raddr1(src1), .val_raddr2(src2), .rd(rd), .imm(imm), .waddr(waddr), .wdata(wdata), .wen(wen), .pc(snpc));
+    ysyx_24080020_EXU exu(.opcode(opcode), 
+        .pc(pc), 
+        .funct3(funct3), 
+        .val_raddr1(src1), 
+        .val_raddr2(src2), 
+        .rd(rd), 
+        .imm(imm), 
+        .waddr(waddr), 
+        .wdata(wdata), 
+        .wen(wen), 
+        .is_dnpc(is_dnpc), 
+        .dnpc(dnpc), 
+        .maddr(mwaddr), 
+        .mdata(mdata), 
+        .mwen(mwen)
+    );
 
 
 endmodule
