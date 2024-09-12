@@ -4,10 +4,10 @@ VERILATOR_CFLAGS += -MMD --build -cc  \
 
 TOPNAME=top
 NXDC_FILES = constr/top.nxdc
-INC_PATH ?= csrc/include
 
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name ".cc") 
+INC_PATH += $(shell find $(abspath ./csrc/include) -name "*.h" -or -name "*.hpp")
 VSRC=$(shell find $(abspath vsrc) -name "*.v") 
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
