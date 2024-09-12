@@ -11,7 +11,7 @@ uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + MBASE; }
 
 int read_memory(int addr, int len) {
-  printf("addr = 0x%x, len = %d.\n", addr, len);
+  // printf("addr = 0x%x, len = %d.\n", addr, len);
   return host_read(guest_to_host(addr), len);
 }
 
