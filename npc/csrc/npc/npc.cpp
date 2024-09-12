@@ -34,8 +34,9 @@ void init_npc() {
 }
 
 void exec_once_npc(uint32_t pc) {
-  printf("exec once\n");
-  if(!contextp->gotFinish()) {
+  printf("exec once, pc = %#x\n", pc);
+  last_pc = pc;
+  while(!contextp->gotFinish()) {
     if(u_npc_state.state != NPC_RUNNING) {
       u_npc_state.pc = pc;
       return;
@@ -44,6 +45,10 @@ void exec_once_npc(uint32_t pc) {
     top->eval();
     tfp->dump(contextp->time());
     contextp->timeInc(1);
+    if(last_pc != top->pc) {
+      printf("last_pc = %#x, pc = %#x", last_pc, top->pc);
+      break;
+    }
   }
 }
 void exec_all_npc() {
