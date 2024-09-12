@@ -14,7 +14,7 @@ typedef struct {
     bool ret;
 }npc_state;
 
-npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
+extern npc_state u_npc_state;
 
 #define no_argument		0
 #define required_argument	1
