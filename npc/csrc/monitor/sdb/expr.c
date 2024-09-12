@@ -19,6 +19,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <assert.h>
 #include "common.h"
 #include "memory/paddr.h"
 
