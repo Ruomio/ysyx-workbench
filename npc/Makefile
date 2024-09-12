@@ -56,7 +56,7 @@ $(OBJ_DIR)/%.o: %.cpp
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self.!"
-	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
+	$(VERILATOR) -cc --exe --build --trace -j 0 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
