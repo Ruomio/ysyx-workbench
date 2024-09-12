@@ -42,8 +42,8 @@ all: $(BIN)
 #include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 # rules for verilator
-INCFLAGS = $(addprefix -I, $(INC_PATH))
-CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
+INCFLAGS = $(addprefix -I, $(INC_PATH)) -lreadline
+CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" -lreadline
 
 # $(OBJ_DIR)/%.o: 
 OBJS = $(CSRCS:%.c=$(OBJ_DIR)/%.o)
