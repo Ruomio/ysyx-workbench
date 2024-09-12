@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
     parse_args(argc, argv);
 
-    init_memory();
+    // init_memory();
 
     VerilatedContext *contextp = new VerilatedContext;
     contextp->commandArgs(argc, argv);
