@@ -10,22 +10,32 @@
 #include "include/memory.h"
 #include "include/define.h"
 
-bool run_flag = false;
 char *img_file = NULL;
 
+npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
 void ebreak() {
-    run_flag = true;
-    return;
+  u_npc_state.state = NPC_STOP;
+  u_npc_state.ret = true;
 }
 
 void invalid_inst() {
-  run_flag = true;
+  u_npc_state.state = NPC_ABORT;
+  u_npc_state.ret = false;
   printf("Unknown inst.\n");
 }
 
 void halt() {
   ebreak();
+}
+
+void check_trap(npc_state u_npc_state) {
+  if(!u_npc_state.ret) {
+    printf("\33[1;31mNPC: HIT BAD TRAP. at pc=%u\033[0m\n",u_npc_state.pc);
+  }
+  else {
+    printf("\33[1;32mNPC: HIT GOOD TRAP. at pc=%u\033[0m\n",u_npc_state.pc);
+  }
 }
 
 static int parse_args(int argc, char *argv[]);
@@ -48,7 +58,10 @@ int main(int argc, char **argv) {
     top->rst = 0;
     
     while(!contextp->gotFinish()) {
-        if(run_flag) break;
+        if(u_npc_state.state != NPC_RUNNING) {
+          u_npc_state.pc = top->pc;
+          break;
+        }
         top->clk ^= 1;
         static int i = 0;
         if(i++>1000) break;
@@ -59,6 +72,7 @@ int main(int argc, char **argv) {
         tfp->dump(contextp->time());
         contextp->timeInc(1);
     }
+    check_trap(u_npc_state);
     top->final();
     delete top;
     tfp->close();
