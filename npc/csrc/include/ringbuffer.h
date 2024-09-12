@@ -2,7 +2,7 @@
 #define __RANG_BUFFER__H
 
 #include <string.h>
-#include <assert.h>
+#include <cassert>
 
 typedef struct RingBuffer {
     char buf[20][128];
