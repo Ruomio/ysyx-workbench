@@ -31,7 +31,7 @@ module ysyx_24080020_EXU
 
     always @(*) begin
         // initial
-        flag = 1'b0;
+        // flag = 1'b0;
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 case(funct3)
