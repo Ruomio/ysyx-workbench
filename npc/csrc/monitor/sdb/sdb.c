@@ -18,9 +18,11 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-#include <memory/paddr.h>
+#include <memory/memory.h>
+#include "stdio.h"
 
 static int is_batch_mode = false;
+extern npc_state u_npc_state;
 
 void init_regex();
 void init_wp_pool();
@@ -50,7 +52,7 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
-  nemu_state.state = NEMU_QUIT;
+  u_npc_state.state = NPC_QUIT;
   return -1;
 }
 
@@ -280,5 +282,5 @@ void init_sdb() {
 
   // test_expr();
   // sdb_set_batch_mode();
-  IFDEF(CONFIG_ITRACE, RingBuffer_create());
+  // IFDEF(CONFIG_ITRACE, RingBuffer_create());
 }

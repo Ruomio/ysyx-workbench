@@ -6,6 +6,8 @@
 #include "define.h"
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
+#include "paddr.h"
+#include "vaddr.h"
 
 typedef  uint32_t word_t;
 typedef  uint32_t paddr_t;

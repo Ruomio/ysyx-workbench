@@ -7,7 +7,7 @@
 #include "svdpi.h"
 #include "Vtop__Dpi.h"
 
-#include "include/memory.h"
+#include "memory/memory.h"
 #include "include/define.h"
 
 char *img_file = NULL;
