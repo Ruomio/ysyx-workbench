@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
 extern bool run_flag;
 extern char *img_file;
@@ -44,6 +45,8 @@ void init_memory() {
   printf("memory addr is %p\n", memory);
   int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
+
+  printf("memory len = %lu\n", strlen((char *)memory));
 
   fclose(fp);
   return;
