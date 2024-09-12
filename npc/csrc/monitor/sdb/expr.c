@@ -21,7 +21,7 @@
 #include <regex.h>
 #include "debug.h"
 #include "common.h"
-#include "memory/paddr.h"
+#include "memory/memory.h"
 
 #define TOKENS_SIZE 1024
 #define TOKEN_STR_SIZE 32
