@@ -17,7 +17,7 @@ int read_memory(int addr, int len) {
 }
 
 void write_memory(int addr, int len, int data) {
-  // host_write(guest_to_host(addr), len, data);
+  host_write(guest_to_host(addr), len, data);
 }
 
 

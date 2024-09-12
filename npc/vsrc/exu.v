@@ -61,7 +61,7 @@ module ysyx_24080020_EXU
                         mwen = 1'b1;
                     end
 
-                    default: ;
+                    default: mwen = 1'b0;
                 endcase
             end
             `ysyx_24080020_AUIPC: begin
