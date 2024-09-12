@@ -25,8 +25,7 @@ void invalid_inst() {
 }
 
 void halt() {
-  run_flag = true;
-  printf("Endlesss loop.\n");
+  ebreak();
 }
 
 static int parse_args(int argc, char *argv[]);
