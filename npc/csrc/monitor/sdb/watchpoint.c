@@ -144,7 +144,7 @@ void scan_watchpoint(bool *is_change, bool *is_break) {
       printf("\033[0;31mexpr fail.\033[0m\n");
       return;
     }
-    if(ret == cpu.pc && p->type == BA_TYPE) {
+    if(ret == top->pc && p->type == BA_TYPE) {
       *is_break = true;
       printf("break point at 0x%x\n", ret);
       return;

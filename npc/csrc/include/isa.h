@@ -18,6 +18,13 @@
 
 // Located at src/isa/$(GUEST_ISA)/include/isa-def.h
 #include <isa-def.h>
+#include "Vtop.h"
+#include "Vtop___024root.h"
+
+extern Vtop *top;
+
+
+
 
 // The macro `__GUEST_ISA__` is defined in $(CFLAGS).
 // It will be expanded as "x86" or "mips32" ...
@@ -30,8 +37,11 @@ typedef riscv32_ISADecodeInfo ISADecodeInfo;
 extern char isa_logo[];
 void init_isa();
 
+
+
 // reg
 extern CPU_state cpu;
+
 void isa_reg_display();
 word_t isa_reg_str2val(const char *name, bool *success);
 
