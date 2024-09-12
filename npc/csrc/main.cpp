@@ -24,6 +24,11 @@ void invalid_inst() {
   printf("Unknown inst.\n");
 }
 
+void halt() {
+  run_flag = true;
+  printf("Endlesss loop.\n");
+}
+
 static int parse_args(int argc, char *argv[]);
 
 int main(int argc, char **argv) {

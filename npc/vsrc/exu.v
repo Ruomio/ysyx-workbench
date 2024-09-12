@@ -65,7 +65,7 @@ module ysyx_24080020_EXU
                 endcase
             end
             `ysyx_24080020_AUIPC: begin
-                wdata = pc - 4 + imm;
+                wdata = pc  + imm;
                 wen = 1'b1;
                 waddr = rd;
             end
