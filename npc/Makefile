@@ -50,6 +50,8 @@ OBJS = $(CSRCS:%.c=$(OBJ_DIR)/%.o)
 
 $(OBJ_DIR)/%.o: %.c
 	gcc $(CFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: %.cpp
+	g++ $(CXXFLAGS) -c $< -o $@
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -63,7 +65,7 @@ nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): $(VSRC) $(OBJS) $(NVBOARD_ARCHIVE)
+$(BIN): $(VSRC) $(OBJS) 
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
