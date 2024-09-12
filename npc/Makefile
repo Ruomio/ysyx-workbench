@@ -45,6 +45,7 @@ all: $(BIN)
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
+OBJS := $(CSRC:%c=$(OBJ_DIR)/%.o)
 # $(OBJ_DIR)/%.o: 
 
 sim:
