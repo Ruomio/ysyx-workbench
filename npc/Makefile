@@ -30,13 +30,13 @@ all: $(BIN)
 # 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 
 # project source
-VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
-CSRCS += $(SRC_AUTO_BIND)
-
-# parameters 
-ARGS +=
-IMG +=
+# VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+# CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+# CSRCS += $(SRC_AUTO_BIND)
+# 
+# # parameters 
+# ARGS +=
+# IMG +=
 
 # rules for NVBoard
 #include $(NVBOARD_HOME)/scripts/nvboard.mk
@@ -45,7 +45,7 @@ IMG +=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
-
+# $(OBJ_DIR)/%.o: 
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -59,7 +59,7 @@ nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+$(BIN): $(VSRCS) $(CSRC) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
