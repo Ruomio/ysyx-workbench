@@ -28,7 +28,7 @@ static FILE *out = NULL;
 
 void init_ftrace(const char *img_file, const char *ftrace_file) {
   if(!img_file) return;
-  char *elf_file = calloc(1, strlen(img_file) + 1);
+  char *elf_file = (char *)calloc(1, strlen(img_file) + 1);
   strcpy(elf_file, img_file);
   memcpy((char *)(elf_file+strlen(elf_file)-3), "elf", 3);
 
@@ -49,7 +49,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   
   // 读取节头
   fseek(file, ehdr.e_shoff, SEEK_SET);
-  Elf32_Shdr *shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
+  Elf32_Shdr *shdrs = (Elf32_Shdr *)malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
   fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, file);
 
   // 找到符号表和字符串表
@@ -65,12 +65,12 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   }
   // printf("%d %d \n", symtab_index, strtab_index);
   // 读取符号表
-  Elf32_Sym *symbols = malloc(shdrs[symtab_index].sh_size);
+  Elf32_Sym *symbols = (Elf32_Sym *)malloc(shdrs[symtab_index].sh_size);
   fseek(file, shdrs[symtab_index].sh_offset, SEEK_SET);
   fread(symbols, shdrs[symtab_index].sh_size, 1, file);
 
   // 读取字符串表
-  char *strtab = malloc(shdrs[strtab_index].sh_size);
+  char *strtab = (char *)malloc(shdrs[strtab_index].sh_size);
   fseek(file, shdrs[strtab_index].sh_offset, SEEK_SET);
   fread(strtab, shdrs[strtab_index].sh_size, 1, file);
 
