@@ -53,17 +53,17 @@ $(OBJ_DIR)/%.o: %.c
 $(OBJ_DIR)/%.o: %.cpp
 	g++ $(CXXFLAGS) -c $< -o $@
 
-sim: $(BIN)
+sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self.!"
-	$(VERILATOR) -cc --exe --build --trace -j 0 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
+	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
-nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ \
-		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+# nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+# 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+# 	$(VERILATOR) $(VERILATOR_CFLAGS) \
+# 		--top-module $(TOPNAME) $^ \
+# 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+# 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
 $(BIN): $(VSRC) $(CSRC) 
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
