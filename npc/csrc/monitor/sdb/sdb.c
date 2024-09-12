@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
+// #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
@@ -60,10 +61,10 @@ static int cmd_si(char *args) {
 
   if(arg == NULL) {
     // no parameter, default 1
-    cpu_exec(1);
+    // cpu_exec(1);
   }
   else {
-    cpu_exec(atoi(arg));
+    // cpu_exec(atoi(arg));
   }
   return 0;
 }
