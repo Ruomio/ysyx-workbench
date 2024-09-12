@@ -13,30 +13,24 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <isa.h>
-#include <cpu/cpu.h>
-#include <difftest-def.h>
-#include <memory/paddr.h>
+#ifndef __SDB_H__
+#define __SDB_H__
 
-__EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
-  assert(0);
-}
+#include <common.h>
+#include "ringbuffer.h"
 
-__EXPORT void difftest_regcpy(void *dut, bool direction) {
-  assert(0);
-}
+enum WP_TYPE {
+  WP_TYPE = 0,
+  BA_TYPE,
+};
 
-__EXPORT void difftest_exec(uint64_t n) {
-  assert(0);
-}
+word_t expr(char *e, bool *success);
 
-__EXPORT void difftest_raise_intr(word_t NO) {
-  assert(0);
-}
+void test_expr();
 
-__EXPORT void difftest_init(int port) {
-  void init_mem();
-  init_mem();
-  /* Perform ISA dependent initialization. */
-  init_isa();
-}
+bool new_wp_interface(char *s, int type);
+bool free_wp_by_no_interface(int no);
+void scan_watchpoint(bool *is_change, bool *is_break);
+void print_watchpoint();
+
+#endif
