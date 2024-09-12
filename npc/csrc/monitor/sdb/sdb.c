@@ -14,7 +14,6 @@
 ***************************************************************************************/
 
 #include <isa.h>
-#include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
@@ -46,7 +45,7 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
-  cpu_exec(-1);
+  // cpu_exec(-1);
   return 0;
 }
 
