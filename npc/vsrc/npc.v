@@ -30,7 +30,8 @@ module ysyx_24080020_NPC(
     // memory
     reg mwen;
     reg [3:0] mlen;
-    reg [`ysyx_24080020_WIDTH-1:0] maddr;
+    reg [`ysyx_24080020_WIDTH-1:0] mraddr;
+    reg [`ysyx_24080020_WIDTH-1:0] mwaddr;
     reg [`ysyx_24080020_WIDTH-1:0] mdata;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata;
 
@@ -40,14 +41,14 @@ module ysyx_24080020_NPC(
         .snpc(snpc), 
         .is_dnpc(is_dnpc), 
         .dnpc(dnpc), .pc(pc), 
-        .maddr(maddr), 
+        .maddr(mraddr), 
         .mlen(mlen)
     );
 
     ysyx_24080020_MEM u_mem(.clk(clk), 
         .rst(rst), 
-        .mraddr(pc), 
-        .mwaddr(maddr), 
+        .mraddr(mraddr), 
+        .mwaddr(mwaddr), 
         .mlen(mlen), 
         .mdata(mdata), 
         .wen(mwen), 
@@ -87,13 +88,14 @@ module ysyx_24080020_NPC(
         .funct3(funct3), 
         .val_raddr1(src1), 
         .val_raddr2(src2), 
-        .rd(rd), .imm(imm), 
+        .rd(rd), 
+        .imm(imm), 
         .waddr(waddr), 
         .wdata(wdata), 
         .wen(wen), 
         .is_dnpc(is_dnpc), 
         .dnpc(dnpc), 
-        .maddr(maddr), 
+        .maddr(mwaddr), 
         .mdata(mdata), 
         .mwen(mwen)
     );
