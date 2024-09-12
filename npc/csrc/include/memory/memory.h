@@ -13,9 +13,10 @@ typedef  uint32_t word_t;
 typedef  uint32_t paddr_t;
 
 
-static uint8_t memory[MSIZE];
+extern uint8_t *memory;
 
 void init_memory();
+void free_memory();
 
 static inline word_t host_read(void *addr, int len) {
   switch (len) {

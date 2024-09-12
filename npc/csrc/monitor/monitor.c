@@ -51,32 +51,6 @@ static char *ftrace_file = NULL;
 extern char *img_file;
 extern npc_state u_npc_state;
 
-void init_memory() {
-  if (img_file == NULL) {
-    printf("No image is given. \n");
-    u_npc_state.state = NPC_STOP;
-    u_npc_state.ret = true;
-    return; // built-in image size
-  }
-
-  FILE *fp = fopen(img_file, "rb");
-  assert(fp);
-
-  fseek(fp, 0, SEEK_END);
-  long size = ftell(fp);
-
-  assert(size <= MSIZE); 
-  printf("The image is %s, size = %ld\n", img_file, size);
-
-  fseek(fp, 0, SEEK_SET);
-
-  printf("memory addr is %p\n", memory);
-  int ret = fread(memory, size, 1, fp);
-  assert(ret == 1);
-
-  fclose(fp);
-  return;
-}
 
 int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
@@ -128,7 +102,7 @@ void init_monitor(int argc, char *argv[]) {
   IFDEF(CONFIG_FTRACE_COND, init_ftrace(img_file, ftrace_file));
 
   /* Initialize memory. */
-  init_mem();
+  // init_mem();
 
   /* Initialize devices. */
   IFDEF(CONFIG_DEVICE, init_device());

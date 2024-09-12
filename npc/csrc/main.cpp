@@ -42,42 +42,43 @@ extern int parse_args(int argc, char *argv[]);
 
 int main(int argc, char **argv) {
 
-    parse_args(argc, argv);
+  parse_args(argc, argv);
 
-    init_memory();
+  init_memory();
 
-    VerilatedContext *contextp = new VerilatedContext;
-    contextp->commandArgs(argc, argv);
-    VerilatedVcdC *tfp = new VerilatedVcdC;
-    
-    Vtop *top = new Vtop(contextp);
-    contextp->traceEverOn(true);
-    top->trace(tfp, 0);
-    tfp->open("build/wave.vcd");
+  VerilatedContext *contextp = new VerilatedContext;
+  contextp->commandArgs(argc, argv);
+  VerilatedVcdC *tfp = new VerilatedVcdC;
+  
+  Vtop *top = new Vtop(contextp);
+  contextp->traceEverOn(true);
+  top->trace(tfp, 0);
+  tfp->open("build/wave.vcd");
 
-    top->rst = 0;
-    
-    while(!contextp->gotFinish()) {
-        if(u_npc_state.state != NPC_RUNNING) {
-          u_npc_state.pc = top->pc;
-          break;
-        }
-        top->clk ^= 1;
-        static int i = 0;
-        if(i++>1000) break;
-        if(i>20) top->rst = 1;
-        top->eval();
-        // printf("pc  = 0x%x\n",top->pc);
+  top->rst = 0;
+  
+  while(!contextp->gotFinish()) {
+      if(u_npc_state.state != NPC_RUNNING) {
+        u_npc_state.pc = top->pc;
+        break;
+      }
+      top->clk ^= 1;
+      static int i = 0;
+      if(i++>1000) break;
+      if(i>20) top->rst = 1;
+      top->eval();
+      // printf("pc  = 0x%x\n",top->pc);
 
-        tfp->dump(contextp->time());
-        contextp->timeInc(1);
-    }
-    check_trap(u_npc_state);
-    top->final();
-    delete top;
-    tfp->close();
-    delete contextp;
-    return 0;
+      tfp->dump(contextp->time());
+      contextp->timeInc(1);
+  }
+  free_memory();
+  check_trap(u_npc_state);
+  top->final();
+  delete top;
+  tfp->close();
+  delete contextp;
+  return 0;
 }
 
 
