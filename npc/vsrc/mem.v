@@ -23,7 +23,11 @@ module ysyx_24080020_MEM(
         else if(wen && mwaddr != 32'b0) begin
             write_memory(mwaddr, {{28{1'b0}},mlen}, mdata);
         end
-        else if(mraddr != 32'b0) begin
+        else begin
+            mrdata <= mraddr;
+        end
+        
+        if(mraddr != 32'b0) begin
             mrdata <= read_memory(mraddr, {{28{1'b0}}, mlen});
         end
         else begin
