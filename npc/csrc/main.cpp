@@ -31,10 +31,10 @@ void halt() {
 
 void check_trap(npc_state u_npc_state) {
   if(!u_npc_state.ret) {
-    printf("\33[1;31mNPC: HIT BAD TRAP. at pc=%u\033[0m\n",u_npc_state.pc);
+    printf("\33[1;31mNPC: HIT BAD TRAP. at pc=%#x\033[0m\n",u_npc_state.pc);
   }
   else {
-    printf("\33[1;32mNPC: HIT GOOD TRAP. at pc=%u\033[0m\n",u_npc_state.pc);
+    printf("\33[1;32mNPC: HIT GOOD TRAP. at pc=%#x\033[0m\n",u_npc_state.pc);
   }
 }
 
