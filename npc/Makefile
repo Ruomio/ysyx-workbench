@@ -53,7 +53,7 @@ $(OBJ_DIR)/%.o: %.c
 $(OBJ_DIR)/%.o: %.cpp
 	g++ $(CXXFLAGS) -c $< -o $@
 
-sim:
+sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self.!"
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
