@@ -40,6 +40,8 @@ void check_trap(npc_state u_npc_state) {
 }
 
 extern int parse_args(int argc, char *argv[]);
+extern void sdb_mainloop();
+extern void init_sdb();
 
 Vtop *top = NULL;
 
@@ -48,6 +50,10 @@ int main(int argc, char **argv) {
   parse_args(argc, argv);
 
   init_memory();
+
+  init_sdb();
+
+  sdb_mainloop();
 
   VerilatedContext *contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);

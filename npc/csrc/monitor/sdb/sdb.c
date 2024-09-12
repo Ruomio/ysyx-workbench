@@ -15,10 +15,8 @@
 
 #include <isa.h>
 // #include <cpu/cpu.h>
-extern "C" {
-  #include <readline/readline.h>
-  #include <readline/history.h>
-}
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "sdb.h"
 #include <memory/memory.h>
 #include "stdio.h"
@@ -26,8 +24,8 @@ extern "C" {
 static int is_batch_mode = false;
 extern npc_state u_npc_state;
 
-void init_regex();
-void init_wp_pool();
+extern void init_regex();
+extern void init_wp_pool();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
