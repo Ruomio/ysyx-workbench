@@ -7,6 +7,7 @@
 
 extern bool run_flag;
 extern char *img_file;
+extern npc_state u_npc_state;
 
 uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + MBASE; }

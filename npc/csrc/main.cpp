@@ -11,6 +11,7 @@
 #include "include/define.h"
 
 char *img_file = NULL;
+npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
 
 void ebreak() {
