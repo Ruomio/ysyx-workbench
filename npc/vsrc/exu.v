@@ -29,7 +29,7 @@ module ysyx_24080020_EXU
 
     assign is_dnpc = flag;
 
-    always @(opcode or funct3 or pc) begin
+    always @(opcode or funct3) begin
         // initial
         flag = 1'b0;
         case(opcode)
