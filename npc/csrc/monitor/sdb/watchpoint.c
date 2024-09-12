@@ -55,23 +55,23 @@ WP *new_wp(char *s, int type) {
   }
 
   if(strlen(s) < STR_SIZE) {
-    WP *new = free_;
+    WP *new_node = free_;
     free_ = free_->next;
-    new->next = NULL;
-    strcpy(new->str, s);
-    new->type = type;
+    new_node->next = NULL;
+    strcpy(new_node->str, s);
+    new_node->type = type;
     bool success = false;
     word_t ret = expr(s, &success);
-    last[new->NO] = ret;
+    last[new_node->NO] = ret;
 
 
-    if(!head) head = new;
+    if(!head) head = new_node;
     else {
-      new->next = head;
-      head = new;
+      new_node->next = head;
+      head = new_node;
     }
 
-    return new;
+    return new_node;
   }
   else {
     printf("\033[0;31mexpr str is too long, over WP->str size\033[0m\n");
