@@ -31,13 +31,7 @@ module ysyx_24080020_EXU
 
     always @(*) begin
         // initial
-        wdata = 32'b0;
-        waddr = 5'b0;
-        wen = 1'b0;
         flag = 1'b0;
-        mwen = 1'b0;
-        maddr = 32'b0;
-        mdata = 32'b0;
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 case(funct3)
