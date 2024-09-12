@@ -8,7 +8,7 @@
 #define MSIZE 0x40000000     // 4G 2^31
 
 enum NPCSTATE{NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT};
-typedef struct {
+typedef struct{
     int state;
     uint32_t pc;
     bool ret;
