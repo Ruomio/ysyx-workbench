@@ -34,6 +34,7 @@ void init_npc() {
 }
 
 void exec_once_npc(uint32_t pc) {
+  printf("exec once\n");
   if(!contextp->gotFinish()) {
     if(u_npc_state.state != NPC_RUNNING) {
       u_npc_state.pc = pc;
@@ -46,6 +47,7 @@ void exec_once_npc(uint32_t pc) {
   }
 }
 void exec_all_npc() {
+  printf("exec all\n");
   while(!contextp->gotFinish()) {
     if(u_npc_state.state != NPC_RUNNING) {
       u_npc_state.pc = top->pc;
