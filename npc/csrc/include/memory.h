@@ -1,7 +1,7 @@
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
-#include <cassert>
+#include <assert.h>
 #include <stdint.h>
 #include "define.h"
 #include "svdpi.h"
