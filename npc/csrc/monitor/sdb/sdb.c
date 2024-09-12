@@ -28,16 +28,10 @@ extern npc_state u_npc_state;
 void init_regex();
 void init_wp_pool();
 
-extern "C"{
-  void init_npc();
-  void free_npc();
-  void exec_once_npc(uint32_t pc);
-  void exec_all_npc();
-  void exec_npc(int n);
-} 
+extern void init_npc();
+extern void free_npc();
+extern void exec_npc(int n);
 
-extern int init_npc();
-extern int free_npc();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -58,7 +52,7 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
-  // cpu_exec(-1);
+  exec_npc(-1);
   return 0;
 }
 
@@ -73,10 +67,10 @@ static int cmd_si(char *args) {
 
   if(arg == NULL) {
     // no parameter, default 1
-    // cpu_exec(1);
+    exec_npc(1);
   }
   else {
-    // cpu_exec(atoi(arg));
+    exec_npc(atoi(arg));
   }
   return 0;
 }
