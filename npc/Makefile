@@ -63,6 +63,10 @@ $(OBJ_DIR)/%.o: %.c
 $(OBJ_DIR)/%.o: %.cpp
 	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 
+$(OBJ_DIR)/%.o: %.cc
+	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+
+
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self.!"
