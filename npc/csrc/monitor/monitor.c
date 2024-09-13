@@ -24,7 +24,7 @@ void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
-// void init_disasm(const char *triple);
+extern "C" void init_disasm(const char *triple);
 IFDEF(CONFIG_FTRACE_COND, void init_ftrace(const char *img_file, const char *ftrace_file));
 
 static void welcome() {
