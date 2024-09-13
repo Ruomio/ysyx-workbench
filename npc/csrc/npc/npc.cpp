@@ -7,6 +7,7 @@
 #include "verilated_vcd_c.h"
 #include "Vtop__Dpi.h"
 #include "common.h"
+#include "ringbuffer.h"
 
 
 extern int argc;
