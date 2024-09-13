@@ -8,7 +8,7 @@
 #include "Vtop__Dpi.h"
 
 #include "memory/memory.h"
-#include "include/define.h"
+#include "define.h"
 
 char *img_file = NULL;
 int argc = 0;
