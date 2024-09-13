@@ -25,12 +25,12 @@ void init_memory() {
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
 
-  assert(size <= MSIZE); 
+  assert(size <= CONFIG_MSIZE); 
   printf("The image is %s, size = %ld\n", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
 
-  memory = (uint8_t *)calloc(1, MSIZE);
+  memory = (uint8_t *)calloc(1, CONFIG_MSIZE);
   printf("memory addr is %p\n", memory);
   int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
