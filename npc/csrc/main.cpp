@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   
   free_memory();
   
-  return is_exit_status_bad();
+  return !is_exit_status_bad();
 }
 
 
