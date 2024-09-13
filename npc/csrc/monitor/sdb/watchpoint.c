@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include "sdb.h"
-#include "memory/memory.h"
+#include "Vtop.h"
 
 extern Vtop *top;
 
