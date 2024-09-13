@@ -114,7 +114,7 @@ void free_npc() {
 
 
 void ebreak() {
-  u_npc_state.state = NPC_STOP;
+  u_npc_state.state = NPC_END;
   u_npc_state.ret = true;
 }
 
