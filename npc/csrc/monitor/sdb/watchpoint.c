@@ -14,7 +14,9 @@
 ***************************************************************************************/
 
 #include "sdb.h"
-#include "isa.h"
+#include "Vtop.h"
+
+extern Vtop *top;
 
 #define NR_WP 32
 #define NR_BA 32
