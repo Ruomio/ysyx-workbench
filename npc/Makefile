@@ -55,17 +55,16 @@ CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
-# $(OBJ_DIR)/%.o: 
 OBJS = $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CSRC:%.cc=$(OBJ_DIR)/%.o)
 
 $(OBJ_DIR)/%.o: %.c
 	gcc $(CFLAGS) -c $< -o $@
 
+$(OBJ_DIR)/%.o: %.cc
+	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o: %.cpp
 	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/%.o: %.cc
-	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
 sim:
