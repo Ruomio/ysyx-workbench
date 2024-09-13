@@ -49,8 +49,8 @@ all: $(BIN)
 
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
-CFLAGS += -g
-CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" -g
+CFLAGS += $(if $(CONFIG_DEBUG), -g)
+CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
 LDFLAGS += -lreadline -ldl
 
 # $(OBJ_DIR)/%.o: 
