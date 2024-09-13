@@ -51,7 +51,7 @@ all: $(BIN)
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
-LDFLAGS += -lreadline -ldl
+LDFLAGS += -lreadline -ldl $(LIBS)
 
 # $(OBJ_DIR)/%.o: 
 OBJS = $(CSRCS:%.c=$(OBJ_DIR)/%.o)
