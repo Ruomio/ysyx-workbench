@@ -142,3 +142,7 @@ void check_trap(npc_state u_npc_state) {
     printf("\33[1;32mNPC: HIT GOOD TRAP. at pc=%#x\033[0m\n",u_npc_state.pc);
   }
 }
+
+uint32_t g_get_pc() {
+  return top->pc;
+}
