@@ -79,7 +79,7 @@ void exec_all_npc() {
 void exec_npc(int n) {
   switch (u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
-      printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
+      printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;
     default: u_npc_state.state = NPC_RUNNING;
   }
