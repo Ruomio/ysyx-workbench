@@ -106,3 +106,6 @@ clean:
 
 include ../Makefile
 include scripts/config.mk
+ifdef CONFIG_ITRACE
+include $(NPC_HOME)/csrc/utils/filelist.mk
+endif
