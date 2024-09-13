@@ -57,12 +57,12 @@ LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
 OBJS = $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CSRC:%.cc=$(OBJ_DIR)/%.o) $(CSRC:%.cpp=$(OBJ_DIR)/%.o)
 
-# $(OBJ_DIR)/%.o: %.c
-# 	gcc $(CFLAGS) -c $< -o $@
-# $(OBJ_DIR)/%.o: %.cc
-# 	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
-# $(OBJ_DIR)/%.o: %.cpp
-# 	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: %.c
+	gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: %.cc
+	g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: %.cpp
+	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
 
