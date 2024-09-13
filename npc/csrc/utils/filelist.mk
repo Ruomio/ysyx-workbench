@@ -14,7 +14,7 @@
 #**************************************************************************************/
 
 ifneq ($(CONFIG_ITRACE)$(CONFIG_IQUEUE),)
-CSRC += csrc/utils/disasm.cc
+CSRC += $(shell find $(abspath ./csrc/utils) -name "disasm.cc")
 CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE
 LIBS += $(shell llvm-config --libs)
 endif
