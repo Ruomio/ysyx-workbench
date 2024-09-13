@@ -18,10 +18,6 @@
 
 // Located at src/isa/$(GUEST_ISA)/include/isa-def.h
 #include <isa-def.h>
-#include "Vtop.h"
-#include "Vtop___024root.h"
-
-extern Vtop *top;
 
 
 
