@@ -16,10 +16,6 @@ char **argv = NULL;
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
 
-
-
-
-
 extern int parse_args(int argc, char *argv[]);
 extern void sdb_mainloop();
 extern void init_sdb();
@@ -42,7 +38,3 @@ int main(int argc, char **argv) {
   
   return is_exit_status_bad();
 }
-
-
-
-
