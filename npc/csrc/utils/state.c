@@ -13,12 +13,13 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "define.h"
 #include <utils.h>
 
-NEMUState nemu_state = { .state = NEMU_STOP };
+extern npc_state u_npc_state;
 
 int is_exit_status_bad() {
-  int good = (nemu_state.state == NEMU_END && nemu_state.halt_ret == 0) ||
-    (nemu_state.state == NEMU_QUIT);
+  int good = (u_npc_state.state == NPC_END && u_npc_state.ret == 0) ||
+    (u_npc_state.state == NPC_QUIT);
   return !good;
 }
