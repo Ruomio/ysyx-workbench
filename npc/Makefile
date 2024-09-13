@@ -6,10 +6,8 @@ TOPNAME=top
 NXDC_FILES = constr/top.nxdc
 
 
-
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-AUTO_CONFIG ?= $(shell find $(abspath ./include) -name autoconf.h) 
 VSRC=$(shell find $(abspath vsrc) -name "*.v") 
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
@@ -79,8 +77,8 @@ sim:
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): $(VSRC) $(CSRC) $(AUTO_CONFIG)
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+$(BIN): $(VSRC) $(CSRC) 
+	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
