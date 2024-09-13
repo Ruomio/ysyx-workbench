@@ -1,25 +1,14 @@
-#include "include/memory.h"
-#include "include/define.h"
+#include "memory/memory.h"
+#include "define.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
 
-extern bool run_flag;
+
+uint8_t *memory = NULL;
 extern char *img_file;
 extern npc_state u_npc_state;
-
-uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - MBASE; }
-paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + MBASE; }
-
-int read_memory(int addr, int len) {
-  return host_read(guest_to_host(addr), len);
-}
-
-void write_memory(int addr, int len, int data) {
-  host_write(guest_to_host(addr), len, data);
-}
-
 
 
 void init_memory() {
@@ -36,11 +25,12 @@ void init_memory() {
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
 
-  assert(size <= MSIZE); 
+  assert(size <= CONFIG_MSIZE); 
   printf("The image is %s, size = %ld\n", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
 
+  memory = (uint8_t *)calloc(1, CONFIG_MSIZE);
   printf("memory addr is %p\n", memory);
   int ret = fread(memory, size, 1, fp);
   assert(ret == 1);
@@ -48,4 +38,23 @@ void init_memory() {
   fclose(fp);
   return;
 }
+
+void free_memory() {
+  if(memory) {
+    free(memory);
+    memory = NULL;
+  }
+}
+
+uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
+paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
+
+int read_memory(int addr, int len) {
+  return host_read(guest_to_host(addr), len);
+}
+
+void write_memory(int addr, int len, int data) {
+  host_write(guest_to_host(addr), len, data);
+}
+
 

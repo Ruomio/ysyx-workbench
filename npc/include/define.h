@@ -3,9 +3,9 @@
 
 #include <getopt.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include "generated/autoconf.h"
 
-#define MBASE 0x80000000
-#define MSIZE 0x40000000     // 4G 2^31
 
 enum NPCSTATE{NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT};
 typedef struct{
