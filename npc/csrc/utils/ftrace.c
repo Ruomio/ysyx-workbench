@@ -12,7 +12,8 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-#include <common.h>
+#include "utils.h"
+#include "debug.h"
 #include <elf.h>
 
 #define NR_FT (1024)
