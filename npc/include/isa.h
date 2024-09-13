@@ -19,8 +19,6 @@
 // Located at src/isa/$(GUEST_ISA)/include/isa-def.h
 #include <isa-def.h>
 
-extern "C" void init_disasm(const char *triple);
-
 
 // The macro `__GUEST_ISA__` is defined in $(CFLAGS).
 // It will be expanded as "x86" or "mips32" ...
