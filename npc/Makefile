@@ -99,3 +99,4 @@ clean:
 	@rm -rf $(BUILD_DIR) *.vcd
 
 include ../Makefile
+include scripts/config.mk
