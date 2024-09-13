@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cstdint>
 #include <readline/chardefs.h>
 #include "Vtop.h"
