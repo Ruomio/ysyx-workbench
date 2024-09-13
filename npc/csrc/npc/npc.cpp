@@ -15,7 +15,7 @@ extern char **argv;
 extern npc_state u_npc_state;
 extern uint8_t *memory;
 
-extern "C" disassemble(char*, int, unsigned long, unsigned char*, int);
+extern "C" extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
