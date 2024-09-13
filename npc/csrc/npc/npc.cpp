@@ -1,9 +1,9 @@
 #include <cstdint>
 #include <readline/chardefs.h>
 #include "Vtop.h"
+#include "Vtop___024root.h"
 #include "define.h"
 #include "verilated_vcd_c.h"
-// #include "svdpi.h"
 #include "Vtop__Dpi.h"
 
 
@@ -144,4 +144,8 @@ void check_trap(npc_state u_npc_state) {
 
 uint32_t g_get_pc() {
   return top->pc;
+}
+
+uint32_t g_get_reg(int i) {
+  return (top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
 }

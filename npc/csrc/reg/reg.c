@@ -1,10 +1,8 @@
 #include "isa.h"
-#include "Vtop.h"
-#include "Vtop___024root.h"
 
-extern Vtop *top;
+extern uint32_t g_get_reg(int i);
 
-#define gpr(i) (top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i])
+#define gpr(i) (g_get_reg(i))
 
 
 const char *regs[] = {
