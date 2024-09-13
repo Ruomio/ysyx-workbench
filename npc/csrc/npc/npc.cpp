@@ -1,6 +1,5 @@
 #include <cstdint>
 #include <readline/chardefs.h>
-#include "Vtop.h"
 #include "define.h"
 #include "verilated_vcd_c.h"
 #include "svdpi.h"
