@@ -27,7 +27,6 @@ $(shell mkdir -p $(BUILD_DIR))
 all: $(BIN)
 
 
-
 # constraint file
 # SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 # $(SRC_AUTO_BIND): $(NXDC_FILES)
