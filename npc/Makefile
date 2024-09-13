@@ -29,7 +29,6 @@ endif
 
 
 
-all: $(OBJS) $(BIN)
 
 
 # constraint file
@@ -65,6 +64,7 @@ $(OBJ_DIR)/%.o: %.cpp
 	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
+all: $(BIN)
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
