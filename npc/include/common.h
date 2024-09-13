@@ -20,9 +20,8 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <string.h>
-#include "define.h"
 
-// #include <generated/autoconf.h>
+#include <generated/autoconf.h>
 #include <macro.h>
 
 #ifdef CONFIG_TARGET_AM

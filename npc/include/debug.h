@@ -17,7 +17,7 @@
 #define __DEBUG_H__
 
 #include <common.h>
-#include <stdio.h>
+ #include <stdio.h>
 #include <utils.h>
 
 #define Log(format, ...) \
