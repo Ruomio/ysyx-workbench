@@ -29,7 +29,7 @@ endif
 
 
 
-all: $(BIN)
+all: $(OBJS) $(BIN)
 
 
 # constraint file
