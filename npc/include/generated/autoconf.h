@@ -4,6 +4,6 @@
  * NPC Configuration
  *
  */
-#define CONFIG_MSIZE "0x40000000"
-#define CONFIG_MBASE "0x80000000"
+#define CONFIG_MSIZE 0x40000000
+#define CONFIG_MBASE 0x80000000
 #define CONFIG_DEBUG 1
