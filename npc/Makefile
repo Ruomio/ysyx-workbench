@@ -11,6 +11,9 @@ VERILATOR_CFLAGS += -MMD --build -cc  \
 TOPNAME=top
 NXDC_FILES = constr/top.nxdc
 
+ifdef CONFIG_ITRACE
+include $(NPC_HOME)/csrc/utils/filelist.mk
+endif
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.cc" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
@@ -106,6 +109,4 @@ clean:
 
 include ../Makefile
 include scripts/config.mk
-ifdef CONFIG_ITRACE
-include $(NPC_HOME)/csrc/utils/filelist.mk
-endif
+
