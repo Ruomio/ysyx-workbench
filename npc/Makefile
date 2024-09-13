@@ -22,6 +22,9 @@ BUILD_DIR=./build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
 BIN=$(BUILD_DIR)/$(TOPNAME)
 
+ifdef CONFIG_ITRACE
+include $(NPC_HOME)/csrc/utils/filelist.mk
+endif
 
 $(shell mkdir -p $(BUILD_DIR))
 
@@ -110,6 +113,3 @@ clean:
 include ../Makefile
 include scripts/config.mk
 
-ifdef CONFIG_ITRACE
-include $(NPC_HOME)/csrc/utils/filelist.mk
-endif
