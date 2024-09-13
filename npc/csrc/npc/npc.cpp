@@ -3,13 +3,16 @@
 #include "Vtop.h"
 #include "Vtop___024root.h"
 #include "define.h"
+#include "memory/paddr.h"
 #include "verilated_vcd_c.h"
 #include "Vtop__Dpi.h"
+#include "common.h"
 
 
 extern int argc;
 extern char **argv;
 extern npc_state u_npc_state;
+extern uint8_t *memory;
 
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
@@ -17,7 +20,10 @@ VerilatedContext *contextp = NULL;
 
 static uint32_t last_pc;
 
+char inst_buf[1024];
+
 void check_trap(npc_state u_npc_state);
+uint32_t g_get_snpc();
 
 void init_npc() {
   contextp = new VerilatedContext;
@@ -60,7 +66,33 @@ void exec_once_npc(uint32_t pc) {
       break;
     }
   }
+#ifdef CONFIG_ITRACE
+  char *p = inst_buf;
+  p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", top->pc);
+  int ilen = g_get_snpc() - top->pc;
+  int i;
+  uint8_t *inst = (uint8_t *)guest_to_host(last_pc);
+  for (i = ilen - 1; i >= 0; i --) {
+    p += snprintf(p, 4, " %02x", inst[i]);
+  }
+  int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
+  int space_len = ilen_max - ilen;
+  if (space_len < 0) space_len = 0;
+  space_len = space_len * 3 + 1;
+  memset(p, ' ', space_len);
+  p += space_len;
+
+#ifndef CONFIG_ISA_loongarch32r
+  void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+  disassemble(p, inst_buf + sizeof(inst_buf) - p,
+      MUXDEF(CONFIG_ISA_x86, g_get_snpc(), top->pc), (uint8_t *)guest_to_host(last_pc), ilen);
+#else
+  p[0] = '\0'; // the upstream llvm does not support loongarch32r
+#endif
+  RingBuffer_write(inst_buf, strlen(inst_buf));
+#endif
 }
+
 void exec_all_npc() {
   printf("exec all\n");
   while(!contextp->gotFinish()) {
@@ -148,4 +180,8 @@ uint32_t g_get_pc() {
 
 uint32_t g_get_reg(int i) {
   return (top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
+}
+
+uint32_t g_get_snpc() {
+  return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
 }
