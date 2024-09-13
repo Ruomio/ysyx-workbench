@@ -26,8 +26,6 @@ BIN=$(BUILD_DIR)/$(TOPNAME)
 $(shell mkdir -p $(BUILD_DIR))
 
 all: $(BIN)
-	# @echo "Write this Makefile by your self."
-	# $(VERILATOR) -cc --exe --build --trace -j 0 $(VSRC) $(CSRC)
 
 
 
