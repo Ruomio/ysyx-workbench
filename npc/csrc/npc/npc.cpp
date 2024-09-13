@@ -23,7 +23,9 @@ VerilatedContext *contextp = NULL;
 
 static uint32_t last_pc;
 
-char inst_buf[1024];
+#ifdef CONFIG_ITRACE
+char inst_buf[128] = {};
+#endif
 
 void check_trap(npc_state u_npc_state);
 uint32_t g_get_snpc();
