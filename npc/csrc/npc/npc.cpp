@@ -82,8 +82,17 @@ void exec_npc(int n) {
   }
   else {
     for(; n>0; n--) {
+      if (u_npc_state.state != NPC_RUNNING) break;
       exec_once_npc(top->pc);
     }
+  }
+  switch(u_npc_state.state) {
+    case NPC_END: case NPC_ABORT:
+      check_trap(u_npc_state);
+      break;
+
+    case NPC_QUIT: break;;
+    default: break;;
   }
 }
 
