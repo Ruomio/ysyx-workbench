@@ -61,7 +61,7 @@ $(OBJ_DIR)/%.o: %.c
 	gcc $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/%.o: %.cpp
-	g++ $(CXXFLAGS) -c $< -o $@
+	g++ $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
