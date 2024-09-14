@@ -22,6 +22,7 @@ VerilatedVcdC *tfp = NULL;
 VerilatedContext *contextp = NULL;
 
 static uint32_t last_pc;
+static bool g_print_step = false;
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -29,6 +30,23 @@ char inst_buf[128] = {};
 
 void check_trap(npc_state u_npc_state);
 uint32_t g_get_snpc();
+uint32_t g_get_dnpc();
+
+static void trace_and_difftest(vaddr_t dnpc) {
+#ifdef CONFIG_ITRACE_COND
+  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
+#endif
+  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
+  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+
+#ifdef CONFIG_WATCHPOINT_COND
+  // scan and print all watch point and break point
+  bool is_chang = false;
+  bool is_break = false;
+  scan_watchpoint(&is_chang, &is_break);
+  if((is_chang || is_break) && nemu_state.state == NEMU_RUNNING) nemu_state.state = NEMU_STOP;
+#endif
+}
 
 void init_npc() {
   contextp = new VerilatedContext;
@@ -114,6 +132,7 @@ void exec_all_npc() {
 }
 
 void exec_npc(int n) {
+  g_print_step = n < 10;
   switch (u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
@@ -127,6 +146,7 @@ void exec_npc(int n) {
     for(; n>0; n--) {
       if (u_npc_state.state != NPC_RUNNING) break;
       exec_once_npc(top->pc);
+      trace_and_difftest(g_get_dnpc());
     }
   }
   switch(u_npc_state.state) {
@@ -190,4 +210,8 @@ uint32_t g_get_reg(int i) {
 
 uint32_t g_get_snpc() {
   return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
+}
+
+uint32_t g_get_dnpc() {
+  return top->rootp->top__DOT__u_npc__DOT__dnpc;
 }
