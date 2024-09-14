@@ -27,6 +27,12 @@ endmenu
 
 menu "Test and debug"
     config ITRACE
-    bool "enable inst trace"
-    default n
+        bool "enable inst trace"
+        default n
+    config MTRACE
+        bool "enable memory trace"
+        default n
+    config FTRACE
+        bool "enable function trace"
+        default n
 endmenu

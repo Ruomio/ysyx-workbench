@@ -29,6 +29,8 @@ char inst_buf[128] = {};
 #endif
 
 void check_trap(npc_state u_npc_state);
+
+uint32_t g_get_pc();
 uint32_t g_get_snpc();
 uint32_t g_get_dnpc();
 
