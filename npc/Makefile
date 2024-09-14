@@ -5,6 +5,10 @@ VERILATOR_CFLAGS += -MMD --build -cc  \
 TOPNAME=top
 NXDC_FILES = constr/top.nxdc
 
+remove_quote = $(patsubst "%",%,$(1))
+
+# Extract variabls from menuconfig
+GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
@@ -51,7 +55,7 @@ endif
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
-CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
+CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
 CSRC_NODIR := $(notdir $(CSRC))
