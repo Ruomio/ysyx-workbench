@@ -84,6 +84,7 @@ extern "C" void init_disasm(const char *triple) {
    auto Ctx = new llvm::MCContext(AsmInfo, gMRI, nullptr);
 #endif
   gDisassembler = target->createMCDisassembler(*gSTI, *Ctx);
+  printf("gDisassembler is NOT NULL ,addr = %p", gDisassembler);
   gIP = target->createMCInstPrinter(llvm::Triple(gTriple),
       AsmInfo->getAssemblerDialect(), *AsmInfo, *gMII, *gMRI);
   gIP->setPrintImmHex(true);
