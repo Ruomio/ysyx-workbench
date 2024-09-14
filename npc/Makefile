@@ -70,7 +70,7 @@ $(OBJ_DIR)/%.o: %.cpp
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 
-all: $(BIN)
+all: $(OBJS) $(BIN)
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
