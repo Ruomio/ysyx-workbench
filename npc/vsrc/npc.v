@@ -29,7 +29,6 @@ module ysyx_24080020_NPC(
 
     // memory
     reg mwen;
-    reg mren;
     reg [3:0] mlen;
     reg [`ysyx_24080020_WIDTH-1:0] mraddr;
     reg [`ysyx_24080020_WIDTH-1:0] mwaddr;
@@ -53,7 +52,6 @@ module ysyx_24080020_NPC(
         .mlen(mlen), 
         .mdata(mdata), 
         .wen(mwen),
-        .ren(mren),
         .mrdata(inst)
     );
     
@@ -99,8 +97,7 @@ module ysyx_24080020_NPC(
         .dnpc(dnpc), 
         .maddr(mwaddr), 
         .mdata(mdata), 
-        .mwen(mwen),
-        .mren(mren)
+        .mwen(mwen)
     );
 
 
