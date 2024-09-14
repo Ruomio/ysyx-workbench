@@ -6,7 +6,6 @@ module ysyx_24080020_PC (
 
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
     output [`ysyx_24080020_WIDTH-1:0] maddr,
-    output reg mren,
     output [3:0] mlen
 );
 
@@ -15,15 +14,15 @@ module ysyx_24080020_PC (
     assign mlen = 4'b100;
 
     always @(*) begin
-        mren = 1'b0;
-        pc = `ysyx_24080020_MBASE;
+        // pc = `ysyx_24080020_MBASE;
         if(is_dnpc) begin
-            pc = dnpc; 
             mren = 1'b1;
         end
         else if(snpc != pc) begin
             pc = snpc;
-            mren = 1'b1;
+        end
+        else begin
+            pc = pc;
         end
     end
 
