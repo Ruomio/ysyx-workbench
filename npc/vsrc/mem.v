@@ -13,15 +13,17 @@ module ysyx_24080020_MEM(
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
     import "DPI-C" function int read_memory(input int addr, input int len);
 
-    reg [`ysyx_24080020_WIDTH-1:0] last_addr;
+    reg [`ysyx_24080020_WIDTH-1:0] last_raddr;
+    reg [`ysyx_24080020_WIDTH-1:0] last_waddr;
    
 
     always @(posedge clk) begin
         if(!rst) begin
             mrdata <= 32'b0;
         end
-        else if(wen && mwaddr != 32'b0) begin
+        else if(wen && mwaddr != last_waddr) begin
             write_memory(mwaddr, {{28{1'b0}},mlen}, mdata);
+            last_waddr <= mwaddr;
         end
         else begin
             mrdata <= mrdata;
