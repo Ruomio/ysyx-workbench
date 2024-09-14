@@ -46,7 +46,7 @@ extern uint32_t g_get_pc();
 #endif
 
 static void out_of_bound(paddr_t addr) {
-  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_add_arrow(); MtraceBuf_save());
+  IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, g_get_pc());
 }
