@@ -14,15 +14,11 @@ module ysyx_24080020_PC (
     assign mlen = 4'b100;
 
     always @(*) begin
-        // pc = `ysyx_24080020_MBASE;
         if(is_dnpc) begin
             pc = dnpc;
         end
-        else if(snpc != pc) begin
-            pc = snpc;
-        end
         else begin
-            pc = pc;
+            pc = snpc;
         end
     end
 
