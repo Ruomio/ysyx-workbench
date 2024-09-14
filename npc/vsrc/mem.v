@@ -24,7 +24,7 @@ module ysyx_24080020_MEM(
             write_memory(mwaddr, {{28{1'b0}},mlen}, mdata);
         end
         else begin
-            mrdata <= mraddr;
+            mrdata <= mrdata;
         end
         
         if(mraddr != last_addr) begin
