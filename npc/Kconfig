@@ -43,4 +43,7 @@ menu "Test and debug"
     config FTRACE
         bool "enable function trace"
         default n
+    config WATCH_POINT
+        bool "enable watch point"
+        default n
 endmenu

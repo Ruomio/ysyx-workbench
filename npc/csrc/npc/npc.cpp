@@ -21,6 +21,7 @@ extern void MtraceBuf_add_arrow();
 extern void MtraceBuf_save();
 extern int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd);
 extern int close_ftrace();
+extern void scan_watchpoint(bool *is_change, bool *is_break);
 
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
@@ -48,7 +49,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
-#ifdef CONFIG_WATCHPOINT_COND
+#ifdef CONFIG_WATCH_POINT
   // scan and print all watch point and break point
   bool is_chang = false;
   bool is_break = false;
@@ -127,6 +128,7 @@ void exec_once_npc(uint32_t pc) {
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
     exec_once_npc(top->pc);
+    trace_and_difftest(g_get_dnpc());
   }
 }
 
