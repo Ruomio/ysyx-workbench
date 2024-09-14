@@ -29,9 +29,9 @@ module ysyx_24080020_MEM(
             mrdata <= mrdata;
         end
         
-        if(mraddr != last_addr) begin
+        if(mraddr != last_raddr) begin
             mrdata <= read_memory(mraddr, {{28{1'b0}}, mlen});
-            last_addr <= mraddr;
+            last_raddr <= mraddr;
         end
         else begin
             mrdata <= mrdata;
