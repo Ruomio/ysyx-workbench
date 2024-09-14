@@ -59,6 +59,7 @@ static int cmd_c(char *args) {
 
 static int cmd_q(char *args) {
   u_npc_state.state = NPC_QUIT;
+  free_npc();
   return -1;
 }
 
@@ -280,7 +281,6 @@ void sdb_mainloop() {
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
 
-  free_npc();
 }
 
 void init_sdb() {

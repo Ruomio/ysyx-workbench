@@ -16,6 +16,8 @@ extern npc_state u_npc_state;
 extern uint8_t *memory;
 
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+extern void MtraceBuf_add_arrow(); 
+extern void MtraceBuf_save();
 
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
@@ -29,6 +31,8 @@ char inst_buf[128] = {};
 #endif
 
 void check_trap(npc_state u_npc_state);
+
+uint32_t g_get_pc();
 uint32_t g_get_snpc();
 uint32_t g_get_dnpc();
 
@@ -157,7 +161,7 @@ void exec_npc(int n) {
 }
 
 void free_npc() {
-  check_trap(u_npc_state);
+  IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   if(top) {
     top->final();
     delete top;
