@@ -16,6 +16,7 @@
 #include "debug.h"
 #include <elf.h>
 
+#ifdef CONFIG_FTRACE
 #define NR_FT (1024)
 
 struct Ftrace_struct{
@@ -37,7 +38,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
 
 
   if(!ftrace_file) {
-    ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ftrace-log.txt";
+    ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/npc/build/ftrace-log.txt";
   }
   FILE *ftrace_log = fopen(ftrace_file, "w");
   out = ftrace_log;
@@ -153,3 +154,4 @@ int close_ftrace() {
 
   return 0;
 }
+#endif

@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <readline/chardefs.h>
+#include <stdint.h>
 #include "Vtop.h"
 #include "Vtop___024root.h"
 #include "define.h"
@@ -18,6 +19,9 @@ extern uint8_t *memory;
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 extern void MtraceBuf_add_arrow(); 
 extern void MtraceBuf_save();
+extern int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd);
+extern int close_ftrace();
+extern void scan_watchpoint(bool *is_change, bool *is_break);
 
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
@@ -35,6 +39,8 @@ void check_trap(npc_state u_npc_state);
 uint32_t g_get_pc();
 uint32_t g_get_snpc();
 uint32_t g_get_dnpc();
+uint32_t g_get_rs1();
+uint32_t g_get_rd();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -43,12 +49,12 @@ static void trace_and_difftest(vaddr_t dnpc) {
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
-#ifdef CONFIG_WATCHPOINT_COND
+#ifdef CONFIG_WATCH_POINT
   // scan and print all watch point and break point
   bool is_chang = false;
   bool is_break = false;
   scan_watchpoint(&is_chang, &is_break);
-  if((is_chang || is_break) && nemu_state.state == NEMU_RUNNING) nemu_state.state = NEMU_STOP;
+  if((is_chang || is_break) && u_npc_state.state == NPC_RUNNING) u_npc_state.state = NPC_STOP;
 #endif
 }
 
@@ -120,15 +126,9 @@ void exec_once_npc(uint32_t pc) {
 }
 
 void exec_all_npc() {
-  while(!contextp->gotFinish()) {
-    if(u_npc_state.state != NPC_RUNNING) {
-      u_npc_state.pc = top->pc;
-      return;
-    }
-    top->clk ^= 1;
-    top->eval();
-    tfp->dump(contextp->time());
-    contextp->timeInc(1);
+  while(u_npc_state.state == NPC_RUNNING) {
+    exec_once_npc(top->pc);
+    trace_and_difftest(g_get_dnpc());
   }
 }
 
@@ -162,6 +162,7 @@ void exec_npc(int n) {
 
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
+  IFDEF(CONFIG_FTRACE, close_ftrace());
   if(top) {
     top->final();
     delete top;
@@ -176,6 +177,9 @@ void free_npc() {
   }
 }
 
+void update_ftrace_dpi() {
+  IFDEF(CONFIG_FTRACE, update_ftrace(last_pc, g_get_dnpc(), g_get_rs1(), g_get_rd()));
+}
 
 void ebreak() {
   u_npc_state.state = NPC_END;
@@ -215,4 +219,11 @@ uint32_t g_get_snpc() {
 
 uint32_t g_get_dnpc() {
   return top->rootp->top__DOT__u_npc__DOT__dnpc;
+}
+
+uint32_t g_get_rs1() {
+  return BITS(top->rootp->__Vdly__top__DOT__u_npc__DOT__inst, 19, 15);
+}
+uint32_t g_get_rd() {
+  return BITS(top->rootp->__Vdly__top__DOT__u_npc__DOT__inst, 11, 7);
 }
