@@ -16,7 +16,7 @@ module ysyx_24080020_PC (
     always @(*) begin
         // pc = `ysyx_24080020_MBASE;
         if(is_dnpc) begin
-            mren = 1'b1;
+            pc = dnpc;
         end
         else if(snpc != pc) begin
             pc = snpc;
