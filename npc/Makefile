@@ -53,11 +53,12 @@ CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
-CSRC_NODIR = $(notdir $(CRSC))
-OBJS = $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
+CSRC_NODIR = $(notdir $(CSRC))
+OBJS = $(CSRC_NODIR:%.c=%.o) $(CSRC_NODIR:%.cc=%.o) $(CSRC_NODIR:%.cpp=%.o)
+
 
 $(OBJ_DIR)/%.o: %.c
-	$(shell mkdir -p $(BUILD_DIR))
+	$(shell mkdir -p $(OBJ_DIR))
 	gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cc
@@ -70,7 +71,8 @@ $(OBJ_DIR)/%.o: %.cpp
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 
-all: $(OBJS) $(BIN)
+all: $(OBJS)
+	@echo $(OBJS) 
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -115,7 +117,7 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY : all clean gtkwave sim nvboard run Kconfig 'include/config/auto.conf' deps_config
+.PHONY: all clean gtkwave sim nvboard run Kconfig 'include/config/auto.conf' deps_config
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
