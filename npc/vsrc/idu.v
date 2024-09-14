@@ -13,6 +13,7 @@ module ysyx_24080020_IDU (
     import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
+    import "DPI-C" function int update_ftrace_dpi();
 
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
@@ -22,8 +23,12 @@ module ysyx_24080020_IDU (
 
     always @(*) begin
         case(opcode)
-            `ysyx_24080020_I_TYPE, `ysyx_24080020_JALR: begin
+            `ysyx_24080020_I_TYPE: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+            end
+            `ysyx_24080020_JALR: begin
+                imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+                update_ftrace_dpi();
             end
 
             `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
@@ -32,6 +37,7 @@ module ysyx_24080020_IDU (
 
             `ysyx_24080020_JAL: begin
                 imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
+                update_ftrace_dpi();
                 if(imm == 32'b0) begin
                     halt();
                 end

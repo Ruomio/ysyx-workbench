@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <readline/chardefs.h>
+#include <stdint.h>
 #include "Vtop.h"
 #include "Vtop___024root.h"
 #include "define.h"
@@ -37,6 +38,8 @@ void check_trap(npc_state u_npc_state);
 uint32_t g_get_pc();
 uint32_t g_get_snpc();
 uint32_t g_get_dnpc();
+uint32_t g_get_rs1();
+uint32_t g_get_rd();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -178,8 +181,8 @@ void free_npc() {
   }
 }
 
-void update_ftace_dpi(int addr, int rs1, int rd) {
-  IFDEF(CONFIG_FTRACE, update_ftrace(g_get_pc(), addr, rs1, rd));
+void update_ftace_dpi() {
+  IFDEF(CONFIG_FTRACE, update_ftrace(g_get_pc(), g_get_dnpc(), g_get_rs1(), g_get_rd()));
 }
 static void close_ftace() {
   IFDEF(CONFIG_FTRACE, close_ftrace());
@@ -227,4 +230,11 @@ uint32_t g_get_snpc() {
 
 uint32_t g_get_dnpc() {
   return top->rootp->top__DOT__u_npc__DOT__dnpc;
+}
+
+uint32_t g_get_rs1() {
+  return BITS(top->rootp->__Vdly__top__DOT__u_npc__DOT__inst, 19, 15);
+}
+uint32_t g_get_rd() {
+  return BITS(top->rootp->__Vdly__top__DOT__u_npc__DOT__inst, 11, 7);
 }
