@@ -15,7 +15,6 @@ module ysyx_24080020_PC (
     assign mlen = 4'b100;
 
     always @(*) begin
-        mren = 1'b0;
         if(is_dnpc) begin
             pc = dnpc; 
             mren = 1'b1;
@@ -25,6 +24,7 @@ module ysyx_24080020_PC (
             mren = 1'b1;
         end
         else begin
+            mren = 1'b0;
             pc = pc;
         end
 
