@@ -32,7 +32,7 @@ module ysyx_24080020_IDU (
             end
             `ysyx_24080020_JALR: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
-                if(last_opcode != `ysyx_24080020_JALR) begin
+                if(last_j_opcode != `ysyx_24080020_JALR) begin
                     last_j_opcode = `ysyx_24080020_JALR;
                     update_ftrace_dpi();
                 end
