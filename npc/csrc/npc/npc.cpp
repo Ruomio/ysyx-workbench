@@ -54,7 +54,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   bool is_chang = false;
   bool is_break = false;
   scan_watchpoint(&is_chang, &is_break);
-  if((is_chang || is_break) && nemu_state.state == NEMU_RUNNING) nemu_state.state = NEMU_STOP;
+  if((is_chang || is_break) && u_npc_state.state == NPC_RUNNING) u_npc_state.state = NPC_STOP;
 #endif
 }
 
