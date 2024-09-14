@@ -8,3 +8,4 @@
 #define CONFIG_ITRACE 1
 #define CONFIG_ISA_riscv32 1
 #define CONFIG_MBASE 0x80000000
+#define CONFIG_DEBUG 1
