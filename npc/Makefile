@@ -11,7 +11,7 @@ INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 VSRC=$(shell find $(abspath vsrc) -name "*.v") 
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
-BUILD_DIR=./build
+BUILD_DIR=$(shell pwd)/build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
 BIN=$(BUILD_DIR)/$(TOPNAME)
 
@@ -53,14 +53,21 @@ CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
-OBJS = $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CSRC:%.cc=$(OBJ_DIR)/%.o) $(CSRC:%.cpp=$(OBJ_DIR)/%.o)
+CSRC_NODIR = $(notdir $(CRSC))
+OBJS = $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
 
 $(OBJ_DIR)/%.o: %.c
+	$(shell mkdir -p $(BUILD_DIR))
 	gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
+	$(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cc
+	$(shell mkdir -p $(BUILD_DIR))`
 	g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cpp
+	$(shell mkdir -p $(BUILD_DIR))
 	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(call call_fixdep, $(@:.o=.d), $@)
 
 
 all: $(BIN)
@@ -77,11 +84,17 @@ sim:
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): $(VSRC) $(CSRC) 
+# $(BIN): $(VSRC) $(CSRC) 
+# 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+# 	$(VERILATOR) $(VERILATOR_CFLAGS) \
+# 		--top-module $(TOPNAME) $^ \
+# 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+# 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
+$(BIN): $(VSRC) $(OBJS) 
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
-		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
 gtkwave: $(VCD_FILE)
