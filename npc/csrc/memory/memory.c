@@ -34,7 +34,7 @@ extern uint32_t g_get_pc();
   }
 
   void MtraceBuf_save() {
-    FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/mtrace-log.txt", "w");
+    FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/npc/build/mtrace-log.txt", "w");
     for(int i=0; i<MtraceBuf.idx; i++) {
       if(strlen((char *)MtraceBuf.m_buffer[i]) != 0) {
         fprintf(fp, "%s\n", MtraceBuf.m_buffer[i]);

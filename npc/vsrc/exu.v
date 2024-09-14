@@ -22,7 +22,8 @@ module ysyx_24080020_EXU
     // out mem
     output reg [`ysyx_24080020_WIDTH-1:0] maddr,
     output reg [`ysyx_24080020_WIDTH-1:0] mdata,
-    output reg mwen
+    output reg mwen,
+    output reg mren
 );
 
     reg flag;
@@ -33,6 +34,7 @@ module ysyx_24080020_EXU
         // initial
         flag = 1'b0;
         mwen = 1'b0;
+        mren = 1'b0;
         wen = 1'b0;
         case(opcode)
             `ysyx_24080020_I_TYPE: begin

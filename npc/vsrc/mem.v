@@ -7,6 +7,7 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] mwaddr,
     input [`ysyx_24080020_WIDTH-1:0] mdata,
     input wen,
+    input ren,
     output reg [`ysyx_24080020_WIDTH-1:0] mrdata
 
 );
@@ -25,7 +26,7 @@ module ysyx_24080020_MEM(
             mrdata <= mraddr;
         end
         
-        if(mraddr != 32'b0) begin
+        if(ren &&mraddr != 32'b0) begin
             mrdata <= read_memory(mraddr, {{28{1'b0}}, mlen});
         end
         else begin
