@@ -67,7 +67,7 @@ module ysyx_24080020_IDU (
             end
 
             default: begin
-                last_j_opcode = 7;b0;
+                last_j_opcode = 7'b0;
                 imm = 32'b0;
                 invalid_inst();
             end
