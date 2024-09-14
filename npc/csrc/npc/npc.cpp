@@ -18,6 +18,8 @@ extern uint8_t *memory;
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 extern void MtraceBuf_add_arrow(); 
 extern void MtraceBuf_save();
+extern int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd);
+extern int close_ftrace();
 
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
@@ -176,16 +178,26 @@ void free_npc() {
   }
 }
 
+void update_ftace_dpi(int addr, int rs1, int rd) {
+  IFDEF(CONFIG_FTRACE, update_ftrace(g_get_pc(), addr, rs1, rd));
+}
+static void close_ftace() {
+  IFDEF(CONFIG_FTRACE, close_ftrace());
+}
+
+
 
 void ebreak() {
   u_npc_state.state = NPC_END;
   u_npc_state.ret = true;
+  close_ftace();
 }
 
 void invalid_inst() {
   u_npc_state.state = NPC_ABORT;
   u_npc_state.ret = false;
   printf("Unknown inst.\n");
+  close_ftace();
 }
 
 void halt() {

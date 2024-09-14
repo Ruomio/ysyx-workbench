@@ -37,11 +37,6 @@ module ysyx_24080020_IDU (
                 end
             end
 
-            `ysyx_24080020_EBREAK: begin
-                imm = 32'b0;
-                ebreak();
-            end
-
             `ysyx_24080020_S_TYPE: begin
                 imm = {inst[31:25], {25{1'b0}}};
             end
@@ -50,6 +45,11 @@ module ysyx_24080020_IDU (
                 // rst
                 imm = 32'b0;
             end
+            `ysyx_24080020_EBREAK: begin
+                imm = 32'b0;
+                ebreak();
+            end
+
             default: begin
                 imm = 32'b0;
                 invalid_inst();

@@ -24,6 +24,7 @@ module ysyx_24080020_EXU
     output reg [`ysyx_24080020_WIDTH-1:0] mdata,
     output reg mwen
 );
+    import "DPI-C" function int update_ftrace_dpi(input int addr, input int rs1, input int rd);
 
     reg flag;
 
@@ -80,6 +81,7 @@ module ysyx_24080020_EXU
                 waddr = rd;
                 dnpc = pc + imm;
                 flag = 1'b1;
+                update_ftrace_dpi(dnpc, {{27{1'b0}}, rs1}, {{27{1'b0}},rd});
             end
             `ysyx_24080020_JALR: begin
                 wdata = pc + 4;

@@ -154,5 +154,4 @@ int close_ftrace() {
 
   return 0;
 }
-
 #endif
