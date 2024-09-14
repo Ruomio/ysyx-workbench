@@ -160,6 +160,7 @@ void exec_npc(int n) {
 
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
+  IFDEF(CONFIG_FTRACE, close_ftrace());
   if(top) {
     top->final();
     delete top;
@@ -177,23 +178,16 @@ void free_npc() {
 void update_ftrace_dpi() {
   IFDEF(CONFIG_FTRACE, update_ftrace(last_pc, g_get_dnpc(), g_get_rs1(), g_get_rd()));
 }
-static void close_ftace() {
-  IFDEF(CONFIG_FTRACE, close_ftrace());
-}
-
-
 
 void ebreak() {
   u_npc_state.state = NPC_END;
   u_npc_state.ret = true;
-  close_ftace();
 }
 
 void invalid_inst() {
   u_npc_state.state = NPC_ABORT;
   u_npc_state.ret = false;
   printf("Unknown inst.\n");
-  close_ftace();
 }
 
 void halt() {
