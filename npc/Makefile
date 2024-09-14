@@ -7,9 +7,6 @@ NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
 
-# Extract variabls from menuconfig
-GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
-
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
@@ -30,6 +27,9 @@ default: all
 ifdef CONFIG_ITRACE
 include $(NPC_HOME)/csrc/utils/filelist.mk
 endif
+
+# Extract variabls from menuconfig
+GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 
 
 
