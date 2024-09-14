@@ -25,10 +25,6 @@ module ysyx_24080020_PC (
             pc = snpc;
             mren = 1'b1;
         end
-        else begin
-            mren = 1'b0;
-            pc = pc;
-        end
     end
 
 
