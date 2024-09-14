@@ -95,7 +95,7 @@ void exec_once_npc(uint32_t pc) {
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
-  RingBuffer_write(inst_buf, strlen(inst_buf));
+  // RingBuffer_write(inst_buf, strlen(inst_buf));
 #endif
 }
 
