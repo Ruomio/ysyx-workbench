@@ -12,11 +12,11 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-#ifdef CONFIG_FTRACE
 #include "utils.h"
 #include "debug.h"
 #include <elf.h>
 
+#ifdef CONFIG_FTRACE
 #define NR_FT (1024)
 
 struct Ftrace_struct{
