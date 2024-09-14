@@ -182,7 +182,7 @@ void free_npc() {
 }
 
 void update_ftrace_dpi() {
-  IFDEF(CONFIG_FTRACE, update_ftrace(g_get_pc(), g_get_dnpc(), g_get_rs1(), g_get_rd()));
+  IFDEF(CONFIG_FTRACE, update_ftrace(last_pc, g_get_dnpc(), g_get_rs1(), g_get_rd()));
 }
 static void close_ftace() {
   IFDEF(CONFIG_FTRACE, close_ftrace());
