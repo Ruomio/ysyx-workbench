@@ -13,7 +13,7 @@ module ysyx_24080020_IDU (
     import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
-    import "DPI-C" function int update_ftrace_dpi();
+    import "DPI-C" function void update_ftrace_dpi();
 
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
