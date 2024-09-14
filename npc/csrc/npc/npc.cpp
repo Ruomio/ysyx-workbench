@@ -125,15 +125,8 @@ void exec_once_npc(uint32_t pc) {
 }
 
 void exec_all_npc() {
-  while(!contextp->gotFinish()) {
-    if(u_npc_state.state != NPC_RUNNING) {
-      u_npc_state.pc = top->pc;
-      return;
-    }
-    top->clk ^= 1;
-    top->eval();
-    tfp->dump(contextp->time());
-    contextp->timeInc(1);
+  while(u_npc_state.state == NPC_RUNNING) {
+    exec_once_npc(top->pc);
   }
 }
 

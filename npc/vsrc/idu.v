@@ -21,6 +21,8 @@ module ysyx_24080020_IDU (
     assign rs1 = inst[`ysyx_24080020_RS1];
     assign rs2 = inst[`ysyx_24080020_RS2];
 
+    reg [6:0] last_opcode;
+
     always @(*) begin
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
@@ -28,7 +30,9 @@ module ysyx_24080020_IDU (
             end
             `ysyx_24080020_JALR: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
-                update_ftrace_dpi();
+                if(last_opcode != `ysyx_24080020_JALR) begin
+                    update_ftrace_dpi();
+                end
             end
 
             `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
@@ -37,7 +41,9 @@ module ysyx_24080020_IDU (
 
             `ysyx_24080020_JAL: begin
                 imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
-                update_ftrace_dpi();
+                if(last_opcode != `ysyx_24080020_JAL) begin
+                    update_ftrace_dpi();
+                end
                 if(imm == 32'b0) begin
                     halt();
                 end
@@ -57,6 +63,7 @@ module ysyx_24080020_IDU (
             end
 
             default: begin
+                last_opcode = opcode;
                 imm = 32'b0;
                 invalid_inst();
             end
