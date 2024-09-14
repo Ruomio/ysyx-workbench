@@ -162,7 +162,6 @@ void exec_npc(int n) {
 
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
-  check_trap(u_npc_state);
   if(top) {
     top->final();
     delete top;
