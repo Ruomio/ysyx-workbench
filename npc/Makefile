@@ -56,21 +56,16 @@ LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
-CSRC_NODIR := $(CSRC)
 
 $(OBJ_DIR)/%.o: %.c
-	$(shell mkdir -p $(OBJ_DIR))
 	gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cc
-	$(shell mkdir -p $(BUILD_DIR))`
 	g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cpp
-	$(shell mkdir -p $(BUILD_DIR))
 	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
-
 
 all: $(BIN)
 
