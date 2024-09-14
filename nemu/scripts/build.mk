@@ -48,6 +48,7 @@ $(OBJ_DIR)/%.o: %.cc
 
 app: $(BINARY)
 	@echo $(SRCS)
+	@echo $(OBJS)
 
 $(BINARY): $(OBJS) $(ARCHIVES)
 	@echo + LD $@
