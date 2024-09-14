@@ -7,6 +7,7 @@ NXDC_FILES = constr/top.nxdc
 
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
+# CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 VSRC=$(shell find $(abspath vsrc) -name "*.v") 
 VCD_FILE=build/wave.vcd
@@ -53,9 +54,9 @@ CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
-CSRC_NODIR = $(notdir $(CSRC))
-OBJS = $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
-
+CSRC_NODIR := $(notdir $(CSRC))
+OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
+CSRC_NODIR := $(CSRC)
 
 $(OBJ_DIR)/%.o: %.c
 	$(shell mkdir -p $(OBJ_DIR))
@@ -71,8 +72,7 @@ $(OBJ_DIR)/%.o: %.cpp
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 
-all: $(OBJS)
-	@echo $(OBJS) 
+all: $(BIN)
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -93,7 +93,7 @@ sim:
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): $(VSRC) $(OBJS) 
+$(BIN): $(VSRC) $(CSRC) 
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
