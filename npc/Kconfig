@@ -1,0 +1,32 @@
+mainmenu "NPC Configuration"
+
+choice 
+    prompt "Select ISA"
+    default ISA_riscv32
+    default ISA_riscv64
+config ISA_riscv32
+    bool "select riscv32"
+config ISA_riscv64
+    bool "selsec riscv64"
+endchoice
+
+menu "Build options"
+    config DEBUG
+        bool "is enable -g parameter when compiling"
+        default n
+endmenu
+
+menu "Memory setting"
+    config MBASE
+        hex "Memory base address"
+        default "0x0"
+    config MSIZE
+        hex "Memory size"
+        default "0x0"
+endmenu
+
+menu "Test and debug"
+    config ITRACE
+    bool "enable inst trace"
+    default n
+endmenu
