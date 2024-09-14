@@ -76,7 +76,8 @@ void exec_once_npc(uint32_t pc) {
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
   int ilen = g_get_snpc() - last_pc;
   int i;
-  uint8_t *inst = (uint8_t *)guest_to_host(last_pc);
+  uint32_t last_inst = read_memory(last_pc, ilen);
+  uint8_t *inst = (uint8_t *)&last_inst;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
   }
@@ -90,7 +91,7 @@ void exec_once_npc(uint32_t pc) {
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, inst_buf + sizeof(inst_buf) - p,
-      MUXDEF(CONFIG_ISA_x86, g_get_snpc(), last_pc), (uint8_t *)guest_to_host(last_pc), ilen);
+      MUXDEF(CONFIG_ISA_x86, g_get_snpc(), last_pc), (uint8_t *)&last_inst, ilen);
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
