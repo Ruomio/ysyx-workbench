@@ -54,7 +54,7 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
 CSRC_NODIR = $(notdir $(CSRC))
-OBJS = $(CSRC_NODIR:%.c=%.o) $(CSRC_NODIR:%.cc=%.o) $(CSRC_NODIR:%.cpp=%.o)
+OBJS = $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
 
 
 $(OBJ_DIR)/%.o: %.c
