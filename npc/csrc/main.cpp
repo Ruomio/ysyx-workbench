@@ -1,3 +1,4 @@
+#include "memory/memory.h"
 #include <cstdio>
 #include <climits>
 
@@ -11,6 +12,9 @@ extern void free_npc();
 
 
 int main(int argc, char **argv) {
+
+  init_memory();
+
   init_npc(argc, argv);
 
   init_monitor(argc, argv);
@@ -19,5 +23,6 @@ int main(int argc, char **argv) {
 
   free_npc();
 
+  free_memory();
   return is_exit_status_bad();
 }
