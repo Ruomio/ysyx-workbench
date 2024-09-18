@@ -32,8 +32,7 @@ endif
 GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 
 # Difftest to NEMU
-# DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "-l$(NEMU_HOME)/build/riscv32-nemu-interpreter-so") /home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
-DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "-L/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build -l/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so")
+DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "-l$(NEMU_HOME)/build/riscv32-nemu-interpreter-so")
 DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 
 
@@ -49,8 +48,8 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 # CSRCS += $(SRC_AUTO_BIND)
 #
 # # parameters
-# ARGS +=
-# IMG +=
+ARGS += --diff=$(DIFFTEST_REF_SO)
+IMG +=
 
 # rules for NVBoard
 #include $(NVBOARD_HOME)/scripts/nvboard.mk
@@ -59,7 +58,7 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
-LDFLAGS += -lreadline -ldl -pie $(LIBS) $(DIFFTEST_REF_SO)
+LDFLAGS += -lreadline -ldl -pie $(LIBS)
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
