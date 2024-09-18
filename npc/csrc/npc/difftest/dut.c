@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "define.h"
 #include <dlfcn.h>
 #include <difftest-def.h>
 #include <isa.h>
@@ -38,8 +39,14 @@ ref_difftest_raise_intr_type ref_difftest_raise_intr = NULL;
 extern "C" {
 #endif
 
+
 static bool is_skip_ref = false;
 static int skip_dut_nr_inst = 0;
+
+extern npc_state u_npc_state;
+extern CPU_state npc_cpu;
+
+extern void update_npc_cpu();
 
 // this is used to let ref skip instructions which
 // can not produce consistent behavior with NEMU
@@ -100,13 +107,14 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 
   ref_difftest_init(port);
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
-  ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+  update_npc_cpu();
+  ref_difftest_regcpy(&npc_cpu, DIFFTEST_TO_REF);
 }
 
 static void checkregs(CPU_state *ref, vaddr_t pc) {
   if (!isa_difftest_checkregs(ref, pc)) {
-    nemu_state.state = NEMU_ABORT;
-    nemu_state.halt_pc = pc;
+    u_npc_state.state = NEMU_ABORT;
+    u_npc_state.pc = pc;
     isa_reg_display();
   }
 }
@@ -129,7 +137,8 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   if (is_skip_ref) {
     // to skip the checking of an instruction, just copy the reg state to reference design
-    ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+    update_npc_cpu();
+    ref_difftest_regcpy(&npc_cpu, DIFFTEST_TO_REF);
     is_skip_ref = false;
     return;
   }

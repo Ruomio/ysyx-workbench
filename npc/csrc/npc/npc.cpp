@@ -1,9 +1,11 @@
 #include <cstdint>
 #include <readline/chardefs.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include "Vtop.h"
 #include "Vtop___024root.h"
 #include "define.h"
+#include "isa.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
 #include "Vtop__Dpi.h"
@@ -14,8 +16,8 @@
 
 extern int argc;
 extern char **argv;
-extern uint8_t *memory;
 
+// TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 extern void MtraceBuf_add_arrow();
 extern void MtraceBuf_save();
@@ -24,6 +26,7 @@ extern int close_ftrace();
 extern void scan_watchpoint(bool *is_change, bool *is_break);
 
 // difftest
+CPU_state npc_cpu;
 extern void difftest_skip_ref();
 extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
@@ -65,7 +68,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
 #endif
 }
 
-void init_npc() {
+void init_npc(int argc, char* argv[]) {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
   tfp = new VerilatedVcdC;
@@ -233,4 +236,26 @@ uint32_t g_get_rs1() {
 }
 uint32_t g_get_rd() {
   return BITS(top->rootp->__Vdly__top__DOT__u_npc__DOT__inst, 11, 7);
+}
+
+bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
+  for(int i=0; i<sizeof(ref_r->gpr)/sizeof(ref_r->gpr[0]); i++) {
+    if(ref_r->gpr[i] != g_get_reg(i)) return false;
+  }
+  if(pc != g_get_pc()) return false;
+  return true;
+}
+
+void update_npc_cpu() {
+  for(int i=0; i<32; i++) {
+    npc_cpu.gpr[i] = g_get_reg(i);
+  }
+  npc_cpu.pc = g_get_pc();
+}
+
+void update_dut() {
+  for(int i=0; i<32; i++) {
+    top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+  }
+  top->pc = npc_cpu.pc;
 }

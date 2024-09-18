@@ -1,11 +1,5 @@
-
 #include <cstdio>
 #include <climits>
-//#include <verilated.h>
-//#include "Vtop.h"
-//#include "verilated_vcd_c.h"
-//#include "svdpi.h"
-//#include "Vtop__Dpi.h"
 
 #include "memory/memory.h"
 

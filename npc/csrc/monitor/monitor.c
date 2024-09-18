@@ -24,6 +24,7 @@ void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
+extern void init_npc(int argc, char *argv[]);
 extern "C" void init_disasm(const char *triple);
 IFDEF(CONFIG_FTRACE, extern void init_ftrace(const char *img_file, const char *ftrace_file));
 
@@ -93,6 +94,9 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Parse arguments. */
   parse_args(argc, argv);
+
+  /* Init NPC */
+  init_npc(argc, argv);
 
   /* Set random seed. */
   init_rand();
