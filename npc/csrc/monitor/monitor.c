@@ -16,7 +16,7 @@
 #include <isa.h>
 #include <memory/memory.h>
 #include <stdio.h>
-#include <utils.h>
+#include <debug.h>
 
 void init_rand();
 void init_log(const char *log_file);
