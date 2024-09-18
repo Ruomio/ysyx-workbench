@@ -60,6 +60,7 @@ static int cmd_c(char *args) {
 static int cmd_q(char *args) {
   u_npc_state.state = NPC_QUIT;
   free_npc();
+  free_memory();
   return -1;
 }
 
