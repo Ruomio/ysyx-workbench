@@ -28,6 +28,7 @@ extern npc_state u_npc_state;
 void init_regex();
 void init_wp_pool();
 
+extern void init_npc();
 extern void free_npc();
 extern void exec_npc(int n);
 
