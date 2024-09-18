@@ -36,9 +36,7 @@ ref_difftest_raise_intr_type ref_difftest_raise_intr = NULL;
 // void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
 #ifdef CONFIG_DIFFTEST
-#ifdef __cplusplus
-extern "C"{
-#endif
+
 
 
 static bool is_skip_ref = false;
@@ -149,9 +147,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   checkregs(&ref_r, pc);
 }
-#ifdef __cplusplus
-}
-#endif
+
 #else
 void init_difftest(char *ref_so_file, long img_size, int port) { }
 #endif
