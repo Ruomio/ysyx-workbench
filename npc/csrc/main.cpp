@@ -13,9 +13,9 @@ extern int is_exit_status_bad();
 
 int main(int argc, char **argv) {
 
-  init_monitor(argc, argv);
-
   init_memory();
+
+  init_monitor(argc, argv);
 
   init_sdb();
 
