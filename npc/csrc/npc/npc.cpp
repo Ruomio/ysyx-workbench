@@ -14,9 +14,6 @@
 #include <cpu/difftest.h>
 
 
-extern int argc;
-extern char **argv;
-
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 extern void MtraceBuf_add_arrow();
@@ -69,7 +66,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
 #endif
 }
 
-void init_npc() {
+void init_npc(int argc, char **argv) {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
   tfp = new VerilatedVcdC;

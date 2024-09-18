@@ -1,30 +1,23 @@
 #include <cstdio>
 #include <climits>
 
-#include "memory/memory.h"
-
-
-
 extern int init_monitor(int argc, char *argv[]);
 extern void sdb_mainloop();
 extern void init_sdb();
 extern int is_exit_status_bad();
+extern void init_npc(int argc, char **argv);
+extern void free_npc();
 
-int argc;
-char **argv;
 
 
 int main(int argc, char **argv) {
-  argc = argc;
-  argv = argv;
-
-  init_memory();
+  init_npc(argc, argv);
 
   init_monitor(argc, argv);
 
   sdb_mainloop();
 
-  free_memory();
+  free_npc();
 
   return is_exit_status_bad();
 }
