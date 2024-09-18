@@ -15,6 +15,7 @@
 
 #include "define.h"
 #include <dlfcn.h>
+#include <cpu/difftest.h>
 #include <difftest-def.h>
 #include <isa.h>
 #include <memory/paddr.h>
