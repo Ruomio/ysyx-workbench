@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "utils.h"
+#include "debug.h"
 #include "memory/paddr.h"
 
 
