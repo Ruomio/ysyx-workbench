@@ -9,6 +9,7 @@
 #include "Vtop__Dpi.h"
 #include "common.h"
 #include "ringbuffer.h"
+#include <cpu/difftest.h>
 
 
 extern int argc;
@@ -23,9 +24,9 @@ extern int close_ftrace();
 extern void scan_watchpoint(bool *is_change, bool *is_break);
 
 // difftest
-extern void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction);
-extern void difftest_regcpy(void *dut, bool direction);
-extern void difftest_exec(uint64_t n) ;
+extern void difftest_skip_ref();
+extern void difftest_skip_dut(int nr_ref, int nr_dut);
+extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
