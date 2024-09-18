@@ -80,7 +80,7 @@ void init_npc(int argc, char **argv) {
   top->rst = 0;
   while(!contextp->gotFinish()) {
     top->clk ^= 1;
-    top->eval();
+    // top->eval();
     tfp->dump(contextp->time());
     contextp->timeInc(1);
     if(i++ > 20) {
