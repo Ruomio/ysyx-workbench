@@ -36,7 +36,7 @@ ref_difftest_raise_intr_type ref_difftest_raise_intr = NULL;
 
 #ifdef CONFIG_DIFFTEST
 #ifdef __cplusplus
-extern "C" {
+extern "C"{
 #endif
 
 
