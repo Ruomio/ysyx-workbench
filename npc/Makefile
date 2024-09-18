@@ -33,7 +33,7 @@ GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 
 # Difftest to NEMU
 # DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "-l$(NEMU_HOME)/build/riscv32-nemu-interpreter-so") /home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so
-DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "-l/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so")
+DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "-L/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build -l/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so")
 DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 
 
