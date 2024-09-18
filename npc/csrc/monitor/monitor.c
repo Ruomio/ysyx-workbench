@@ -104,7 +104,7 @@ void init_monitor(int argc, char *argv[]) {
   IFDEF(CONFIG_FTRACE, init_ftrace(img_file, ftrace_file));
 
   /* Initialize memory. */
-  // init_memory();
+  init_memory();
   // init_mem();
 
   /* Initialize devices. */

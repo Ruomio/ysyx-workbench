@@ -13,11 +13,11 @@ extern void free_npc();
 
 int main(int argc, char **argv) {
 
-  init_memory();
 
-  init_npc(argc, argv);
 
   init_monitor(argc, argv);
+
+  init_npc(argc, argv);
 
   sdb_mainloop();
 
