@@ -51,6 +51,7 @@ uint32_t g_get_snpc();
 uint32_t g_get_dnpc();
 uint32_t g_get_rs1();
 uint32_t g_get_rd();
+void update_npc_cpu();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
