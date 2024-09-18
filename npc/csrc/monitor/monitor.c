@@ -95,8 +95,6 @@ void init_monitor(int argc, char *argv[]) {
   /* Parse arguments. */
   parse_args(argc, argv);
 
-  /* Init NPC */
-  init_npc(argc, argv);
 
   /* Set random seed. */
   init_rand();
@@ -133,6 +131,9 @@ void init_monitor(int argc, char *argv[]) {
     MUXDEF(CONFIG_ISA_riscv64, "riscv64", "bad")))) "-pc-linux-gnu"
   ));
 #endif
+
+  /* Init NPC */
+  init_npc(argc, argv);
 
   /* Display welcome message. */
   welcome();
