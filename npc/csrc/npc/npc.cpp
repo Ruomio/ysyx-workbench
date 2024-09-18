@@ -69,7 +69,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
 #endif
 }
 
-void init_npc(int argc, char* argv[]) {
+void init_npc() {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
   tfp = new VerilatedVcdC;

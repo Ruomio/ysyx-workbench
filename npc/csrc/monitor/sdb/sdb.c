@@ -242,6 +242,8 @@ void sdb_set_batch_mode() {
 }
 
 void sdb_mainloop() {
+  /* Init NPC */
+  init_npc();
 
   if (is_batch_mode) {
     cmd_c(NULL);
