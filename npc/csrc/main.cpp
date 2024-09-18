@@ -8,12 +8,7 @@
 //#include "Vtop__Dpi.h"
 
 #include "memory/memory.h"
-#include "define.h"
 
-char *img_file = NULL;
-int argc = 0;
-char **argv = NULL;
-npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
 
 extern int init_monitor(int argc, char *argv[]);
@@ -23,8 +18,6 @@ extern int is_exit_status_bad();
 
 
 int main(int argc, char **argv) {
-  argc = argc;
-  argv = argv;
 
   init_monitor(argc, argv);
 
@@ -33,8 +26,8 @@ int main(int argc, char **argv) {
   init_sdb();
 
   sdb_mainloop();
-  
+
   free_memory();
-  
+
   return is_exit_status_bad();
 }

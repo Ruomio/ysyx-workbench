@@ -16,7 +16,7 @@
 #include <isa.h>
 #include <memory/memory.h>
 #include <stdio.h>
-#include <debug.h>
+#include <utils.h>
 
 void init_rand();
 void init_log(const char *log_file);
@@ -48,7 +48,9 @@ static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static int difftest_port = 1234;
 static char *ftrace_file = NULL;
-extern char *img_file;
+long img_size = 0;
+
+char *img_file = NULL;
 extern npc_state u_npc_state;
 
 
@@ -65,11 +67,11 @@ int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhf:l:d:p:", table, NULL)) != -1) {
     switch (o) {
-      // case 'b': sdb_set_batch_mode(); break;
-      // case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      // case 'l': log_file = optarg; break;
-      // case 'd': diff_so_file = optarg; break;
-      // case 'f': ftrace_file = optarg; break;
+      case 'b': sdb_set_batch_mode(); break;
+      case 'p': sscanf(optarg, "%d", &difftest_port); break;
+      case 'l': log_file = optarg; break;
+      case 'd': diff_so_file = optarg; break;
+      case 'f': ftrace_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -114,7 +116,7 @@ void init_monitor(int argc, char *argv[]) {
   // long img_size = load_img();
 
   /* Initialize differential testing. */
-  // init_difftest(diff_so_file, img_size, difftest_port);
+  IFDEF(CONFIG_DIFFTEST, init_difftest(diff_so_file, img_size, difftest_port));
 
   /* Initialize the simple debugger. */
   init_sdb();

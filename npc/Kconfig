@@ -1,6 +1,6 @@
 mainmenu "NPC Configuration"
 
-choice 
+choice
     prompt "Select ISA"
     default ISA_riscv32
 config ISA_riscv32
@@ -45,5 +45,8 @@ menu "Test and debug"
         default n
     config WATCH_POINT
         bool "enable watch point"
+        default n
+    config DIFFTEST
+        bool "enable difftest"
         default n
 endmenu

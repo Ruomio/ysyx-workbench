@@ -13,19 +13,25 @@
 
 extern int argc;
 extern char **argv;
-extern npc_state u_npc_state;
 extern uint8_t *memory;
 
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-extern void MtraceBuf_add_arrow(); 
+extern void MtraceBuf_add_arrow();
 extern void MtraceBuf_save();
 extern int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd);
 extern int close_ftrace();
 extern void scan_watchpoint(bool *is_change, bool *is_break);
 
+// difftest
+extern void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction);
+extern void difftest_regcpy(void *dut, bool direction);
+extern void difftest_exec(uint64_t n) ;
+
 Vtop *top = NULL;
 VerilatedVcdC *tfp = NULL;
 VerilatedContext *contextp = NULL;
+
+npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
 static uint32_t last_pc;
 static bool g_print_step = false;
@@ -44,10 +50,10 @@ uint32_t g_get_rd();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
+  if (ITRACE_COND) { log_write("%s\n", inst_buf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(g_get_pc(), g_get_dnpc()));
 
 #ifdef CONFIG_WATCH_POINT
   // scan and print all watch point and break point
@@ -62,7 +68,7 @@ void init_npc() {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
   tfp = new VerilatedVcdC;
-  
+
   top = new Vtop(contextp);
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
