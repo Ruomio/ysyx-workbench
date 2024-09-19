@@ -6,7 +6,7 @@ extern int init_monitor(int argc, char *argv[]);
 extern void sdb_mainloop();
 extern void init_sdb();
 extern int is_exit_status_bad();
-extern void init_npc(int argc, char **argv);
+// extern void init_npc(int argc, char **argv);
 extern void free_npc();
 
 
@@ -14,10 +14,8 @@ extern void free_npc();
 int main(int argc, char **argv) {
 
 
-
   init_monitor(argc, argv);
 
-  init_npc(argc, argv);
 
   sdb_mainloop();
 
