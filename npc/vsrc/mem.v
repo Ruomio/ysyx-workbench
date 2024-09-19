@@ -19,7 +19,7 @@ module ysyx_24080020_MEM(
 
     always @(posedge clk) begin
         if(!rst) begin
-            mrdata <= `ysyx_24080020_WIDTH;
+            mrdata <= 32'b0;
         end
         else if(wen && mwaddr != last_waddr) begin
             write_memory(mwaddr, {{28{1'b0}},mlen}, mdata);
