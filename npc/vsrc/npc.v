@@ -113,8 +113,8 @@ module ysyx_24080020_NPC(
         .mwaddr(mwaddr), 
         .mwdata(mwdata), 
         .mwen(mwen),
-        .mwlen(mrlen),
-        .mrlen(mwlen)
+        .mwlen(mwlen),
+        .mrlen(mrlen)
     );
 
 
