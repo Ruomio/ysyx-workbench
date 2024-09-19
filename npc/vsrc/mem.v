@@ -44,7 +44,7 @@ module ysyx_24080020_MEM(
             last_pc <= 32'b0;
         end
         else if(pc != last_pc) begin
-            inst <= read_memory(pc, {{28{1'b0}}, mlen});
+            inst <= read_memory(pc, {{28{1'b0}}, pc_len});
             last_pc <= pc;
         end
         else begin
