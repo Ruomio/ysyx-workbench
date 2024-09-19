@@ -28,7 +28,7 @@ module ysyx_24080020_EXU
     output reg [`ysyx_24080020_WIDTH-1:0] mwdata,
     output reg mwen,
     output reg [3:0] mrlen,
-    output reg [3:0] mwlen,
+    output reg [3:0] mwlen
 );
 
     reg flag;
