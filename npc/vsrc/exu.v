@@ -84,6 +84,8 @@ module ysyx_24080020_EXU
                         wdata = {{24{mrdata[7]}}, mrdata[7:0]};
                     end
 
+                    default: wdata = 32'b0;
+
                 endcase
 
             end
