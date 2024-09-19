@@ -10,6 +10,7 @@
 
 uint8_t *memory = NULL;
 extern char *img_file;
+extern long img_size;
 extern npc_state u_npc_state;
 
 extern uint32_t g_get_pc();
@@ -64,16 +65,16 @@ void init_memory() {
   assert(fp);
 
   fseek(fp, 0, SEEK_END);
-  long size = ftell(fp);
+  img_size = ftell(fp);
 
-  assert(size <= CONFIG_MSIZE); 
-  printf("The image is %s, size = %ld\n", img_file, size);
+  assert(img_size <= CONFIG_MSIZE);
+  printf("The image is %s, size = %ld\n", img_file, img_size);
 
   fseek(fp, 0, SEEK_SET);
 
   memory = (uint8_t *)calloc(1, CONFIG_MSIZE);
   printf("memory addr is %p\n", memory);
-  int ret = fread(memory, size, 1, fp);
+  int ret = fread(memory, img_size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
@@ -111,5 +112,3 @@ void write_memory(int addr, int len, int data) {
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, data));
   host_write(guest_to_host(addr), len, data);
 }
-
-

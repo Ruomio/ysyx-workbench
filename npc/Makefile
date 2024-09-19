@@ -31,7 +31,9 @@ endif
 # Extract variabls from menuconfig
 GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 
-
+# Difftest to NEMU
+DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "$(NEMU_HOME)/build/riscv32-nemu-interpreter-so")
+DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 
 
 
@@ -46,8 +48,10 @@ GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 # CSRCS += $(SRC_AUTO_BIND)
 # 
 # # parameters 
-# ARGS +=
-# IMG +=
+override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
+override ARGS += --diff=$(DIFFTEST_REF_SO) $(NPCFLAGS)
+override IMG +=
+
 
 # rules for NVBoard
 #include $(NVBOARD_HOME)/scripts/nvboard.mk

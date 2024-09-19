@@ -25,6 +25,7 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
 extern "C" void init_disasm(const char *triple);
+extern void init_npc(int argc, char **argv);
 IFDEF(CONFIG_FTRACE, extern void init_ftrace(const char *img_file, const char *ftrace_file));
 
 static void welcome() {
@@ -48,7 +49,9 @@ static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static int difftest_port = 1234;
 static char *ftrace_file = NULL;
-extern char *img_file;
+long img_size = 0;
+
+char *img_file = NULL;
 extern npc_state u_npc_state;
 
 
@@ -65,11 +68,11 @@ int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhf:l:d:p:", table, NULL)) != -1) {
     switch (o) {
-      // case 'b': sdb_set_batch_mode(); break;
-      // case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      // case 'l': log_file = optarg; break;
-      // case 'd': diff_so_file = optarg; break;
-      // case 'f': ftrace_file = optarg; break;
+      case 'b': sdb_set_batch_mode(); break;
+      case 'p': sscanf(optarg, "%d", &difftest_port); break;
+      case 'l': log_file = optarg; break;
+      case 'd': diff_so_file = optarg; printf("diff-so path = %s\n", diff_so_file);break;
+      case 'f': ftrace_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -102,7 +105,11 @@ void init_monitor(int argc, char *argv[]) {
   IFDEF(CONFIG_FTRACE, init_ftrace(img_file, ftrace_file));
 
   /* Initialize memory. */
+  init_memory();
   // init_mem();
+
+  /* Initialize npc */
+  init_npc(argc, argv);
 
   /* Initialize devices. */
   IFDEF(CONFIG_DEVICE, init_device());
@@ -114,7 +121,7 @@ void init_monitor(int argc, char *argv[]) {
   // long img_size = load_img();
 
   /* Initialize differential testing. */
-  // init_difftest(diff_so_file, img_size, difftest_port);
+  IFDEF(CONFIG_DIFFTEST, init_difftest(diff_so_file, img_size, difftest_port));
 
   /* Initialize the simple debugger. */
   init_sdb();
