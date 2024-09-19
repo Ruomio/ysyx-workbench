@@ -32,8 +32,8 @@ endif
 GUEST_ISA ?= $(call remove_quote,$(CONFIG_ISA))
 
 # Difftest to NEMU
-DIFFTEST_REF_PATH = $(if CONFIG_DIFFTEST, "$(NEMU_HOME)/build/riscv32-nemu-interpreter-so")
-DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
+DIFFTEST_REF_PATH := $(if CONFIG_DIFFTEST, "$(NEMU_HOME)/build/riscv32-nemu-interpreter-so")
+DIFFTEST_REF_SO := $(call remove_quote,$(DIFFTEST_REF_PATH))
 
 
 
@@ -102,6 +102,7 @@ $(VCD_FILE):
 
 run: $(BIN)
 	@$^ $(ARGS) $(IMG)
+	@echo $(ARGS) 
 	$(call git_commit, "run NPC")
 
 gdb: $(BIN)
