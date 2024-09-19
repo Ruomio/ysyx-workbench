@@ -26,7 +26,9 @@ module ysyx_24080020_EXU
     output reg [`ysyx_24080020_WIDTH-1:0] mraddr,
     output reg [`ysyx_24080020_WIDTH-1:0] mwaddr,
     output reg [`ysyx_24080020_WIDTH-1:0] mwdata,
-    output reg mwen
+    output reg mwen,
+    output reg [3:0] mrlen,
+    output reg [3:0] mwlen,
 );
 
     reg flag;
@@ -82,6 +84,7 @@ module ysyx_24080020_EXU
                 case(funct3)
                     `ysyx_24080020_LB: begin
                         wdata = {{24{mrdata[7]}}, mrdata[7:0]};
+                        mrlen = 4'b001;
                     end
 
                     default: wdata = 32'b0;
@@ -101,6 +104,7 @@ module ysyx_24080020_EXU
                         mwaddr = val_raddr1 + imm;
                         mwdata = val_raddr2;
                         mwen = 1'b1;
+                        mwlen = 4'b100;
                     end
 
                     default: mwen = 1'b0;

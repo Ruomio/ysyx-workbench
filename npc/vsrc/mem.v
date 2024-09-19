@@ -4,7 +4,8 @@ module ysyx_24080020_MEM(
     input rst,
     input [`ysyx_24080020_WIDTH-1:0] pc,
     input [3:0] pc_len,
-    input [3:0] mlen,
+    input [3:0] mrlen,
+    input [3:0] mwlen,
     input [`ysyx_24080020_WIDTH-1:0] mraddr,
     input [`ysyx_24080020_WIDTH-1:0] mwaddr,
     input [`ysyx_24080020_WIDTH-1:0] mwdata,
@@ -28,7 +29,7 @@ module ysyx_24080020_MEM(
             last_raddr <= 32'b0;
         end
         else if(mraddr != last_raddr) begin
-            mrdata <= read_memory(mraddr, {{28{1'b0}}, mlen});
+            mrdata <= read_memory(mraddr, {{28{1'b0}}, mrlen});
             last_raddr <= mraddr;
         end
         else begin
@@ -59,7 +60,7 @@ module ysyx_24080020_MEM(
             last_waddr <= 32'b0;
         end
         else if(mwen && mwaddr != last_waddr) begin
-            write_memory(mwaddr, {{28{1'b0}},mlen}, mwdata);
+            write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
             last_waddr <= mwaddr;
         end
 
