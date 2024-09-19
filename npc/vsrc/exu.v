@@ -23,6 +23,7 @@ module ysyx_24080020_EXU
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     // out mem
+    output reg [`ysyx_24080020_WIDTH-1:0] mraddr,
     output reg [`ysyx_24080020_WIDTH-1:0] mwaddr,
     output reg [`ysyx_24080020_WIDTH-1:0] mwdata,
     output reg mwen

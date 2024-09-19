@@ -51,6 +51,8 @@ module ysyx_24080020_NPC(
     ysyx_24080020_MEM u_mem(
         .clk(clk), 
         .rst(rst), 
+        .pc(pc),
+        .pc_len(pc_len),
         .mraddr(mraddr), 
         .mwaddr(mwaddr), 
         .mlen(mlen), 
@@ -105,6 +107,7 @@ module ysyx_24080020_NPC(
         .wen(wen), 
         .is_dnpc(is_dnpc), 
         .dnpc(dnpc), 
+        .mraddr(mraddr),
         .mwaddr(mwaddr), 
         .mwdata(mwdata), 
         .mwen(mwen)
