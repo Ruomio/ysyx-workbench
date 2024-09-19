@@ -7,10 +7,10 @@ NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
 
-CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c")
-# CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c")
+CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
+# CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-VSRC=$(shell find $(abspath vsrc) -name "*.v")
+VSRC=$(shell find $(abspath vsrc) -name "*.v") 
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=$(shell pwd)/build
@@ -46,8 +46,8 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 # VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 # CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 # CSRCS += $(SRC_AUTO_BIND)
-#
-# # parameters
+# 
+# # parameters 
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
 override ARGS += --diff=$(DIFFTEST_REF_SO) $(NPCFLAGS)
 override IMG +=
@@ -89,7 +89,7 @@ sim:
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): $(VSRC) $(CSRC)
+$(BIN): $(VSRC) $(CSRC) 
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
@@ -121,3 +121,5 @@ clean:
 
 include ../Makefile
 include scripts/config.mk
+
+

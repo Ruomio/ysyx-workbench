@@ -42,10 +42,43 @@ module ysyx_24080020_EXU
                         wen = 1'b1;
                         waddr = rd;
                     end
+                    `ysyx_24080020_SLTI: begin
+                        wdata = $signed(val_raddr1) < $signed(imm) ? 32'b1 : 32'b0;
+                        wen = 1'b1;
+                        waddr = rd;
+                    end
+                    `ysyx_24080020_SLTIU: begin
+                        wdata = val_raddr1 < imm ? 32'b1 : 32'b0;
+                        wen = 1'b1;
+                        waddr = rd;
+                    end
+                    `ysyx_24080020_XORI: begin
+                        wdata = val_raddr1 ^ imm;
+                        wen = 1'b1;
+                        waddr = rd;
+                    end
+                    `ysyx_24080020_ORI: begin
+                        wdata = val_raddr1 | imm;
+                        wen = 1'b1;
+                        waddr = rd;
+                    end
+                    `ysyx_24080020_ANDI: begin
+                        wdata = val_raddr1 & imm;
+                        wen = 1'b1;
+                        waddr = rd;
+                    end
+                    
 
                 default: wdata = 0;
 
                 endcase
+            end
+            `ysyx_24080020_I_TYPEI: begin
+                case(funct3)
+
+
+                endcase
+
             end
             `ysyx_24080020_S_TYPE: begin
                 case(funct3)

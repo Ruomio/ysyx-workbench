@@ -24,7 +24,7 @@ module ysyx_24080020_IDU (
 
     always @(*) begin
         case(opcode)
-            `ysyx_24080020_I_TYPE: begin
+            `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
             end
             `ysyx_24080020_JALR: begin
@@ -46,6 +46,10 @@ module ysyx_24080020_IDU (
 
             `ysyx_24080020_S_TYPE: begin
                 imm = {inst[31:25], {25{1'b0}}};
+            end
+
+            `ysyx_24080020_B_TYPE: begin
+                imm = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
             end
 
             7'b0000000 : begin

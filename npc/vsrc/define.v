@@ -17,15 +17,25 @@
 `define ysyx_24080020_I_TYPE 7'b0010011
 `define ysyx_24080020_IMM_I 31:20
 `define ysyx_24080020_ADDI 3'b000
+`define ysyx_24080020_SLTI 3'b010
+`define ysyx_24080020_SLTIU 3'b011
+`define ysyx_24080020_XORI 3'b100
+`define ysyx_24080020_ORI 3'b110
+`define ysyx_24080020_ANDI 3'b111
 
+
+`define ysyx_24080020_I_TYPEI 7'b0000011
+`define ysyx_24080020_LB 3'b000
+`define ysyx_24080020_LH 3'b001
+`define ysyx_24080020_LW 3'b010
+`define ysyx_24080020_LBU 3'b100
+`define ysyx_24080020_LHU 3'b101
 
 
 // U-TYPE
 // `define ysyx_24080020_U_TYPE 7'b0010111     // 7'b0110111
 `define ysyx_24080020_IMM_U 31:12
 
-
-// J-TYPE
 
 
 // B-TYPE
