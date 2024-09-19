@@ -9,7 +9,7 @@
 `define ysyx_24080020_FUNCT3 14:12
 `define ysyx_24080020_RS1 19:15
 `define ysyx_24080020_RS2 24:20
-`define ysyx_24080020_FUNCT& 31:25
+`define ysyx_24080020_FUNCT7 31:25
 
 `define ysyx_24080020_EBREAK 7'b1110011
 

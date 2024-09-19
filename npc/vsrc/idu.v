@@ -20,11 +20,15 @@ module ysyx_24080020_IDU (
     assign funct3 = inst[`ysyx_24080020_FUNCT3];
     assign rs1 = inst[`ysyx_24080020_RS1];
     assign rs2 = inst[`ysyx_24080020_RS2];
+    assign funct7 = inst[`ysyx_24080020_FUNCT7];
 
 
     always @(*) begin
         case(opcode)
-            `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
+            `ysyx_24080020_I_TYPE: begin
+                imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+            end
+            `ysyx_24080020_I_TYPEI: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
             end
             `ysyx_24080020_JALR: begin

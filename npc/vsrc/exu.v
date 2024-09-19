@@ -10,6 +10,9 @@ module ysyx_24080020_EXU
     input [4:0] rd,
     input [`ysyx_24080020_WIDTH-1:0] imm,
 
+    // mrdata
+    input [`ysyx_24080020_WIDTH-1:0] mrdata,
+
     // out reg
     output reg [4:0] waddr,
     output reg[`ysyx_24080020_WIDTH-1:0] wdata,
@@ -20,8 +23,8 @@ module ysyx_24080020_EXU
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     // out mem
-    output reg [`ysyx_24080020_WIDTH-1:0] maddr,
-    output reg [`ysyx_24080020_WIDTH-1:0] mdata,
+    output reg [`ysyx_24080020_WIDTH-1:0] mwaddr,
+    output reg [`ysyx_24080020_WIDTH-1:0] mwdata,
     output reg mwen
 );
 
@@ -74,8 +77,11 @@ module ysyx_24080020_EXU
                 endcase
             end
             `ysyx_24080020_I_TYPEI: begin
+                mraddr = val_raddr1 + imm;
                 case(funct3)
-
+                    `ysyx_24080020_LB: begin
+                        wdata = {{24{mrdata[7]}}, mrdata[7:0]};
+                    end
 
                 endcase
 
@@ -89,8 +95,8 @@ module ysyx_24080020_EXU
 
                     end
                     `ysyx_24080020_SW: begin
-                        maddr = val_raddr1 + imm;
-                        mdata = val_raddr2;
+                        mwaddr = val_raddr1 + imm;
+                        mwdata = val_raddr2;
                         mwen = 1'b1;
                     end
 
