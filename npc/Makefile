@@ -102,7 +102,6 @@ $(VCD_FILE):
 
 run: $(BIN)
 	@$^ $(ARGS) $(IMG)
-	echo "here is log:" $(ARGS) 
 	$(call git_commit, "run NPC")
 
 gdb: $(BIN)
