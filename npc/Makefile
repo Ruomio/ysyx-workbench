@@ -48,8 +48,10 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 # CSRCS += $(SRC_AUTO_BIND)
 #
 # # parameters
-ARGS += --diff=$(DIFFTEST_REF_SO)
-IMG +=
+override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
+override ARGS += --diff=$(DIFFTEST_REF_SO) $(NPCFLAGS)
+override IMG +=
+
 
 # rules for NVBoard
 #include $(NVBOARD_HOME)/scripts/nvboard.mk
