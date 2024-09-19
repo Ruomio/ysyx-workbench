@@ -59,7 +59,7 @@ module ysyx_24080020_MEM(
             last_waddr <= 32'b0;
         end
         else if(mwen && mwaddr != last_waddr) begin
-            write_memory(mwaddr, {{28{1'b0}},mlen});
+            write_memory(mwaddr, {{28{1'b0}},mlen}, mwdata);
             last_waddr <= mwaddr;
         end
 
