@@ -80,6 +80,7 @@ module ysyx_24080020_EXU
             `ysyx_24080020_I_TYPEI: begin
                 mraddr = val_raddr1 + imm;
                 wen = 1'b1;
+                waddr = rd;
                 case(funct3)
                     `ysyx_24080020_LB: begin
                         wdata = {{24{mrdata[7]}}, mrdata[7:0]};
