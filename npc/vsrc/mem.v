@@ -56,7 +56,6 @@ module ysyx_24080020_MEM(
     // write
     always @(posedge clk) begin
         if(!rst) begin
-            last_waddr <= 32'b0;
         end
         else if(mwen) begin
             write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
