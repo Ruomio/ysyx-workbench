@@ -26,7 +26,6 @@ module ysyx_24080020_IDU (
 
     always @(opcode) begin
         if(!rst) begin
-            imm = 0;
         end
         else begin
             case(opcode)
