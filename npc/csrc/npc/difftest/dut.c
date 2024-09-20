@@ -116,7 +116,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
   if (!isa_difftest_checkregs(ref, pc)) {
     u_npc_state.state = NPC_ABORT;
     u_npc_state.pc = pc;
-    u_npc_state.ret = false;
+    u_npc_state.ret = true;
 
     isa_reg_display();
   }

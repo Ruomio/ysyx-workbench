@@ -191,12 +191,12 @@ void update_ftrace_dpi() {
 
 void ebreak() {
   u_npc_state.state = NPC_END;
-  u_npc_state.ret = true;
+  u_npc_state.ret = false;
 }
 
 void invalid_inst() {
   u_npc_state.state = NPC_ABORT;
-  u_npc_state.ret = false;
+  u_npc_state.ret = true;
   printf("Unknown inst.\n");
 }
 
@@ -205,7 +205,7 @@ void halt() {
 }
 
 void check_trap(npc_state u_npc_state) {
-  if(!u_npc_state.ret) {
+  if(u_npc_state.ret) {
     printf("\33[1;31mNPC: HIT BAD TRAP. at pc=%#x\033[0m\n",u_npc_state.pc);
   }
   else {
