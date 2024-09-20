@@ -46,7 +46,7 @@ module ysyx_24080020_IDU (
             end
 
             `ysyx_24080020_S_TYPE: begin
-                imm = {{20{1'b0}}, inst[31:25], inst[11:7]};
+                imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
             end
 
             `ysyx_24080020_B_TYPE: begin
