@@ -29,7 +29,7 @@ module ysyx_24080020_IDU (
             imm = 32'b0;
         end
         else begin
-            imm = 32'100;
+            imm = 32'b100;
             case(opcode)
                 `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
                     imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
