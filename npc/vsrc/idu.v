@@ -53,6 +53,11 @@ module ysyx_24080020_IDU (
                 imm = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
             end
 
+            `ysyx_24080020_R_TYPE: begin
+                funct7 = inst[31:25];
+            end
+
+            // initial inst
             7'b0000000 : begin
                 // rst
                 imm = 32'b0;
