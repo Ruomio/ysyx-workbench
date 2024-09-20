@@ -19,7 +19,6 @@ module ysyx_24080020_MEM(
 
     reg [`ysyx_24080020_WIDTH-1:0] last_pc;
     reg [`ysyx_24080020_WIDTH-1:0] last_raddr;
-    reg [`ysyx_24080020_WIDTH-1:0] last_waddr;
    
 
     // read mrdata
@@ -59,9 +58,8 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             last_waddr <= 32'b0;
         end
-        else if(mwen && mwaddr != last_waddr) begin
+        else if(mwen) begin
             write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
-            last_waddr <= mwaddr;
         end
 
     end
