@@ -33,7 +33,6 @@ module ysyx_24080020_EXU
 );
 
     reg flag;
-    reg is_auipc;
 
     assign is_dnpc = flag;
 
@@ -198,10 +197,9 @@ module ysyx_24080020_EXU
             end
 
             `ysyx_24080020_AUIPC: begin
-                wdata = pc + imm;
+                wdata = imm;
                 wen = 1'b1;
                 waddr = rd;
-                is_auipc = 1'b1;
             end
             `ysyx_24080020_LUI: begin
                 wdata = imm;
