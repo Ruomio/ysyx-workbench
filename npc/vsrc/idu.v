@@ -60,7 +60,6 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_R_TYPE: begin
                     imm = 32'b0;
-                    funct7 = inst[31:25];
                 end
 
                 // rst
