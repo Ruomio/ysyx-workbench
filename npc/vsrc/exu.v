@@ -73,7 +73,7 @@ module ysyx_24080020_EXU
                     
                     default: begin
                         wen = 1'b0;
-                        waddr = 1'b0;
+                        waddr = 32'b0;
                     end
 
                 endcase
