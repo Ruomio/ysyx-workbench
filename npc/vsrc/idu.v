@@ -60,9 +60,9 @@ module ysyx_24080020_IDU (
                 end
 
                 // rst
-                // 7'b0000000 : begin
-                //     imm = 32'b0;
-                // end
+                7'b0000000 : begin
+                    imm = 32'b0;
+                end
                 `ysyx_24080020_EBREAK: begin
                     imm = 32'b0;
                     ebreak();
