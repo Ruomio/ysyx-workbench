@@ -198,13 +198,13 @@ module ysyx_24080020_EXU
 
             `ysyx_24080020_AUIPC: begin
                 wdata = pc + imm;
-                waddr = rd;
                 wen = 1'b1;
+                waddr = rd;
             end
             `ysyx_24080020_LUI: begin
-                wdata = imm + imm;
-                waddr = rd;
+                wdata = imm;
                 wen = 1'b1;
+                waddr = rd;
             end
             `ysyx_24080020_JAL: begin
                 wdata = pc + 4;
@@ -220,7 +220,6 @@ module ysyx_24080020_EXU
                 dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
                 flag = 1'b1;
             end
-
 
             default: begin
                 wdata = 32'b0;
