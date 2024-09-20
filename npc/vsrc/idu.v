@@ -24,7 +24,7 @@ module ysyx_24080020_IDU (
     assign funct7 = inst[`ysyx_24080020_FUNCT7];
 
 
-    always @(inst) begin
+    always @(*) begin
         if(!rst) begin
             imm = 32'b0;
         end
