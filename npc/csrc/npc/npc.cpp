@@ -161,7 +161,6 @@ void exec_npc(int n) {
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
-      return;
       break;
 
     case NPC_QUIT: break;;
