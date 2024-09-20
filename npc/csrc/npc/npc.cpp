@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdint>
 #include <readline/chardefs.h>
 #include <stdbool.h>
@@ -12,6 +13,9 @@
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
+
+
+#define MAXSTEP 10000
 
 
 // TRACE
@@ -93,6 +97,12 @@ void init_npc(int argc, char **argv) {
 void exec_once_npc(uint32_t pc) {
   last_pc = pc;
   while(!contextp->gotFinish()) {
+    static int stepi = 0;
+    if(stepi ++ > MAXSTEP) {
+      u_npc_state.state = NPC_STOP;
+      u_npc_state.pc = pc;
+      return;
+    }
     if(u_npc_state.state != NPC_RUNNING) {
       u_npc_state.pc = pc;
       return;
