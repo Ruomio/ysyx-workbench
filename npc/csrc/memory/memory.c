@@ -95,7 +95,7 @@ int read_memory(int addr, int len) {
   if(!in_pmem(addr)) {
     out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
-    u_npc_state.ret = false;
+    u_npc_state.ret = true;
     return 0;
   }
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, 0));
@@ -106,7 +106,7 @@ void write_memory(int addr, int len, int data) {
   if(!in_pmem(addr)) {
     out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
-    u_npc_state.ret = false;
+    u_npc_state.ret = true;
     return;
   }
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, data));
