@@ -96,6 +96,7 @@ module ysyx_24080020_NPC(
     );
 
     ysyx_24080020_EXU exu(
+        .inst(inst),
         .opcode(opcode), 
         .pc(pc), 
         .funct3(funct3), 

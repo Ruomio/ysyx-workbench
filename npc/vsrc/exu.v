@@ -1,5 +1,6 @@
 module ysyx_24080020_EXU 
 (
+    input [`ysyx_24080020_WIDTH-1:0] inst,
     input [6:0] opcode,
     input [2:0] funct3,
     input [6:0] funct7,
