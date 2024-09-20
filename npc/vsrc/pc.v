@@ -7,14 +7,12 @@ module ysyx_24080020_PC (
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
-    output [`ysyx_24080020_WIDTH-1:0] maddr,
-    output [3:0] mlen
+    output [3:0] pc_len
 );
     // reg [`ysyx_24080020_WIDTH-1:0] tmp_pc;
 
     // assign pc = !rst ? `ysyx_24080020_WIDTH : (is_dnpc ? dnpc : snpc);
-    assign maddr = pc;
-    assign mlen = 4'b100;
+    assign pc_len = 4'b100;
 
     always @(posedge clk) begin
         if(!rst) begin
