@@ -79,6 +79,7 @@ module ysyx_24080020_EXU
             end
             `ysyx_24080020_I_TYPEI: begin
                 mraddr = val_raddr1 + imm;
+                wen = 1'b1;
                 case(funct3)
                     `ysyx_24080020_LB: begin
                         wdata = {{24{mrdata[7]}}, mrdata[7:0]};
@@ -101,7 +102,10 @@ module ysyx_24080020_EXU
                         mrlen = 4'b010;
                     end
 
-                    default: mraddr = 32'b0;
+                    default: begin
+                        wen = 1'b0;
+                        mraddr = 32'b0;
+                    end
 
                 endcase
             end
