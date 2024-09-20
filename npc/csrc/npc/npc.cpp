@@ -201,6 +201,7 @@ void invalid_inst() {
 }
 
 void halt() {
+  printf("HALT.\n");
   ebreak();
 }
 
