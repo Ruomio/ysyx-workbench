@@ -71,8 +71,10 @@ module ysyx_24080020_EXU
                         wdata = imm[10] == 0 ? val_raddr1 >> imm[4:0] : val_raddr1 >>> imm[4:0];
                     end
                     
-
-                default: wdata = 0;
+                    default: begin
+                        wen = 1'b0;
+                        waddr = 1'b0;
+                    end
 
                 endcase
             end
@@ -100,7 +102,7 @@ module ysyx_24080020_EXU
                         mrlen = 4'b010;
                     end
 
-                    default: wdata = 32'b0;
+                    default: mraddr = 32'b0;
 
                 endcase
             end
@@ -133,7 +135,9 @@ module ysyx_24080020_EXU
                     `ysyx_24080020_AND: begin
                         wdata = val_raddr1 & val_raddr2;
                     end
-
+                    default: begin
+                        wen = 1'b0;
+                    end
                 endcase
 
             end
@@ -183,8 +187,10 @@ module ysyx_24080020_EXU
                         dnpc = val_raddr1 >= val_raddr2 ? pc + imm : pc + 4;
                     end
 
+                    default: begin
+                        flag = 1'b0;
+                    end
                 endcase
-
             end
 
             `ysyx_24080020_AUIPC: begin
@@ -215,6 +221,7 @@ module ysyx_24080020_EXU
             default: begin
                 wdata = 32'b0;
                 wen = 1'b0;
+                mwen = 1'b0;
             end
         endcase
 
