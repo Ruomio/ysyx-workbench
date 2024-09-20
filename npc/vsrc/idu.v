@@ -41,7 +41,6 @@ module ysyx_24080020_IDU (
                 `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
                     invalid_inst();
                     imm = {inst[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                    imm = 32'b100;
                 end
 
                 `ysyx_24080020_JAL: begin
