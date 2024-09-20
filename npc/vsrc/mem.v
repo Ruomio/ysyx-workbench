@@ -25,11 +25,9 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             mrdata <= 32'b0;
-            last_raddr <= 32'b0;
         end
-        else if(mraddr != last_raddr) begin
+        else if(mraddr != 32'b0) begin
             mrdata <= read_memory(mraddr, {{28{1'b0}}, mrlen});
-            last_raddr <= mraddr;
         end
         else begin
             mrdata <= mrdata;
