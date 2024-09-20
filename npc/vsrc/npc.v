@@ -99,6 +99,7 @@ module ysyx_24080020_NPC(
         .opcode(opcode), 
         .pc(pc), 
         .funct3(funct3), 
+        .funct7(funct7), 
         .val_raddr1(src1), 
         .val_raddr2(src2), 
         .rd(rd), 
