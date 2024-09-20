@@ -223,9 +223,6 @@ module ysyx_24080020_EXU
                 mwen = 1'b0;
             end
         endcase
-
-
-
     end
 
 
