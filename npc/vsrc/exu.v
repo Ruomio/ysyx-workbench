@@ -44,13 +44,13 @@ module ysyx_24080020_EXU
         case(opcode) 
             `ysyx_24080020_AUIPC: begin
                 wdata = pc  + imm;
-                wen = 1'b1;
                 waddr = rd;
+                wen = 1'b1;
             end
             `ysyx_24080020_LUI: begin
                 wdata = imm;
-                wen = 1'b1;
                 waddr = rd;
+                wen = 1'b1;
             end
             `ysyx_24080020_JAL: begin
                 wdata = pc + 4;
