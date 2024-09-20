@@ -38,7 +38,7 @@ module ysyx_24080020_IDU (
                     update_ftrace_dpi();
                 end
 
-                `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
+                `ysyx_24080020_AUIPC,`ysyx_24080020_LUI: begin
                     imm = {inst[`ysyx_24080020_IMM_U], {12{1'b0}}};
                     imm = 32'b100;
                 end
