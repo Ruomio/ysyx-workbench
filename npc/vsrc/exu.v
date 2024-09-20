@@ -43,6 +43,7 @@ module ysyx_24080020_EXU
         mwen = 1'b0;
         wen = 1'b0;
         mraddr = 32'b0;
+        mwaddr = 32'b0;
         case(opcode) 
             `ysyx_24080020_I_TYPE: begin
                 wen = 1'b1;
@@ -80,7 +81,6 @@ module ysyx_24080020_EXU
                 endcase
             end
             `ysyx_24080020_I_TYPEI: begin
-                mraddr = val_raddr1 + imm;
                 wen = 1'b1;
                 waddr = rd;
                 case(funct3)
@@ -94,6 +94,7 @@ module ysyx_24080020_EXU
                     end
                     `ysyx_24080020_LW: begin
                         wdata = mrdata;
+                        mraddr = val_raddr1 + imm;
                         mrlen = 4'b100;
                     end
                     `ysyx_24080020_LBU: begin
