@@ -1,6 +1,5 @@
 `include "vsrc/define.v"
 module ysyx_24080020_IDU (
-    input rst,
     input [`ysyx_24080020_WIDTH-1:0] inst,
     output reg [6:0] opcode,
     output reg [4:0] rd,
@@ -25,10 +24,7 @@ module ysyx_24080020_IDU (
 
 
     always @(opcode) begin
-        if(!rst) begin
-            imm = 0;
-        end
-        else begin
+
             case(opcode)
                 `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
                     imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
@@ -64,9 +60,9 @@ module ysyx_24080020_IDU (
                 end
 
                 // rst
-                // 7'b0000000 : begin
-                //     imm = 32'b0;
-                // end
+                7'b0000000 : begin
+                    imm = 32'b0;
+                end
                 `ysyx_24080020_EBREAK: begin
                     imm = 32'b0;
                     ebreak();
@@ -79,7 +75,6 @@ module ysyx_24080020_IDU (
             endcase
         end
 
-    end
 
 
 
