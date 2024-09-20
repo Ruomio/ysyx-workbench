@@ -73,7 +73,6 @@ module ysyx_24080020_NPC(
     );
 
     ysyx_24080020_IDU idu(
-        .rst(rst),
         .inst(inst), 
         .opcode(opcode), 
         .rd(rd), 

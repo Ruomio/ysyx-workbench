@@ -1,6 +1,5 @@
 `include "vsrc/define.v"
 module ysyx_24080020_IDU (
-    input rst,
     input [`ysyx_24080020_WIDTH-1:0] inst,
     output reg [6:0] opcode,
     output reg [4:0] rd,
@@ -25,60 +24,56 @@ module ysyx_24080020_IDU (
 
 
     always @(*) begin
-        if(!rst) begin
-            imm = 32'b0;
-        end
-        else begin
-            case(opcode)
-                `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
-                    imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
-                end
-                `ysyx_24080020_JALR: begin
-                    imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
-                    update_ftrace_dpi();
-                end
 
-                `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
-                    imm = {inst[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                end
+        case(opcode)
+            `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
+                imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+            end
+            `ysyx_24080020_JALR: begin
+                imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+                update_ftrace_dpi();
+            end
 
-                `ysyx_24080020_JAL: begin
-                    imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
-                    update_ftrace_dpi();
-                    if(imm == 32'b0) begin
-                        halt();
-                    end
-                end
+            `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
+                imm = {inst[`ysyx_24080020_IMM_U], {12{1'b0}}};
+            end
 
-                `ysyx_24080020_S_TYPE: begin
-                    imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
+            `ysyx_24080020_JAL: begin
+                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
+                update_ftrace_dpi();
+                if(imm == 32'b0) begin
+                    halt();
                 end
+            end
 
-                `ysyx_24080020_B_TYPE: begin
-                    imm = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
-                end
+            `ysyx_24080020_S_TYPE: begin
+                imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
+            end
 
-                `ysyx_24080020_R_TYPE: begin
-                    imm = 32'b0;
-                end
+            `ysyx_24080020_B_TYPE: begin
+                imm = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
+            end
 
-                // rst
-                7'b0000000 : begin
-                    imm = 32'b0;
-                end
-                `ysyx_24080020_EBREAK: begin
-                    imm = 32'b0;
-                    ebreak();
-                end
+            `ysyx_24080020_R_TYPE: begin
+                imm = 32'b0;
+            end
 
-                default: begin
-                    imm = 32'b0;
-                    invalid_inst();
-                end
-            endcase
-        end
+            // rst
+            7'b0000000 : begin
+                imm = 32'b0;
+            end
+            `ysyx_24080020_EBREAK: begin
+                imm = 32'b0;
+                ebreak();
+            end
 
+            default: begin
+                imm = 32'b0;
+                invalid_inst();
+            end
+        endcase
     end
+
 
 
 
