@@ -42,30 +42,7 @@ module ysyx_24080020_EXU
         mwen = 1'b0;
         wen = 1'b0;
         case(opcode) 
-            `ysyx_24080020_AUIPC: begin
-                wdata = pc  + imm;
-                waddr = rd;
-                wen = 1'b1;
-            end
-            `ysyx_24080020_LUI: begin
-                wdata = imm;
-                waddr = rd;
-                wen = 1'b1;
-            end
-            `ysyx_24080020_JAL: begin
-                wdata = pc + 4;
-                wen = 1'b1;
-                waddr = rd;
-                dnpc = pc + imm;
-                flag = 1'b1;
-            end
-            `ysyx_24080020_JALR: begin
-                wdata = pc + 4;
-                wen = 1'b1;
-                waddr = rd;
-                dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
-                flag = 1'b1;
-            end
+
             `ysyx_24080020_I_TYPE: begin
                 wen = 1'b1;
                 waddr = rd;
@@ -219,7 +196,31 @@ module ysyx_24080020_EXU
                     end
                 endcase
             end
-
+            
+            `ysyx_24080020_AUIPC: begin
+                wdata = pc  + imm;
+                waddr = rd;
+                wen = 1'b1;
+            end
+            `ysyx_24080020_LUI: begin
+                wdata = imm;
+                waddr = rd;
+                wen = 1'b1;
+            end
+            `ysyx_24080020_JAL: begin
+                wdata = pc + 4;
+                wen = 1'b1;
+                waddr = rd;
+                dnpc = pc + imm;
+                flag = 1'b1;
+            end
+            `ysyx_24080020_JALR: begin
+                wdata = pc + 4;
+                wen = 1'b1;
+                waddr = rd;
+                dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
+                flag = 1'b1;
+            end
 
 
             default: begin
