@@ -42,7 +42,6 @@ module ysyx_24080020_EXU
         mwen = 1'b0;
         wen = 1'b0;
         case(opcode) 
-
             `ysyx_24080020_I_TYPE: begin
                 wen = 1'b1;
                 waddr = rd;
@@ -196,14 +195,14 @@ module ysyx_24080020_EXU
                     end
                 endcase
             end
-            
+
             `ysyx_24080020_AUIPC: begin
-                wdata = pc  + imm;
+                wdata = pc + imm;
                 waddr = rd;
                 wen = 1'b1;
             end
             `ysyx_24080020_LUI: begin
-                wdata = imm;
+                wdata = imm + imm;
                 waddr = rd;
                 wen = 1'b1;
             end
