@@ -22,7 +22,7 @@ module ysyx_24080020_MEM(
    
 
     // read mrdata
-    always @(posedge clk) begin
+    always @(mraddr or mrlen or rst) begin
         if(!rst) begin
             mrdata <= 32'b0;
         end
@@ -36,7 +36,7 @@ module ysyx_24080020_MEM(
     end
 
     // read inst
-    always @(posedge clk) begin
+    always @(pc or pc_len or rst) begin
         if(!rst) begin
             inst <= 32'b0;
             last_pc <= 32'b0;
