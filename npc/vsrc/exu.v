@@ -33,9 +33,6 @@ module ysyx_24080020_EXU
     output reg [3:0] mwlen
 );
 
-    // reg flag;
-
-    // assign is_dnpc = flag;
 
     always @(inst or mrdata) begin
         // initial

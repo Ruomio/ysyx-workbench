@@ -9,10 +9,8 @@ module ysyx_24080020_PC (
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
     output [3:0] pc_len
 );
-    // reg [`ysyx_24080020_WIDTH-1:0] tmp_pc;
     reg cnt;
 
-    // assign pc = !rst ? `ysyx_24080020_WIDTH : (is_dnpc ? dnpc : snpc);
     assign pc_len = 4'b100;
 
     always @(posedge clk) begin
