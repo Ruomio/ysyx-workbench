@@ -131,7 +131,7 @@ module ysyx_24080020_EXU
                         wdata = val_raddr1 ^ val_raddr2;
                     end
                     `ysyx_24080020_SRLA: begin
-                        wdata = funct7[5] == 0 ? val_raddr1 >> val_raddr2 : $signed(val_raddr1) >>> val_raddr2;
+                        wdata = funct7[5] == 0 ? val_raddr1 >> val_raddr2 : val_raddr1 >> val_raddr2 | ~(32'hffffffff >> val_raddr2);
                     end
                     `ysyx_24080020_OR: begin
                         wdata = val_raddr1 | val_raddr2;
