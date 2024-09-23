@@ -20,7 +20,7 @@ module ysyx_24080020_PC (
             pc <= `ysyx_24080020_MBASE;
             cnt <= 2'b0;
         end
-        else if(cnt == 2'b10) begin
+        else if(cnt == 2'b01) begin
             if(is_dnpc) pc <= dnpc;
             else pc <= snpc;
 
