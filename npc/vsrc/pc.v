@@ -18,7 +18,7 @@ module ysyx_24080020_PC (
     always @(posedge clk) begin
         if(!rst) begin
             pc <= `ysyx_24080020_MBASE;
-            cnt = 2'b0;
+            cnt <= 2'b0;
         end
         else if(cnt == 2'b10) begin
             if(is_dnpc) pc <= dnpc;
