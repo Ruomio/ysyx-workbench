@@ -192,6 +192,7 @@ void update_ftrace_dpi() {
 void ebreak() {
   u_npc_state.state = NPC_END;
   u_npc_state.ret = false;
+  u_npc_state.pc = g_get_pc();
 }
 
 void invalid_inst() {
