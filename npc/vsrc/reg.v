@@ -36,7 +36,7 @@ module ysyx_24080020_REG #(
         end
     end
 
-    always @(posedge clk) begin
+    always @(wdata) begin
         next_wdata <= wdata;
     end
 
