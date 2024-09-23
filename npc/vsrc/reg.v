@@ -18,6 +18,8 @@ module ysyx_24080020_REG #(
 
     reg [WIDTH-1:0] regs[WIDTH-1:0];
 
+    reg [`ysyx_24080020_WIDTH-1:0] next_wdata;
+
     integer  i;
 
     always @(posedge clk) begin
@@ -27,11 +29,15 @@ module ysyx_24080020_REG #(
             end
         end
         else if(wen && (waddr != 0)) begin
-            regs[waddr] <= wdata;
+            regs[waddr] <= next_wdata;
         end
         else begin
             regs[0] <= 32'b0;
         end
+    end
+
+    always @(posedge clk) begin
+        next_wdata <= wdata;
     end
 
     assign val_raddr1 = raddr1 != 5'b0 ? regs[raddr1] : 32'b0;
