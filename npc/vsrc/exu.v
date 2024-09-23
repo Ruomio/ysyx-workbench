@@ -82,28 +82,27 @@ module ysyx_24080020_EXU
             end
             `ysyx_24080020_I_TYPEI: begin
                 mraddr = val_raddr1 + imm;
-                wdata = mrdata;
                 wen = 1'b1;
                 waddr = rd;
                 case(funct3)
                     `ysyx_24080020_LB: begin
-                        // wdata = {{24{mrdata[7]}}, mrdata[7:0]};
+                        wdata = {{24{mrdata[7]}}, mrdata[7:0]};
                         mrlen = 4'b001;
                     end
                     `ysyx_24080020_LH: begin
-                        // wdata = {{16{mrdata[15]}}, mrdata[15:0]};
+                        wdata = {{16{mrdata[15]}}, mrdata[15:0]};
                         mrlen = 4'b010;
                     end
                     `ysyx_24080020_LW: begin
-                        // wdata = mrdata;
+                        wdata = mrdata;
                         mrlen = 4'b100;
                     end
                     `ysyx_24080020_LBU: begin
-                        // wdata = {{24{1'b0}}, mrdata[7:0]};
+                        wdata = {{24{1'b0}}, mrdata[7:0]};
                         mrlen = 4'b001;
                     end
                     `ysyx_24080020_LHU: begin
-                        // wdata = {{16{1'b0}}, mrdata[15:0]};
+                        wdata = {{16{1'b0}}, mrdata[15:0]};
                         mrlen = 4'b010;
                     end
 
