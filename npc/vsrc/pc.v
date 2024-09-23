@@ -23,6 +23,7 @@ module ysyx_24080020_PC (
         else if(cnt == 2'b1) begin
             if(is_dnpc) pc <= dnpc;
             else pc <= snpc;
+            cnt <= 2'b0;
         end
         else begin
             cnt <= cnt + 2'b1;
