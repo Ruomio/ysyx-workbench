@@ -92,7 +92,6 @@ uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
 int read_memory(int addr, int len) {
-  printf("read_mem: addr=%#x, len=%d, val=%#x", addr, len, host_read(guest_to_host(addr), len));
   if(!in_pmem(addr)) {
     out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
