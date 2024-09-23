@@ -230,10 +230,10 @@ uint32_t g_get_dnpc() {
 }
 
 uint32_t g_get_rs1() {
-  return BITS(top->rootp->__Vdly__top__DOT__u_npc__DOT__inst, 19, 15);
+  return BITS(top->rootp->top__DOT__u_npc__DOT__inst, 19, 15);
 }
 uint32_t g_get_rd() {
-  return BITS(top->rootp->__Vdly__top__DOT__u_npc__DOT__inst, 11, 7);
+  return BITS(top->rootp->top__DOT__u_npc__DOT__inst, 11, 7);
 }
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
