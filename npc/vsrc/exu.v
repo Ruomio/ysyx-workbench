@@ -33,13 +33,10 @@ module ysyx_24080020_EXU
     output reg [3:0] mwlen
 );
 
-    reg flag;
 
-    assign is_dnpc = flag;
-
-    always @(inst) begin
+    always @(inst or mrdata) begin
         // initial
-        flag = 1'b0;
+        is_dnpc = 1'b0;
         mwen = 1'b0;
         wen = 1'b0;
         mraddr = 32'b0;
@@ -173,7 +170,7 @@ module ysyx_24080020_EXU
             end
 
             `ysyx_24080020_B_TYPE: begin
-                flag = 1'b1;
+                is_dnpc = 1'b1;
                 case(funct3)
                     `ysyx_24080020_BEQ: begin
                         dnpc = val_raddr1 == val_raddr2 ? pc + imm : pc + 4;
@@ -195,7 +192,7 @@ module ysyx_24080020_EXU
                     end
 
                     default: begin
-                        flag = 1'b0;
+                        is_dnpc = 1'b0;
                     end
                 endcase
             end
@@ -215,14 +212,14 @@ module ysyx_24080020_EXU
                 wen = 1'b1;
                 waddr = rd;
                 dnpc = pc + imm;
-                flag = 1'b1;
+                is_dnpc = 1'b1;
             end
             `ysyx_24080020_JALR: begin
                 wdata = pc + 4;
                 wen = 1'b1;
                 waddr = rd;
                 dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
-                flag = 1'b1;
+                is_dnpc = 1'b1;
             end
 
             default: begin
