@@ -68,7 +68,7 @@ module ysyx_24080020_EXU
                         wdata = val_raddr1 << imm[4:0];
                     end
                     `ysyx_24080020_SRI: begin
-                        wdata = imm[10] == 0 ? val_raddr1 >> imm[4:0] : val_raddr1 >>> imm[4:0];
+                        wdata = imm[10] == 0 ? val_raddr1 >> imm[4:0] : val_raddr1 >> imm[4:0] | ({32{val_raddr1[31]}} & ~(32'hffffffff >> imm[4:0]));
                     end
                     
                     default: begin
