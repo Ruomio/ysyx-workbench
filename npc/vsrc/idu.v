@@ -73,8 +73,4 @@ module ysyx_24080020_IDU (
             end
         endcase
     end
-
-
-
-
 endmodule

@@ -1,4 +1,5 @@
-module ysyx_24080020_EXU 
+`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
+module ysyx_24080020_EXU
 (
     input [`ysyx_24080020_WIDTH-1:0] inst,
     input [6:0] opcode,
@@ -41,7 +42,7 @@ module ysyx_24080020_EXU
         wen = 1'b0;
         mraddr = 32'b0;
         mwaddr = 32'b0;
-        case(opcode) 
+        case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 wen = 1'b1;
                 waddr = rd;
@@ -70,7 +71,7 @@ module ysyx_24080020_EXU
                     `ysyx_24080020_SRI: begin
                         wdata = imm[10] == 0 ? val_raddr1 >> imm[4:0] : val_raddr1 >> imm[4:0] | ({32{val_raddr1[31]}} & ~(32'hffffffff >> imm[4:0]));
                     end
-                    
+
                     default: begin
                         wen = 1'b0;
                     end
