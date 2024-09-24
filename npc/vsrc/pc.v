@@ -1,4 +1,4 @@
-`include "vsrc/define.v"
+`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_PC (
     input clk,
     input rst,

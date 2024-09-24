@@ -1,13 +1,13 @@
-`include "vsrc/define.v"
+`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] inst,
-    output reg [6:0] opcode,
-    output reg [4:0] rd,
-    output reg [2:0] funct3,
-    output reg [4:0] rs1,
-    output reg [4:0] rs2,
+    output [6:0] opcode,
+    output [4:0] rd,
+    output [2:0] funct3,
+    output [4:0] rs1,
+    output [4:0] rs2,
     output reg [`ysyx_24080020_WIDTH-1:0] imm,
-    output reg [6:0] funct7
+    output [6:0] funct7
 
 );
     import "DPI-C" function void ebreak();
@@ -73,8 +73,4 @@ module ysyx_24080020_IDU (
             end
         endcase
     end
-
-
-
-
 endmodule
