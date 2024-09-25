@@ -15,4 +15,4 @@
 !digital-circuit-experiments/*
 /yosys-sta
 /am-kernels
-/abstrace-machine
+/abstract-machine
