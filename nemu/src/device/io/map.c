@@ -87,7 +87,7 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
 
 
 void dtrace_free() {
-  sprintf(dtrace_buf[(db_idx + NR_DB - 1)%NR_DB], "-> ");
+  memcpy(dtrace_buf[(db_idx + NR_DB - 1)%NR_DB],  "-> ", 3);
 
   FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/dtrace-log.txt", "w");
   assert(fp);
