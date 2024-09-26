@@ -96,7 +96,8 @@ void dtrace_free() {
 }
 
 static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite) {
-  fseek(dtrace_file, strlen(dtrace_buf), SEEK_SET);
+  assert(dtrace_file);
+  fseek(dtrace_file, 0, SEEK_END);
   memset(dtrace_buf, 0, sizeof(dtrace_buf));
   sprintf(dtrace_buf, "Device:%s,    W/R:%s,    LEN:%d,    DATA:0x%u\n", map.name, iswrite ? "write" : "read", len, data);
   fprintf(dtrace_file, "%s\n", dtrace_buf);
