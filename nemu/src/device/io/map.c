@@ -19,15 +19,13 @@
 #include <device/map.h>
 
 #ifdef CONFIG_DTRACE_COND
-#define NR_DB 128
 
+#define NR_DB 128
 static char dtrace_buf[NR_DB][64];
 static int db_idx = 0;
 
-// void dtrace_init();
 void dtrace_free();
 static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite);
-
 #endif
 
 #define IO_SPACE_MAX (2 * 1024 * 1024)
@@ -85,28 +83,21 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
 
 #ifdef CONFIG_DTRACE_COND
 
-
 void dtrace_free() {
   memcpy(dtrace_buf[(db_idx + NR_DB - 1)%NR_DB],  "-> ", 3);
-
   FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/dtrace-log.txt", "w");
   assert(fp);
-
   for(int i=0; i<NR_DB; i++) {
     fprintf(fp, "%s", dtrace_buf[i]);
   }
-
   if(fp) fclose(fp);
   fp = NULL;
 }
 
 static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite) {
-
   memset(dtrace_buf[db_idx], 0, sizeof(dtrace_buf[db_idx]));
   memset(dtrace_buf[db_idx], ' ', 3);
   sprintf(dtrace_buf[db_idx] + 3, "Device:%s,    W/R:%s,    LEN:%d,    DATA:0x%u\n", map.name, iswrite ? "write" : "read", len, data);
-
   db_idx = (db_idx + 1) % NR_DB;
 }
-
 #endif
