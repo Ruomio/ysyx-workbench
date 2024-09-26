@@ -105,7 +105,7 @@ void dtrace_free() {
 
 static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite) {
 
-  memset(dtrace_buf[db_idx], 0, sizeof(dtrace_buf));
+  memset(dtrace_buf[db_idx], 0, sizeof(dtrace_buf[db_idx]));
   memset(dtrace_buf[db_idx], ' ', 3);
   sprintf(dtrace_buf[(db_idx++)%NR_DB] + 3, "Device:%s,    W/R:%s,    LEN:%d,    DATA:0x%u\n", map.name, iswrite ? "write" : "read", len, data);
 }
