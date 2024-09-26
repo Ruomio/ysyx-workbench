@@ -85,9 +85,6 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
 
 #ifdef CONFIG_DTRACE_COND
 
-void dtrace_init() {
-
-}
 
 void dtrace_free() {
   sprintf(dtrace_buf[(db_idx + NR_DB - 1)%NR_DB], "-> ");
