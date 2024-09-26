@@ -204,6 +204,10 @@ config FTRACE_COND
   bool "Enable function trace"
   default n
 
+config DTRACE_COND
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  bool "Enable device trace"
+  default n
 endmenu
 
 if MODE_SYSTEM

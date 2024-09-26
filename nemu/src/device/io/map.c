@@ -18,6 +18,17 @@
 #include <memory/vaddr.h>
 #include <device/map.h>
 
+#ifdef CONFIG_DTRACE_COND
+
+FILE *dtrace_file = NULL;
+static char dtrace_buf[64];
+
+void dtrace_init();
+void dtrace_free();
+static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite);
+
+#endif
+
 #define IO_SPACE_MAX (2 * 1024 * 1024)
 
 static uint8_t *io_space = NULL;
@@ -58,6 +69,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   paddr_t offset = addr - map->low;
   invoke_callback(map->callback, offset, len, false); // prepare data to read
   word_t ret = host_read(map->space + offset, len);
+  IFDEF(CONFIG_DTRACE_COND, dtrace_update(*map, len, ret, false));
   return ret;
 }
 
@@ -67,4 +79,27 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   paddr_t offset = addr - map->low;
   host_write(map->space + offset, len, data);
   invoke_callback(map->callback, offset, len, true);
+  IFDEF(CONFIG_DTRACE_COND, dtrace_update(*map, len, data, true));
 }
+
+#ifdef CONFIG_DTRACE_COND
+
+void dtrace_init() {
+  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/dtrace-log.txt", "w");
+  assert(fp);
+  dtrace_file = fp;
+}
+
+void dtrace_free() {
+  if(dtrace_file) fclose(dtrace_file);
+  dtrace_file = NULL;
+}
+
+static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite) {
+  fseek(dtrace_file, strlen(dtrace_buf), SEEK_SET);
+  memset(dtrace_buf, 0, sizeof(dtrace_buf));
+  sprintf(dtrace_buf, "Device:%s,    W/R:%s,    LEN:%d,    DATA:0x%u\n", map.name, iswrite ? "write" : "read", len, data);
+  fprintf(dtrace_file, "%s\n", dtrace_buf);
+}
+
+#endif
