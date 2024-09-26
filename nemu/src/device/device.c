@@ -29,7 +29,6 @@ void init_audio();
 void init_disk();
 void init_sdcard();
 void init_alarm();
-void dtrace_init();
 
 void send_key(uint8_t, bool);
 void vga_update_screen();
@@ -87,6 +86,4 @@ void init_device() {
   IFDEF(CONFIG_HAS_SDCARD, init_sdcard());
 
   IFNDEF(CONFIG_TARGET_AM, init_alarm());
-
-  IFDEF(CONFIG_DTRACE_COND, dtrace_init());
 }

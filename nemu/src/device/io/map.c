@@ -19,11 +19,12 @@
 #include <device/map.h>
 
 #ifdef CONFIG_DTRACE_COND
+#define NR_DB 128
 
-FILE *dtrace_file = NULL;
-static char dtrace_buf[64];
+static char dtrace_buf[NR_DB][64];
+static int db_idx = 0;
 
-void dtrace_init();
+// void dtrace_init();
 void dtrace_free();
 static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite);
 
@@ -85,22 +86,28 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
 #ifdef CONFIG_DTRACE_COND
 
 void dtrace_init() {
-  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/dtrace-log.txt", "w");
-  assert(fp);
-  dtrace_file = fp;
+
 }
 
 void dtrace_free() {
-  if(dtrace_file) fclose(dtrace_file);
-  dtrace_file = NULL;
+  sprintf(dtrace_buf[(db_idx + NR_DB - 1)%NR_DB], "-> ");
+
+  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/dtrace-log.txt", "w");
+  assert(fp);
+
+  for(int i=0; i<NR_DB; i++) {
+    fprintf(fp, "%s", dtrace_buf[i]);
+  }
+
+  if(fp) fclose(fp);
+  fp = NULL;
 }
 
 static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite) {
-  assert(dtrace_file);
-  fseek(dtrace_file, 0, SEEK_END);
-  memset(dtrace_buf, 0, sizeof(dtrace_buf));
-  sprintf(dtrace_buf, "Device:%s,    W/R:%s,    LEN:%d,    DATA:0x%u\n", map.name, iswrite ? "write" : "read", len, data);
-  fprintf(dtrace_file, "%s", dtrace_buf);
+
+  memset(dtrace_buf[db_idx], 0, sizeof(dtrace_buf));
+  memset(dtrace_buf[db_idx], ' ', 3);
+  sprintf(dtrace_buf[(db_idx++)%NR_DB] + 3, "Device:%s,    W/R:%s,    LEN:%d,    DATA:0x%u\n", map.name, iswrite ? "write" : "read", len, data);
 }
 
 #endif
