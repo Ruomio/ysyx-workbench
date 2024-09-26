@@ -19,6 +19,7 @@
 #include <locale.h>
 
 #include "../../src/monitor/sdb/sdb.h"
+#include "difftest-def.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -32,6 +33,7 @@ static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
 void device_update();
+void dtrace_free();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -132,6 +134,8 @@ void cpu_exec(uint64_t n) {
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
+
+      IFDEF(CONFIG_DTRACE_COND, dtrace_free());
 
     if(nemu_state.state == NEMU_ABORT) {RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file();}
       // fall through
