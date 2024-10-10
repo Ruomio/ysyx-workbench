@@ -40,10 +40,10 @@ void device_update() {
     return;
   }
   last = now;
-  printf("line show.\n");
 
   IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
+  printf("line show.\n");
 #ifndef CONFIG_TARGET_AM
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
