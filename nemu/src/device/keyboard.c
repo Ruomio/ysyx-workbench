@@ -66,7 +66,6 @@ static uint32_t key_dequeue() {
     key = key_queue[key_f];
     key_f = (key_f + 1) % KEY_QUEUE_LEN;
   }
-  printf("line show.\n");
   return key;
 }
 
@@ -74,6 +73,7 @@ void send_key(uint8_t scancode, bool is_keydown) {
   if (nemu_state.state == NEMU_RUNNING && keymap[scancode] != _KEY_NONE) {
     uint32_t am_scancode = keymap[scancode] | (is_keydown ? KEYDOWN_MASK : 0);
     key_enqueue(am_scancode);
+  printf("line show.\n");
   }
 }
 #else // !CONFIG_TARGET_AM
