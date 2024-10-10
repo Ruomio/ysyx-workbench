@@ -53,6 +53,7 @@ void device_update() {
 #ifdef CONFIG_HAS_KEYBOARD
       // If a key was pressed
       case SDL_KEYDOWN:
+  printf("line show.\n");
       case SDL_KEYUP: {
         uint8_t k = event.key.keysym.scancode;
         bool is_keydown = (event.key.type == SDL_KEYDOWN);
@@ -60,9 +61,7 @@ void device_update() {
         break;
       }
 #endif
-      default: 
-  printf("line show.\n");
-                      break;
+      default: break;
     }
   }
 #endif
