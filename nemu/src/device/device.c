@@ -44,6 +44,7 @@ void device_update() {
   IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
 #ifndef CONFIG_TARGET_AM
+  printf("line show.\n");
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
@@ -54,7 +55,6 @@ void device_update() {
       // If a key was pressed
       case SDL_KEYDOWN:
       case SDL_KEYUP: {
-  printf("line show.\n");
         uint8_t k = event.key.keysym.scancode;
         bool is_keydown = (event.key.type == SDL_KEYDOWN);
         send_key(k, is_keydown);
