@@ -66,7 +66,7 @@ static uint32_t key_dequeue() {
     key = key_queue[key_f];
     key_f = (key_f + 1) % KEY_QUEUE_LEN;
   }
-  return key + 2;
+  return key;
 }
 
 void send_key(uint8_t scancode, bool is_keydown) {
