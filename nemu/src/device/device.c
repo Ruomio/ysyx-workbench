@@ -49,7 +49,6 @@ void device_update() {
     switch (event.type) {
       case SDL_QUIT:
         nemu_state.state = NEMU_QUIT;
-  printf("line show.\n");
         break;
 #ifdef CONFIG_HAS_KEYBOARD
       // If a key was pressed
@@ -61,7 +60,9 @@ void device_update() {
         break;
       }
 #endif
-      default: break;
+      default: 
+  printf("line show.\n");
+                      break;
     }
   }
 #endif
