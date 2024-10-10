@@ -58,6 +58,7 @@ static void key_enqueue(uint32_t am_scancode) {
   key_queue[key_r] = am_scancode;
   key_r = (key_r + 1) % KEY_QUEUE_LEN;
   Assert(key_r != key_f, "key queue overflow!");
+  printf("line show.\n");
 }
 
 static uint32_t key_dequeue() {
@@ -74,7 +75,6 @@ void send_key(uint8_t scancode, bool is_keydown) {
     uint32_t am_scancode = keymap[scancode] | (is_keydown ? KEYDOWN_MASK : 0);
     key_enqueue(am_scancode);
   }
-  printf("line show.\n");
 }
 #else // !CONFIG_TARGET_AM
 #define _KEY_NONE 0
