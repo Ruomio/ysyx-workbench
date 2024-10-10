@@ -46,7 +46,7 @@ void device_update() {
 #ifndef CONFIG_TARGET_AM
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
-  printf("line show.\tevent.type = %d\n", event.type);
+  printf("line show.\tevent.type = 0x%x\n", event.type);
     switch (event.type) {
       case SDL_QUIT:
         nemu_state.state = NEMU_QUIT;
