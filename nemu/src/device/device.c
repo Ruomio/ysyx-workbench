@@ -46,12 +46,12 @@ void device_update() {
 #ifndef CONFIG_TARGET_AM
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
+  printf("line show.\tevent.type = %d\n", event.type);
     switch (event.type) {
       case SDL_QUIT:
         nemu_state.state = NEMU_QUIT;
         break;
 #ifdef CONFIG_HAS_KEYBOARD
-  printf("line show.\n");
       // If a key was pressed
       case SDL_KEYDOWN:
       case SDL_KEYUP: {
