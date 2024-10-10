@@ -40,6 +40,7 @@ void device_update() {
     return;
   }
   last = now;
+  printf("line show.\n");
 
   IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
@@ -57,7 +58,6 @@ void device_update() {
         uint8_t k = event.key.keysym.scancode;
         bool is_keydown = (event.key.type == SDL_KEYDOWN);
         send_key(k, is_keydown);
-  printf("line show.\n");
         break;
       }
 #endif
