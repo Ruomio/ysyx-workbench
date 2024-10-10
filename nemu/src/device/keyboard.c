@@ -66,6 +66,7 @@ static uint32_t key_dequeue() {
     key = key_queue[key_f];
     key_f = (key_f + 1) % KEY_QUEUE_LEN;
   }
+  printf("line show.\n");
   return key;
 }
 
@@ -91,7 +92,6 @@ static void i8042_data_io_handler(uint32_t offset, int len, bool is_write) {
   assert(!is_write);
   assert(offset == 0);
   i8042_data_port_base[0] = key_dequeue();
-  printf("line 94.\n");
 }
 
 void init_i8042() {
