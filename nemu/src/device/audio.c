@@ -54,7 +54,8 @@ void sdl_audio_callback(void *userdata, uint8_t *stream, int len) {
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
 
-    if(offset == reg_init && is_write) {
+    if(offset == reg_init * 4 && is_write) {
+        printf("audio handler.\n");
         // update 
         SDL_AudioSpec s = {};
         s.format = AUDIO_S16SYS;
