@@ -29,8 +29,40 @@ enum {
 
 static uint8_t *sbuf = NULL;
 static uint32_t *audio_base = NULL;
+static uint32_t sb_idx = 0;
+
+void sdl_audio_callback(void *userdata, uint8_t *stream, int len) {
+    SDL_memset(stream, 0, len);
+    uint32_t cnt = audio_base[reg_count];
+    len = len > cnt ? cnt : len;
+    uint32_t sb_size = audio_base[reg_sbuf_size];
+    if(sb_idx + len > sb_size) {
+        SDL_MixAudio(stream, sbuf + sb_idx, sb_size - sb_idx, SDL_MIX_MAXVOLUME);
+        SDL_MixAudio(stream + sb_size - sb_idx , sbuf + sb_size - sb_idx, len - sb_size + sb_idx, SDL_MIX_MAXVOLUME );
+    }
+    else {
+        SDL_MixAudio(stream, sbuf + sb_idx, len, SDL_MIX_MAXVOLUME);
+    }
+    sb_idx = (sb_idx + len) % sb_size;
+    audio_base[reg_count] -= len; 
+}
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
+    if(offset == reg_init * 4 && is_write) {
+    // if(audio_base[reg_init] == 1) {
+        // update 
+        SDL_AudioSpec s = {};
+        s.format = AUDIO_S16SYS;
+        s.userdata = NULL;
+        s.freq = audio_base[reg_freq];
+        s.channels = audio_base[reg_channels];
+        s.samples = audio_base[reg_samples];
+        s.callback = sdl_audio_callback;
+        SDL_InitSubSystem(SDL_INIT_AUDIO);
+        SDL_OpenAudio(&s, NULL);
+        SDL_PauseAudio(0);
+        audio_base[reg_init] = 0;
+    }
 }
 
 void init_audio() {
@@ -44,4 +76,5 @@ void init_audio() {
 
   sbuf = (uint8_t *)new_space(CONFIG_SB_SIZE);
   add_mmio_map("audio-sbuf", CONFIG_SB_ADDR, sbuf, CONFIG_SB_SIZE, NULL);
+  audio_base[reg_sbuf_size] = CONFIG_SB_SIZE;
 }
