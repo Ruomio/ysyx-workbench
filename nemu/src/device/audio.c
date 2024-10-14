@@ -54,14 +54,14 @@ void sdl_audio_callback(void *userdata, uint8_t *stream, int len) {
 
 static void audio_io_handler(uint32_t offset, int len, bool is_write) {
 
-    if(offset == 0x10 && is_write) {
+    if(offset == reg_init && is_write) {
         // update 
         SDL_AudioSpec s = {};
         s.format = AUDIO_S16SYS;
         s.userdata = NULL;
-        s.freq = audio_base[0];
-        s.channels = audio_base[1];
-        s.samples = audio_base[2];
+        s.freq = audio_base[reg_freq];
+        s.channels = audio_base[reg_channels];
+        s.samples = audio_base[reg_samples];
         s.callback = sdl_audio_callback;
         SDL_InitSubSystem(SDL_INIT_AUDIO);
         SDL_OpenAudio(&s, NULL);
