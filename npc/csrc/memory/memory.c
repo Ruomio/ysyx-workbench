@@ -112,6 +112,6 @@ void write_memory(int addr, int len, int data) {
     return;
   }
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, data));
-  if(addr == 0xa00003f8) putchar(char(data));
+  if(addr == 0xa00003f8) putchar(data);
   host_write(guest_to_host(addr), len, data);
 }
