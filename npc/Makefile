@@ -75,7 +75,8 @@ $(OBJ_DIR)/%.o: %.cpp
 	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 
-all: $(BIN)
+CONFIG: ./.config
+all: $(BIN) CONFIG
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
