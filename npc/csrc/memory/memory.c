@@ -99,8 +99,7 @@ int read_memory(int addr, int len) {
     return 0;
   }
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, 0));
-  printf("read memory.\n");
-  if(addr == 0xa0000048) return get_time();
+  if(addr == 0xa0000048) { printf("test\n"); return get_time(); }
   if(addr == 0xa0000048 + 0x4) return get_time() >> 32;
   return host_read(guest_to_host(addr), len);
 }
