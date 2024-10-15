@@ -60,7 +60,7 @@ override IMG +=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
-LDFLAGS += -lreadline -ldl -pie $(LIBS)
+LDFLAGS += -lreadline -ldl -pie -lm $(LIBS)
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
