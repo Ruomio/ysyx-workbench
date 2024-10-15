@@ -115,7 +115,7 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY: all clean gtkwave sim nvboard run Kconfig 'include/config/auto.conf' deps_config
+.PHONY: all clean gtkwave sim nvboard run
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
