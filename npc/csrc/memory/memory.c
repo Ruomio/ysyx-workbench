@@ -105,8 +105,8 @@ int read_memory(int addr, int len) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE,
-    if(addr == 0xa0000048) { return (uint32_t)get_time(); }
-    else if(addr == 0xa0000048 + 0x4) { return get_time() >> 32;}
+    // if(addr == 0xa0000048) { return (uint32_t)get_time(); }
+    // else if(addr == 0xa0000048 + 0x4) { return get_time() >> 32;}
     // return mmio_read(addr, len)
   );
   out_of_bound(addr);
