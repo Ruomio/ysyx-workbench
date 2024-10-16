@@ -107,7 +107,7 @@ int read_memory(int addr, int len) {
 }
 
 void write_memory(int addr, int len, int data) {
-  if(addr == 0xa00003f8) {putchar(data);} return;
+  if(addr == 0xa00003f8) {printf("%c\n",data);} return;
 
   if(!in_pmem(addr)) {
     out_of_bound(addr);
