@@ -99,7 +99,7 @@ int read_memory(int addr, int len) {
     u_npc_state.ret = true;
     return 0;
   }
-  printf("addr = 0x%x\n", addr);
+  // printf("addr = 0x%x\n", addr);
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, 0));
   if(addr == 0xa0000048) { printf("test\n"); return get_time(); }
   if(addr == 0xa0000048 + 0x4) return get_time() >> 32;
