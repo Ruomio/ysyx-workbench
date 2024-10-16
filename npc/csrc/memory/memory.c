@@ -96,7 +96,7 @@ int read_memory(int addr, int len) {
   if(!in_pmem(addr)) {
     out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
-    u_npc_state.ret = true;
+    u_npc_state.ret = false;
     return 0;
   }
   printf("addr = 0x%x\n", addr);
