@@ -12,7 +12,7 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
+#if 0
 #include <cstdint>
 #include <isa.h>
 #include <memory/memory.h>
@@ -104,3 +104,5 @@ static void dtrace_update(IOMap map, int len, uint32_t data, bool iswrite) {
 #endif
 
 
+
+#endif

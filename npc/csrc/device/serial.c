@@ -12,7 +12,7 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
+#if 0
 #include <utils.h>
 #include <device/map.h>
 
@@ -49,3 +49,5 @@ void init_serial() {
 #endif
 
 }
+
+#endif

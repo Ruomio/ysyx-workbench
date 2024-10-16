@@ -1,3 +1,4 @@
+#if 0
 #include <common.h>
 
 extern void init_map();
@@ -9,3 +10,5 @@ void init_device() {
     IFDEF(CONFIG_HAS_TIMER, init_timer());
     IFDEF(CONFIG_HAS_SERIAL, init_serial());
 }
+
+#endif

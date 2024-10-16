@@ -12,7 +12,7 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
+#if 0
 #include <device/map.h>
 #include <device/alarm.h>
 #include <utils.h>
@@ -46,3 +46,5 @@ void init_timer() {
 #endif
   IFNDEF(CONFIG_TARGET_AM, add_alarm_handle(timer_intr));
 }
+
+#endif
