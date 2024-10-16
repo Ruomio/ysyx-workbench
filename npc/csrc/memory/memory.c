@@ -105,21 +105,12 @@ int read_memory(int addr, int len) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE,
-    if(addr == 0xa0000048) { return get_time(); }
+    if(addr == 0xa0000048) { return (uint32_t)get_time(); }
     else if(addr == 0xa0000048 + 0x4) { return get_time() >> 32;}
     // return mmio_read(addr, len)
   );
   out_of_bound(addr);
   return 0;
-
-  // if(!in_pmem(addr)) {
-  //   out_of_bound(addr);
-  //   u_npc_state.state = NPC_ABORT;
-  //   u_npc_state.ret = true;
-  //   return 0;
-  // }
-  // IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, 0));
-  // return host_read(guest_to_host(addr), len);
 }
 
 void write_memory(int addr, int len, int data) {
@@ -130,14 +121,4 @@ void write_memory(int addr, int len, int data) {
     if(addr == 0xa00003f8) {putchar(data);} return;
   );
   out_of_bound(addr);
-
-  // if(addr == 0xa00003f8) {printf("%c",data);} return;
-  // if(!in_pmem(addr)) {
-  //   out_of_bound(addr);
-  //   u_npc_state.state = NPC_ABORT;
-  //   u_npc_state.ret = true;
-  //   return;
-  // }
-  // IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, data));
-  // host_write(guest_to_host(addr), len, data);
 }
