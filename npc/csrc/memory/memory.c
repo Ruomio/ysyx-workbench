@@ -94,9 +94,9 @@ paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 int read_memory(int addr, int len) {
   if(addr > 0xa0000048) { printf("test\n"); return get_time(); }
   if(!in_pmem(addr)) {
-    out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
     u_npc_state.ret = true;
+    out_of_bound(addr);
     return 0;
   }
   // printf("addr = 0x%x\n", addr);
@@ -109,9 +109,9 @@ int read_memory(int addr, int len) {
 void write_memory(int addr, int len, int data) {
   if(addr > 0xa0000048) { printf("test\n");}
   if(!in_pmem(addr)) {
-    out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
     u_npc_state.ret = true;
+    out_of_bound(addr);
     return;
   }
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, data));
