@@ -108,6 +108,7 @@ int read_memory(int addr, int len) {
     // if(addr == 0xa0000048) { return (uint32_t)get_time(); }
     // else if(addr == 0xa0000048 + 0x4) { return get_time() >> 32;}
     // return mmio_read(addr, len)
+    return 0;
   );
   out_of_bound(addr);
   return 0;
