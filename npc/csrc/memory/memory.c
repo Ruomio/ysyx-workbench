@@ -94,8 +94,8 @@ paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
 int read_memory(int addr, int len) {
   IFDEF(CONFIG_DEVICE,
-    if(addr == 0xa0000048) return get_time();
-    else if(addr == 0xa0000048 + 0x4) return get_time() >> 32;
+    if(addr == 0xa0000048) { return get_time(); }
+    else if(addr == 0xa0000048 + 0x4) { return get_time() >> 32;}
   );
   if(!in_pmem(addr)) {
     out_of_bound(addr);
@@ -104,8 +104,6 @@ int read_memory(int addr, int len) {
     return 0;
   }
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, 0));
-  if(addr == 0xa0000048) { printf("test\n"); return get_time(); }
-  if(addr == 0xa0000048 + 0x4) return get_time() >> 32;
   return host_read(guest_to_host(addr), len);
 }
 
