@@ -92,7 +92,7 @@ uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
 int read_memory(int addr, int len) {
-  if(addr == 0xa0000048) { printf("test\n"); return get_time(); }
+  if(addr > 0xa0000048) { printf("test\n"); return get_time(); }
   if(!in_pmem(addr)) {
     out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
@@ -107,7 +107,7 @@ int read_memory(int addr, int len) {
 }
 
 void write_memory(int addr, int len, int data) {
-  if(addr == 0xa0000048) { printf("test\n");}
+  if(addr > 0xa0000048) { printf("test\n");}
   if(!in_pmem(addr)) {
     out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
