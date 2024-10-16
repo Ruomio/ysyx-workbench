@@ -98,7 +98,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
 int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
   static int top = 0;
 
-  char str[1024] = {};
+  char str[10240] = {};
   int idx=0;
 
   // printf("rs1 = %x, rd = %x\n", rs1, rd);
