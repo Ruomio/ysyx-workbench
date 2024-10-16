@@ -107,7 +107,7 @@ int read_memory(int addr, int len) {
 }
 
 void write_memory(int addr, int len, int data) {
-  if(addr > 0xa0000048) { printf("test\n");}
+  if(addr > 0xa0000048) { printf("test\n"); return;}
   if(!in_pmem(addr)) {
     u_npc_state.state = NPC_ABORT;
     u_npc_state.ret = true;
