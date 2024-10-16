@@ -6,6 +6,7 @@
 #include <string.h>
 #include "debug.h"
 #include "memory/paddr.h"
+#include "utils.h"
 
 
 uint8_t *memory = NULL;
@@ -92,15 +93,16 @@ uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
 int read_memory(int addr, int len) {
-  if(addr > 0xa0000000) { printf("test\n"); return get_time(); }
+  IFDEF(CONFIG_DEVICE,
+    if(addr == 0xa0000048) return get_time();
+    else if(addr == 0xa0000048 + 0x4) return get_time() >> 32;
+  );
   if(!in_pmem(addr)) {
+    out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
     u_npc_state.ret = true;
-    printf("out of bound 1");
-    out_of_bound(addr);
     return 0;
   }
-  // printf("addr = 0x%x\n", addr);
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, 0));
   if(addr == 0xa0000048) { printf("test\n"); return get_time(); }
   if(addr == 0xa0000048 + 0x4) return get_time() >> 32;
@@ -108,15 +110,13 @@ int read_memory(int addr, int len) {
 }
 
 void write_memory(int addr, int len, int data) {
-  if(addr > 0xa0000000) { printf("test\n"); return;}
+  IFDEF(CONFIG_DEVICE, if(addr == 0xa00003f8) {putchar(data);} return;);
   if(!in_pmem(addr)) {
+    out_of_bound(addr);
     u_npc_state.state = NPC_ABORT;
     u_npc_state.ret = true;
-    printf("out of bound 2");
-    out_of_bound(addr);
     return;
   }
   IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, data));
-  if(addr == 0xa00003f8) printf("%c",data);
   host_write(guest_to_host(addr), len, data);
 }
