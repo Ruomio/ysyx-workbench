@@ -97,7 +97,6 @@ int read_memory(int addr, int len) {
     u_npc_state.state = NPC_ABORT;
     u_npc_state.ret = true;
     printf("out of bound 1");
-    printf("out of bound 1");
     out_of_bound(addr);
     return 0;
   }
@@ -113,6 +112,7 @@ void write_memory(int addr, int len, int data) {
   if(!in_pmem(addr)) {
     u_npc_state.state = NPC_ABORT;
     u_npc_state.ret = true;
+    printf("out of bound 2");
     out_of_bound(addr);
     return;
   }
