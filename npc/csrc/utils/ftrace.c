@@ -98,12 +98,12 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
 int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
   static int top = 0;
 
-  char str[512] = {};
+  char str[1024] = {};
   int idx=0;
 
   // printf("rs1 = %x, rd = %x\n", rs1, rd);
   for(int i=0; i<NR_FT; i++) {
-    assert(idx < 512);
+    assert(idx < 1024);
     if(addr >= Ftrace_tab[i].addr && addr < Ftrace_tab[i].addr + Ftrace_tab[i].size) {
       // pc
       sprintf(str+idx, "0x%x: ", pc);
