@@ -46,7 +46,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
 
   Elf32_Ehdr ehdr;
   fread(&ehdr, sizeof(ehdr), 1, file);
-  
+
   // 读取节头
   fseek(file, ehdr.e_shoff, SEEK_SET);
   Elf32_Shdr *shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
@@ -81,7 +81,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
       // printf("Function: %10s, Address: 0x%x  Size: %d  \n",(strtab + symbols[i].st_name), symbols[i].st_value, symbols[i].st_size);
       strcpy(Ftrace_tab[i].name, strtab + symbols[i].st_name);
       Ftrace_tab[i].addr = symbols[i].st_value;
-      Ftrace_tab[i].size = symbols[i].st_size; 
+      Ftrace_tab[i].size = symbols[i].st_size;
     }
   }
 
@@ -105,7 +105,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
       // pc
       sprintf(str+idx, "0x%x: ", pc);
       idx += strlen(str+idx);
-      
+
 
       // type: call or ret
       if(rs1 == 1 && rd == 0) {
@@ -114,7 +114,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
           sprintf(str+idx, " ");
           idx += strlen(str+idx);
         }
-        top--;
+        if(top > 0) top--;
         sprintf(str+idx, "ret  ");
         idx += strlen(str+idx);
         // function name
@@ -124,6 +124,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
       else {
         top ++;
         // space
+        if(2*top < 450) top--;
         for(int i=0; i<2*top; i++) {
           sprintf(str+idx, " ");
           idx += strlen(str+idx);
