@@ -91,7 +91,7 @@ sim:
 
 $(BIN): $(VSRC) $(CSRC) 
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-	$(VERILATOR) $(VERILATOR_CFLAGS) \
+	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
@@ -114,7 +114,7 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY: all clean gtkwave sim nvboard run Kconfig 'include/config/auto.conf' deps_config
+.PHONY: all clean gtkwave sim nvboard run
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
