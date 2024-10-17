@@ -91,24 +91,35 @@ void free_memory() {
 uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
+static word_t pmem_read(paddr_t addr, int len) {
+  word_t ret = host_read(guest_to_host(addr), len);
+  return ret;
+}
+
+static void pmem_write(paddr_t addr, int len, word_t data) {
+  host_write(guest_to_host(addr), len, data);
+}
+
+static uint64_t u_time;
 int read_memory(int addr, int len) {
-  if(!in_pmem(addr)) {
-    out_of_bound(addr);
-    u_npc_state.state = NPC_ABORT;
-    u_npc_state.ret = true;
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
+  if (likely(in_pmem(addr))) return pmem_read(addr, len);
+  IFDEF(CONFIG_DEVICE,
+    if(addr == 0xa0000048 + 4) { u_time = get_time(); return u_time >> 32;}
+    else if(addr == 0xa0000048) { return (uint32_t)u_time;}
+    // return mmio_read(addr, len)
     return 0;
-  }
-  IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, 0));
-  return host_read(guest_to_host(addr), len);
+  );
+  out_of_bound(addr);
+  return 0;
 }
 
 void write_memory(int addr, int len, int data) {
-  if(!in_pmem(addr)) {
-    out_of_bound(addr);
-    u_npc_state.state = NPC_ABORT;
-    u_npc_state.ret = true;
-    return;
-  }
-  IFDEF(CONFIG_MTRACE, MtraceBuf_write(addr, len, data));
-  host_write(guest_to_host(addr), len, data);
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, data));
+  if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
+  IFDEF(CONFIG_DEVICE,
+    // mmio_write(addr, len, data);
+    if(addr == 0xa00003f8) {putchar(data);} return;
+  );
+  out_of_bound(addr);
 }

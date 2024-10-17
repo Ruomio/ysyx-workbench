@@ -42,7 +42,6 @@ module ysyx_24080020_NPC(
     ysyx_24080020_PC u_pc(
         .clk(clk), 
         .rst(rst), 
-        .snpc(snpc), 
         .is_dnpc(is_dnpc), 
         .dnpc(dnpc), 
         .pc(pc), 
