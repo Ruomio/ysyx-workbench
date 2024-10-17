@@ -124,7 +124,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
       else {
         top ++;
         // space
-        if(2*top < 450) top--;
+        if(2*top > 450) top--;
         for(int i=0; i<2*top; i++) {
           sprintf(str+idx, " ");
           idx += strlen(str+idx);
