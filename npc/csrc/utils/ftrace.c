@@ -120,7 +120,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
         sprintf(str+idx, "ret  ");
         idx += strlen(str+idx);
         // function name
-        sprintf(str+idx, "[%s]\n", Ftrace_tab[i].name);
+        sprintf(str+idx, "[%s]", Ftrace_tab[i].name);
         idx += strlen(str+idx);
       }
       else {
@@ -134,11 +134,11 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
         sprintf(str+idx, "call ");
         idx += strlen(str+idx);
         // function name
-        sprintf(str+idx, "[%s@0x%x]\n", Ftrace_tab[i].name, Ftrace_tab[i].addr);
+        sprintf(str+idx, "[%s@0x%x]", Ftrace_tab[i].name, Ftrace_tab[i].addr);
         idx += strlen(str+idx);
       }
 
-
+      break;
 
     }
   }
