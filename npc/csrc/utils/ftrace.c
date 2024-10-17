@@ -116,7 +116,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
           sprintf(str+idx, " ");
           idx += strlen(str+idx);
         }
-        top--;
+        if(top > 0) top--;
         sprintf(str+idx, "ret  ");
         idx += strlen(str+idx);
         // function name
@@ -126,6 +126,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
       else {
         top ++;
         // space
+        if(2*top > 450) top--;
         for(int i=0; i<2*top; i++) {
           sprintf(str+idx, " ");
           idx += strlen(str+idx);
@@ -137,7 +138,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
         idx += strlen(str+idx);
       }
 
-
+      break;
 
     }
   }
