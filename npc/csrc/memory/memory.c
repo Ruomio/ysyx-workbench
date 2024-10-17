@@ -6,7 +6,6 @@
 #include <string.h>
 #include "debug.h"
 #include "memory/paddr.h"
-#include "utils.h"
 
 
 uint8_t *memory = NULL;

@@ -4,7 +4,6 @@ module ysyx_24080020_PC (
     input rst,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
-
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
     output [3:0] pc_len
 );
