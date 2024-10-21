@@ -22,6 +22,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   cpu.csrs[2] = NO;
   cpu.csrs[0] = epc;
 
+  printf("raise_intr.\n");
   return cpu.csrs[3];
 }
 
