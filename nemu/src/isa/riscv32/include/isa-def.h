@@ -18,6 +18,13 @@
 
 #include <common.h>
 
+enum {
+    mepc = 0x0,
+    mstatus,
+    mcause,
+    mtvec
+};
+
 typedef struct {
   word_t gpr[32];
   vaddr_t pc;
