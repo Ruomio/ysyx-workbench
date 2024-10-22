@@ -60,7 +60,6 @@ int RingBuffer_add_arrow() {
 }
 
 void RingBuffer_save_file() {
-    assert(0);
     FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ringbuffer-log.txt", "w");
 
     for(int i=0; i<buffer->length; i++) {
