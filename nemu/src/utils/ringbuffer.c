@@ -15,6 +15,7 @@ RingBuffer *RingBuffer_create() {
     buffer->length = 20;
     memset(buffer->buf, 0, sizeof(buffer->buf));
 
+    assert(0);
     return buffer;
 }
 int RingBuffer_destory() {
@@ -53,9 +54,7 @@ void RingBuffer_print() {
 }
 
 int RingBuffer_add_arrow() {
-    assert(buffer);
     int idx = (buffer->idx + 19)%buffer->length;
-    printf("idx = %d\n", idx);
     char *str = buffer->buf[idx];
     memcpy(str, "-> ", 3);
     return 0;
