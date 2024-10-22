@@ -41,8 +41,8 @@ enum {
 #define imm() BITS(s->isa.inst.val, 31, 20)
 #define CSR(i) *get_csr_reg(i) 
 #define ECALL() do { \
-    IFDEF(__riscv_e, bool success;  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);  return;) \
-    bool success; isa_raise_intr(isa_reg_str2val("a7", &success), s->pc); assert(0);\
+    IFDEF(__riscv_e, bool success;  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);  return;); assert(0); \
+    bool success; isa_raise_intr(isa_reg_str2val("a7", &success), s->pc); \
 } while(0)
 
 IFDEF(CONFIG_FTRACE_COND, int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd));
