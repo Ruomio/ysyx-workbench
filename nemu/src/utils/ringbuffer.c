@@ -53,7 +53,9 @@ void RingBuffer_print() {
 }
 
 int RingBuffer_add_arrow() {
+    assert(buffer);
     int idx = (buffer->idx + 19)%buffer->length;
+    printf("idx = %d\n", idx);
     char *str = buffer->buf[idx];
     memcpy(str, "-> ", 3);
     return 0;
