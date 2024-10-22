@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include "common.h"
+#include "isa-def.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
@@ -40,22 +41,22 @@ enum {
 #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1) | (BITS(i, 7, 7) << 11); } while(0)
 
 #define imm() BITS(s->isa.inst.val, 31, 20)
-#define CSR(i) *get_csr_reg(i) 
+#define CSR(i) *get_csr_reg(i)
 
 
 IFDEF(CONFIG_FTRACE_COND, int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd));
 IFDEF(CONFIG_FTRACE_COND, int close_ftrace());
 static vaddr_t *get_csr_reg(word_t csr) {
-    if(csr == 0x341) {return &cpu.csrs[mepc];} 
-    else if(csr == 0x300) {return &cpu.csrs[mstatus];} 
-    else if(csr == 0x342) {return &cpu.csrs[mcause];} 
-    else if(csr == 0x305) {return &cpu.csrs[mtvec];} 
+    if(csr == 0x341) {return &cpu.csrs[mepc];}
+    else if(csr == 0x300) {return &cpu.csrs[mstatus];}
+    else if(csr == 0x342) {printf("mcause = 0x%x\n", cpu.csrs[mcause]); return &cpu.csrs[mcause];}
+    else if(csr == 0x305) {return &cpu.csrs[mtvec];}
     else { Assert(0, "Unknown csr reg."); }
 }
 static void ecall(Decode *s) {
   bool success;
 #ifdef __riscv_e
-  s->dnpc =  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc); 
+  s->dnpc =  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);
   assert(0);
 #else
   s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
