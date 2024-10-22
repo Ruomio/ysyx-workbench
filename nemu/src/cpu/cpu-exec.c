@@ -137,7 +137,7 @@ void cpu_exec(uint64_t n) {
 
       IFDEF(CONFIG_DTRACE_COND, dtrace_free());
 
-    if(nemu_state.state == NEMU_ABORT) {RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file();}
+      if(nemu_state.state == NEMU_ABORT) {IFDEF(CONFIG_ITRACE, RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file(););}
       // fall through
     case NEMU_QUIT: statistic();
   }
