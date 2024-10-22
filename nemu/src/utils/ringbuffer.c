@@ -15,7 +15,6 @@ RingBuffer *RingBuffer_create() {
     buffer->length = 20;
     memset(buffer->buf, 0, sizeof(buffer->buf));
 
-    assert(0);
     return buffer;
 }
 int RingBuffer_destory() {
@@ -61,6 +60,7 @@ int RingBuffer_add_arrow() {
 }
 
 void RingBuffer_save_file() {
+    assert(0);
     FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ringbuffer-log.txt", "w");
 
     for(int i=0; i<buffer->length; i++) {
