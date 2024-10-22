@@ -60,7 +60,6 @@ static state_t *state = NULL;
 void sim_t::diff_init(int port) {
   p = get_core("0");
   state = p->get_state();
-  state->mcause->write(0xffffffff);
 }
 
 void sim_t::diff_step(uint64_t n) {
@@ -88,6 +87,7 @@ void sim_t::diff_set_regs(void* diff_context) {
   state->mepc->write(ctx->csrs[mepc]);
   state->mstatus->write(ctx->csrs[mstatus]);
   state->mcause->write(ctx->csrs[mcause]);
+  printf("set regs: mcause -> 0x%x", ctx->csrs[mcause]);
   state->mtvec->write(ctx->csrs[mtvec]);
 }
 
