@@ -53,6 +53,7 @@ void RingBuffer_print() {
 }
 
 int RingBuffer_add_arrow() {
+    assert(0);
     int idx = (buffer->idx + 19)%buffer->length;
     char *str = buffer->buf[idx];
     memcpy(str, "-> ", 3);
@@ -60,7 +61,6 @@ int RingBuffer_add_arrow() {
 }
 
 void RingBuffer_save_file() {
-    assert(0);
     FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/ringbuffer-log.txt", "w");
 
     for(int i=0; i<buffer->length; i++) {
