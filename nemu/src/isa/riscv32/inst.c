@@ -51,7 +51,7 @@ static vaddr_t *get_csr_reg(word_t csr) {
   if(csr == 0x341) {return &cpu.csrs[mepc];}
   else if(csr == 0x300) { /*printf("mstatus = 0x%x\n", cpu.csrs[mstatus]);*/ return &cpu.csrs[mstatus];}
   else if(csr == 0x342) { /*printf("mcause = 0x%x\n", cpu.csrs[mcause]);*/ return &cpu.csrs[mcause];}
-  else if(csr == 0x305) { printf("mtvec = 0x%x\n", cpu.csrs[mtvec]); return &cpu.csrs[mtvec];}
+  else if(csr == 0x305) { /*printf("mtvec = 0x%x\n", cpu.csrs[mtvec]);*/ return &cpu.csrs[mtvec];}
   else { Assert(0, "Unknown csr reg."); }
 }
 static void ecall(Decode *s) {
