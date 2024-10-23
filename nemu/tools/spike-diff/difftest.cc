@@ -87,7 +87,7 @@ void sim_t::diff_set_regs(void* diff_context) {
   state->mepc->write(ctx->csrs[mepc]);
   state->mstatus->write(ctx->csrs[mstatus]);
   state->mcause->write(ctx->csrs[mcause]);
-  printf("set regs: mcause -> 0x%x\n", ctx->csrs[mcause]);
+  // printf("set regs: mcause -> 0x%x\n", ctx->csrs[mstatus]);
   state->mtvec->write(ctx->csrs[mtvec]);
 }
 

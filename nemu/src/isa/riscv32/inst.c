@@ -13,8 +13,6 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "common.h"
-#include "isa-def.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
@@ -48,7 +46,7 @@ IFDEF(CONFIG_FTRACE_COND, int update_ftrace(uint32_t pc, uint32_t addr, uint32_t
 IFDEF(CONFIG_FTRACE_COND, int close_ftrace());
 static vaddr_t *get_csr_reg(word_t csr) {
     if(csr == 0x341) {return &cpu.csrs[mepc];}
-    else if(csr == 0x300) {return &cpu.csrs[mstatus];}
+    else if(csr == 0x300) {printf("mstatus = 0x%x\n", cpu.csrs[mstatus]);return &cpu.csrs[mstatus];}
     else if(csr == 0x342) {printf("mcause = 0x%x\n", cpu.csrs[mcause]); return &cpu.csrs[mcause];}
     else if(csr == 0x305) {return &cpu.csrs[mtvec];}
     else { Assert(0, "Unknown csr reg."); }
