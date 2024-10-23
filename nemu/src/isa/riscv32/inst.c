@@ -61,7 +61,7 @@ static void ecall(Decode *s) {
 #else
   s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
   Assert(success, "isa_reg_str2val error.");
-  printf("R[a7] = 0x%x\n", s->dnpc);
+  printf("R[a7] = 0x%x\n", isa_reg_str2val("a7", &success));
 #endif
 }
 
