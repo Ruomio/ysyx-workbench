@@ -22,7 +22,8 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   cpu.csrs[mcause] = NO;
   cpu.csrs[mepc] = epc;
 
-  printf("mtvec = 0x%x.\n", cpu.csrs[mtvec]);
+  printf("raise_intr mcause = 0x%x.\n", cpu.csrs[mcause]);
+  printf("raise_intr mtvec = 0x%x.\n", cpu.csrs[mtvec]);
   return cpu.csrs[mtvec];
 }
 
