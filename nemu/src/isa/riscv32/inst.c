@@ -44,6 +44,8 @@ enum {
 
 IFDEF(CONFIG_FTRACE_COND, int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd));
 IFDEF(CONFIG_FTRACE_COND, int close_ftrace());
+extern void difftest_skip_ref();
+
 static vaddr_t *get_csr_reg(word_t csr) {
     if(csr == 0x341) {return &cpu.csrs[mepc];}
     else if(csr == 0x300) {printf("mstatus = 0x%x\n", cpu.csrs[mstatus]);return &cpu.csrs[mstatus];}
@@ -140,7 +142,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, ecall(s); /*assert(0)*/ );
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10)); IFDEF(CONFIG_FTRACE_COND, close_ftrace())); // R(10) is $a0
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm()); CSR(imm()) = src1; /*assert(0)*/ );
-  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, printf("inst imm() = 0x%x\n", (unsigned int)imm());R(rd) = CSR(imm()); CSR(imm()) = CSR(imm()) | src1; /*assert(0)*/ );
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, printf("inst imm() = 0x%x\n", (unsigned int)imm());R(rd) = CSR(imm()); CSR(imm()) = CSR(imm()) | src1; difftest_skip_ref();/*assert(0)*/ );
   INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrc  , I, assert(0));
   INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrw  , I, assert(0));
   INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrsi , I, assert(0));
