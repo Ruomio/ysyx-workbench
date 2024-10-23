@@ -47,6 +47,7 @@ IFDEF(CONFIG_FTRACE_COND, int close_ftrace());
 extern void difftest_skip_ref();
 
 static vaddr_t *get_csr_reg(word_t csr) {
+    printf("csr idx = 0x%x\n", csr);
     if(csr == 0x341) {return &cpu.csrs[mepc];}
     else if(csr == 0x300) { /*printf("mstatus = 0x%x\n", cpu.csrs[mstatus]);*/ return &cpu.csrs[mstatus];}
     else if(csr == 0x342) { /*printf("mcause = 0x%x\n", cpu.csrs[mcause]);*/ return &cpu.csrs[mcause];}
