@@ -1,5 +1,5 @@
 /***************************************************************************************
-* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+* Copyright (c) 2024-2024 Peizhi Peng
 *
 * NEMU is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -12,38 +12,29 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
-#ifndef __ISA_RISCV32_H__
-#define __ISA_RISCV32_H__
-
 #include <common.h>
 
-enum {
-  EVENT_NULL = 0,
-  EVENT_YIELD = 0xb, EVENT_SYSCALL = 0x9, EVENT_PAGEFAULT = 0xc, EVENT_ERROR = 0xffffffff,
-  EVENT_IRQ_TIMER = 0x80000007, EVENT_IRQ_IODEV = 0x8000000b,
-};
+static bool is_init = false;
+static FILE *fp = NULL;
 
-enum {
-  mepc = 0x0,
-  mstatus,
-  mcause,
-  mtvec
-};
+void etrace_init() {
+    fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/etrace-log.txt", "w");
 
-typedef struct {
-  word_t gpr[32];
-  vaddr_t pc;
-  word_t csrs[4];   // 0: mepc, 0x341;   1: mstatus, 0x300;   2: mcause, 0x342;  3: mtvec, 0x305
-} riscv32_CPU_state;
+    is_init = true;
+}
+void etrace_write(word_t NO, vaddr_t epc) {
+    if(!is_init) etrace_init();
+    assert(fp);
+    fseek(fp, 0, SEEK_END);
 
-// decode
-typedef struct {
-  union {
-    uint32_t val;
-  } inst;
-} riscv32_ISADecodeInfo;
+    char buf[128] = {};
+    sprintf(buf, "[%s] at PC 0x%x, cause 0x%x\n", NO&0x80000000 ? "Interrupt" : "Exception", epc, NO);
 
-#define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
+    fprintf(fp, "%s", buf);
 
-#endif
+}
+
+void etrace_close() {
+    fclose(fp);
+    fp = NULL;
+}

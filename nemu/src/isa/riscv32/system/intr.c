@@ -15,13 +15,17 @@
 
 #include <isa.h>
 
+extern void etrace_write(word_t NO, vaddr_t epc);
+
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * Then return the address of the interrupt/exception vector.
    */
+  // printf("NO = 0x%x,    EPC = 0x%x\n", NO, epc);
   cpu.csrs[mcause] = NO;
-  cpu.csrs[mepc] = NO == 0xb ? epc + 4 : epc;
+  cpu.csrs[mepc] =  epc + 4;
 
+  IFDEF(CONFIG_ETRACE_COND, etrace_write(NO, epc));
   return cpu.csrs[mtvec];
 }
 
