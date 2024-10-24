@@ -19,6 +19,12 @@
 #include <common.h>
 
 enum {
+  EVENT_NULL = 0,
+  EVENT_YIELD = 0xb, EVENT_SYSCALL = 0x9, EVENT_PAGEFAULT = 0xc, EVENT_ERROR = 0xffffffff,
+  EVENT_IRQ_TIMER = 0x80000009, EVENT_IRQ_IODEV = 0x8000000b,
+};
+
+enum {
     mepc = 0x0,
     mstatus,
     mcause,
