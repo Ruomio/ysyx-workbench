@@ -25,10 +25,10 @@ enum {
 };
 
 enum {
-    mepc = 0x0,
-    mstatus,
-    mcause,
-    mtvec
+  mepc = 0x0,
+  mstatus,
+  mcause,
+  mtvec
 };
 
 typedef struct {
