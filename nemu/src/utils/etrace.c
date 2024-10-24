@@ -1,5 +1,5 @@
 /***************************************************************************************
-* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+* Copyright (c) 2024-2024 Peizhi Peng
 *
 * NEMU is licensed under Mulan PSL v2.
 * You can use this software according to the terms and conditions of the Mulan PSL v2.
@@ -12,23 +12,29 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
+#include <common.h>
 
-#include <isa.h>
+static bool is_init = false;
+static FILE *fp = NULL;
 
-extern void etrace_write(word_t NO, vaddr_t epc);
+void etrace_init() {
+    fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/etrace-log.txt", "w");
 
-word_t isa_raise_intr(word_t NO, vaddr_t epc) {
-  /* TODO: Trigger an interrupt/exception with ``NO''.
-   * Then return the address of the interrupt/exception vector.
-   */
-  // printf("NO = 0x%x,    EPC = 0x%x\n", NO, epc);
-  cpu.csrs[mcause] = NO;
-  cpu.csrs[mepc] =  epc + 4;
+    is_init = true;
+}
+void etrace_write(word_t NO, vaddr_t epc) {
+    if(!is_init) etrace_init();
+    assert(fp);
+    fseek(fp, 0, SEEK_END);
 
-  IFDEF(CONFIG_ETRACE_COND, etrace_write(NO, epc));
-  return cpu.csrs[mtvec];
+    char buf[128] = {};
+    sprintf(buf, "[%s] at PC 0x%x, cause 0x%x\n", NO&0x80000000 ? "Interrupt" : "Exception", epc, NO);
+
+    fprintf(fp, "%s", buf);
+
 }
 
-word_t isa_query_intr() {
-  return INTR_EMPTY;
+void etrace_close() {
+    fclose(fp);
+    fp = NULL;
 }
