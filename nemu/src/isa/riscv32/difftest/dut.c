@@ -19,7 +19,7 @@
 
 #define CHECKCSRS(csr) do {\
                             if(ref_r->csrs[csr] != cpu.csrs[csr]) { \
-                              printf("csrs diff at %dth, ref = 0x%x, dut = 0x%x", csr, ref_r->csrs[csr], cpu.csrs[csr]);   \
+                              printf("csrs diff at %dth, ref = 0x%x, dut = 0x%x\n", csr, ref_r->csrs[csr], cpu.csrs[csr]);   \
                               return false; \
                             }\
                         } while(0)
