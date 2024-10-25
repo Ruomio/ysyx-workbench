@@ -18,6 +18,11 @@
 
 #include <common.h>
 
+#define MEPC_ADDR 0x341
+#define MSTATUS_ADDR 0x300
+#define MCAUSE_ADDR 0x342
+#define MTVEC_ADDR 0x305
+
 enum {
   EVENT_NULL = 0,
   EVENT_YIELD = 0xb, EVENT_SYSCALL = 0x9, EVENT_PAGEFAULT = 0xc, EVENT_ERROR = 0xffffffff,

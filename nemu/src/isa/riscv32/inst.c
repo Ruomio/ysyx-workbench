@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "isa-def.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
@@ -48,10 +49,10 @@ extern void difftest_skip_ref();
 
 static vaddr_t *get_csr_reg(word_t csr) {
   // printf("csr idx = 0x%x\n", csr);
-  if(csr == 0x341) {return &cpu.csrs[mepc];}
-  else if(csr == 0x300) { /*printf("mstatus = 0x%x\n", cpu.csrs[mstatus]);*/ return &cpu.csrs[mstatus];}
-  else if(csr == 0x342) { /*printf("mcause = 0x%x\n", cpu.csrs[mcause]);*/ return &cpu.csrs[mcause];}
-  else if(csr == 0x305) { /*printf("mtvec = 0x%x\n", cpu.csrs[mtvec]);*/ return &cpu.csrs[mtvec];}
+  if(csr == MEPC_ADDR) {return &cpu.csrs[mepc];}
+  else if(csr == MSTATUS_ADDR) { /*printf("mstatus = 0x%x\n", cpu.csrs[mstatus]);*/ return &cpu.csrs[mstatus];}
+  else if(csr == MCAUSE_ADDR) { /*printf("mcause = 0x%x\n", cpu.csrs[mcause]);*/ return &cpu.csrs[mcause];}
+  else if(csr == MTVEC_ADDR) { /*printf("mtvec = 0x%x\n", cpu.csrs[mtvec]);*/ return &cpu.csrs[mtvec];}
   else { Assert(0, "Unknown csr reg."); }
 }
 static void ecall(Decode *s) {
@@ -141,7 +142,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000??? ????? 00000 000 00000 00011 11", fence  , N, );       // sync mem and i/o
   INSTPAT("0000000 00000 00000 001 00000 00011 11", fence.i, N, );       // sync insts
 
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , N, s->dnpc = CSR(0x341); /*assert(0)*/ );
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, s->dnpc = CSR(MEPC_ADDR); CSR(MCAUSE_ADDR) = 1 << 6;  /*assert(0)*/ );
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ecall(s); /*assert(0)*/ );
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)); IFDEF(CONFIG_FTRACE_COND, close_ftrace())); // R(10) is $a0
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm()); CSR(imm()) = src1; IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); /* assert(0) */ );
