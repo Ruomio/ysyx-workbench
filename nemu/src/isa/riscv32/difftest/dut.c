@@ -17,6 +17,13 @@
 #include <cpu/difftest.h>
 #include "../local-include/reg.h"
 
+#define CHECKCSRS(csr) do {\
+                            if(ref_r->csrs[csr] != cpu.csrs[csr]) { \
+                              printf("csrs diff at %dth, ref = 0x%x, dut = 0x%x", csr, ref_r->csrs[csr], cpu.csrs[csr]);   \
+                              return false; \
+                            }\
+                        } while(0)
+
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   for(int i = 0; i < sizeof(cpu.gpr)/sizeof(cpu.gpr[0]); i++) {
     if(ref_r->gpr[i] != cpu.gpr[i]) { 
@@ -24,6 +31,10 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
       return false;
     };
   }
+  CHECKCSRS(mepc);
+  CHECKCSRS(mstatus);
+  CHECKCSRS(mcause);
+  CHECKCSRS(mtvec);
   return true;
 }
 
