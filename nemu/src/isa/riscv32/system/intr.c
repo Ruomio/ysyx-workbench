@@ -23,7 +23,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
    */
   // printf("NO = 0x%x,    EPC = 0x%x\n", NO, epc);
   cpu.csrs[mcause] = NO;
-  cpu.csrs[mepc] =  epc + 4;
+  cpu.csrs[mepc] =  epc;
 
   IFDEF(CONFIG_ETRACE_COND, etrace_write(NO, epc));
   return cpu.csrs[mtvec];
