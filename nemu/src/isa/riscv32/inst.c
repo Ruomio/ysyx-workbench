@@ -156,9 +156,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000??? ????? 00000 000 00000 00011 11", fence  , N, );       // sync mem and i/o
   INSTPAT("0000000 00000 00000 001 00000 00011 11", fence.i, N, );       // sync insts
 
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, mret(s); /* IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); */ );
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, mret(s); IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); );
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ecall(s); IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); );
-  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)); /*IFDEF(CONFIG_FTRACE_COND, close_ftrace()) */); 
+  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)); IFDEF(CONFIG_FTRACE_COND, close_ftrace())); 
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm()); CSR(imm()) = src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ );
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm()); CSR(imm()) = CSR(imm()) | src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ );
   INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrc  , I, assert(0));
