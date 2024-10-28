@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "isa-def.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
@@ -63,6 +64,20 @@ static void ecall(Decode *s) {
   s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
   Assert(success, "isa_reg_str2val error.");
 #endif
+}
+
+static void mret(Decode *s) {
+  s->dnpc = CSR(MEPC_ADDR);
+  uint32_t tmp_mstatus = CSR(MSTATUS_ADDR);
+  // 保留 MPP bit[12:11]
+  tmp_mstatus |= tmp_mstatus & (3 << 11); 
+
+  // MIE = MPIE; MPIE = 1;   MIE: bit[3],  MPIE: bit[7]
+  bool flag = (tmp_mstatus & 0x80) == 0x80 ? 1 : 0; 
+  tmp_mstatus |= flag << 3;
+  tmp_mstatus |= 0x80;
+
+  CSR(MSTATUS_ADDR) = tmp_mstatus;
 }
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -141,11 +156,11 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000??? ????? 00000 000 00000 00011 11", fence  , N, );       // sync mem and i/o
   INSTPAT("0000000 00000 00000 001 00000 00011 11", fence.i, N, );       // sync insts
 
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, s->dnpc = CSR(MEPC_ADDR); /* CSR(MSTATUS_ADDR) = 0x80; */ /* IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); */ /*assert(0)*/ );
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ecall(s); IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); /*assert(0)*/ );
-  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)); /*IFDEF(CONFIG_FTRACE_COND, close_ftrace()) */); // R(10) is $a0
-  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm()); CSR(imm()) = src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ /* assert(0) */ );
-  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm()); CSR(imm()) = CSR(imm()) | src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ /* assert(0) */ );
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, mret(s); /* IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); */ );
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ecall(s); IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); );
+  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)); /*IFDEF(CONFIG_FTRACE_COND, close_ftrace()) */); 
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm()); CSR(imm()) = src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ );
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm()); CSR(imm()) = CSR(imm()) | src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ );
   INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrc  , I, assert(0));
   INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrw  , I, assert(0));
   INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrsi , I, assert(0));
