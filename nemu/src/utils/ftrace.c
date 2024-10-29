@@ -15,7 +15,7 @@
 #include <common.h>
 #include <elf.h>
 
-#define NR_FT (500)
+#define NR_FT (256)
 
 struct Ftrace_struct{
   uint32_t addr;
