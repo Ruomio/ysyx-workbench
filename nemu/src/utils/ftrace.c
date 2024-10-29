@@ -15,7 +15,7 @@
 #include <common.h>
 #include <elf.h>
 
-#define NR_FT (256)
+#define NR_FT (1024)
 
 struct Ftrace_struct{
   uint32_t addr;
@@ -101,11 +101,10 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
 
   // printf("rs1 = %x, rd = %x\n", rs1, rd);
   for(int i=0; i<NR_FT; i++) {
-    // pc
-    assert(idx < 510);
-    sprintf(str+idx, "0x%x: ", pc);
-    idx += strlen(str+idx);
     if(addr >= Ftrace_tab[i].addr && addr < Ftrace_tab[i].addr + Ftrace_tab[i].size) {
+      // pc
+      sprintf(str+idx, "0x%x: ", pc);
+      idx += strlen(str+idx);
       
 
       // type: call or ret
