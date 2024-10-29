@@ -132,7 +132,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
         sprintf(str+idx, "call ");
         idx += strlen(str+idx);
         // function name
-        sprintf(str+idx, "[%s@0x%x]", Ftrace_tab[i].name, Ftrace_tab[i].addr);
+        sprintf(str+idx, "[%s@0x%x]\n", Ftrace_tab[i].name, Ftrace_tab[i].addr);
         idx += strlen(str+idx);
       }
 
@@ -140,7 +140,7 @@ int update_ftrace(uint32_t pc, uint32_t addr, uint32_t rs1, uint32_t rd) {
 
     }
   }
-  fprintf(out, "%s\n", str);
+  fprintf(out, "%s", str);
   // printf("%s\n", str);
 
   return 0;
