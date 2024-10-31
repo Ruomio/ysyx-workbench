@@ -52,7 +52,6 @@ module ysyx_24080020_REG
         if(!rst) begin
             for(i = 0; i<3'd5; i = i+1) csrs[i] <= 32'b0;
             csrs[1] <= 32'h1800;
-            wcsr_idx <= 3'b0;
         end
         else if(wcsren) begin
             csrs[wcsr_idx] <= wcsrdata;
