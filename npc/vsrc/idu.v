@@ -10,10 +10,10 @@ module ysyx_24080020_IDU (
     output [6:0] funct7
 
 );
-    import "DPI-C" function void ebreak();
-    import "DPI-C" function void invalid_inst();
-    import "DPI-C" function void halt();
-    import "DPI-C" function void update_ftrace_dpi();
+    // import "DPI-C" function void ebreak();
+    // import "DPI-C" function void invalid_inst();
+    // import "DPI-C" function void halt();
+    // import "DPI-C" function void update_ftrace_dpi();
 
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
@@ -39,7 +39,7 @@ module ysyx_24080020_IDU (
             end
 
             `ysyx_24080020_JAL: begin
-                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
+                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b1};
                 // update_ftrace_dpi();
                 // if(imm == 32'b0) begin
                 //     halt();
