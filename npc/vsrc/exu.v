@@ -247,7 +247,7 @@ module ysyx_24080020_EXU
             end
 
             default: begin
-                invaild_inst();
+                invalid_inst();
                 wdata = 32'b0;
                 wen = 1'b0;
                 mwen = 1'b0;
