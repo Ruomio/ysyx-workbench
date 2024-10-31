@@ -3,10 +3,10 @@
 `define ysyx_24080020_LEN 4
 `define ysyx_24080020_MEM 10
 `define ysyx_24080020_CSR_WIDTH 12
-`define ysyx_24080020_MEPC_ADDR 0x341
-`define ysyx_24080020_MSTATUS_ADDR 0x300
-`define ysyx_24080020_MCAUSE_ADDR 0x342
-`define ysyx_24080020_MTVEC_ADDR 0x305
+`define ysyx_24080020_MEPC_ADDR 12'h341
+`define ysyx_24080020_MSTATUS_ADDR 12'h300
+`define ysyx_24080020_MCAUSE_ADDR 12'h342
+`define ysyx_24080020_MTVEC_ADDR 12'h305
 
 
 `define ysyx_24080020_OPCODE 6:0
