@@ -96,7 +96,6 @@ $(BIN): $(VSRC) $(CSRC)
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): include/generated/autoconf.h
 gtkwave: $(VCD_FILE)
 	gtkwave $^
 
