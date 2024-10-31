@@ -247,6 +247,10 @@ module ysyx_24080020_EXU
                 is_dnpc = 1'b1;
             end
 
+            // rst
+            7'b0000000 : begin
+                imm = 32'b0;
+            end
             default: begin
                 invalid_inst();
                 wdata = 32'b0;
