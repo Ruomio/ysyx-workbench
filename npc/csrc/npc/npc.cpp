@@ -198,6 +198,7 @@ void ebreak() {
 void invalid_inst() {
   u_npc_state.state = NPC_ABORT;
   u_npc_state.ret = true;
+  printf("inst: 0x%x\n", top->rootp->top__DOT__u_npc__DOT__inst);
   printf("Unknown inst.\n");
 }
 
