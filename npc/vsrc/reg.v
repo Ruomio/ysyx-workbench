@@ -17,6 +17,7 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata,
     input [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
 
+    // out src1 & src2
     output [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     output [`ysyx_24080020_WIDTH-1:0] val_raddr2,
 

@@ -31,7 +31,7 @@ module ysyx_24080020_IDU (
             end
             `ysyx_24080020_JALR: begin
                 imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
-                update_ftrace_dpi();
+                // update_ftrace_dpi();
             end
 
             `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
@@ -40,10 +40,10 @@ module ysyx_24080020_IDU (
 
             `ysyx_24080020_JAL: begin
                 imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
-                update_ftrace_dpi();
-                if(imm == 32'b0) begin
-                    halt();
-                end
+                // update_ftrace_dpi();
+                // if(imm == 32'b0) begin
+                //     halt();
+                // end
             end
 
             `ysyx_24080020_S_TYPE: begin
@@ -58,18 +58,22 @@ module ysyx_24080020_IDU (
                 imm = 32'b0;
             end
 
+            `ysyx_24080020_CSR_TYPE: begin
+                imm = {{20{1'b0}}, inst[`ysyx_24080020_IMM_I]};
+            end
+
             // rst
             7'b0000000 : begin
                 imm = 32'b0;
             end
-            `ysyx_24080020_EBREAK: begin
+            /* `ysyx_24080020_EBREAK: begin
                 imm = 32'b0;
                 ebreak();
-            end
+            end */
 
             default: begin
                 imm = 32'b0;
-                invalid_inst();
+                // invalid_inst();
             end
         endcase
     end

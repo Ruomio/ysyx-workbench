@@ -33,7 +33,10 @@ module ysyx_24080020_EXU
     output reg [3:0] mrlen,
     output reg [3:0] mwlen
 );
-
+    import "DPI-C" function void ebreak();
+    import "DPI-C" function void invalid_inst();
+    import "DPI-C" function void halt();
+    import "DPI-C" function void update_ftrace_dpi();
 
     always @(inst or mrdata) begin
         // initial
@@ -198,6 +201,19 @@ module ysyx_24080020_EXU
                 endcase
             end
 
+            `ysyx_24080020_CSR_TYPE: begin
+                case(funct3)
+                    `ysyx_24080020_ECALL_EBREAK: begin
+                        if(imm == 32'b1)  ebreak();
+                        else begin
+
+                        end
+                    end
+
+
+                endcase
+            end
+
             `ysyx_24080020_AUIPC: begin
                 wdata = pc + imm;
                 wen = 1'b1;
@@ -209,13 +225,20 @@ module ysyx_24080020_EXU
                 waddr = rd;
             end
             `ysyx_24080020_JAL: begin
-                wdata = pc + 4;
-                wen = 1'b1;
-                waddr = rd;
-                dnpc = pc + imm;
-                is_dnpc = 1'b1;
+                update_ftrace_dpi();
+                if(imm == 32'b0) begin
+                    halt();
+                end
+                else begin
+                    wdata = pc + 4;
+                    wen = 1'b1;
+                    waddr = rd;
+                    dnpc = pc + imm;
+                    is_dnpc = 1'b1;
+                end
             end
             `ysyx_24080020_JALR: begin
+                update_ftrace_dpi();
                 wdata = pc + 4;
                 wen = 1'b1;
                 waddr = rd;
@@ -224,6 +247,7 @@ module ysyx_24080020_EXU
             end
 
             default: begin
+                invaild_inst();
                 wdata = 32'b0;
                 wen = 1'b0;
                 mwen = 1'b0;
