@@ -64,19 +64,19 @@ module ysyx_24080020_REG
 
     always @(wcsraddr or rcsraddr) begin
         case(wcsraddr)
-            `ysyx_24080020_MEPC_ADDR:     wcsr_idx <= 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx <= 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx <= 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    wcsr_idx <= 3'd3;
-            default: wcsr_idx <= 3'd4;
+            `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
+            `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
+            `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
+            `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
+            default: wcsr_idx = 3'd4;
         endcase
 
         case(rcsraddr)
-            `ysyx_24080020_MEPC_ADDR:     rcsr_idx <= 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  rcsr_idx <= 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   rcsr_idx <= 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    rcsr_idx <= 3'd3;
-            default: rcsr_idx <= 3'd4;
+            `ysyx_24080020_MEPC_ADDR:     rcsr_idx = 3'd0;
+            `ysyx_24080020_MSTATUS_ADDR:  rcsr_idx = 3'd1;
+            `ysyx_24080020_MCAUSE_ADDR:   rcsr_idx = 3'd2;
+            `ysyx_24080020_MTVEC_ADDR:    rcsr_idx = 3'd3;
+            default: rcsr_idx = 3'd4;
         endcase
     end
 
