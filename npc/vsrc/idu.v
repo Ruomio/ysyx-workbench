@@ -39,7 +39,7 @@ module ysyx_24080020_IDU (
             end
 
             `ysyx_24080020_JAL: begin
-                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b1};
+                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
                 // update_ftrace_dpi();
                 // if(imm == 32'b0) begin
                 //     halt();
