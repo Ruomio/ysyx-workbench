@@ -79,8 +79,8 @@ module ysyx_24080020_REG
         endcase
     end
 
-    assign val_raddr1 = raddr1 != 5'b0 ? regs[raddr1] : 32'b0;
-    assign val_raddr2 = raddr2 != 5'b0 ? regs[raddr2] : 32'b0;
+    assign val_raddr1 = regs[raddr1];
+    assign val_raddr2 = regs[raddr2];
 
     assign rcsrdata = csrs[rcsr_idx];
 endmodule
