@@ -1,7 +1,6 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
-module ysyx_24080020_REG #(
-    parameter WIDTH = 32
-) (
+module ysyx_24080020_REG  
+(
     input clk,
     input rst,
 
@@ -16,7 +15,7 @@ module ysyx_24080020_REG #(
     output [`ysyx_24080020_WIDTH-1:0] val_raddr2
 );
 
-    reg [WIDTH-1:0] regs[WIDTH-1:0];
+    reg [`ysyx_24080020_WIDTH-1:0] regs[`ysyx_24080020_WIDTH-1:0];
 
     integer  i;
 
