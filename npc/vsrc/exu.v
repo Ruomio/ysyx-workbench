@@ -210,7 +210,7 @@ module ysyx_24080020_EXU
                         end
                     end
                     default: begin
-                        invalid_inst();
+                        // invalid_inst();
                     end
                 endcase
             end
