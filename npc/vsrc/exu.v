@@ -249,7 +249,9 @@ module ysyx_24080020_EXU
 
             // rst
             7'b0000000 : begin
-                imm = 32'b0;
+                wdata = 32'b0;
+                wen = 1'b0;
+                mwen = 1'b0;
             end
             default: begin
                 invalid_inst();
