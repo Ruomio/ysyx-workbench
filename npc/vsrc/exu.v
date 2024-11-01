@@ -243,20 +243,20 @@ module ysyx_24080020_EXU
                         end
                     end
                     `ysyx_24080020_CSRRW: begin
-                        wcsraddr = imm;
+                        wcsraddr = imm[11:0];
                         wcsrdata = val_raddr1;
                         wcsren = 1'b1;
 
-                        rcsraddr = imm;
+                        rcsraddr = imm[11:0];
 
                         waddr = rd;
                         wdata = rcsrdata;
                         wen = 1'b1;
                     end
                     `ysyx_24080020_CSRRS: begin
-                        rcsraddr = imm;
+                        rcsraddr = imm[11:0];
 
-                        wcsraddr = imm;
+                        wcsraddr = imm[11:0];
                         wcsrdata = val_raddr1 | rcsrdata;
                         wcsren = 1'b1;
 
