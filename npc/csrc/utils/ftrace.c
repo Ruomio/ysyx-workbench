@@ -55,7 +55,6 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   Elf32_Shdr *shdrs = (Elf32_Shdr *)malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
   fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, file);
 
-  printf("init ftrace 1\n");
   // 找到符号表和字符串表
   int symtab_index = -1;
   int strtab_index = -1;
@@ -67,6 +66,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
       strtab_index = i;
     }
   }
+  printf("init ftrace 1\n");
   // printf("%d %d \n", symtab_index, strtab_index);
   // 读取符号表
   Elf32_Sym *symbols = (Elf32_Sym *)malloc(shdrs[symtab_index].sh_size);
