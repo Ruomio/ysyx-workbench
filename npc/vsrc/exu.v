@@ -208,6 +208,7 @@ module ysyx_24080020_EXU
                         else begin
                             // ecall
                             
+                            dnpc = rcsrdata;
                         end
                     end
                     default: begin
