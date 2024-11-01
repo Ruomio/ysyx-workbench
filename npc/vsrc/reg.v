@@ -79,13 +79,7 @@ module ysyx_24080020_REG
         case(wcsraddr)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
             `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
-                case(wcsraddr)
-            `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
             `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
-            default: wcsr_idx = 3'd4;
-        endcase    `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
             `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
             default: wcsr_idx = 3'd4;
         endcase
