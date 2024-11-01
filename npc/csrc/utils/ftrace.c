@@ -66,7 +66,6 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
       strtab_index = i;
     }
   }
-  printf("init ftrace 1\n");
   // printf("%d %d \n", symtab_index, strtab_index);
   // 读取符号表
   Elf32_Sym *symbols = (Elf32_Sym *)malloc(shdrs[symtab_index].sh_size);
@@ -79,7 +78,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   fread(strtab, shdrs[strtab_index].sh_size, 1, file);
 
   memset(Ftrace_tab, 0, sizeof(Ftrace_tab));
-  printf("init ftrace 2\n");
+  printf("init ftrace 1\n");
   // 打印函数名和地址
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
     if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
@@ -89,6 +88,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
       Ftrace_tab[i].size = symbols[i].st_size; 
     }
   }
+  printf("init ftrace 2\n");
 
   free(shdrs);
   free(symbols);
