@@ -238,6 +238,7 @@ module ysyx_24080020_EXU
                             // mret
                             rcsraddr = `ysyx_24080020_MTVEC_ADDR;
                             dnpc = rcsrdata;
+                            is_dnpc = 1'b1;
                         end
                         else begin
                             invalid_inst();
