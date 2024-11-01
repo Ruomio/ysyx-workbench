@@ -79,6 +79,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   fread(strtab, shdrs[strtab_index].sh_size, 1, file);
 
   memset(Ftrace_tab, 0, sizeof(Ftrace_tab));
+  printf("init ftrace 2\n");
   // 打印函数名和地址
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
     if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
@@ -94,7 +95,6 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   free(strtab);
   fclose(file);
   free(elf_file);
-  printf("init ftrace 2\n");
 }
 
 
