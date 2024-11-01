@@ -41,12 +41,14 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   if(!ftrace_file) {
     ftrace_file = "/home/papillon/Documents/All_codes/ysyx-workbench/npc/build/ftrace-log.txt";
   }
+  printf("init ftrace 1\n");
   FILE *ftrace_log = fopen(ftrace_file, "w");
   out = ftrace_log;
 
   FILE *file = fopen(elf_file, "rb");
   assert(file);
 
+  printf("init ftrace 2\n");
   Elf32_Ehdr ehdr;
   fread(&ehdr, sizeof(ehdr), 1, file);
   
