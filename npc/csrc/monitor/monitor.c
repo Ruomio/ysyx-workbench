@@ -71,7 +71,7 @@ int parse_args(int argc, char *argv[]) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
-      case 'd': diff_so_file = optarg; printf("diff-so path = %s\n", diff_so_file);break;
+      case 'd': diff_so_file = optarg; IFDEF(CONFIG_DIFFTEST ,printf("diff-so path = %s\n", diff_so_file));break;
       case 'f': ftrace_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:

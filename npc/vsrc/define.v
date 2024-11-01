@@ -2,6 +2,14 @@
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
 `define ysyx_24080020_MEM 10
+`define ysyx_24080020_CSR_WIDTH 12
+`define ysyx_24080020_MEPC_ADDR 12'h341
+`define ysyx_24080020_MSTATUS_ADDR 12'h300
+`define ysyx_24080020_MCAUSE_ADDR 12'h342
+`define ysyx_24080020_MTVEC_ADDR 12'h305
+
+`define ysyx_24080020_MRET 32'b00110000001000000000000001110011
+`define ysyx_24080020_ECALL 32'h00000073
 
 
 `define ysyx_24080020_OPCODE 6:0
@@ -11,7 +19,6 @@
 `define ysyx_24080020_RS2 24:20     // same location as shamt
 `define ysyx_24080020_FUNCT7 31:25
 
-`define ysyx_24080020_EBREAK 7'b1110011
 
 // I-TYPE
 `define ysyx_24080020_I_TYPE 7'b0010011
@@ -68,8 +75,22 @@
 `define ysyx_24080020_SH 3'b001
 `define ysyx_24080020_SW 3'b010
 
+
+// CSR-TYPE
+`define ysyx_24080020_CSR_TYPE 7'b1110011
+`define ysyx_24080020_ECALL_EBREAK 3'b000
+`define ysyx_24080020_CSRRW 3'b001
+`define ysyx_24080020_CSRRS 3'b010
+`define ysyx_24080020_CSRRC 3'b011
+`define ysyx_24080020_CSRRWI 3'b101
+`define ysyx_24080020_CSRRSI 3'b110
+`define ysyx_24080020_CSRRCI 3'b111
+
 // OTHER
 `define ysyx_24080020_LUI 7'b0110111 
 `define ysyx_24080020_AUIPC 7'b0010111 
 `define ysyx_24080020_JAL 7'b1101111
 `define ysyx_24080020_JALR 7'b1100111
+
+
+`define ysyx_24080020_EBREAK 7'b1110011

@@ -13,6 +13,9 @@ module ysyx_24080020_EXU
     input [4:0] rd,
     input [`ysyx_24080020_WIDTH-1:0] imm,
 
+    // csrs
+    input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
+
     // mrdata
     input [`ysyx_24080020_WIDTH-1:0] mrdata,
 
@@ -37,11 +40,17 @@ module ysyx_24080020_EXU
     output reg wcsren,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr,
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata,
+    output reg wcsren2,
+    output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2,
+    output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata2,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr
 );
+    import "DPI-C" function void ebreak();
+    import "DPI-C" function void invalid_inst();
+    import "DPI-C" function void halt();
+    import "DPI-C" function void update_ftrace_dpi();
 
-
-    always @(inst or mrdata) begin
+    always @(inst or mrdata or rcsrdata) begin
         // initial
         is_dnpc = 1'b0;
         mwen = 1'b0;
@@ -204,6 +213,66 @@ module ysyx_24080020_EXU
                 endcase
             end
 
+            `ysyx_24080020_CSR_TYPE: begin
+                case(funct3)
+                    `ysyx_24080020_ECALL_EBREAK: begin
+                        if(imm == 32'b1)  ebreak();
+                        else if(imm == 32'b0) begin
+                            // ecall
+                            // csrs[mepc] = pc;
+                            wcsraddr = `ysyx_24080020_MEPC_ADDR;
+                            wcsrdata = pc;
+                            wcsren = 1'b1;
+
+                            // csrs[mcause] = R[a5];
+                            wcsraddr2 = `ysyx_24080020_MCAUSE_ADDR;
+                            wcsrdata2 = val_raddr1; 
+                            wcsren2 = 1'b1;
+
+                            // dnpc = rcsrdata;
+                            rcsraddr = `ysyx_24080020_MTVEC_ADDR;
+                            dnpc = rcsrdata;
+                            is_dnpc = 1'b1;
+                        end
+                        else if(imm == 32'b1100000010) begin
+                            // mret
+                            rcsraddr = `ysyx_24080020_MEPC_ADDR;
+                            dnpc = rcsrdata;
+                            is_dnpc = 1'b1;
+                        end
+                        else begin
+                            invalid_inst();
+                        end
+                    end
+                    `ysyx_24080020_CSRRW: begin
+                        wcsraddr = imm[11:0];
+                        wcsrdata = val_raddr1;
+                        wcsren = 1'b1;
+
+                        rcsraddr = imm[11:0];
+
+                        waddr = rd;
+                        wdata = rcsrdata;
+                        wen = 1'b1;
+                    end
+                    `ysyx_24080020_CSRRS: begin
+                        rcsraddr = imm[11:0];
+
+                        wcsraddr = imm[11:0];
+                        wcsrdata = val_raddr1 | rcsrdata;
+                        wcsren = 1'b1;
+
+                        waddr = rd;
+                        wdata = rcsrdata;
+                        wen = 1'b1;
+
+                    end
+                    default: begin
+                        invalid_inst();
+                    end
+                endcase
+            end
+
             `ysyx_24080020_AUIPC: begin
                 wdata = pc + imm;
                 wen = 1'b1;
@@ -215,13 +284,20 @@ module ysyx_24080020_EXU
                 waddr = rd;
             end
             `ysyx_24080020_JAL: begin
-                wdata = pc + 4;
-                wen = 1'b1;
-                waddr = rd;
-                dnpc = pc + imm;
-                is_dnpc = 1'b1;
+                update_ftrace_dpi();
+                if(imm == 32'b0) begin
+                    halt();
+                end
+                else begin
+                    wdata = pc + 4;
+                    wen = 1'b1;
+                    waddr = rd;
+                    dnpc = pc + imm;
+                    is_dnpc = 1'b1;
+                end
             end
             `ysyx_24080020_JALR: begin
+                update_ftrace_dpi();
                 wdata = pc + 4;
                 wen = 1'b1;
                 waddr = rd;
@@ -229,7 +305,14 @@ module ysyx_24080020_EXU
                 is_dnpc = 1'b1;
             end
 
+            // rst
+            7'b0000000 : begin
+                wdata = 32'b0;
+                wen = 1'b0;
+                mwen = 1'b0;
+            end
             default: begin
+                invalid_inst();
                 wdata = 32'b0;
                 wen = 1'b0;
                 mwen = 1'b0;
