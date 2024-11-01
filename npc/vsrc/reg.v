@@ -58,16 +58,14 @@ module ysyx_24080020_REG
             for(i = 0; i<3'd5; i = i+1) csrs[i] <= 32'b0;
             csrs[1] <= 32'h1800;
         end
+        else if(wcsren && wcsren2) begin
+            csrs[wcsr_idx] <= wcsrdata;
+            csrs[wcsr_idx2] <= wcsrdata2;
+        end
         else if(wcsren) begin
             csrs[wcsr_idx] <= wcsrdata;
         end
-        else begin 
-            csrs[4] <= 32'b0;
-        end
-    end
-    
-    always @(posedge clk) begin
-        if(wcsren2) begin
+        else if(wcsren2) begin
             csrs[wcsr_idx2] <= wcsrdata2;
         end
         else begin 
