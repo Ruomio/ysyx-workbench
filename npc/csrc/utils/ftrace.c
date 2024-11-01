@@ -82,7 +82,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   // 打印函数名和地址
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
     if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
-      // printf("Function: %10s, Address: 0x%x  Size: %d  \n",(strtab + symbols[i].st_name), symbols[i].st_value, symbols[i].st_size);
+      printf("Function: %10s, Address: 0x%x  Size: %d  \n",(strtab + symbols[i].st_name), symbols[i].st_value, symbols[i].st_size);
       strcpy(Ftrace_tab[i].name, strtab + symbols[i].st_name);
       Ftrace_tab[i].addr = symbols[i].st_value;
       Ftrace_tab[i].size = symbols[i].st_size; 
