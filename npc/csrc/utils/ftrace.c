@@ -29,6 +29,7 @@ struct Ftrace_struct{
 static FILE *out = NULL;
 
 void init_ftrace(const char *img_file, const char *ftrace_file) {
+  printf("img_file = %s,    ftrace_file = %s\n", img_file, ftrace_file);
   if(!img_file) return;
   char *elf_file = (char *)calloc(1, strlen(img_file) + 1);
   strcpy(elf_file, img_file);
