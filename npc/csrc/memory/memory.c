@@ -119,7 +119,7 @@ void write_memory(int addr, int len, int data) {
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE,
     // mmio_write(addr, len, data);
-    if(addr == 0xa00003f8) {putchar(data);} return;
+    if(addr == 0xa00003f8) {putchar(data); fflush(stdout); } return;
   );
   out_of_bound(addr);
 }

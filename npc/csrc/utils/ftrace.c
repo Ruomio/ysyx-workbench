@@ -29,7 +29,6 @@ struct Ftrace_struct{
 static FILE *out = NULL;
 
 void init_ftrace(const char *img_file, const char *ftrace_file) {
-  printf("img_file = %s,    ftrace_file = %s\n", img_file, ftrace_file);
   if(!img_file) return;
   char *elf_file = (char *)calloc(1, strlen(img_file) + 1);
   strcpy(elf_file, img_file);
@@ -82,7 +81,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   for (int i = 0; i < shdrs[symtab_index].sh_size / sizeof(Elf32_Sym); i++) {
     assert(i < NR_FT);
     if (ELF32_ST_TYPE(symbols[i].st_info) == STT_FUNC) {
-      printf("Function: %10s, Address: 0x%x  Size: %d  \n",(strtab + symbols[i].st_name), symbols[i].st_value, symbols[i].st_size);
+      // printf("Function: %10s, Address: 0x%x  Size: %d  \n",(strtab + symbols[i].st_name), symbols[i].st_value, symbols[i].st_size);
       strcpy(Ftrace_tab[i].name, strtab + symbols[i].st_name);
       Ftrace_tab[i].addr = symbols[i].st_value;
       Ftrace_tab[i].size = symbols[i].st_size; 
