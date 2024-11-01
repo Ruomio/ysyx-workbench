@@ -235,7 +235,9 @@ module ysyx_24080020_EXU
                             rcsraddr = `ysyx_24080020_MTVEC_ADDR;
                             dnpc = rcsrdata;
                         end
-                        eles invalid_inst();
+                        else begin
+                            invalid_inst();
+                        end
                     end
                     `ysyx_24080020_CSRRW: begin
                         wcsraddr = imm;
