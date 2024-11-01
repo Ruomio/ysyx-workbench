@@ -15,6 +15,9 @@ module ysyx_24080020_REG
     input wcsren,
     input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata,
+    input wcsren2,
+    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2,
+    input [`ysyx_24080020_WIDTH-1:0] wcsrdata2,
     input [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
 
     // out src1 & src2
@@ -33,6 +36,7 @@ module ysyx_24080020_REG
     integer  i;
  
     reg [2:0] wcsr_idx;
+    reg [2:0] wcsr_idx2;
     reg [2:0] rcsr_idx;
 
     always @(posedge clk) begin
@@ -49,7 +53,7 @@ module ysyx_24080020_REG
         end
     end
 
-    always @(posedge clk) begin
+    always @(posedge clk or rst) begin
         if(!rst) begin
             for(i = 0; i<3'd5; i = i+1) csrs[i] <= 32'b0;
             csrs[1] <= 32'h1800;
@@ -61,14 +65,37 @@ module ysyx_24080020_REG
             csrs[4] <= 32'b0;
         end
     end
+    
+    always @(posedge clk) begin
+        if(wcsren2) begin
+            csrs[wcsr_idx2] <= wcsrdata2;
+        end
+        else begin 
+            csrs[4] <= 32'b0;
+        end
+    end
 
-    always @(wcsraddr or rcsraddr) begin
+    always @(wcsraddr or rcsraddr or wcsraddr2) begin
         case(wcsraddr)
+            `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
+            `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
+                case(wcsraddr)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
             `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
             `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
             `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
             default: wcsr_idx = 3'd4;
+        endcase    `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
+            `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
+            default: wcsr_idx = 3'd4;
+        endcase
+
+        case(wcsraddr2)
+            `ysyx_24080020_MEPC_ADDR:     wcsr_idx2 = 3'd0;
+            `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx2 = 3'd1;
+            `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx2 = 3'd2;
+            `ysyx_24080020_MTVEC_ADDR:    wcsr_idx2 = 3'd3;
+            default: wcsr_idx2 = 3'd4;
         endcase
 
         case(rcsraddr)

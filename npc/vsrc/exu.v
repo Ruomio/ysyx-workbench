@@ -13,6 +13,9 @@ module ysyx_24080020_EXU
     input [4:0] rd,
     input [`ysyx_24080020_WIDTH-1:0] imm,
 
+    // csrs
+    input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
+
     // mrdata
     input [`ysyx_24080020_WIDTH-1:0] mrdata,
 
@@ -31,14 +34,20 @@ module ysyx_24080020_EXU
     output reg [`ysyx_24080020_WIDTH-1:0] mwdata,
     output reg mwen,
     output reg [3:0] mrlen,
-    output reg [3:0] mwlen
+    output reg [3:0] mwlen,
+
+    //csrs
+    output reg wcsren,
+    output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr,
+    output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata,
+    output reg[`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
 );
     import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
 
-    always @(inst or mrdata) begin
+    always @(inst or mrdata or rcsrdata) begin
         // initial
         is_dnpc = 1'b0;
         mwen = 1'b0;
@@ -207,9 +216,39 @@ module ysyx_24080020_EXU
                         if(imm[0] == 1'b1)  ebreak();
                         else begin
                             // ecall
+                            // csrs[mepc] = pc;
+                            wcsraddr = `ysyx_24080020_MEPC_ADDR;
+                            wcsrdata = pc;
+                            wcsren = 1'b1;
+
+                            // csrs[mcause] = R[a5];
+                            wcsraddr2 = `ysyx_24080020_MCAUSE_ADDR;
                             
                             // dnpc = rcsrdata;
                         end
+                    end
+                    `ysyx_24080020_CSRRW: begin
+                        wcsraddr = imm;
+                        wcsrdata = val_raddr1;
+                        wcsren = 1'b1;
+
+                        rcsraddr = imm;
+
+                        waddr = rd;
+                        wdata = rcsrdata;
+                        wen = 1'b1;
+                    end
+                    `ysyx_24080020_CSRRS: begin
+                        rcsraddr = imm;
+
+                        wcsraddr = imm;
+                        wcsrdata = val_raddr1 | rcsrdata;
+                        wcsren = 1'b1;
+
+                        waddr = rd;
+                        wdata = rcsrdata;
+                        wen = 1'b1;
+
                     end
                     default: begin
                         invalid_inst();

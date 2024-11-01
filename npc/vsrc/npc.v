@@ -32,6 +32,9 @@ module ysyx_24080020_NPC(
     reg wcsren;
     reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr;
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata;
+    reg wcsren2;
+    reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2;
+    reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2;
     reg [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr;
     reg [`ysyx_24080020_WIDTH-1:0] rcsrdata;
 
@@ -99,6 +102,9 @@ module ysyx_24080020_NPC(
         .wcsren(wcsren),
         .wcsraddr(wcsraddr),
         .wcsrdata(wcsrdata),
+        .wcsren2(wcsren2),
+        .wcsraddr2(wcsraddr2),
+        .wcsrdata2(wcsrdata2),
         .rcsraddr(rcsraddr),
         .val_raddr1(src1), 
         .val_raddr2(src2),
@@ -111,10 +117,13 @@ module ysyx_24080020_NPC(
         .pc(pc), 
         .funct3(funct3), 
         .funct7(funct7), 
+        // reg
         .val_raddr1(src1), 
         .val_raddr2(src2), 
         .rd(rd), 
-        .imm(imm), 
+        .imm(imm),
+        // csrs
+        .rcsrdata(rcsrdata), 
         .mrdata(mrdata),
         .waddr(waddr), 
         .wdata(wdata), 
@@ -126,7 +135,15 @@ module ysyx_24080020_NPC(
         .mwdata(mwdata), 
         .mwen(mwen),
         .mwlen(mwlen),
-        .mrlen(mrlen)
+        .mrlen(mrlen),
+        // csrs
+        .wcsren(wcsren),
+        .wcsraddr(wcsraddr),
+        .wcsrdata(wcsrdata),
+        .wcsren2(wcsren2),
+        .wcsraddr2(wcsraddr2),
+        .wcsrdata2(wcsrdata2),
+        .rcsraddr(rcsraddr)
     );
 
 

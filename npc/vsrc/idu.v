@@ -60,6 +60,15 @@ module ysyx_24080020_IDU (
 
             `ysyx_24080020_CSR_TYPE: begin
                 imm = {{20{1'b0}}, inst[`ysyx_24080020_IMM_I]};
+
+                case(funct3)
+                    `ysyx_24080020_ECALL_EBREAK: begin
+                        rs1 = 5'hf;  // riscv a7(0x17); riscv e a5(0xf);
+                    end
+                    default: begin
+                        rs1 = inst[`ysyx_24080020_RS1];
+                    end
+                endcase
             end
 
             // rst
