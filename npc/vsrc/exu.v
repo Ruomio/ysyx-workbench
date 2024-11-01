@@ -40,6 +40,9 @@ module ysyx_24080020_EXU
     output reg wcsren,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr,
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata,
+    output reg wcsren2,
+    output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2,
+    output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata2,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr
 );
     import "DPI-C" function void ebreak();
