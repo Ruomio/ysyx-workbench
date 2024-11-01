@@ -18,7 +18,7 @@ module ysyx_24080020_IDU (
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
     assign funct3 = inst[`ysyx_24080020_FUNCT3];
-    assign rs1 = inst[`ysyx_24080020_RS1];
+    assign rs1 = inst == `ysyx_24080020_MRET ? 5'hf : inst[`ysyx_24080020_RS1];
     assign rs2 = inst[`ysyx_24080020_RS2];
     assign funct7 = inst[`ysyx_24080020_FUNCT7];
 
@@ -60,15 +60,6 @@ module ysyx_24080020_IDU (
 
             `ysyx_24080020_CSR_TYPE: begin
                 imm = {{20{1'b0}}, inst[`ysyx_24080020_IMM_I]};
-
-                case(funct3)
-                    `ysyx_24080020_ECALL_EBREAK: begin
-                        assign rs1 = 5'hf;  // riscv a7(0x17); riscv e a5(0xf);
-                    end
-                    default: begin
-                        rs1 = inst[`ysyx_24080020_RS1];
-                    end
-                endcase
             end
 
             // rst
