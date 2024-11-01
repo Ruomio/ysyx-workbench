@@ -63,7 +63,7 @@ module ysyx_24080020_IDU (
 
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
-                        rs1 = 5'hf;  // riscv a7(0x17); riscv e a5(0xf);
+                        assign rs1 = 5'hf;  // riscv a7(0x17); riscv e a5(0xf);
                     end
                     default: begin
                         rs1 = inst[`ysyx_24080020_RS1];
