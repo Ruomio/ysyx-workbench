@@ -48,7 +48,6 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   FILE *file = fopen(elf_file, "rb");
   assert(file);
 
-  printf("init ftrace 2\n");
   Elf32_Ehdr ehdr;
   fread(&ehdr, sizeof(ehdr), 1, file);
   
@@ -95,6 +94,7 @@ void init_ftrace(const char *img_file, const char *ftrace_file) {
   free(strtab);
   fclose(file);
   free(elf_file);
+  printf("init ftrace 2\n");
 }
 
 
