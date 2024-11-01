@@ -213,8 +213,8 @@ module ysyx_24080020_EXU
             `ysyx_24080020_CSR_TYPE: begin
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
-                        if(imm[0] == 1'b1)  ebreak();
-                        else begin
+                        if(imm == 32'b1)  ebreak();
+                        else if(imm == 32'b0) begin
                             // ecall
                             // csrs[mepc] = pc;
                             wcsraddr = `ysyx_24080020_MEPC_ADDR;
@@ -223,9 +223,19 @@ module ysyx_24080020_EXU
 
                             // csrs[mcause] = R[a5];
                             wcsraddr2 = `ysyx_24080020_MCAUSE_ADDR;
-                            
+                            wcsrdata2 = val_raddr1; 
+                            wcsren2 = 1'b1;
+
                             // dnpc = rcsrdata;
+                            rcsraddr = `ysyx_24080020_MTVEC_ADDR;
+                            dnpc = rcsrdata;
                         end
+                        else if(imm == 32'b1100000010) begin
+                            // mret
+                            rcsraddr = `ysyx_24080020_MTVEC_ADDR;
+                            dnpc = rcsrdata;
+                        end
+                        eles invalid_inst();
                     end
                     `ysyx_24080020_CSRRW: begin
                         wcsraddr = imm;
