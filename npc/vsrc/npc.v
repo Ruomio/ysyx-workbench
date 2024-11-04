@@ -49,6 +49,7 @@ module ysyx_24080020_NPC(
 
     // bus control
     // IFU -> DEU -> EXU -> MEM -> WB
+    // pc -> mem. 
 
     ysyx_24080020_PC u_pc(
         .clk(clk), 
