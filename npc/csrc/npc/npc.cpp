@@ -29,7 +29,9 @@ extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
 Vtop *top = NULL;
+#ifdef CONFIG_WAVEFILE
 VerilatedVcdC *tfp = NULL;
+#endif
 VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
