@@ -69,19 +69,22 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void init_npc(int argc, char **argv) {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
-  tfp = new VerilatedVcdC;
-
   top = new Vtop(contextp);
+#ifdef CONFIG_WAVEFILE
+  tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
-
+#endif
   int i = 0;
   top->rst = 0;
   while(!contextp->gotFinish()) {
     top->clk ^= 1;
     top->eval();
+#ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
+#endif
+  int i = 0;
     contextp->timeInc(1);
     if(i++ > 20) {
       top->rst = 1;
