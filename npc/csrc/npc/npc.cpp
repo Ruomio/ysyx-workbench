@@ -102,7 +102,9 @@ void exec_once_npc(uint32_t pc) {
     }
     top->clk ^= 1;
     top->eval();
+#ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
+#endif
     contextp->timeInc(1);
     if(last_pc != top->pc) {
       break;
