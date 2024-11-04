@@ -47,6 +47,8 @@ module ysyx_24080020_NPC(
     reg [`ysyx_24080020_WIDTH-1:0] mwdata;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata;
 
+    // bus control
+    // IFU -> DEU -> EXU -> MEM -> WB
 
     ysyx_24080020_PC u_pc(
         .clk(clk), 
