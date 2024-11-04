@@ -70,9 +70,9 @@ void init_npc(int argc, char **argv) {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
   top = new Vtop(contextp);
+  contextp->traceEverOn(true);
 #ifdef CONFIG_WAVEFILE
   tfp = new VerilatedVcdC;
-  contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
 #endif
