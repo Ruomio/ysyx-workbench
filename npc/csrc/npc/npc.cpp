@@ -229,9 +229,9 @@ uint32_t g_get_reg(int i) {
   return (top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
 }
 
-uint32_t g_get_snpc() {
-  return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
-}
+// uint32_t g_get_snpc() {
+//   return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
+// }
 
 uint32_t g_get_dnpc() {
   return top->rootp->top__DOT__u_npc__DOT__dnpc;
