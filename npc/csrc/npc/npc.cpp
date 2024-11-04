@@ -87,7 +87,6 @@ void init_npc(int argc, char **argv) {
     tfp->dump(contextp->time());
     contextp->timeInc(1);
 #endif
-    int i = 0;
     if(i++ > 20) {
       top->rst = 1;
       break;
