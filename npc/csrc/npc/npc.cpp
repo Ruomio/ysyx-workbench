@@ -85,9 +85,9 @@ void init_npc(int argc, char **argv) {
     top->eval();
 #ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
-#endif
-  int i = 0;
     contextp->timeInc(1);
+#endif
+    int i = 0;
     if(i++ > 20) {
       top->rst = 1;
       break;
@@ -106,8 +106,8 @@ void exec_once_npc(uint32_t pc) {
     top->eval();
 #ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
-#endif
     contextp->timeInc(1);
+#endif
     if(last_pc != top->pc) {
       break;
     }
