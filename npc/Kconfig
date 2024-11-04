@@ -22,6 +22,10 @@ menu "Build options"
     config DEBUG
         bool "is enable -g parameter when compiling"
         default n
+    
+    config WAVEFILE
+        bool "is generate wave file"
+        default n
 endmenu
 
 menu "Memory setting"

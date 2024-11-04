@@ -29,7 +29,9 @@ extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
 Vtop *top = NULL;
+#ifdef CONFIG_WAVEFILE
 VerilatedVcdC *tfp = NULL;
+#endif
 VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
@@ -69,20 +71,22 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void init_npc(int argc, char **argv) {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
-  tfp = new VerilatedVcdC;
-
   top = new Vtop(contextp);
+#ifdef CONFIG_WAVEFILE
+  tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
-
+#endif
   int i = 0;
   top->rst = 0;
   while(!contextp->gotFinish()) {
     top->clk ^= 1;
     top->eval();
+#ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
     contextp->timeInc(1);
+#endif
     if(i++ > 20) {
       top->rst = 1;
       break;
@@ -99,8 +103,10 @@ void exec_once_npc(uint32_t pc) {
     }
     top->clk ^= 1;
     top->eval();
+#ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
     contextp->timeInc(1);
+#endif
     if(last_pc != top->pc) {
       break;
     }
@@ -176,9 +182,11 @@ void free_npc() {
     delete top;
     top = NULL;
   }
+#ifdef CONFIG_WAVEFILE
   if(tfp) {
     tfp->close();
   }
+#endif
   if(contextp) {
     delete contextp;
     contextp = NULL;
@@ -223,7 +231,8 @@ uint32_t g_get_reg(int i) {
 }
 
 uint32_t g_get_snpc() {
-  return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
+  // return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
+  return g_get_pc() + 4;
 }
 
 uint32_t g_get_dnpc() {
