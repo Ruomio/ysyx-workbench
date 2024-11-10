@@ -5,61 +5,90 @@ module ysyx_24080020_NPC(
     output [31:0] pc
 );
 
-    // pc
-    reg [3:0] pc_len;
-    reg [`ysyx_24080020_WIDTH-1:0] snpc;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc;
-    reg is_dnpc;
+  // pc
+  wire [3:0] pc_len;
+  wire [`ysyx_24080020_WIDTH-1:0] snpc;
+  wire [`ysyx_24080020_WIDTH-1:0] dnpc;
+  wire is_dnpc;
 
-    // inst
-    reg [`ysyx_24080020_WIDTH-1:0] inst;
-    reg [6:0] opcode;
-    reg [4:0] rd;
-    reg [2:0] funct3;
-    reg [4:0] rs1;
-    reg [4:0] rs2;
-    reg [`ysyx_24080020_WIDTH-1:0] imm;
-    reg [6:0] funct7;
-
-
-    // register
-    reg wen;
-    reg [4:0] waddr;
-    reg [`ysyx_24080020_WIDTH-1:0] wdata;
-    reg [`ysyx_24080020_WIDTH-1:0] src1;
-    reg [`ysyx_24080020_WIDTH-1:0] src2;
-    // csrs
-    reg wcsren;
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr;
-    reg [`ysyx_24080020_WIDTH-1:0] wcsrdata;
-    reg wcsren2;
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2;
-    reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2;
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr;
-    reg [`ysyx_24080020_WIDTH-1:0] rcsrdata;
-
-    // memory
-    reg mwen;
-    reg [3:0] mrlen;
-    reg [3:0] mwlen;
-    reg [`ysyx_24080020_WIDTH-1:0] mraddr;
-    reg [`ysyx_24080020_WIDTH-1:0] mwaddr;
-    reg [`ysyx_24080020_WIDTH-1:0] mwdata;
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata;
+  // inst
+  wire [`ysyx_24080020_WIDTH-1:0] inst;
+  wire [6:0] opcode;
+  wire [4:0] rd;
+  wire [2:0] funct3;
+  wire [4:0] rs1;
+  wire [4:0] rs2;
+  wire [`ysyx_24080020_WIDTH-1:0] imm;
+  wire [6:0] funct7;
 
 
-    ysyx_24080020_PC u_pc(
-        .clk(clk), 
-        .rst(rst), 
-        .is_dnpc(is_dnpc), 
-        .dnpc(dnpc), 
-        .pc(pc), 
-        .pc_len(pc_len)
-    );
+  // wireister
+  wire wen;
+  wire [4:0] waddr;
+  wire [`ysyx_24080020_WIDTH-1:0] wdata;
+  wire [`ysyx_24080020_WIDTH-1:0] src1;
+  wire [`ysyx_24080020_WIDTH-1:0] src2;
+  // csrs
+  wire wcsren;
+  wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr;
+  wire [`ysyx_24080020_WIDTH-1:0] wcsrdata;
+  wire wcsren2;
+  wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2;
+  wire [`ysyx_24080020_WIDTH-1:0] wcsrdata2;
+  wire [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr;
+  wire [`ysyx_24080020_WIDTH-1:0] rcsrdata;
+
+  // memory
+  wire mwen;
+  wire [3:0] mrlen;
+  wire [3:0] mwlen;
+  wire [`ysyx_24080020_WIDTH-1:0] mraddr;
+  wire [`ysyx_24080020_WIDTH-1:0] mwaddr;
+  wire [`ysyx_24080020_WIDTH-1:0] mwdata;
+  wire [`ysyx_24080020_WIDTH-1:0] mrdata;
+
+  // bus control
+  // IFU -> DEU -> EXU -> LSU -> WB
+  // IFU: pc -> ir.
+  wire pc_ir_valid;
+  wire ir_pc_ready;
+
+  // DEU: IR -> reg
+  wire ir_reg_valid;
+  wire reg_ir_ready;
+
+  // EXU: reg -> alu
+  wire reg_alu_valid;
+  wire alu_reg_ready;
+
+  // LSU: alu -> mem;
+  wire alu_mem_valid;
+  wire mem_alu_ready;
+
+  // WB: mem -> reg
+  wire mem_reg_valid;
+  wire reg_mem_rerady;
+
+  // WB -> IFU
+  wire reg_pc_valid;
+
+  ysyx_24080020_PC u_pc(
+      .clk(clk), 
+      .rst(rst), 
+      .reg_pc_valid(reg_pc_valid), 
+      .ir_pc_ready(ir_pc_ready), 
+      .is_dnpc(is_dnpc), 
+      .dnpc(dnpc), 
+      .pc(pc), 
+      .pc_len(pc_len),
+      .pc_ir_valid(pc_ir_valid)
+  );
 
     ysyx_24080020_MEM u_mem(
         .clk(clk), 
         .rst(rst), 
+        .pc_ir_valid(pc_ir_valid),
+        .reg_ir_ready(reg_ir_ready),
         .pc(pc),
         .pc_len(pc_len),
         .mraddr(mraddr), 
@@ -69,7 +98,8 @@ module ysyx_24080020_NPC(
         .mwdata(mwdata), 
         .mwen(mwen), 
         .mrdata(mrdata),
-        .inst(inst)
+        .inst(inst),
+        .ir_reg_valid(ir_reg_valid)
     );
     
     ysyx_24080020_IFU ifu(
