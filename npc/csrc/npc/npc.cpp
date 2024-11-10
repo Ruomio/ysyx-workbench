@@ -38,8 +38,6 @@ npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
 static uint32_t last_pc;
 static bool g_print_step = false;
-uint64_t g_nr_guest_inst = 0;
-static uint64_t g_timer = 0; // unit: us
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -148,18 +146,6 @@ void exec_all_npc() {
   }
 }
 
-static void statistic() {
-  IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
-  IFDEF(CONFIG_DTRACE_COND, dtrace_free());
-  IFDEF(CONFIG_ETRACE_COND, etrace_close());
-  if(nemu_state.state == NEMU_ABORT) {IFDEF(CONFIG_ITRACE, RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file(););}
-#define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
-  Log("host time spent = " NUMBERIC_FMT " us", g_timer);
-  Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
-  if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
-  else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
-}
-
 void exec_npc(int n) {
   g_print_step = n < 10;
   switch (u_npc_state.state) {
@@ -181,9 +167,9 @@ void exec_npc(int n) {
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
-      // break;
+      break;
 
-    case NPC_QUIT: statistic(); break;;
+    case NPC_QUIT: break;;
     default: break;;
   }
 }
