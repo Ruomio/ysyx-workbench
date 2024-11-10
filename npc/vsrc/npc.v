@@ -1,5 +1,5 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
-module ysyx_24080020_NPC (
+module ysyx_24080020_NPC(
     input clk,
     input rst,
     output [31:0] pc
@@ -48,106 +48,133 @@ module ysyx_24080020_NPC (
   wire [`ysyx_24080020_WIDTH-1:0] mrdata;
 
   // bus control
-  // IFU -> DEU -> EXU -> MEM -> WB
-  // pc -> mem.
+  // IFU -> DEU -> EXU -> LSU -> WB
+  // IFU: pc -> ir.
+  wire pc_ir_valid;
+  wire ir_pc_ready;
 
-  ysyx_24080020_PC u_pc (
-      .clk(clk),
-      .rst(rst),
-      .is_dnpc(is_dnpc),
-      .dnpc(dnpc),
-      .pc(pc),
-      .pc_len(pc_len)
-  );
+  // DEU: IR -> reg
+  wire ir_reg_valid;
+  wire reg_ir_ready;
 
-  ysyx_24080020_MEM u_mem (
-      .clk(clk),
-      .rst(rst),
-      .pc(pc),
+  // EXU: reg -> alu
+  wire reg_alu_valid;
+  wire alu_reg_ready;
+
+  // LSU: alu -> mem;
+  wire alu_mem_valid;
+  wire mem_alu_ready;
+
+  // WB: mem -> reg
+  wire mem_reg_valid;
+  wire reg_mem_rerady;
+
+  // WB -> IFU
+  wire reg_pc_valid;
+
+  ysyx_24080020_PC u_pc(
+      .clk(clk), 
+      .rst(rst), 
+      .reg_pc_valid(reg_pc_valid), 
+      .ir_pc_ready(ir_pc_ready), 
+      .is_dnpc(is_dnpc), 
+      .dnpc(dnpc), 
+      .pc(pc), 
       .pc_len(pc_len),
-      .mraddr(mraddr),
-      .mwaddr(mwaddr),
-      .mwlen(mwlen),
-      .mrlen(mrlen),
-      .mwdata(mwdata),
-      .mwen(mwen),
-      .mrdata(mrdata),
-      .inst(inst)
+      .pc_ir_valid(pc_ir_valid)
   );
 
-  // ysyx_24080020_IFU ifu(
-  //     .clk(clk),
-  //     .rst(rst),
-  //     .pc(pc),
-  //     .len(`ysyx_24080020_LEN),
-  //     .snpc(snpc)
-  // );
+    ysyx_24080020_MEM u_mem(
+        .clk(clk), 
+        .rst(rst), 
+        .pc_ir_valid(pc_ir_valid),
+        .reg_ir_ready(reg_ir_ready),
+        .pc(pc),
+        .pc_len(pc_len),
+        .mraddr(mraddr), 
+        .mwaddr(mwaddr), 
+        .mwlen(mwlen), 
+        .mrlen(mrlen), 
+        .mwdata(mwdata), 
+        .mwen(mwen), 
+        .mrdata(mrdata),
+        .inst(inst),
+        .ir_reg_valid(ir_reg_valid)
+    );
+    
+    ysyx_24080020_IFU ifu(
+        .clk(clk), 
+        .rst(rst), 
+        .pc(pc), 
+        .len(`ysyx_24080020_LEN), 
+        .snpc(snpc)
+    );
 
-  ysyx_24080020_IDU idu (
-      .inst(inst),
-      .opcode(opcode),
-      .rd(rd),
-      .funct3(funct3),
-      .rs1(rs1),
-      .rs2(rs2),
-      .imm(imm),
-      .funct7(funct7)
-  );
+    ysyx_24080020_IDU idu(
+        .inst(inst), 
+        .opcode(opcode), 
+        .rd(rd), 
+        .funct3(funct3), 
+        .rs1(rs1), 
+        .rs2(rs2), 
+        .imm(imm), 
+        .funct7(funct7)
+    );
 
-  ysyx_24080020_REG u_reg (
-      .clk(clk),
-      .rst(rst),
-      .raddr1(rs1),
-      .raddr2(rs2),
-      .wen(wen),
-      .waddr(waddr),
-      .wdata(wdata),
-      .wcsren(wcsren),
-      .wcsraddr(wcsraddr),
-      .wcsrdata(wcsrdata),
-      .wcsren2(wcsren2),
-      .wcsraddr2(wcsraddr2),
-      .wcsrdata2(wcsrdata2),
-      .rcsraddr(rcsraddr),
-      .val_raddr1(src1),
-      .val_raddr2(src2),
-      .rcsrdata(rcsrdata)
-  );
+    ysyx_24080020_REG u_reg(
+        .clk(clk), 
+        .rst(rst), 
+        .raddr1(rs1), 
+        .raddr2(rs2), 
+        .wen(wen), 
+        .waddr(waddr), 
+        .wdata(wdata), 
+        .wcsren(wcsren),
+        .wcsraddr(wcsraddr),
+        .wcsrdata(wcsrdata),
+        .wcsren2(wcsren2),
+        .wcsraddr2(wcsraddr2),
+        .wcsrdata2(wcsrdata2),
+        .rcsraddr(rcsraddr),
+        .val_raddr1(src1), 
+        .val_raddr2(src2),
+        .rcsrdata(rcsrdata)        
+    );
 
-  ysyx_24080020_EXU exu (
-      .inst(inst),
-      .opcode(opcode),
-      .pc(pc),
-      .funct3(funct3),
-      .funct7(funct7),
-      // reg
-      .val_raddr1(src1),
-      .val_raddr2(src2),
-      .rd(rd),
-      .imm(imm),
-      // csrs
-      .rcsrdata(rcsrdata),
-      .mrdata(mrdata),
-      .waddr(waddr),
-      .wdata(wdata),
-      .wen(wen),
-      .is_dnpc(is_dnpc),
-      .dnpc(dnpc),
-      .mraddr(mraddr),
-      .mwaddr(mwaddr),
-      .mwdata(mwdata),
-      .mwen(mwen),
-      .mwlen(mwlen),
-      .mrlen(mrlen),
-      // csrs
-      .wcsren(wcsren),
-      .wcsraddr(wcsraddr),
-      .wcsrdata(wcsrdata),
-      .wcsren2(wcsren2),
-      .wcsraddr2(wcsraddr2),
-      .wcsrdata2(wcsrdata2),
-      .rcsraddr(rcsraddr)
-  );
+    ysyx_24080020_EXU exu(
+        .inst(inst),
+        .opcode(opcode), 
+        .pc(pc), 
+        .funct3(funct3), 
+        .funct7(funct7), 
+        // reg
+        .val_raddr1(src1), 
+        .val_raddr2(src2), 
+        .rd(rd), 
+        .imm(imm),
+        // csrs
+        .rcsrdata(rcsrdata), 
+        .mrdata(mrdata),
+        .waddr(waddr), 
+        .wdata(wdata), 
+        .wen(wen), 
+        .is_dnpc(is_dnpc), 
+        .dnpc(dnpc), 
+        .mraddr(mraddr),
+        .mwaddr(mwaddr), 
+        .mwdata(mwdata), 
+        .mwen(mwen),
+        .mwlen(mwlen),
+        .mrlen(mrlen),
+        // csrs
+        .wcsren(wcsren),
+        .wcsraddr(wcsraddr),
+        .wcsrdata(wcsrdata),
+        .wcsren2(wcsren2),
+        .wcsraddr2(wcsraddr2),
+        .wcsrdata2(wcsrdata2),
+        .rcsraddr(rcsraddr)
+    );
 
 
 endmodule
