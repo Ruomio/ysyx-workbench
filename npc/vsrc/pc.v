@@ -22,7 +22,7 @@ module ysyx_24080020_PC (
     end 
     else if (reg_pc_valid) begin
       pc_ir_valid <= 1'b1;
-      pc_reg_ready < =1'b1;
+      pc_reg_ready <= 1'b1;
     end 
     else if(ir_pc_ready) begin
       if (is_dnpc) pc <= dnpc;
