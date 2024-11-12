@@ -1,5 +1,9 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_IDU (
+    input clk,
+    input rst,
+    input ir_idu_valid,
+    input exu_idu_ready,
     input [`ysyx_24080020_WIDTH-1:0] inst,
     output [6:0] opcode,
     output [4:0] rd,
@@ -7,13 +11,13 @@ module ysyx_24080020_IDU (
     output [4:0] rs1,
     output [4:0] rs2,
     output reg [`ysyx_24080020_WIDTH-1:0] imm,
-    output [6:0] funct7
+    output [6:0] funct7,
+
+    output idu_ir_ready,
+    output idu_exu_valid
 
 );
-    // import "DPI-C" function void ebreak();
-    // import "DPI-C" function void invalid_inst();
-    // import "DPI-C" function void halt();
-    // import "DPI-C" function void update_ftrace_dpi();
+    reg state = 1'b0; // 0: idle;    1: wate_ready
 
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
@@ -23,7 +27,7 @@ module ysyx_24080020_IDU (
     assign funct7 = inst[`ysyx_24080020_FUNCT7];
 
 
-    always @(*) begin
+    always @(inst) begin
 
         case(opcode)
             `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
@@ -77,4 +81,28 @@ module ysyx_24080020_IDU (
             end
         endcase
     end
+
+    always @(posedge clk) begin
+        if(!state) begin
+            if(idu_exu_valid) state <= 1'b1;
+            else state <= 1'b0;
+        end
+        else begin
+            if(exu_idu_ready) state <= 1'b0;
+            else state <= 1'b1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(ir_idu_valid) begin
+            idu_ir_ready <= 1'b1;
+            idu_exu_valid <= 1'b1;
+        end
+        else begin
+            idu_ir_ready <= 1'b0;
+        end
+
+    end
+
+
 endmodule
