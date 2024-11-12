@@ -30,7 +30,7 @@ module ysyx_24080020_PC (
     end
     else begin
       pc_ir_valid <= 1'b0;
-      pc_reg_ready < =1'b0;
+      pc_reg_ready <= 1'b0;
     end
   end
 
