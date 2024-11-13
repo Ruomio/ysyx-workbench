@@ -57,6 +57,10 @@ module ysyx_24080020_NPC(
   wire ir_idu_valid;
   wire idu_ir_ready;
 
+  // IR
+  wire ir_reg_valid;
+  wire reg_ir_ready;
+
   // EXU: idu -> exu
   wire idu_exu_valid;
   wire exu_idu_ready;
