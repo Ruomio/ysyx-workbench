@@ -71,6 +71,7 @@ module ysyx_24080020_NPC(
 
   // WB -> IFU
   wire reg_pc_valid;
+  wire pc_reg_ready;
 
     ysyx_24080020_PC u_pc(
         .clk(clk), 
