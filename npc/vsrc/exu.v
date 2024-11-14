@@ -39,6 +39,7 @@ module ysyx_24080020_EXU
     output reg [3:0] mwlen,
 
     // alu
+    output [3:0] alu_op,
     output [`ysyx_24080020_WIDTH-1:0] alu_src1,
     output [`ysyx_24080020_WIDTH-1:0] alu_src2,
     output [`ysyx_24080020_WIDTH-1:0] alu_pc,
