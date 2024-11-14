@@ -6,10 +6,10 @@ module ysyx_24080020_PC (
     input ir_pc_ready,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
-    input [`ysyx_24080020_WIDTH-1:0] alu_out,
-    output reg [`ysyx_24080020_WIDTH-1:0] alu_src1,
-    output reg [`ysyx_24080020_WIDTH-1:0] alu_src2,
-    output reg [3:0] alu_op,
+    // input [`ysyx_24080020_WIDTH-1:0] alu_out,
+    // output reg [`ysyx_24080020_WIDTH-1:0] alu_src1,
+    // output reg [`ysyx_24080020_WIDTH-1:0] alu_src2,
+    // output reg [3:0] alu_op,
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
     output [3:0] pc_len,
     output reg pc_reg_ready,
@@ -31,11 +31,11 @@ module ysyx_24080020_PC (
     else if(ir_pc_ready) begin
       if (is_dnpc) pc <= dnpc;
       else begin
-        alu_op <= `ysyx_24080020_ALU_ADD;
-        alu_src1 <= pc;
-        alu_src2 <= 32'b100;
-        pc <= alu_out;
-        // pc <= pc + 32'b100;
+        // alu_op <= `ysyx_24080020_ALU_ADD;
+        // alu_src1 <= pc;
+        // alu_src2 <= 32'b100;
+        // pc <= alu_out;
+        pc <= pc + 32'b100;
       end
       pc_ir_valid <= 1'b0;
     end
