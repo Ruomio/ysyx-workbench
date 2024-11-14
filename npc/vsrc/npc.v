@@ -214,7 +214,6 @@ module ysyx_24080020_NPC(
         .alu_src2(alu_src2),
         .alu_pc(alu_pc),
         .alu_shift(alu_shift),
-        .alu_out(alu_out),
         // csrs
         .wcsren(wcsren),
         .wcsraddr(wcsraddr),
