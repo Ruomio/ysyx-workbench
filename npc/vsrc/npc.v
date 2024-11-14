@@ -95,7 +95,7 @@ module ysyx_24080020_NPC(
         .alu_out(alu_out),
         .alu_op(alu_op),
         .alu_src1(alu_src1),
-        .alu_src2(alu_src2)
+        .alu_src2(alu_src2),
         .pc(pc), 
         .pc_len(pc_len),
         .pc_reg_ready(pc_reg_ready),
