@@ -289,7 +289,11 @@ module ysyx_24080020_EXU
                         rcsraddr = imm[11:0];
 
                         wcsraddr = imm[11:0];
-                        wcsrdata = val_raddr1 | rcsrdata;
+                        alu_op = `ysyx_24080020_ALU_OR;
+                        alu_src1 = val_raddr1;
+                        alu_src2 = rcsrdata;
+                        wcsrdata = alu_out;
+                        // wcsrdata = val_raddr1 | rcsrdata;
                         wcsren = 1'b1;
 
                         waddr = rd;
@@ -304,7 +308,11 @@ module ysyx_24080020_EXU
             end
 
             `ysyx_24080020_AUIPC: begin
-                wdata = pc + imm;
+                alu_op = `ysyx_24080020_ALU_ADD;
+                alu_src1 = pc;
+                alu_src2 = imm;
+                wdata = alu_out;
+                // wdata = pc + imm;
                 wen = 1'b1;
                 waddr = rd;
             end
@@ -319,10 +327,14 @@ module ysyx_24080020_EXU
                     halt();
                 end
                 else begin
+                    alu_op = `ysyx_24080020_ALU_ADD;
+                    alu_src1 = pc;
+                    alu_src2 = imm;
+                    dnpc = alu_out;
                     wdata = pc + 4;
                     wen = 1'b1;
                     waddr = rd;
-                    dnpc = pc + imm;
+                    // dnpc = pc + imm;
                     is_dnpc = 1'b1;
                 end
             end
@@ -331,7 +343,11 @@ module ysyx_24080020_EXU
                 wdata = pc + 4;
                 wen = 1'b1;
                 waddr = rd;
-                dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
+                alu_op = `ysyx_24080020_ALU_ADD;
+                alu_src1 = val_raddr1;
+                alu_src2 = imm;
+                dnpc = alu_out & {{31{1'b1}},1'b0};
+                // dnpc = (val_raddr1 + imm)&{{31{1'b1}},1'b0};
                 is_dnpc = 1'b1;
             end
 
