@@ -47,6 +47,14 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] mwdata;
   wire [`ysyx_24080020_WIDTH-1:0] mrdata;
 
+  // alu
+  wire [3:0] opcode;
+  wire [`ysyx_24080020_WIDTH-1:0] alu_src1;
+  wire [`ysyx_24080020_WIDTH-1:0] alu_src2;
+  wire [`ysyx_24080020_WIDTH-1:0] alu_pc;
+  wire [`ysyx_24080020_WIDTH-1:0] alu_shift;
+  wire [`ysyx_24080020_WIDTH-1:0] alu_out;
+
   // bus control
   // IFU -> DEU -> EXU -> LSU -> WB
   // IFU: pc -> ir.
@@ -84,6 +92,10 @@ module ysyx_24080020_NPC(
         .ir_pc_ready(ir_pc_ready), 
         .is_dnpc(is_dnpc), 
         .dnpc(dnpc), 
+        .alu_out(alu_out),
+        .alu_op(alu_op),
+        .alu_src1(alu_src1),
+        .alu_src2(alu_src2)
         .pc(pc), 
         .pc_len(pc_len),
         .pc_reg_ready(pc_reg_ready),
@@ -127,7 +139,6 @@ module ysyx_24080020_NPC(
 
     ysyx_24080020_IDU idu(
         .clk(clk),
-        .rst(rst),
         .ir_idu_valid(ir_idu_valid),
         .exu_idu_ready(exu_idu_ready),
         .inst(inst), 
@@ -162,12 +173,22 @@ module ysyx_24080020_NPC(
         .rcsrdata(rcsrdata)        
     );
 
+    ysyx_24080020_ALU alu(
+        .alu_op(alu_op),
+        .alu_src1(alu_src1),
+        .alu_src2(alu_src2),
+        .alu_pc(alu_pc),
+        .alu_shift(alu_shift),
+        .alu_out(alu_out)
+    );
+
     ysyx_24080020_EXU exu(
         .inst(inst),
         .opcode(opcode), 
         .pc(pc), 
         .funct3(funct3), 
         .funct7(funct7), 
+        .alu_out(alu_out),
         // reg
         .val_raddr1(src1), 
         .val_raddr2(src2), 
@@ -187,6 +208,13 @@ module ysyx_24080020_NPC(
         .mwen(mwen),
         .mwlen(mwlen),
         .mrlen(mrlen),
+        // alu
+        .alu_op(alu_op),
+        .alu_src1(alu_src1),
+        .alu_src2(alu_src2),
+        .alu_pc(alu_pc),
+        .alu_shift(alu_shift),
+        .alu_out(alu_out),
         // csrs
         .wcsren(wcsren),
         .wcsraddr(wcsraddr),

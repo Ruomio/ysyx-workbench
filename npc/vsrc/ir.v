@@ -34,18 +34,19 @@ module ysyx_24080020_IR(
     always @(posedge clk) begin
         if(!rst) begin
             inst <= 32'b0;
-            ir_pc_ready <= 1'b1;
+            ir_reg_valid <= 1'b0;
         end
         else if(pc_ir_valid) begin
-            ir_reg_valid <= 1'b1;
-            ir_pc_ready <= 1'b1;
+            if(ir_reg_valid) ir_pc_ready <= 1'b0;
+            else ir_pc_ready <= 1'b1;
         end
         else if(reg_ir_ready) begin
             inst <= read_memory(pc, {{28{1'b0}}, pc_len});
+            ir_reg_valid <= 1'b0;
         end
         else begin
             inst <= inst;
-            ir_reg_valid <= 1'b0;
+            ir_reg_valid <= 1'b1;
             ir_pc_ready <= 1'b0;
         end
 

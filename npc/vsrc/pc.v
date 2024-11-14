@@ -6,6 +6,10 @@ module ysyx_24080020_PC (
     input ir_pc_ready,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
+    input [`ysyx_24080020_WIDTH-1:0] alu_out,
+    output [`ysyx_24080020_WIDTH-1:0] alu_src1,
+    output [`ysyx_24080020_WIDTH-1:0] alu_src2,
+    output [3:0] alu_op,
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
     output [3:0] pc_len,
     output reg pc_reg_ready,
@@ -15,21 +19,28 @@ module ysyx_24080020_PC (
 
   assign pc_len = 4'b100;
 
-  always @(posedge clk) begin
+  always @(posedge clk or alu_out) begin
     if (!rst) begin
       pc <= `ysyx_24080020_MBASE;
-      pc_ir_valid <= 1'b1;
+      pc_ir_valid <= 1'b0;
     end 
     else if (reg_pc_valid) begin
-      pc_ir_valid <= 1'b1;
-      pc_reg_ready <= 1'b1;
+      if(pc_ir_valid) pc_reg_ready <= 1'b0;
+      else pc_reg_ready <= 1'b1;
     end 
     else if(ir_pc_ready) begin
       if (is_dnpc) pc <= dnpc;
-      else pc <= pc + 32'b100;
+      else begin
+        alu_op <= `ysyx_24080020_ALU_ADD;
+        alu_src1 <= pc;
+        alu_src2 <= 32'b100;
+        pc <= alu_out;
+        // pc <= pc + 32'b100;
+      end
+      pc_ir_valid <= 1'b0;
     end
     else begin
-      pc_ir_valid <= 1'b0;
+      pc_ir_valid <= 1'b1;
       pc_reg_ready <= 1'b0;
     end
   end

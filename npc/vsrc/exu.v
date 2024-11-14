@@ -6,6 +6,8 @@ module ysyx_24080020_EXU
     input [2:0] funct3,
     input [6:0] funct7,
 
+    // alu
+    input [`ysyx_24080020_WIDTH-1:0] alu_out,
     input [`ysyx_24080020_WIDTH-1:0] pc,
     // reg
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
@@ -36,6 +38,11 @@ module ysyx_24080020_EXU
     output reg [3:0] mrlen,
     output reg [3:0] mwlen,
 
+    // alu
+    output [`ysyx_24080020_WIDTH-1:0] alu_src1,
+    output [`ysyx_24080020_WIDTH-1:0] alu_src2,
+    output [`ysyx_24080020_WIDTH-1:0] alu_pc,
+    output [`ysyx_24080020_WIDTH-1:0] alu_shift,
     //csrs
     output reg wcsren,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr,
@@ -50,7 +57,7 @@ module ysyx_24080020_EXU
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
 
-    always @(inst or mrdata or rcsrdata) begin
+    always @(inst or mrdata or rcsrdata or alu_out) begin
         // initial
         is_dnpc = 1'b0;
         mwen = 1'b0;
@@ -61,30 +68,33 @@ module ysyx_24080020_EXU
             `ysyx_24080020_I_TYPE: begin
                 wen = 1'b1;
                 waddr = rd;
+                alu_src1 = val_raddr1;
+                alu_src2 = imm;
+                wdata = alu_out;
                 case(funct3)
                     `ysyx_24080020_ADDI: begin
-                        wdata = val_raddr1 + imm;
+                        alu_op = `ysyx_24080020_ALU_ADD;
                     end
                     `ysyx_24080020_SLTI: begin
-                        wdata = $signed(val_raddr1) < $signed(imm) ? 32'b1 : 32'b0;
+                        alu_op = `ysyx_24080020_ALU_SLT;
                     end
                     `ysyx_24080020_SLTIU: begin
-                        wdata = val_raddr1 < imm ? 32'b1 : 32'b0;
+                        alu_op = `ysyx_24080020_ALU_SLTU;
                     end
                     `ysyx_24080020_XORI: begin
-                        wdata = val_raddr1 ^ imm;
+                        alu_op = `ysyx_24080020_ALU_XOR;
                     end
                     `ysyx_24080020_ORI: begin
-                        wdata = val_raddr1 | imm;
+                        alu_op = `ysyx_24080020_ALU_OR;
                     end
                     `ysyx_24080020_ANDI: begin
-                        wdata = val_raddr1 & imm;
+                        alu_op = `ysyx_24080020_ALU_AND;
                     end
                     `ysyx_24080020_SLLI: begin
-                        wdata = val_raddr1 << imm[4:0];
+                        alu_op = `ysyx_24080020_ALU_SLL;
                     end
                     `ysyx_24080020_SRI: begin
-                        wdata = imm[10] == 0 ? val_raddr1 >> imm[4:0] : val_raddr1 >> imm[4:0] | ({32{val_raddr1[31]}} & ~(32'hffffffff >> imm[4:0]));
+                        alu_op = imm[10] == 0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
                     end
 
                     default: begin
@@ -94,7 +104,11 @@ module ysyx_24080020_EXU
                 endcase
             end
             `ysyx_24080020_I_TYPEI: begin
-                mraddr = val_raddr1 + imm;
+                alu_op = `ysyx_24080020_ALU_ADD;
+                alu_src1 = val_raddr1;
+                alu_src2 = imm;
+                mraddr = alu_out;
+                // mraddr = val_raddr1 + imm;
                 wen = 1'b1;
                 waddr = rd;
                 case(funct3)
@@ -128,32 +142,35 @@ module ysyx_24080020_EXU
             end
 
             `ysyx_24080020_R_TYPE: begin
+                alu_src1 = val_raddr1;
+                alu_src2 = val_raddr2;
+                wdata = alu_out;
                 waddr = rd;
                 wen = 1'b1;
                 case(funct3)
                     `ysyx_24080020_ADD_SUB: begin
-                        wdata = funct7[5] ==  0 ? val_raddr1 + val_raddr2 : val_raddr1 - val_raddr2;
+                        alu_op = funct7[5] ==  0 ? `ysyx_24080020_ALU_ADD : `ysyx_24080020_ALU_SUB;
                     end
                     `ysyx_24080020_SLL: begin
-                        wdata = val_raddr1 << val_raddr2;
+                        alu_op = `ysyx_24080020_ALU_SLL;
                     end
                     `ysyx_24080020_SLT: begin
-                        wdata = $signed(val_raddr1) < $signed(val_raddr2) ? 32'b1 : 32'b0;
+                        alu_op = `ysyx_24080020_ALU_SLT;
                     end
                     `ysyx_24080020_SLTU: begin
-                        wdata = val_raddr1 < val_raddr2 ? 32'b1 : 32'b0;
+                        alu_op = `ysyx_24080020_ALU_SLTU;
                     end
                     `ysyx_24080020_XOR: begin
-                        wdata = val_raddr1 ^ val_raddr2;
+                        alu_op = `ysyx_24080020_ALU_XOR;
                     end
                     `ysyx_24080020_SRLA: begin
-                        wdata = funct7[5] == 0 ? val_raddr1 >> val_raddr2 : val_raddr1 >> val_raddr2 | ({32{val_raddr1[31]}} & ~(32'hffffffff >> val_raddr2));
+                        alu_op = funct7[5] == 0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
                     end
                     `ysyx_24080020_OR: begin
-                        wdata = val_raddr1 | val_raddr2;
+                        alu_op = `ysyx_24080020_ALU_OR;
                     end
                     `ysyx_24080020_AND: begin
-                        wdata = val_raddr1 & val_raddr2;
+                        alu_op = `ysyx_24080020_ALU_AND;
                     end
                     default: begin
                         wen = 1'b0;
@@ -163,20 +180,21 @@ module ysyx_24080020_EXU
             end
 
             `ysyx_24080020_S_TYPE: begin
+                alu_op = `ysyx_24080020_ALU_ADD;
+                alu_src1 = val_raddr1;
+                alu_src2 = imm;
+                mwaddr = alu_out;
                 mwen = 1'b1;
                 case(funct3)
                     `ysyx_24080020_SB: begin
-                        mwaddr = val_raddr1 + imm;
                         mwdata = {{24{1'b0}}, val_raddr2[7:0]};
                         mwlen = 4'b001;
                     end
                     `ysyx_24080020_SH: begin
-                        mwaddr = val_raddr1 + imm;
                         mwdata = {{16{1'b0}}, val_raddr2[15:0]};
                         mwlen = 4'b010;
                     end
                     `ysyx_24080020_SW: begin
-                        mwaddr = val_raddr1 + imm;
                         mwdata = val_raddr2;
                         mwlen = 4'b100;
                     end
@@ -186,25 +204,36 @@ module ysyx_24080020_EXU
             end
 
             `ysyx_24080020_B_TYPE: begin
+                alu_src1 = val_raddr1;
+                alu_src2 = val_raddr2;
+                alu_pc = pc;
+                alu_shift = imm;
+                dnpc = alu_out;
                 is_dnpc = 1'b1;
                 case(funct3)
                     `ysyx_24080020_BEQ: begin
-                        dnpc = val_raddr1 == val_raddr2 ? pc + imm : pc + 4;
+                        alu_op = `ysyx_24080020_ALU_BEQ;
+                        // dnpc = val_raddr1 == val_raddr2 ? pc + imm : pc + 4;
                     end
                     `ysyx_24080020_BNE: begin
-                        dnpc = val_raddr1 != val_raddr2 ? pc + imm : pc + 4;
+                        alu_op = `ysyx_24080020_ALU_BNE;
+                        // dnpc = val_raddr1 != val_raddr2 ? pc + imm : pc + 4;
                     end
                     `ysyx_24080020_BLT: begin
-                        dnpc = $signed(val_raddr1) < $signed(val_raddr2) ? pc + imm : pc + 4;
+                        alu_op = `ysyx_24080020_ALU_BLT;
+                        // dnpc = $signed(val_raddr1) < $signed(val_raddr2) ? pc + imm : pc + 4;
                     end
                     `ysyx_24080020_BGE: begin
-                        dnpc = $signed(val_raddr1) >= $signed(val_raddr2) ? pc + imm : pc + 4;
+                        alu_op = `ysyx_24080020_ALU_BGE;
+                        // dnpc = $signed(val_raddr1) >= $signed(val_raddr2) ? pc + imm : pc + 4;
                     end
                     `ysyx_24080020_BLTU: begin
-                        dnpc = val_raddr1 < val_raddr2 ? pc + imm : pc + 4;
+                        alu_op = `ysyx_24080020_ALU_BLTU;
+                        // dnpc = val_raddr1 < val_raddr2 ? pc + imm : pc + 4;
                     end
                     `ysyx_24080020_BGEU: begin
-                        dnpc = val_raddr1 >= val_raddr2 ? pc + imm : pc + 4;
+                        alu_op = `ysyx_24080020_ALU_BGEU;
+                        // dnpc = val_raddr1 >= val_raddr2 ? pc + imm : pc + 4;
                     end
 
                     default: begin

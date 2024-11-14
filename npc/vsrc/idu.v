@@ -1,7 +1,6 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_IDU (
     input clk,
-    input rst,
     input ir_idu_valid,
     input exu_idu_ready,
     input [`ysyx_24080020_WIDTH-1:0] inst,
@@ -95,10 +94,15 @@ module ysyx_24080020_IDU (
 
     always @(posedge clk) begin
         if(ir_idu_valid) begin
-            idu_ir_ready <= 1'b1;
-            idu_exu_valid <= 1'b1;
+            if(idu_exu_valid) idu_ir_ready <= 1'b0;
+            else idu_ir_ready <= 1'b1;
+        end
+        else if(exu_idu_ready) begin
+
+            idu_exu_valid <= 1'b0;
         end
         else begin
+            idu_exu_valid <= 1'b1;
             idu_ir_ready <= 1'b0;
         end
 
