@@ -19,7 +19,7 @@ module ysyx_24080020_PC (
 
   assign pc_len = 4'b100;
 
-  always @(posedge clk or alu_out) begin
+  always @(posedge clk) begin
     if (!rst) begin
       pc <= `ysyx_24080020_MBASE;
       pc_ir_valid <= 1'b0;
