@@ -13,7 +13,7 @@ module ysyx_24080020_ALU(
             `ysyx_24080020_ALU_ADD: begin
                 alu_out = alu_src1 + alu_src2;
             end
-            `ysyx_24080020_ADD_SUB: begin
+            `ysyx_24080020_ALU_SUB: begin
                 alu_out = alu_src1 - alu_src2;
             end
             `ysyx_24080020_ALU_SLT: begin
