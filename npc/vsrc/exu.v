@@ -11,8 +11,8 @@ module ysyx_24080020_EXU
     // alu
     input [`ysyx_24080020_WIDTH-1:0] alu_out,
     // axi
-    input [`ysyx_24080020_WIDTH-1:0] idu_exu_valid,
-    input [`ysyx_24080020_WIDTH-1:0] mem_exu_ready,
+    input idu_exu_valid,
+    input mem_exu_ready,
     // reg
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
