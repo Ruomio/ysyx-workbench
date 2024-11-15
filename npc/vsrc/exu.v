@@ -57,8 +57,8 @@ module ysyx_24080020_EXU
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata2,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
 
-    output reg [`ysyx_24080020_WIDTH-1:0] exu_idu_ready,
-    output reg [`ysyx_24080020_WIDTH-1:0] exu_mem_valid
+    output reg exu_idu_ready,
+    output reg exu_mem_valid
 );
     import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
