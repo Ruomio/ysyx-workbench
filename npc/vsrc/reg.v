@@ -4,6 +4,9 @@ module ysyx_24080020_REG
     input clk,
     input rst,
 
+    input mem_reg_valid,
+    input pc_reg_ready,
+
     input [4:0] raddr1,
     input [4:0] raddr2,
 
@@ -25,7 +28,9 @@ module ysyx_24080020_REG
     output [`ysyx_24080020_WIDTH-1:0] val_raddr2,
 
     // out csr
-    output [`ysyx_24080020_WIDTH-1:0] rcsrdata
+    output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
+    output reg reg_pc_valid,
+    output reg reg_mem_ready
 );
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[`ysyx_24080020_WIDTH-1:0];

@@ -1,6 +1,7 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_EXU
 (
+    input clk,
     input [`ysyx_24080020_WIDTH-1:0] inst,
     input [`ysyx_24080020_WIDTH-1:0] pc,
     input [6:0] opcode,
