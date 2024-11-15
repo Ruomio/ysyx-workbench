@@ -2,13 +2,16 @@
 module ysyx_24080020_EXU
 (
     input [`ysyx_24080020_WIDTH-1:0] inst,
+    input [`ysyx_24080020_WIDTH-1:0] pc,
     input [6:0] opcode,
     input [2:0] funct3,
     input [6:0] funct7,
 
     // alu
     input [`ysyx_24080020_WIDTH-1:0] alu_out,
-    input [`ysyx_24080020_WIDTH-1:0] pc,
+    // axi
+    input [`ysyx_24080020_WIDTH-1:0] idu_exu_valid,
+    input [`ysyx_24080020_WIDTH-1:0] mem_exu_ready,
     // reg
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
@@ -51,12 +54,17 @@ module ysyx_24080020_EXU
     output reg wcsren2,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2,
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata2,
-    output reg[`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr
+    output reg[`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] exu_idu_ready,
+    output reg [`ysyx_24080020_WIDTH-1:0] exu_mem_valid
 );
     import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
+
+    reg state = 1'b0;   // 0:idle;   1:wait_ready
 
     always @(inst or mrdata or rcsrdata or alu_out) begin
         // initial
@@ -364,6 +372,30 @@ module ysyx_24080020_EXU
                 mwen = 1'b0;
             end
         endcase
+    end
+
+    always @(posedge clk) begin
+        if(idu_exu_valid) begin
+            if(exu_mem_valid) exu_idu_ready <=  1'b0;
+            else exu_idu_ready <= 1'b1;
+        end
+        else if(mem_exu_ready && mem_exu_ready && !state) begin
+            exu_mem_valid <= 1'b0;
+        end
+        else begin
+            exu_mem_valid <= 1'b1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!state) begin
+            if(exu_mem_valid) state <= 1'b1;
+            else state <= 1'b0;
+        end
+        else begin
+            if(mem_exu_ready) state <= 1'b0;
+            else state <= 1'b1;
+        end
     end
 
 

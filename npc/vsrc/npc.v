@@ -66,8 +66,8 @@ module ysyx_24080020_NPC(
   wire idu_ir_ready;
 
   // IR
-  wire ir_reg_valid;
-  wire reg_ir_ready;
+  // wire ir_reg_valid;
+  // wire reg_ir_ready;
 
   // EXU: idu -> exu
   wire idu_exu_valid;
@@ -79,7 +79,7 @@ module ysyx_24080020_NPC(
 
   // WB: mem -> reg
   wire mem_reg_valid;
-  wire reg_mem_rerady;
+  wire reg_mem_ready;
 
   // WB -> IFU
   wire reg_pc_valid;
@@ -106,19 +106,19 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
         .pc_ir_valid(pc_ir_valid),
-        .reg_ir_ready(reg_ir_ready),
+        .idu_ir_ready(idu_ir_ready),
         .pc(pc),
         .pc_len(pc_len),
         .inst(inst),
         .ir_pc_ready(ir_pc_ready),
-        .ir_reg_valid(ir_reg_valid)
+        .ir_idu_valid(ir_idu_valid)
     );
 
     ysyx_24080020_MEM u_mem(
         .clk(clk), 
         .rst(rst), 
-        .pc_ir_valid(pc_ir_valid),
-        .reg_ir_ready(reg_ir_ready),
+        .exu_mem_valid(exu_mem_valid),
+        .reg_mem_ready(reg_mem_ready),
         .mraddr(mraddr), 
         .mwaddr(mwaddr), 
         .mwlen(mwlen), 
@@ -126,7 +126,8 @@ module ysyx_24080020_NPC(
         .mwdata(mwdata), 
         .mwen(mwen), 
         .mrdata(mrdata),
-        .ir_reg_valid(ir_reg_valid)
+        .mem_exu_ready(mem_exu_ready),
+        .mem_reg_valid(mem_reg_valid)
     );
     
     ysyx_24080020_IFU ifu(
@@ -156,6 +157,8 @@ module ysyx_24080020_NPC(
     ysyx_24080020_REG u_reg(
         .clk(clk), 
         .rst(rst), 
+        .mem_reg_valid(mem_reg_valid),
+        .pc_reg_ready(pc_reg_ready),
         .raddr1(rs1), 
         .raddr2(rs2), 
         .wen(wen), 
@@ -170,7 +173,9 @@ module ysyx_24080020_NPC(
         .rcsraddr(rcsraddr),
         .val_raddr1(src1), 
         .val_raddr2(src2),
-        .rcsrdata(rcsrdata)        
+        .rcsrdata(rcsrdata),
+        .reg_mem_ready(reg_mem_ready),
+        .reg_pc_valid(reg_pc_valid)
     );
 
     ysyx_24080020_ALU alu(
@@ -189,6 +194,8 @@ module ysyx_24080020_NPC(
         .funct3(funct3), 
         .funct7(funct7), 
         .alu_out(alu_out),
+        .idu_exu_valid(idu_exu_valid),
+        .mem_exu_ready(mem_exu_ready),
         // reg
         .val_raddr1(src1), 
         .val_raddr2(src2), 
@@ -221,7 +228,9 @@ module ysyx_24080020_NPC(
         .wcsren2(wcsren2),
         .wcsraddr2(wcsraddr2),
         .wcsrdata2(wcsrdata2),
-        .rcsraddr(rcsraddr)
+        .rcsraddr(rcsraddr),
+        .exu_mem_valid(exu_mem_valid),
+        .exu_idu_ready(exu_idu_ready)
     );
 
 

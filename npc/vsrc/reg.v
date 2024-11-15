@@ -32,6 +32,7 @@ module ysyx_24080020_REG
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec
     reg [`ysyx_24080020_WIDTH-1:0] csrs[4:0];
 
+    reg state; // 0:idle;    1:wait_ready
 
     integer  i;
  
@@ -39,13 +40,41 @@ module ysyx_24080020_REG
     reg [2:0] wcsr_idx2;
     reg [2:0] rcsr_idx;
 
+
+    always @(posedge clk) begin
+        if(!state) begin
+            if(reg_pc_valid) state <= 1'b1;
+            else state <= 1'b0;
+        end
+        else begin
+            if(pc_reg_ready) state <= 1'b0;
+            else state <= 1'b1;
+        end
+
+    end
+
+    always @(posedge clk) begin
+        if(mem_reg_valid) begin
+            if(reg_pc_valid) reg_mem_ready <= 1'b0;
+            else reg_mem_ready <= 1'b1;
+        end
+        else if(pc_reg_ready && !state) begin
+            reg_pc_valid <= 1'b0;
+        end
+        else begin
+            reg_pc_valid <= 1'b1;
+            reg_mem_ready <= 1'b0;
+        end
+
+    end
+
     always @(posedge clk) begin
         if(!rst) begin
             for(i = 0; i<6'd32; i = i+1 ) begin
                 regs[i] <= 32'b0;
             end
         end
-        else if(wen && (waddr != 0)) begin
+        else if(wen && (waddr != 32'b0) && pc_reg_ready && !state) begin
             regs[waddr] <= wdata;
         end
         else begin

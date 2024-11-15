@@ -15,7 +15,7 @@ module ysyx_24080020_PC (
     output reg pc_reg_ready,
     output reg pc_ir_valid
 );
-  reg state = 1'b0; // 0: idle;  1: waite_ready;
+  reg state = 1'b0; // 0: idle;  1: wait_ready;
 
   assign pc_len = 4'b100;
 
@@ -28,7 +28,7 @@ module ysyx_24080020_PC (
       if(pc_ir_valid) pc_reg_ready <= 1'b0;
       else pc_reg_ready <= 1'b1;
     end 
-    else if(ir_pc_ready) begin
+    else if(ir_pc_ready && !state) begin
       if (is_dnpc) pc <= dnpc;
       else begin
         // alu_op <= `ysyx_24080020_ALU_ADD;

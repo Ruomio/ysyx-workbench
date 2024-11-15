@@ -16,7 +16,7 @@ module ysyx_24080020_IDU (
     output idu_exu_valid
 
 );
-    reg state = 1'b0; // 0: idle;    1: wate_ready
+    reg state = 1'b0; // 0: idle;    1: wait_ready
 
     assign opcode = inst[`ysyx_24080020_OPCODE];
     assign rd = inst[`ysyx_24080020_RD];
@@ -97,8 +97,7 @@ module ysyx_24080020_IDU (
             if(idu_exu_valid) idu_ir_ready <= 1'b0;
             else idu_ir_ready <= 1'b1;
         end
-        else if(exu_idu_ready) begin
-
+        else if(exu_idu_ready && exu_idu_ready && !state) begin
             idu_exu_valid <= 1'b0;
         end
         else begin
