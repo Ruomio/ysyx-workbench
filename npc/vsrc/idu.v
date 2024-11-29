@@ -102,13 +102,15 @@ module ysyx_24080020_IDU (
                 // update inst reg
                 pc_idu <= pc_ifu;
                 inst_idu <= inst_ifu;
+
+                idu_ifu_ready <= 1'b1;
             end
         end
         else if(exu_idu_ready && state) begin
             idu_exu_valid <= 1'b0;
         end
         else begin
-            idu_exu_valid <= 1'b1;
+            // idu_exu_valid <= 1'b0;
             idu_ifu_ready <= 1'b0;
         end
 

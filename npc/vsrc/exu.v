@@ -156,13 +156,14 @@ module ysyx_24080020_EXU
                 wcsraddr2_exu <= wcsraddr2_idu;
                 wcsrdata2_exu <= wcsrdata2_idu;
 
+                exu_mem_valid <= 1'b1;
             end
         end
         else if(mem_exu_ready && state) begin
             exu_mem_valid <= 1'b0;
         end
         else begin
-            exu_mem_valid <= 1'b1;
+            // exu_mem_valid <= 1'b1;
             exu_idu_ready <= 1'b0;
         end
     end

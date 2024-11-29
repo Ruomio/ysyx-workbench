@@ -109,6 +109,7 @@ module ysyx_24080020_REG
 
                 is_dnpc_wb <= is_dnpc_mem;
 
+                wb_ifu_valid <= 1'b1;
             end
         end
         else if(ifu_wb_ready && state) begin
@@ -116,7 +117,7 @@ module ysyx_24080020_REG
             wb_ifu_valid <= 1'b0;
         end
         else begin
-            wb_ifu_valid <= 1'b1;
+            // wb_ifu_valid <= 1'b1;
             wb_mem_ready <= 1'b0;
         end
 
