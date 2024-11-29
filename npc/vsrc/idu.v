@@ -371,14 +371,14 @@ module ysyx_24080020_IDU (
                             wcsren2_idu = 1'b1;
 
                             // dnpc = csrs[mtvec];
-                            rcsraddr_idu = `ysyx_24080020_MTVEC_ADDR;
+                            rcsraddr = `ysyx_24080020_MTVEC_ADDR;
                             dnpc_idu = rcsrdata;
 
                             is_dnpc_idu = 1'b1;
                         end
                         else if(imm_idu == 32'b1100000010) begin
                             // mret
-                            rcsraddr_idu = `ysyx_24080020_MEPC_ADDR;
+                            rcsraddr = `ysyx_24080020_MEPC_ADDR;
                             dnpc_idu = rcsrdata;
                             is_dnpc_idu = 1'b1;
                         end
@@ -393,14 +393,14 @@ module ysyx_24080020_IDU (
                         wcsrdata_idu = val_raddr1;
                         wcsren_idu = 1'b1;
 
-                        rcsraddr_idu = imm_idu[11:0];
+                        rcsraddr = imm_idu[11:0];
 
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
                     end
                     `ysyx_24080020_CSRRS: begin
-                        rcsraddr_idu = imm_idu[11:0];
+                        rcsraddr = imm_idu[11:0];
 
                         wcsraddr_idu = imm_idu[11:0];
                         src1_idu = val_raddr1;

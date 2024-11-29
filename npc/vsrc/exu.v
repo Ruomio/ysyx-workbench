@@ -88,6 +88,7 @@ module ysyx_24080020_EXU
     reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src2_exu;
+    reg [`ysyx_24080020_WIDTH-1:0] wdata_idu;
 
 
     reg state;   // 0:idle;   1:wait_ready
@@ -112,7 +113,7 @@ module ysyx_24080020_EXU
     assign dnpc = is_jalr_exu == 1'b1 ? (branch_dnpc & (~32'b1)) : branch_dnpc;
     always @(dnpc or alu_out) begin
         dnpc_new_exu = dnpc;
-        alu_out_exu = alu_out;
+        alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
     end
 
     // bus
@@ -126,6 +127,7 @@ module ysyx_24080020_EXU
                 // update all reg type control wire
                 wen_exu <= wen_idu;
                 waddr_exu <= waddr_idu;
+                wdata_exu <= wdata_idu;
 
                 mwen_exu <= mwen_idu;
                 mwmask_exu <= mwmask_idu;

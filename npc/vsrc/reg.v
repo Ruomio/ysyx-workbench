@@ -129,7 +129,7 @@ module ysyx_24080020_REG
                 regs[i] <= 32'b0;
             end
         end
-        else if(wen_wb && (waddr_wb != 5'b0) && pc_reg_ready && state) begin
+        else if(wen_wb && (waddr_wb != 5'b0) && ifu_wb_ready && state) begin
             regs[waddr_wb] <= result;
         end
         else begin
