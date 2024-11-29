@@ -3,7 +3,7 @@ module ysyx_24080020_IFU (
     input clk,
     input rst,
 
-    input dnpc_wb,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc_wb,
     input is_dnpc_wb,
 
     output [`ysyx_24080020_WIDTH-1:0] pc_ifu,

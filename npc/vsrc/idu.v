@@ -33,7 +33,7 @@ module ysyx_24080020_IDU (
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu,
 
     // alu control
-    output reg alu_op_idu,
+    output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
     output reg alu_src2_con_idu,
     // output reg reg_dst_con_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_idu,
@@ -59,9 +59,10 @@ module ysyx_24080020_IDU (
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
 
-    wire [6:0] opcode;
-    wire [2:0] funct3, funct7;
+    wire [6:0] opcode, funct7;
+    wire [2:0] funct3;
     wire [4:0] rs1, rs2, rd;
+    
 
 
     reg state = 1'b0; // 0: idle;    1: wait_ready

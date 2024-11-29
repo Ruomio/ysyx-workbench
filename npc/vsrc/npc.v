@@ -57,7 +57,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] mrdata_exu, mrdata_mem, mrdata_wb;
 
   // alu
-  wire [3:0] alu_op_idu, alu_op_exu;
+  wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu, alu_op_exu;
   // wire [`ysyx_24080020_WIDTH-1:0] alu_src1;
   // wire [`ysyx_24080020_WIDTH-1:0] alu_src2;
   wire [`ysyx_24080020_WIDTH-1:0] alu_out_exu, alu_out_mem;
