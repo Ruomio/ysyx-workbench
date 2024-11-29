@@ -58,7 +58,6 @@ module ysyx_24080020_IFU (
         if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
                 ifu_wb_ready <= 1'b0;
-                if_en <= 1'b0;
             end
             else begin
                 // shake hands
