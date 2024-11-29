@@ -32,6 +32,7 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
     // regs
     input wen_exu,
+    input [4:0] waddr_exu,
     output reg wen_mem,
     output reg [4:0] waddr_mem,
 
@@ -39,7 +40,9 @@ module ysyx_24080020_MEM(
     output reg is_load_mem,
 
     input is_dnpc_exu,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
     output reg is_dnpc_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
     input exu_mem_valid,
     input wb_mem_ready,
@@ -51,9 +54,14 @@ module ysyx_24080020_MEM(
     import "DPI-C" function int read_memory(input int addr, input int len);
 
     reg mren_mem;
+    reg mwen_mem;
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
+    reg [3:0] mwmask_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
+    reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
+    reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
+    reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
 
     reg state; // 0: idle;   1: wait_ready
 
@@ -89,6 +97,7 @@ module ysyx_24080020_MEM(
                 mrtype_mem <= mrtype_exu;
                 mrlen_mem <= mrlen_exu;
                 mwen_mem <= mwen_exu;
+                mwmask_mem <= mwmask_exu;
                 mwaddr_mem <= mwaddr_exu;
                 mwdata_mem <= mwdata_exu;
 
@@ -126,7 +135,7 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             mrdata_mem <= 32'b0;
         end
-        else if(mraddr != 32'b0 && mren_mem) begin
+        else if(mraddr_mem != 32'b0 && mren_mem) begin
             if(mrtype_mem) begin
                 // zero extension
                 mrdata_mem = mrdata_tmp;
@@ -145,7 +154,7 @@ module ysyx_24080020_MEM(
                     end
                 endcase
 
-                mem_reg_valid = 1'b1;
+                mem_wb_valid = 1'b1;
             end
         end
         else begin
@@ -158,7 +167,7 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
         end
-        else if(mwen_mem && reg_mem_ready && state) begin
+        else if(mwen_mem && wb_mem_ready && state) begin
             write_memory(mwaddr_mem, {{28{1'b0}},mwmask_mem}, mwdata_mem);
             mem_reg_valid <= 1'b1;
         end

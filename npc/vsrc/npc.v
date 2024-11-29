@@ -8,7 +8,7 @@ module ysyx_24080020_NPC(
   // wire [3:0] pc_len;
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu;
   // wire [`ysyx_24080020_WIDTH-1:0] snpc, snpc_ifu, snpc_idu, snpc_exu;
-  wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_exu, dnpc_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem;
   wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, is_dnpc_wb;
 
   // inst
@@ -186,8 +186,9 @@ module ysyx_24080020_NPC(
         // .is_btype_idu(is_btype_idu),
         .dnpc_idu(dnpc_idu),
         .is_dnpc_exu(is_dnpc_exu),
-        .dnpc_new_exu(dnpc_exu),
+        .dnpc_new_exu(dnpc_new_exu),
 
+        .alu_src2_con_idu(alu_src2_con_idu),
         .src1_idu(src1_idu),
         .src2_idu(src2_idu),
         .alu_op_idu(alu_op_idu),
@@ -269,12 +270,14 @@ module ysyx_24080020_NPC(
         .wcsrdata2_mem(wcsrdata2_mem),
 
         .wen_exu(wen_exu),
+        .waddr_exu(waddr_exu),
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
 
         .is_load_exu(is_load_exu),
         .is_load_mem(is_load_mem),
 
+        .dnpc_new_exu(dnpc_new_exu),
         .is_dnpc_exu(is_dnpc_exu),
         .is_dnpc_mem(is_dnpc_mem),
 

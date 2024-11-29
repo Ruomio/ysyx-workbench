@@ -16,6 +16,7 @@ module ysyx_24080020_IFU (
 
 );
     reg is_dnpc;
+    reg if_en;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
     wire [`ysyx_24080020_WIDTH-1:0] snpc;
 
