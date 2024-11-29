@@ -40,7 +40,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu, wcsraddr2_exu, wcsraddr2_mem, wcsraddr2_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu, wcsrdata2_exu, wcsrdata2_mem, wcsrdata2_wb;
   wire [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr_idu, rcsraddr_exu, rcsraddr_mem, rcsraddr_wb;
-  wire [`ysyx_24080020_WIDTH-1:0] rcsrdata_idu, rcsrdata_exu, rcsrdata_mem. rcsrdata_wb;
+  wire [`ysyx_24080020_WIDTH-1:0] rcsrdata_idu, rcsrdata_exu, rcsrdata_mem, rcsrdata_wb;
 
   // memory
   wire mwen_idu, mwen_exu, mwen_mem;

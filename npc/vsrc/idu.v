@@ -229,7 +229,7 @@ module ysyx_24080020_IDU (
                         mwmask_idu = 4'b1;
                     end
                     `ysyx_24080020_SH: begin
-                        mwmask_idu = 4'10;
+                        mwmask_idu = 4'b10;
                     end
                     `ysyx_24080020_SW: begin
                         mwmask_idu = 4'b100;
