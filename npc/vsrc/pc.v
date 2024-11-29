@@ -4,7 +4,7 @@ module ysyx_24080020_PC (
     input rst,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
-    input [`ysyx_24080020_WIDTH-1:0] snpc,
+    // input [`ysyx_24080020_WIDTH-1:0] snpc,
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
 
@@ -17,7 +17,7 @@ module ysyx_24080020_PC (
             addr <= dnpc;
         end
         else begin
-            addr <= snpc;
+            addr <= addr + 32'd4;
         end
 
     end

@@ -85,13 +85,13 @@ module ysyx_24080020_IFU (
         end
     end
 
-    assign snpc = addr + 32'd4;
+    // assign snpc = addr + 32'd4;
 
     ysyx_24080020_PC u_pc(
         .clk(clk),
         .rst(rst),
         .dnpc(dnpc),
-        .snpc(snpc),
+        // .snpc(snpc),
         .is_dnpc(is_dnpc),
         .addr(addr)
     );
