@@ -347,7 +347,7 @@ module ysyx_24080020_IDU (
                 wen_idu = 1'b1;
                 waddr_idu = rd;
 
-                rcsraddr = imm_idu;
+                rcsraddr = imm_idu[11:0];
 
                 src1_idu = val_raddr1;
                 alu_src2_con_idu = 1'b1;
