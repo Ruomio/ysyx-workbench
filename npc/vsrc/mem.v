@@ -131,37 +131,37 @@ module ysyx_24080020_MEM(
     end
 
     // read mrdata
-    always @(mraddr_mem or mrlen_mem or rst or mrtype_mem or mrdata_tmp) begin
+    always @(posedge clk) begin
         if(!rst) begin
-            mrdata_mem = 32'b0;
+            mrdata_mem <= 32'b0;
         end
         else if(mraddr_mem != 32'b0 && mren_mem) begin
             if(mrtype_mem) begin
                 // zero extension
-                mrdata_mem = mrdata_tmp;
+                mrdata_mem <= mrdata_tmp;
             end
             else begin
                 // signed extension
                 case(mrlen_mem)
                     4'b0001: begin
-                        mrdata_mem = {{24{mrdata_tmp[7]}}, mrdata_tmp[7:0]};
+                        mrdata_mem <= {{24{mrdata_tmp[7]}}, mrdata_tmp[7:0]};
                     end
                     4'b0010: begin
-                        mrdata_mem = {{16{mrdata_tmp[15]}}, mrdata_tmp[15:0]};
+                        mrdata_mem <= {{16{mrdata_tmp[15]}}, mrdata_tmp[15:0]};
                     end
                     4'b0100: begin
-                        mrdata_mem = mrdata_tmp;
+                        mrdata_mem <= mrdata_tmp;
                     end
                     default: begin
-                        mrdata_mem = ~32'b0;
+                        mrdata_mem <= ~32'b0;
                     end
                 endcase
 
-                mem_wb_valid = 1'b1;
+                mem_wb_valid <= 1'b1;
             end
         end
         else begin
-            mrdata_mem = mrdata_mem;
+            mrdata_mem <= mrdata_mem;
         end
 
     end
