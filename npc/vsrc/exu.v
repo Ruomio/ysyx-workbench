@@ -88,7 +88,7 @@ module ysyx_24080020_EXU
     reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src2_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] wdata_idu;
+    reg [`ysyx_24080020_WIDTH-1:0] wdata_exu;
 
 
     reg state;   // 0:idle;   1:wait_ready
