@@ -31,9 +31,10 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             state <= 1'b0;
-            if_en <= 1'b1; // first inst
         end
         else if(!state) begin
+            if_en <= 1'b1; // first inst
+
             if(ifu_idu_valid) state <= 1'b1;
             else state <= 1'b0;
         end
@@ -44,7 +45,10 @@ module ysyx_24080020_IFU (
     end
 
     always @(posedge clk) begin
-        if(inst_fin) begin
+        if(!rst) begin
+
+        end
+        else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
             inst_fin <= 1'b0;
         end
