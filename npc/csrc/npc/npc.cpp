@@ -109,7 +109,7 @@ void exec_once_npc(uint32_t pc) {
     tfp->dump(contextp->time());
     contextp->timeInc(1);
 #endif
-    if(last_pc != top->pc) {
+    if(last_pc != g_get_pc()) {
       break;
     }
   }
@@ -143,7 +143,7 @@ void exec_once_npc(uint32_t pc) {
 
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
-    exec_once_npc(top->pc);
+    exec_once_npc(g_get_pc());
     trace_and_difftest(g_get_dnpc());
   }
 }
@@ -174,7 +174,7 @@ void exec_npc(int n) {
   else {
     for(; n>0; n--) {
       if (u_npc_state.state != NPC_RUNNING) break;
-      exec_once_npc(top->pc);
+      exec_once_npc(g_get_pc());
       trace_and_difftest(g_get_dnpc());
     }
   }
@@ -237,7 +237,11 @@ void check_trap(npc_state u_npc_state) {
 }
 
 uint32_t g_get_pc() {
-  return top->pc;
+  return top->rootp->top__DOT__u_npc__DOT__pc_ifu;
+}
+
+void g_set_pc(uint32_t pc) {
+  top->rootp->top__DOT__u_npc__DOT__pc_ifu = pc;
 }
 
 uint32_t g_get_reg(int i) {
@@ -250,14 +254,14 @@ uint32_t g_get_snpc() {
 }
 
 uint32_t g_get_dnpc() {
-  return top->rootp->top__DOT__u_npc__DOT__dnpc;
+  return top->rootp->top__DOT__u_npc__DOT__dnpc_wb;
 }
 
 uint32_t g_get_rs1() {
-  return BITS(top->rootp->top__DOT__u_npc__DOT__inst, 19, 15);
+  return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 19, 15);
 }
 uint32_t g_get_rd() {
-  return BITS(top->rootp->top__DOT__u_npc__DOT__inst, 11, 7);
+  return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 11, 7);
 }
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
@@ -282,5 +286,6 @@ void update_dut() {
   for(int i=0; i<32; i++) {
     top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
   }
-  top->pc = npc_cpu.pc;
+  // top->pc = npc_cpu.pc;
+  g_set_pc(npc_cpu.pc);
 }
