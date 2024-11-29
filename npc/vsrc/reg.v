@@ -7,7 +7,9 @@ module ysyx_24080020_REG
     input [4:0] raddr1,
     input [4:0] raddr2,
 
-    input [`ysyx_24080020_WIDTH-1:0] is_load_mem,
+    input is_load_mem,
+    input is_dnpc_mem,
+    output is_dnpc_wb,
 
     input wen_mem,
     input [4:0] waddr_mem,
@@ -97,6 +99,8 @@ module ysyx_24080020_REG
 
                 alu_out_wb <= alu_out_mem;
                 is_load_wb <= is_load_mem;
+
+                is_dnpc_wb <= is_dnpc_mem;
 
             end
         end

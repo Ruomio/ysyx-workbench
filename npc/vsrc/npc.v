@@ -9,7 +9,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu;
   // wire [`ysyx_24080020_WIDTH-1:0] snpc, snpc_ifu, snpc_idu, snpc_exu;
   wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_exu, dnpc_mem;
-  wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem;
+  wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, is_dnpc_wb;
 
   // inst
   wire [`ysyx_24080020_WIDTH-1:0] inst_ifu, inst_idu;
@@ -146,6 +146,8 @@ module ysyx_24080020_NPC(
         .raddr2(rs2), 
 
         .is_load_mem(is_load_mem),
+        .is_dnpc_mem(is_dnpc_mem),
+        .is_dnpc_wb(is_dnpc_wb),
 
         .wen_mem(wen_mem), 
         .waddr_mem(waddr_mem), 
