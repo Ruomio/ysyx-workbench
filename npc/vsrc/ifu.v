@@ -11,8 +11,8 @@ module ysyx_24080020_IFU (
 
     input wb_ifu_valid,
     input idu_ifu_ready,
-    output ifu_wb_ready,
-    output ifu_idu_valid
+    output reg ifu_wb_ready,
+    output reg ifu_idu_valid
 
 );
     reg is_dnpc;
