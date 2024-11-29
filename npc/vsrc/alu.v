@@ -1,10 +1,8 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_ALU(
-    input [3:0] alu_op,
+    input [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op,
     input [`ysyx_24080020_WIDTH-1:0] alu_src1,
     input [`ysyx_24080020_WIDTH-1:0] alu_src2,
-    input [`ysyx_24080020_WIDTH-1:0] alu_pc,
-    input [`ysyx_24080020_WIDTH-1:0] alu_shift,
     output reg [`ysyx_24080020_WIDTH-1:0] alu_out
 );
 
@@ -39,24 +37,6 @@ module ysyx_24080020_ALU(
             end 
             `ysyx_24080020_ALU_SRA: begin
                 alu_out = alu_src1 >> alu_src2[4:0] | ({32{alu_src1[31]}} & ~(32'hffffffff >> alu_src2[4:0]));
-            end 
-            `ysyx_24080020_ALU_BEQ: begin
-                alu_out = alu_src1 == alu_src2 ? alu_pc + alu_shift : alu_pc + 32'b100;
-            end 
-            `ysyx_24080020_ALU_BNE: begin
-                alu_out = alu_src1 != alu_src2 ? alu_pc + alu_shift : alu_pc + 32'b100;
-            end 
-            `ysyx_24080020_ALU_BLT: begin
-                alu_out = $signed(alu_src1) < $signed(alu_src2) ? alu_pc + alu_shift : alu_pc + 32'b100;
-            end 
-           `ysyx_24080020_ALU_BLTU: begin
-                alu_out = alu_src1 < alu_src2 ? alu_pc + alu_shift : alu_pc + 32'b100;
-            end 
-            `ysyx_24080020_ALU_BGE: begin
-                alu_out = $signed(alu_src1) >= $signed(alu_src2) ? alu_pc + alu_shift : alu_pc + 32'b100;
-            end 
-            `ysyx_24080020_ALU_BGEU: begin
-                alu_out = alu_src1 >= alu_src2 ? alu_pc + alu_shift : alu_pc + 32'b100;
             end 
             
             default: begin
