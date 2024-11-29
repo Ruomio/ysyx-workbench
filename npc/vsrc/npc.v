@@ -207,7 +207,7 @@ module ysyx_24080020_NPC(
         .wdata_idu(wdata_idu),
         .wen_exu(wen_exu),
         .waddr_exu(waddr_exu),
-        .wdata_exu(wdata_exu),
+        // .wdata_exu(wdata_exu),
 
         //memory
         .mwen_idu(mwen_idu),

@@ -29,7 +29,7 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_WIDTH-1:0] wdata_idu,
     output reg wen_exu,
     output reg [4:0] waddr_exu,
-    output reg[`ysyx_24080020_WIDTH-1:0] wdata_exu,
+    // output reg[`ysyx_24080020_WIDTH-1:0] wdata_exu,
 
     // memory
     input mwen_idu,
