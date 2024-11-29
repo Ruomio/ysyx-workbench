@@ -73,6 +73,7 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             state <= 1'b0;
+            wb_ifu_valid <= 1'b1;
         end
         else if(!state) begin
             if(wb_ifu_valid) state <= 1'b1;
