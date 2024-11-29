@@ -11,7 +11,7 @@ module ysyx_24080020_EXU
     // branch
     input is_jalr_idu,
     input is_dnpc_idu,
-    input is_btype_idu,
+    // input is_btype_idu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg is_dnpc_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,

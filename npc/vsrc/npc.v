@@ -90,7 +90,7 @@ module ysyx_24080020_NPC(
         .pc_ifu(pc_ifu), 
         .inst_ifu(inst_ifu),
         .wb_ifu_valid(wb_ifu_valid),
-        .id_ifu_ready(idu_ifu_ready),
+        .idu_ifu_ready(idu_ifu_ready),
         .ifu_idu_valid(ifu_idu_valid),
         .ifu_wb_ready(ifu_wb_ready)
     );
@@ -116,13 +116,13 @@ module ysyx_24080020_NPC(
         .rcsraddr(rcsraddr),
         .wcsren_idu(wcsren_idu),
         .wcsraddr_idu(wcsraddr_idu),
-        .wcsrdata(wcsrdata),
+        .wcsrdata_idu(wcsrdata_idu),
         .wcsren2_idu(wcsren2_idu),
         .wcsraddr2_idu(wcsraddr2_idu),
         .wcsrdata2_idu(wcsrdata2_idu),
 
         .alu_op_idu(alu_op_idu),
-        .alu_src2_con(alu_src2_con),
+        .alu_src2_con_idu(alu_src2_con_idu),
         .pc_idu(pc_idu),
         .src1_idu(src1_idu),
         .src2_idu(src2_idu),
@@ -179,6 +179,7 @@ module ysyx_24080020_NPC(
         .pc_idu(pc_idu),
         .imm_idu(imm_idu),
         .is_load_idu(is_load_idu),
+        .is_load_exu(is_load_exu),
 
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
@@ -263,6 +264,9 @@ module ysyx_24080020_NPC(
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
         .wcsrdata_mem(wcsrdata_mem),
+        .wcsren2_mem(wcsren2_mem),
+        .wcsraddr2_mem(wcsraddr2_mem),
+        .wcsrdata2_mem(wcsrdata2_mem),
 
         .wen_exu(wen_exu),
         .wen_mem(wen_mem),
