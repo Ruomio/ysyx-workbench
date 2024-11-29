@@ -9,7 +9,7 @@ module ysyx_24080020_REG
 
     input is_load_mem,
     input is_dnpc_mem,
-    output is_dnpc_wb,
+    output reg is_dnpc_wb,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_wb,
 
