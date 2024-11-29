@@ -278,6 +278,7 @@ module ysyx_24080020_NPC(
         .is_load_mem(is_load_mem),
 
         .dnpc_new_exu(dnpc_new_exu),
+        .dnpc_mem(dnpc_mem),
         .is_dnpc_exu(is_dnpc_exu),
         .is_dnpc_mem(is_dnpc_mem),
 

@@ -82,10 +82,9 @@ module ysyx_24080020_EXU
     reg is_jalr_exu;
     reg is_csrtype_exu;
     reg alu_src2_con_exu;
+    reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu;
     reg [`ysyx_24080020_WIDTH-1:0] pc_exu;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] src2_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] alu_out_exu;
     reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src2_exu;
