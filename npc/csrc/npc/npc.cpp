@@ -13,6 +13,7 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 
+#define MAX_WAVE_STEP 10000
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -40,6 +41,7 @@ static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
+static uint32_t total_wave_stop = 0; 
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -108,6 +110,9 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
     contextp->timeInc(1);
+    if(total_wave_stop++ > MAX_WAVE_STEP) {
+      u_npc_state.state = NPC_QUIT;
+    }
 #endif
     if(last_pc != g_get_pc()) {
       break;
