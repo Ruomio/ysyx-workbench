@@ -29,18 +29,20 @@ module ysyx_24080020_NPC(
   // reg
   wire wen_idu, wen_exu, wen_mem, wen_wb;
   wire [4:0] waddr_idu, waddr_exu, waddr_mem, waddr_wb;
-  wire [`ysyx_24080020_WIDTH-1:0] wdata_exec, wdata_mem, wdata_wb;
+  wire [`ysyx_24080020_WIDTH-1:0] wdata_exu, wdata_mem, wdata_wb;
   wire [`ysyx_24080020_WIDTH-1:0] src1_idu, src1_exu;
   wire [`ysyx_24080020_WIDTH-1:0] src2_idu, src2_exu, src2_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] val_raddr1, val_raddr2;
   // csrs
+  wire is_csrtype_idu;
   wire wcsren_idu, wcsren_exu, wcsren_mem, wcsren_wb;
   wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu, wcsraddr_exu, wcsraddr_mem, wcsraddr_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu, wcsrdata_exu, wcsrdata_mem, wcsrdata_wb;
   wire wcsren2_idu, wcsren2_exu, wcsren2_mem, wcsren2_wb;
   wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu, wcsraddr2_exu, wcsraddr2_mem, wcsraddr2_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu, wcsrdata2_exu, wcsrdata2_mem, wcsrdata2_wb;
-  wire [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr_idu, rcsraddr_exu, rcsraddr_mem, rcsraddr_wb;
-  wire [`ysyx_24080020_WIDTH-1:0] rcsrdata_idu, rcsrdata_exu, rcsrdata_mem, rcsrdata_wb;
+  wire [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr;
+  wire [`ysyx_24080020_WIDTH-1:0] rcsrdata;
 
   // memory
   wire mwen_idu, mwen_exu, mwen_mem;
@@ -57,7 +59,7 @@ module ysyx_24080020_NPC(
   wire [3:0] alu_op_idu, alu_op_exu;
   // wire [`ysyx_24080020_WIDTH-1:0] alu_src1;
   // wire [`ysyx_24080020_WIDTH-1:0] alu_src2;
-  // wire [`ysyx_24080020_WIDTH-1:0] alu_out;
+  wire [`ysyx_24080020_WIDTH-1:0] alu_out_exu, alu_out_mem;
 
   // bus control
   // IFU -> DEU -> EXU -> LSU -> WB
@@ -148,10 +150,12 @@ module ysyx_24080020_NPC(
         .is_load_mem(is_load_mem),
         .is_dnpc_mem(is_dnpc_mem),
         .is_dnpc_wb(is_dnpc_wb),
+        .dnpc_mem(dnpc_mem),
+        .dnpc_wb(dnpc_wb),
 
         .wen_mem(wen_mem), 
         .waddr_mem(waddr_mem), 
-        .wdata_mem(wdata_mem), 
+        // .wdata_mem(wdata_mem), 
         .mrdata_mem(mrdata_mem),
         .alu_out_mem(alu_out_mem),
 
@@ -162,8 +166,8 @@ module ysyx_24080020_NPC(
         .wcsraddr2_mem(wcsraddr2_mem),
         .wcsrdata2_mem(wcsrdata2_mem),
 
-        .val_raddr1(src1), 
-        .val_raddr2(src2),
+        .val_raddr1(val_raddr1), 
+        .val_raddr2(val_raddr2),
         .rcsraddr(rcsraddr),
         .rcsrdata(rcsrdata),
 

@@ -10,6 +10,8 @@ module ysyx_24080020_REG
     input is_load_mem,
     input is_dnpc_mem,
     output is_dnpc_wb,
+    input dnpc_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_wb,
 
     input wen_mem,
     input [4:0] waddr_mem,
@@ -44,6 +46,8 @@ module ysyx_24080020_REG
     reg state; // 0:idle;    1:wait_ready
 
     integer  i;
+
+    reg is_load_wb;
  
     reg [2:0] wcsr_idx;
     reg [2:0] wcsr_idx2;
@@ -51,6 +55,9 @@ module ysyx_24080020_REG
 
     reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
+
+    reg wen_wb;
+    reg [4:0] waddr_wb;
     
     reg wcsren_wb;
     reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_wb;
@@ -68,11 +75,11 @@ module ysyx_24080020_REG
             state <= 1'b0;
         end
         else if(!state) begin
-            if(reg_pc_valid) state <= 1'b1;
+            if(wb_ifu_valid) state <= 1'b1;
             else state <= 1'b0;
         end
         else begin
-            if(pc_reg_ready) state <= 1'b0;
+            if(ifu_wb_ready) state <= 1'b0;
             else state <= 1'b1;
         end
 

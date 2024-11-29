@@ -12,6 +12,8 @@ module ysyx_24080020_IDU (
 
     // reg
     output reg wen_idu,
+    output reg [4:0] waddr_idu,
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
     output reg is_load_idu,
     output reg is_dnpc_idu,
     // output reg is_jal_idu,
@@ -126,7 +128,7 @@ module ysyx_24080020_IDU (
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_id[`ysyx_24080020_IMM_I]};
+                imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
                 alu_src2_con_idu = 1'b1;
 
                 mwen_idu = 1'b0;
@@ -344,7 +346,7 @@ module ysyx_24080020_IDU (
                 wen_idu = 1'b1;
                 waddr_idu = rd;
 
-                rcsraddr_idu = imm_idu;
+                rcsraddr = imm_idu;
 
                 src1_idu = val_raddr1;
                 alu_src2_con_idu = 1'b1;
@@ -360,7 +362,7 @@ module ysyx_24080020_IDU (
                             // ecall
                             // csrs[mepc] = pc;
                             wcsraddr_idu = `ysyx_24080020_MEPC_ADDR;
-                            wcsrdata_idu = pc;
+                            wcsrdata_idu = pc_idu;
                             wcsren_idu = 1'b1;
 
                             // csrs[mcause] = R[a5];
@@ -378,7 +380,7 @@ module ysyx_24080020_IDU (
                             // mret
                             rcsraddr_idu = `ysyx_24080020_MEPC_ADDR;
                             dnpc_idu = rcsrdata;
-                            is_dnpc = 1'b1;
+                            is_dnpc_idu = 1'b1;
                         end
                         else begin
                             is_csrtype_idu = 1'b0;
@@ -491,7 +493,7 @@ module ysyx_24080020_IDU (
 
             // rst
             7'b0000000 : begin
-                imm = 32'b0;
+                imm_idu = 32'b0;
             end
             /* `ysyx_24080020_EBREAK: begin
                 imm = 32'b0;
@@ -499,7 +501,7 @@ module ysyx_24080020_IDU (
             end */
 
             default: begin
-                imm = 32'b0;
+                imm_idu = 32'b0;
                 invalid_inst();
             end
         endcase
