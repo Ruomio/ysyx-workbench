@@ -52,7 +52,7 @@ module ysyx_24080020_IFU (
             if_en <= 1'b0;
         end
         else begin
-            ifu_idu_valid <= ifu_idu_valid;
+            // ifu_idu_valid <= ifu_idu_valid;
         end
 
     end
@@ -76,7 +76,7 @@ module ysyx_24080020_IFU (
                 if_en <= 1'b1;
             end
         end
-        else if(idu_ifu_ready && !state) begin
+        else if(idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
         end
         else begin
