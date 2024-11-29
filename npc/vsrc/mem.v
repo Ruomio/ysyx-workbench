@@ -152,6 +152,9 @@ module ysyx_24080020_MEM(
                     4'b0100: begin
                         mrdata_mem = mrdata_tmp;
                     end
+                    default: begin
+                        mrdata_mem = ~32'b0;
+                    end
                 endcase
 
                 mem_wb_valid = 1'b1;
