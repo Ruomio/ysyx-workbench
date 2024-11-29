@@ -133,7 +133,7 @@ module ysyx_24080020_MEM(
     // read mrdata
     always @(mraddr_mem or mrlen_mem or rst or mrtype_mem or mrdata_tmp) begin
         if(!rst) begin
-            mrdata_mem <= 32'b0;
+            mrdata_mem = 32'b0;
         end
         else if(mraddr_mem != 32'b0 && mren_mem) begin
             if(mrtype_mem) begin
@@ -161,7 +161,7 @@ module ysyx_24080020_MEM(
             end
         end
         else begin
-            mrdata_mem <= mrdata_mem;
+            mrdata_mem = mrdata_mem;
         end
 
     end
