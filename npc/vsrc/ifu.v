@@ -74,7 +74,7 @@ module ysyx_24080020_IFU (
             ifu_idu_valid <= 1'b0;
         end
         else begin
-            if_en <= 1'b0;
+            // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
         end
     end
