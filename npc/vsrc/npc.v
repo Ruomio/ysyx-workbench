@@ -85,8 +85,8 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IFU ifu(
         .clk(clk), 
         .rst(rst), 
-        .dnpc_wb(dnpc_wb)
-        .is_dnpc_wb(is_dnpc_wb)
+        .dnpc_wb(dnpc_wb),
+        .is_dnpc_wb(is_dnpc_wb),
         .pc_ifu(pc_ifu), 
         .inst_ifu(inst_ifu),
         .wb_ifu_valid(wb_ifu_valid),
