@@ -242,11 +242,11 @@ void check_trap(npc_state u_npc_state) {
 }
 
 uint32_t g_get_pc() {
-  return top->rootp->top__DOT__u_npc__DOT__pc_ifu;
+  return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
 }
 
 void g_set_pc(uint32_t pc) {
-  top->rootp->top__DOT__u_npc__DOT__pc_ifu = pc;
+  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 }
 
 uint32_t g_get_reg(int i) {
