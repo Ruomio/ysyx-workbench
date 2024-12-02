@@ -93,6 +93,8 @@ module ysyx_24080020_EXU
 
     reg state;   // 0:idle;   1:wait_ready
 
+    reg cnt;
+
 
 
     // memory
@@ -156,7 +158,8 @@ module ysyx_24080020_EXU
                 wcsraddr2_exu <= wcsraddr2_idu;
                 wcsrdata2_exu <= wcsrdata2_idu;
 
-                exu_mem_valid <= 1'b1;
+                // exu_mem_valid <= 1'b1;
+                cnt <= cnt + 1'b1;
             end
         end
         else if(mem_exu_ready && state) begin
@@ -182,6 +185,18 @@ module ysyx_24080020_EXU
         else begin
             if(mem_exu_ready) state <= 1'b0;
             else state <= 1'b1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            cnt <= 1'b0;
+        end
+        else if(cnt == 1'b1) begin
+            exu_mem_valid <= 1'b1;
+        end
+        else begin
+            cnt <= 1'b0;
         end
     end
     

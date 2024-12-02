@@ -25,7 +25,7 @@ module ysyx_24080020_IR(
                 cnt <= 1'b0;
             end
             else begin
-                cnt <= cnt + 1'b1;
+                cnt <= 1'b1;
             end
         end
         else begin

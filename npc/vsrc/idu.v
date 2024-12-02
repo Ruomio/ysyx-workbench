@@ -103,7 +103,7 @@ module ysyx_24080020_IDU (
                 pc_idu <= pc_ifu;
                 inst_idu <= inst_ifu;
 
-                idu_exu_valid <= 1'b1;
+                // idu_exu_valid <= 1'b1;
             end
         end
         else if(exu_idu_ready && state) begin
@@ -128,6 +128,8 @@ module ysyx_24080020_IDU (
         mren_idu = 1'b0;
         mwen_idu = 1'b0;
         wen_idu = 1'b0;
+
+        idu_exu_valid <= 1'b1;
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin

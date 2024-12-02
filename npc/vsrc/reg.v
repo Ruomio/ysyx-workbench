@@ -112,8 +112,12 @@ module ysyx_24080020_REG
                 is_load_wb <= is_load_mem;
 
                 is_dnpc_wb <= is_dnpc_mem;
-
-                wb_ifu_valid <= 1'b1;
+                if(!wen_exu) begin
+                    wb_ifu_valid <= 1'b1;
+                end
+                else begin
+                    wb_ifu_valid <= 1'b0;
+                end
             end
         end
         else if(ifu_wb_ready && state) begin
@@ -136,6 +140,7 @@ module ysyx_24080020_REG
         end
         else if(wen_wb && (waddr_wb != 5'b0) && ifu_wb_ready && state) begin
             regs[waddr_wb] <= result;
+            wb_ifu_valid <= 1'b1;
         end
         else begin
             regs[0] <= 32'b0;
