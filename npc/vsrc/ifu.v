@@ -48,6 +48,7 @@ module ysyx_24080020_IFU (
         end
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
+            pc_ifu <= addr;
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
@@ -94,7 +95,7 @@ module ysyx_24080020_IFU (
         .rst(rst),
         .is_update_pc(is_update_pc),
         .dnpc(dnpc),
-        .pc_ifu(pc_ifu),
+        // .pc_ifu(pc_ifu),
         .is_dnpc(is_dnpc),
         .if_en(if_en),
         .addr(addr)
