@@ -50,9 +50,8 @@ module ysyx_24080020_IFU (
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
             // inst_fin <= 1'b0;
-            if_en <= 1'b0;
-
-            is_update_pc <= 1'b0;
+            // if_en <= 1'b0;
+            // is_update_pc <= 1'b0;
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
@@ -85,6 +84,9 @@ module ysyx_24080020_IFU (
             ifu_idu_valid <= 1'b0;
         end
         else begin
+            // process
+            if_en <= 1'b0;
+            is_update_pc <= 1'b0;
             // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
         end
