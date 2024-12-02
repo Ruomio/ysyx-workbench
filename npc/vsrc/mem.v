@@ -174,7 +174,7 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
         end
-        else if(mwen_mem && wb_mem_ready && state) begin
+        else if(mwen_mem) begin
             write_memory(mwaddr_mem, {{28{1'b0}},mwmask_mem}, mwdata_mem);
             mem_wb_valid <= 1'b1;
         end
