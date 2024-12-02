@@ -106,7 +106,7 @@ module ysyx_24080020_IFU (
         .clk(clk),
         .rst(rst),
         .if_en(if_en),
-        .addr(addr),
+        .addr(pc_ifu),
         .inst(inst_ifu),
         .inst_fin(inst_fin)
     );
