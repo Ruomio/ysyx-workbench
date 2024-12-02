@@ -110,9 +110,10 @@ module ysyx_24080020_MEM(
                 wcsraddr2_mem <= wcsraddr2_exu;
                 wcsrdata2_mem <= wcsrdata2_exu;
 
-                if(!mwen_exu && !mren_exu) begin
-                    mem_wb_valid <= 1'b1;
-                end
+                mem_wb_valid <= 1'b1;
+                // if(!mwen_exu && !mren_exu) begin
+                //     mem_wb_valid <= 1'b1;
+                // end
             end
         end
         else if(wb_mem_ready && state) begin
@@ -176,7 +177,7 @@ module ysyx_24080020_MEM(
         end
         else if(mwen_mem) begin
             write_memory(mwaddr_mem, {{28{1'b0}},mwmask_mem}, mwdata_mem);
-            mem_wb_valid <= 1'b1;
+            // mem_wb_valid <= 1'b1;
         end
 
     end
