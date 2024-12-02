@@ -13,7 +13,7 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 
-#define MAX_WAVE_STEP 100
+#define MAX_WAVE_STEP 10000
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
