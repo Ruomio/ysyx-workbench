@@ -62,6 +62,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(g_get_pc(), g_get_dnpc()));
+  printf("1\n");
 
 #ifdef CONFIG_WATCH_POINT
   // scan and print all watch point and break point
