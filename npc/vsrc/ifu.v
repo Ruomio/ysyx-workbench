@@ -76,7 +76,7 @@ module ysyx_24080020_IFU (
                 dnpc <= dnpc_wb;
                 is_dnpc <= is_dnpc_wb;
 
-                if_en <= 1'b1;
+                // if_en <= 1'b1;
 
                 is_update_pc <= 1'b1;
             end
@@ -99,6 +99,7 @@ module ysyx_24080020_IFU (
         .dnpc(dnpc),
         .pc_ifu(pc_ifu),
         .is_dnpc(is_dnpc),
+        .if_en(if_en),
         .addr(addr)
     );
 

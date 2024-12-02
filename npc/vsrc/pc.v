@@ -7,6 +7,7 @@ module ysyx_24080020_PC (
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
     // input [`ysyx_24080020_WIDTH-1:0] snpc,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
+    output reg if_en,
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
 
@@ -20,6 +21,7 @@ module ysyx_24080020_PC (
         else if(is_update_pc) begin
             if(cnt == 1'b1) begin
                 addr <= is_dnpc ? dnpc : addr + 32'd4;
+                if_en <= 1'b1;
                 pc_ifu <= addr;
                 cnt <= 1'b0;
             end
