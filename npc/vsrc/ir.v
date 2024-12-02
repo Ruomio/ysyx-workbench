@@ -16,17 +16,10 @@ module ysyx_24080020_IR(
     always @(posedge clk) begin
         if(!rst) begin
             inst <= 32'b0;
-            cnt <= 1'b0;
         end
         else if(if_en) begin
-            if(cnt == 1'b1) begin
-                inst <= read_memory(addr, 32'b100);
-                inst_fin <= 1'b1;
-                cnt <= 1'b0;
-            end
-            else begin
-                cnt <= 1'b1;
-            end
+            inst <= read_memory(addr, 32'b100);
+            inst_fin <= 1'b1;
         end
         else begin
             inst <= inst;
