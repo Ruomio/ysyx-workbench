@@ -109,6 +109,10 @@ module ysyx_24080020_MEM(
                 wcsren2_mem <= wcsren2_exu;
                 wcsraddr2_mem <= wcsraddr2_exu;
                 wcsrdata2_mem <= wcsrdata2_exu;
+
+                if(!mwen_exu && !mren_exu) begin
+                    mem_wb_valid <= 1'b1;
+                end
             end
         end
         else if(wb_mem_ready && state) begin
