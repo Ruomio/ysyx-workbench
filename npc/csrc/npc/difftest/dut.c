@@ -123,7 +123,6 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
-  assert(0);
   CPU_state ref_r;
 
   if (skip_dut_nr_inst > 0) {
@@ -138,6 +137,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
       panic("can not catch up with ref.pc = " FMT_WORD " at pc = " FMT_WORD, ref_r.pc, pc);
     return;
   }
+  assert(0);
 
   if (is_skip_ref) {
     // to skip the checking of an instruction, just copy the reg state to reference design
