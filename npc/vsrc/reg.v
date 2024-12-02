@@ -142,7 +142,6 @@ module ysyx_24080020_REG
         end
         else if(wen_wb && (waddr_wb != 5'b0)) begin
             regs[waddr_wb] <= result;
-            wb_ifu_valid <= 1'b1;
         end
         else begin
             regs[0] <= 32'b0;
