@@ -2,7 +2,7 @@
 module ysyx_24080020_PC (
     input clk,
     input rst,
-    input is_update_pc,
+    // input is_update_pc,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
     // input [`ysyx_24080020_WIDTH-1:0] snpc,
