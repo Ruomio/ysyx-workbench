@@ -6,7 +6,7 @@ module ysyx_24080020_IFU (
     input [`ysyx_24080020_WIDTH-1:0] dnpc_wb,
     input is_dnpc_wb,
 
-    output [`ysyx_24080020_WIDTH-1:0] pc_ifu,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
 
     input wb_ifu_valid,
@@ -22,7 +22,7 @@ module ysyx_24080020_IFU (
     wire [`ysyx_24080020_WIDTH-1:0] snpc;
 
 
-    wire [`ysyx_24080020_WIDTH-1:0] addr;
+    // wire [`ysyx_24080020_WIDTH-1:0] addr;
 
     reg inst_fin;
     // reg [`ysyx_24080020_WIDTH-1:0] inst_ifu;
@@ -99,7 +99,7 @@ module ysyx_24080020_IFU (
         .dnpc(dnpc),
         // .snpc(snpc),
         .is_dnpc(is_dnpc),
-        .addr(addr)
+        .addr(pc_ifu)
     );
 
     ysyx_24080020_IR u_ir(
