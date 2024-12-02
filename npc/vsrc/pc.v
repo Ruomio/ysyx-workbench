@@ -9,15 +9,16 @@ module ysyx_24080020_PC (
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
 
-    reg [`ysyx_24080020_WIDTH-1:0] next_addr;
+    reg [`ysyx_24080020_WIDTH-1:0] last_pc;
 
     always @(posedge clk) begin
         if(!rst) begin
-            next_addr <= `ysyx_24080020_MBASE;
+            addr <= `ysyx_24080020_MBASE;
+            last_pc <= 32'b0;
         end
-        else if(is_update_pc) begin
-            next_addr <= is_dnpc ? dnpc : next_addr + 32'd4;
-            addr <= next_addr;
+        else if(last_pc != addr) begin
+            addr <= is_dnpc ? dnpc : addr + 32'd4;
+            last_pc = addr;
         end
         else begin
             addr <= addr;
