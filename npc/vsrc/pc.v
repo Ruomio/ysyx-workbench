@@ -25,7 +25,7 @@ module ysyx_24080020_PC (
                 addr <= is_dnpc ? dnpc :
                         ~first_if ? addr : addr + 32'd4;
                 if_en <= 1'b1;
-                first_if 1'b1;
+                first_if <= 1'b1;
 
                 pc_ifu <= addr;
                 cnt <= 1'b0;
