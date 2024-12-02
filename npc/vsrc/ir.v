@@ -25,7 +25,7 @@ module ysyx_24080020_IR(
                 inst <= read_memory(addr, 32'b100);
                 inst_fin <= 1'b1;
                 cnt <= 1'b0;
-                cn1 <= 1'b0;
+                cnt1 <= 1'b0;
             end
             else if(cnt == 1'b0 && cnt1 == 1'b0) begin
                 cnt <= 1'b1;
