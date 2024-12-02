@@ -148,9 +148,9 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-  assert(0);
 
   checkregs(&ref_r, pc);
+  assert(0);
 }
 
 #else
