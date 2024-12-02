@@ -11,13 +11,22 @@ module ysyx_24080020_IR(
 );
     import "DPI-C" function int read_memory(input int addr, input int len);
 
-    always @(posedge clk or posedge rst) begin
+    reg cnt;
+
+    always @(posedge clk) begin
         if(!rst) begin
             inst <= 32'b0;
+            cnt <= 1'b0;
         end
         else if(if_en) begin
-            inst <= read_memory(addr, 32'b100);
-            inst_fin <= 1'b1;
+            if(cnt == 1'b1) begin
+                inst <= read_memory(addr, 32'b100);
+                inst_fin <= 1'b1;
+                cnt <= 1'b0;
+            end
+            else begin
+                cnt <= cnt + 1'b1;
+            end
         end
         else begin
             inst <= inst;
