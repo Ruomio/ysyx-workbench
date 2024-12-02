@@ -199,7 +199,7 @@ module ysyx_24080020_EXU
             cnt <= 1'b0;
         end
         else begin
-            cnt <= cnt;
+            // cnt <= cnt;
         end
     end
     
