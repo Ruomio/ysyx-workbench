@@ -95,7 +95,7 @@ module ysyx_24080020_IFU (
     ysyx_24080020_PC u_pc(
         .clk(clk),
         .rst(rst),
-        .is_update_pc(wb_ifu_valid),
+        .is_update_pc(is_update_pc),
         .dnpc(dnpc),
         // .snpc(snpc),
         .is_dnpc(is_dnpc),
