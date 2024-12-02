@@ -2,6 +2,7 @@
 module ysyx_24080020_PC (
     input clk,
     input rst,
+    input is_update_pc,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
     // input [`ysyx_24080020_WIDTH-1:0] snpc,
@@ -13,11 +14,11 @@ module ysyx_24080020_PC (
         if(!rst) begin
             addr <= `ysyx_24080020_MBASE;
         end
-        else if(is_dnpc) begin
-            addr <= dnpc;
+        else if(is_update_pc) begin
+            addr <= is_dnpc ? dnpc : addr + 32'd4;
         end
         else begin
-            addr <= addr + 32'd4;
+            addr <= addr;
         end
 
     end
