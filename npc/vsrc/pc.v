@@ -18,7 +18,7 @@ module ysyx_24080020_PC (
         end
         else if(is_update_pc) begin
             if(cnt == 1'b1) begin
-                addr = is_dnpc ? dnpc : addr + 32'd4;
+                addr <= is_dnpc ? dnpc : addr + 32'd4;
                 cnt <= 1'b0;
             end
             else begin
@@ -26,7 +26,7 @@ module ysyx_24080020_PC (
             end
         end
         else begin
-            addr = addr;
+            addr <= addr;
         end
 
     end
