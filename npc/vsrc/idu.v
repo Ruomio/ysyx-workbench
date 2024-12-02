@@ -449,14 +449,14 @@ module ysyx_24080020_IDU (
 
             `ysyx_24080020_JAL: begin
                 imm_idu = {{12{inst_idu[31]}}, inst_idu[19:12], inst_idu[20], inst_idu[30:21], 1'b0};
-                is_dnpc_idu = 1'b1;
+                is_dnpc_idu = 1'b0;
 
                 mwen_idu = 1'b0;
 
                 wen_idu = 1'b1;
                 waddr_idu = rd;
                 // reg_dst_con_idu = 1'b0;
-                src1_idu = val_raddr1;
+                src1_idu = pc_idu;
                 src2_idu = 32'b100;
                 alu_src2_con_idu = 1'b0;
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
