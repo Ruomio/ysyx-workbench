@@ -16,6 +16,7 @@ module ysyx_24080020_IFU (
 
 );
     wire if_en;
+    wire inst_fin;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
     // wire [`ysyx_24080020_WIDTH-1:0] snpc;
 
@@ -24,7 +25,6 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
 
 
-    reg inst_fin;
     // reg [`ysyx_24080020_WIDTH-1:0] inst_ifu;
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -72,6 +72,7 @@ module ysyx_24080020_IFU (
                 is_dnpc <= is_dnpc_wb;
 
                 is_update_pc <= 1'b1;
+                // if_en <= 1'b1;
             end
         end
         else if(idu_ifu_ready && state) begin
@@ -79,7 +80,7 @@ module ysyx_24080020_IFU (
         end
         else if(!ifu_idu_valid) begin
             // process
-            is_update_pc <= 1'b0;
+            // is_update_pc <= 1'b0;
         end
         else begin
             // if_en <= 1'b0;
