@@ -15,14 +15,14 @@ module ysyx_24080020_IFU (
     output reg ifu_idu_valid
 
 );
+    wire if_en;
+    wire [`ysyx_24080020_WIDTH-1:0] addr;
+    // wire [`ysyx_24080020_WIDTH-1:0] snpc;
+
     reg is_dnpc;
-    reg if_en;
     reg is_update_pc;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
-    wire [`ysyx_24080020_WIDTH-1:0] snpc;
 
-
-    wire [`ysyx_24080020_WIDTH-1:0] addr;
 
     reg inst_fin;
     // reg [`ysyx_24080020_WIDTH-1:0] inst_ifu;
@@ -45,13 +45,9 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            // if_en <= 1'b1; // first inst
         end
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
-            // inst_fin <= 1'b0;
-            // if_en <= 1'b0;
-            // is_update_pc <= 1'b0;
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
@@ -75,24 +71,22 @@ module ysyx_24080020_IFU (
                 dnpc <= dnpc_wb;
                 is_dnpc <= is_dnpc_wb;
 
-                if_en <= 1'b1;
-
                 is_update_pc <= 1'b1;
             end
         end
         else if(idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
         end
-        else begin
+        else if(!ifu_idu_valid) begin
             // process
-            if_en <= 1'b0;
             is_update_pc <= 1'b0;
+        end
+        else begin
             // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
         end
     end
 
-    // assign snpc = addr + 32'd4;
 
     ysyx_24080020_PC u_pc(
         .clk(clk),
@@ -101,6 +95,7 @@ module ysyx_24080020_IFU (
         .dnpc(dnpc),
         .pc_ifu(pc_ifu),
         .is_dnpc(is_dnpc),
+        .if_en(if_en),
         .addr(addr)
     );
 
