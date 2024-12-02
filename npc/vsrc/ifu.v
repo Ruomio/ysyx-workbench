@@ -97,7 +97,7 @@ module ysyx_24080020_IFU (
         .rst(rst),
         .is_update_pc(is_update_pc),
         .dnpc(dnpc),
-        // .snpc(snpc),
+        .pc_ifu(pc_ifu),
         .is_dnpc(is_dnpc),
         .addr(addr)
     );
