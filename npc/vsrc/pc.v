@@ -14,7 +14,7 @@ module ysyx_24080020_PC (
     always @(posedge clk) begin
         if(!rst) begin
             addr <= `ysyx_24080020_MBASE;
-            last_pc <= 32'b0;
+            last_pc = 32'b0;
         end
         else if(last_pc != addr) begin
             addr <= is_dnpc ? dnpc : addr + 32'd4;
