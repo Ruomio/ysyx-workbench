@@ -80,7 +80,7 @@ module ysyx_24080020_IFU (
         end
         else if(!ifu_idu_valid) begin
             // process
-            // is_update_pc <= 1'b0;
+            is_update_pc <= 1'b0;
         end
         else begin
             // if_en <= 1'b0;
