@@ -112,7 +112,7 @@ module ysyx_24080020_REG
                 is_load_wb <= is_load_mem;
 
                 is_dnpc_wb <= is_dnpc_mem;
-                if(!wen_exu) begin
+                if(!wen_mem) begin
                     wb_ifu_valid <= 1'b1;
                 end
                 else begin
