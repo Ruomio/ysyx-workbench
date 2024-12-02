@@ -118,6 +118,7 @@ void exec_once_npc(uint32_t pc) {
       break;
     }
   }
+  if(total_wave_stop < 20) return;
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
