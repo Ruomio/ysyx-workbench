@@ -127,6 +127,7 @@ module ysyx_24080020_IDU (
         end
         else if(cnt == 1'b1) begin
             idu_exu_valid <= 1'b1;
+            cnt <= 1'b0;
         end
         else begin
             cnt <= 1'b0;

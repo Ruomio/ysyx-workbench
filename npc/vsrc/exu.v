@@ -194,6 +194,7 @@ module ysyx_24080020_EXU
         end
         else if(cnt == 1'b1) begin
             exu_mem_valid <= 1'b1;
+            cnt <= 1'b0;
         end
         else begin
             cnt <= 1'b0;
