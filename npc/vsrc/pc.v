@@ -2,47 +2,45 @@
 module ysyx_24080020_PC (
     input clk,
     input rst,
-    input reg_pc_valid,
-    input ir_pc_ready,
+    input is_update_pc,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc,
-    output [3:0] pc_len,
-    output reg pc_reg_ready,
-    output reg pc_ir_valid
+    // input [`ysyx_24080020_WIDTH-1:0] snpc,
+    // output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
+    output reg if_en,
+    output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
-  reg state = 1'b0; // 0: idle;  1: waite_ready;
 
-  assign pc_len = 4'b100;
+    reg cnt;
+    reg first_if;
 
-  always @(posedge clk) begin
-    if (!rst) begin
-      pc <= `ysyx_24080020_MBASE;
-      pc_ir_valid <= 1'b1;
-    end 
-    else if (reg_pc_valid) begin
-      pc_ir_valid <= 1'b1;
-      pc_reg_ready < =1'b1;
-    end 
-    else if(ir_pc_ready) begin
-      if (is_dnpc) pc <= dnpc;
-      else pc <= pc + 32'b100;
-    end
-    else begin
-      pc_ir_valid <= 1'b0;
-      pc_reg_ready < =1'b0;
-    end
-  end
+    always @(posedge clk) begin
+        if(!rst) begin
+            addr <= `ysyx_24080020_MBASE;
+            cnt <= 1'b0;
+            first_if <= 1'b0;
+        end
+        else if(is_update_pc) begin
+            if(cnt == 1'b1) begin
+                addr <= is_dnpc ? dnpc :
+                        ~first_if ? addr : addr + 32'd4;
+                if_en <= 1'b1;
+                first_if <= 1'b1;
 
-  always @(posedge clk) begin
-    if(!state) begin 
-      if(pc_ir_valid) state <= 1'b1;
-      else state <= 1'b0;
+                // pc_ifu <= addr;
+                cnt <= 1'b0;
+            end
+            else begin
+                cnt <= 1'b1;
+            end
+        end
+        else begin
+            // addr <= addr;
+            if_en <= 1'b0;
+        end
+
     end
-    else begin
-      if(ir_pc_ready) state <= 1'b0;
-      else state <= 1'b1;
-    end
-  end
+
+
 
 endmodule
