@@ -102,6 +102,8 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
         .inst_ifu(inst_ifu), 
+        .rs1(raddr1),
+        .rs2(raddr2),
         .val_raddr1(val_raddr1),
         .val_raddr2(val_raddr2),
         .pc_ifu(pc_ifu),

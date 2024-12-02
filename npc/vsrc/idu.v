@@ -5,6 +5,8 @@ module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
+    output [4:0] rs1,
+    output [4:0] rs2,
     // input [`ysyx_24080020_WIDTH-1:0] snpc_ifu,
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
 
@@ -61,7 +63,7 @@ module ysyx_24080020_IDU (
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
-    wire [4:0] rs1, rs2, rd;
+    wire [4:0] rd;
     
 
 
@@ -79,6 +81,7 @@ module ysyx_24080020_IDU (
     assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 5'hf : inst_idu[`ysyx_24080020_RS1];
     assign rs2 = inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
+
 
     always @(posedge clk) begin
         if(!rst) begin
