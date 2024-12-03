@@ -28,7 +28,7 @@ module ysyx_24080020_MEM(
     // read mrdata
     always @(mraddr or mrlen or rst) begin
         if(!rst) begin
-            mrdata <= 32'b0;
+            mrdata = 32'b0;
         end
         else if(mraddr != 32'b0) begin
             mrdata_tmp = read_memory(mraddr, {{28{1'b0}}, mrlen});
