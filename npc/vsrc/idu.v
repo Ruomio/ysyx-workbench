@@ -462,11 +462,10 @@ module ysyx_24080020_IDU (
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
 
-                // is_jal_idu = 1'b0;
-                // update_ftrace_dpi();
-                // if(imm == 32'b0) begin
-                //     halt();
-                // end
+                update_ftrace_dpi();
+                if(imm_idu == 32'b0) begin
+                    halt();
+                end
             end
 
             `ysyx_24080020_JALR: begin

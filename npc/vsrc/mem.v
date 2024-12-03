@@ -96,6 +96,7 @@ module ysyx_24080020_MEM(
                 mren_mem <= mren_exu;
                 mrtype_mem <= mrtype_exu;
                 mrlen_mem <= mrlen_exu;
+                mraddr_mem <= mraddr_exu;
                 mwen_mem <= mwen_exu;
                 mwmask_mem <= mwmask_exu;
                 mwaddr_mem <= mwaddr_exu;
@@ -110,10 +111,10 @@ module ysyx_24080020_MEM(
                 wcsraddr2_mem <= wcsraddr2_exu;
                 wcsrdata2_mem <= wcsrdata2_exu;
 
-                mem_wb_valid <= 1'b1;
-                // if(!mwen_exu && !mren_exu) begin
-                //     mem_wb_valid <= 1'b1;
-                // end
+                // mem_wb_valid <= 1'b1;
+                if(!mwen_exu && !mren_exu) begin
+                    mem_wb_valid <= 1'b1;
+                end
             end
         end
         else if(wb_mem_ready && state) begin
@@ -162,8 +163,9 @@ module ysyx_24080020_MEM(
                     end
                 endcase
 
-                mem_wb_valid <= 1'b1;
             end
+            mren_mem <= 1'b0;
+            mem_wb_valid <= 1'b1;
         end
         else begin
             mrdata_mem <= mrdata_mem;
@@ -178,6 +180,8 @@ module ysyx_24080020_MEM(
         else if(mwen_mem) begin
             write_memory(mwaddr_mem, {{28{1'b0}},mwmask_mem}, mwdata_mem);
             // mem_wb_valid <= 1'b1;
+            mwen_mem <= 1'b0;
+            mem_wb_valid <= 1'b1;
         end
 
     end

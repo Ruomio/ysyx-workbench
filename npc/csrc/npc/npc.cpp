@@ -37,6 +37,7 @@ VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
+static uint32_t g_pc;
 static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
@@ -118,10 +119,15 @@ void exec_once_npc(uint32_t pc) {
       break;
     }
   }
+
+  g_nr_guest_inst ++;
+
+
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
-  int ilen = g_get_snpc() - last_pc;
+  // int ilen = g_get_snpc() - last_pc;
+  int ilen = 4;
   int i;
   uint32_t last_inst = read_memory(last_pc, ilen);
   uint8_t *inst = (uint8_t *)&last_inst;
@@ -173,6 +179,10 @@ void exec_npc(int n) {
       return;
     default: u_npc_state.state = NPC_RUNNING;
   }
+
+  uint64_t timer_start = get_time();
+
+
   if(n < 0) {
     exec_all_npc();
   }
@@ -183,6 +193,12 @@ void exec_npc(int n) {
       trace_and_difftest(g_get_dnpc());
     }
   }
+
+
+  uint64_t timer_end = get_time();
+  g_timer += timer_end - timer_start;
+
+
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
@@ -242,7 +258,8 @@ void check_trap(npc_state u_npc_state) {
 }
 
 uint32_t g_get_pc() {
-  return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
+  g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
+  return g_pc;
 }
 
 void g_set_pc(uint32_t pc) {
@@ -254,8 +271,7 @@ uint32_t g_get_reg(int i) {
 }
 
 uint32_t g_get_snpc() {
-  // return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
-  return g_get_pc() + 4;
+  return g_pc + 4;
 }
 
 uint32_t g_get_dnpc() {

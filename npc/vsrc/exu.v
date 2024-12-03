@@ -98,15 +98,20 @@ module ysyx_24080020_EXU
 
 
     // memory
-    always @(alu_out or src2_exu) begin
+    always @(alu_out or src2_exu or mwen_exu or mren_exu) begin
         if(mwen_exu) begin
             mwaddr_exu = alu_out;
             mwdata_exu = src2_exu;
         end
-        else if(mren_exu) begin
+        else begin
+            mwaddr_exu = 32'b0;
+            mwdata_exu = src2_exu;
+        end
+        if(mren_exu) begin
             mraddr_exu = alu_out;
         end
         else begin
+            mraddr_exu = 32'b0;
         end
     end
 
