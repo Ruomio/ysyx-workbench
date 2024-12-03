@@ -119,6 +119,10 @@ void exec_once_npc(uint32_t pc) {
       break;
     }
   }
+
+  g_nr_guest_inst ++;
+
+
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
@@ -175,6 +179,10 @@ void exec_npc(int n) {
       return;
     default: u_npc_state.state = NPC_RUNNING;
   }
+
+  uint64_t timer_start = get_time();
+
+
   if(n < 0) {
     exec_all_npc();
   }
@@ -185,6 +193,12 @@ void exec_npc(int n) {
       trace_and_difftest(g_get_dnpc());
     }
   }
+
+
+  uint64_t timer_end = get_time();
+  g_timer += timer_end - timer_start;
+
+
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
