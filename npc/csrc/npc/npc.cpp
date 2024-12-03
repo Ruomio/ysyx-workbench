@@ -119,7 +119,8 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
-  int ilen = g_get_snpc() - last_pc;
+  // int ilen = g_get_snpc() - last_pc;
+  int ilen = 4;
   int i;
   uint32_t last_inst = read_memory(last_pc, ilen);
   uint8_t *inst = (uint8_t *)&last_inst;
