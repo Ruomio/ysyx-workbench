@@ -69,6 +69,14 @@ module ysyx_24080020_REG
     wire [`ysyx_24080020_WIDTH-1:0] result;
 
     assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
+    always @(mrdata_wb or alu_out_wb) begin
+        if(is_load_wb) begin
+            result = mrdata_wb;
+        end
+        else begin
+            result = alu_out_wb;
+        end
+    end
 
     always @(posedge clk) begin
         if(!rst) begin
