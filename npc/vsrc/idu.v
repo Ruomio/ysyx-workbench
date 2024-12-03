@@ -463,7 +463,7 @@ module ysyx_24080020_IDU (
 
 
                 update_ftrace_dpi();
-                if(imm == 32'b0) begin
+                if(imm_idu == 32'b0) begin
                     halt();
                 end
             end
