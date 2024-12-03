@@ -135,7 +135,7 @@ module ysyx_24080020_EXU
                         wdata = funct7[5] ==  0 ? $signed(val_raddr1) + $signed(val_raddr2) : $signed(val_raddr1) - $signed(val_raddr2);
                     end
                     `ysyx_24080020_SLL: begin
-                        wdata = val_raddr1 << val_raddr2;
+                        wdata = val_raddr1 << val_raddr2[4:0];
                     end
                     `ysyx_24080020_SLT: begin
                         wdata = $signed(val_raddr1) < $signed(val_raddr2) ? 32'b1 : 32'b0;
@@ -147,7 +147,7 @@ module ysyx_24080020_EXU
                         wdata = val_raddr1 ^ val_raddr2;
                     end
                     `ysyx_24080020_SRLA: begin
-                        wdata = funct7[5] == 0 ? val_raddr1 >> val_raddr2 : val_raddr1 >> val_raddr2 | ({32{val_raddr1[31]}} & ~(32'hffffffff >> val_raddr2));
+                        wdata = funct7[5] == 0 ? val_raddr1 >> val_raddr2[4:0] : val_raddr1 >> val_raddr2[4:0] | ({32{val_raddr1[31]}} & ~(32'hffffffff >> val_raddr2[4:0]));
                     end
                     `ysyx_24080020_OR: begin
                         wdata = val_raddr1 | val_raddr2;
