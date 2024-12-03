@@ -96,6 +96,7 @@ module ysyx_24080020_MEM(
                 mren_mem <= mren_exu;
                 mrtype_mem <= mrtype_exu;
                 mrlen_mem <= mrlen_exu;
+                mraddr_mem <= mraddr_exu;
                 mwen_mem <= mwen_exu;
                 mwmask_mem <= mwmask_exu;
                 mwaddr_mem <= mwaddr_exu;
