@@ -119,7 +119,8 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
-  int ilen = g_get_snpc() - last_pc;
+  // int ilen = g_get_snpc() - last_pc;
+  int ilen = 4;
   int i;
   uint32_t last_inst = read_memory(last_pc, ilen);
   uint8_t *inst = (uint8_t *)&last_inst;
@@ -149,7 +150,7 @@ static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
   IFDEF(CONFIG_DTRACE_COND, dtrace_free());
   IFDEF(CONFIG_ETRACE_COND, etrace_close());
-  if(nemu_state.state == NEMU_ABORT) {IFDEF(CONFIG_ITRACE, RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file(););}
+  if(u_npc_state.state == NPC_ABORT) {IFDEF(CONFIG_ITRACE, RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file(););}
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
