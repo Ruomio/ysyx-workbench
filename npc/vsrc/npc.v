@@ -39,6 +39,7 @@ module ysyx_24080020_NPC(
     reg [`ysyx_24080020_WIDTH-1:0] rcsrdata;
 
     // memory
+    wire is_mr_signed;
     reg mwen;
     reg [3:0] mrlen;
     reg [3:0] mwlen;
@@ -62,6 +63,7 @@ module ysyx_24080020_NPC(
         .rst(rst), 
         .pc(pc),
         .pc_len(pc_len),
+        .is_mr_signed(is_mr_signed),
         .mraddr(mraddr), 
         .mwaddr(mwaddr), 
         .mwlen(mwlen), 
@@ -130,6 +132,7 @@ module ysyx_24080020_NPC(
         .wen(wen), 
         .is_dnpc(is_dnpc), 
         .dnpc(dnpc), 
+        .is_mr_signed(is_mr_signed)
         .mraddr(mraddr),
         .mwaddr(mwaddr), 
         .mwdata(mwdata), 
