@@ -38,6 +38,8 @@ npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
 static uint32_t last_pc;
 static bool g_print_step = false;
+uint64_t g_nr_guest_inst = 0;
+static uint64_t g_timer = 0; // unit: us
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -111,6 +113,9 @@ void exec_once_npc(uint32_t pc) {
       break;
     }
   }
+
+  g_nr_guest_inst ++;
+
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
@@ -139,6 +144,21 @@ void exec_once_npc(uint32_t pc) {
 #endif
 }
 
+
+static void statistic() {
+  IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
+  IFDEF(CONFIG_DTRACE_COND, dtrace_free());
+  IFDEF(CONFIG_ETRACE_COND, etrace_close());
+  if(nemu_state.state == NEMU_ABORT) {IFDEF(CONFIG_ITRACE, RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file(););}
+#define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
+  Log("host time spent = " NUMBERIC_FMT " us", g_timer);
+  Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
+  if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
+  else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+}
+
+
+
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
     exec_once_npc(top->pc);
@@ -154,6 +174,10 @@ void exec_npc(int n) {
       return;
     default: u_npc_state.state = NPC_RUNNING;
   }
+
+
+  uint64_t timer_start = get_time();
+
   if(n < 0) {
     exec_all_npc();
   }
@@ -164,13 +188,17 @@ void exec_npc(int n) {
       trace_and_difftest(g_get_dnpc());
     }
   }
+
+
+  uint64_t timer_end = get_time();
+  g_timer += timer_end - timer_start;
+
+
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
-      break;
 
-    case NPC_QUIT: break;;
-    default: break;;
+    case NPC_QUIT: statistic();
   }
 }
 
