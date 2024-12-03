@@ -260,7 +260,7 @@ uint32_t g_get_reg(int i) {
 
 uint32_t g_get_snpc() {
   // return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
-  return g_get_pc() + 4;
+  return g_get_pc();
 }
 
 uint32_t g_get_dnpc() {
