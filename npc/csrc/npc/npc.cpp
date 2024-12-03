@@ -109,10 +109,9 @@ void exec_once_npc(uint32_t pc) {
     top->clk ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
-    tfp->dump(contextp->time());
-    contextp->timeInc(1);
-    if(total_wave_stop++ > MAX_WAVE_STEP) {
-      u_npc_state.state = NPC_QUIT;
+    if(total_wave_stop++ < MAX_WAVE_STEP) {
+      tfp->dump(contextp->time());
+      contextp->timeInc(1);
     }
 #endif
     if(last_pc != g_get_pc()) {
