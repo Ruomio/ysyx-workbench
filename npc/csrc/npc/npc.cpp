@@ -121,6 +121,7 @@ void exec_once_npc(uint32_t pc) {
     }
   }
   printf("once npc: last_pc = 0x%x\n", last_pc);
+  printf("once npc: snpc = 0x%x\n", g_get_snpc());
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
