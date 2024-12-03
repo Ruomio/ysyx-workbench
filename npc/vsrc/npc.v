@@ -132,7 +132,7 @@ module ysyx_24080020_NPC(
         .wen(wen), 
         .is_dnpc(is_dnpc), 
         .dnpc(dnpc), 
-        .is_mr_signed(is_mr_signed)
+        .is_mr_signed(is_mr_signed),
         .mraddr(mraddr),
         .mwaddr(mwaddr), 
         .mwdata(mwdata), 
