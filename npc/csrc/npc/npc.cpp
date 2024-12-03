@@ -101,6 +101,7 @@ void init_npc(int argc, char **argv) {
 void exec_once_npc(uint32_t pc) {
   printf("once npc: pc = 0x%x\n", pc);
   last_pc = pc;
+  printf("once npc: last_pc = 0x%x\n", last_pc);
   while(!contextp->gotFinish()) {
     if(u_npc_state.state != NPC_RUNNING) {
       u_npc_state.pc = pc;
@@ -119,6 +120,7 @@ void exec_once_npc(uint32_t pc) {
       break;
     }
   }
+  printf("once npc: last_pc = 0x%x\n", last_pc);
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
   p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
