@@ -99,6 +99,7 @@ void init_npc(int argc, char **argv) {
 }
 
 void exec_once_npc(uint32_t pc) {
+  printf("once npc: pc = 0x%x\n", pc);
   last_pc = pc;
   while(!contextp->gotFinish()) {
     if(u_npc_state.state != NPC_RUNNING) {
