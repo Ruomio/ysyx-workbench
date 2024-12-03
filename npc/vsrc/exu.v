@@ -132,7 +132,7 @@ module ysyx_24080020_EXU
                 wen = 1'b1;
                 case(funct3)
                     `ysyx_24080020_ADD_SUB: begin
-                        wdata = funct7[5] ==  0 ? val_raddr1 + val_raddr2 : val_raddr1 - val_raddr2;
+                        wdata = funct7[5] ==  0 ? $signed(val_raddr1) + $signed(val_raddr2) : $signed(val_raddr1) - $signed(val_raddr2);
                     end
                     `ysyx_24080020_SLL: begin
                         wdata = val_raddr1 << val_raddr2;
