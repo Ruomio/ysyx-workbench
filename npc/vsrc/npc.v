@@ -24,6 +24,7 @@ module ysyx_24080020_NPC(
   
   wire is_load_idu, is_load_exu, is_load_mem, is_load_wb;
   wire alu_src2_con_idu, alu_src2_con_exu;
+  wire [`ysyx_24080020_WIDTH-1:0] branch_src1_idu;
   // wire reg_dst_con_idu, reg_dst_con_exu;
 
 
@@ -108,6 +109,7 @@ module ysyx_24080020_NPC(
         .val_raddr2(val_raddr2),
         .pc_ifu(pc_ifu),
         .imm_idu(imm_idu), 
+        .branch_src1_idu(branch_src1_idu),
         // .snpc_ifu(snpc_ifu),
         .wen_idu(wen_idu),
         .waddr_idu(waddr_idu),
@@ -193,6 +195,7 @@ module ysyx_24080020_NPC(
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
         // .is_btype_idu(is_btype_idu),
+        .branch_src1_idu(branch_src1_idu),
         .dnpc_idu(dnpc_idu),
         .is_dnpc_exu(is_dnpc_exu),
         .dnpc_new_exu(dnpc_new_exu),

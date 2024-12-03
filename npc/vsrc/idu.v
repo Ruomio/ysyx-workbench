@@ -11,6 +11,7 @@ module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
 
     output reg [`ysyx_24080020_WIDTH-1:0] imm_idu,
+    output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
 
     // reg
     output reg wen_idu,
@@ -481,6 +482,8 @@ module ysyx_24080020_IDU (
                 src2_idu = 32'b100;
                 alu_src2_con_idu = 1'b0;
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
+
+                branch_src1_idu = val_raddr1;
 
                 is_jalr_idu = 1'b1;
                 // update_ftrace_dpi();
