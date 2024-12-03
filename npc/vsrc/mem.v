@@ -82,7 +82,7 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
-            else if(mem_exu_ready == 1'b0) begin
+            else begin
                 mem_exu_ready <= 1'b1;
 
                 // update reg
@@ -115,12 +115,6 @@ module ysyx_24080020_MEM(
                 if(!mwen_exu && !mren_exu) begin
                     mem_wb_valid <= 1'b1;
                 end
-                else begin
-                    mem_wb_valid <= 1'b0;
-                end
-            end
-            else begin
-                mem_exu_ready <= 1'b0;
             end
         end
         else if(wb_mem_ready && state) begin
