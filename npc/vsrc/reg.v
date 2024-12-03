@@ -66,17 +66,18 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_wb;
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
 
-    reg [`ysyx_24080020_WIDTH-1:0] result;
+    // reg [`ysyx_24080020_WIDTH-1:0] result;
+    wire [`ysyx_24080020_WIDTH-1:0] result;
 
-    // assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
-    always @(mrdata_wb or alu_out_wb or is_load_wb) begin
-        if(is_load_wb) begin
-            result = mrdata_wb;
-        end
-        else begin
-            result = alu_out_wb;
-        end
-    end
+    assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
+    // always @(mrdata_wb or alu_out_wb or is_load_wb) begin
+    //     if(is_load_wb) begin
+    //         result = mrdata_wb;
+    //     end
+    //     else begin
+    //         result = alu_out_wb;
+    //     end
+    // end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -122,13 +123,13 @@ module ysyx_24080020_REG
                 is_dnpc_wb <= is_dnpc_mem;
                 dnpc_wb <= dnpc_mem;
 
-                wb_ifu_valid <= 1'b1;
-                // if(!wen_mem) begin
-                //     wb_ifu_valid <= 1'b1;
-                // end
-                // else begin
-                //     wb_ifu_valid <= 1'b0;
-                // end
+                // wb_ifu_valid <= 1'b1;
+                if(!wen_mem) begin
+                    wb_ifu_valid <= 1'b1;
+                end
+                else begin
+                    wb_ifu_valid <= 1'b0;
+                end
             end
         end
         else if(ifu_wb_ready && state) begin
@@ -151,6 +152,8 @@ module ysyx_24080020_REG
         end
         else if(wen_wb && (waddr_wb != 5'b0)) begin
             regs[waddr_wb] <= result;
+            wb_ifu_valid <= 1'b1;
+            wen_wb <= 1'b0;
         end
         else begin
             regs[0] <= 32'b0;
