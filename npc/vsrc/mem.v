@@ -4,8 +4,6 @@ module ysyx_24080020_MEM(
     input rst,
     input [`ysyx_24080020_WIDTH-1:0] pc,
     input [3:0] pc_len,
-
-    input is_mr_signed,
     input [3:0] mrlen,
     input [3:0] mwlen,
     input [`ysyx_24080020_WIDTH-1:0] mraddr,
@@ -21,8 +19,6 @@ module ysyx_24080020_MEM(
 
     reg [`ysyx_24080020_WIDTH-1:0] last_pc;
     reg [`ysyx_24080020_WIDTH-1:0] last_raddr;
-
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
    
 
     // read mrdata
@@ -31,28 +27,10 @@ module ysyx_24080020_MEM(
             mrdata = 32'b0;
         end
         else if(mraddr != 32'b0) begin
-            mrdata_tmp = read_memory(mraddr, {{28{1'b0}}, mrlen});
-
-            if(!is_mr_signed) begin
-                mrdata = mrdata_tmp;
-            end
-            else begin
-                // signed extension
-                case(mrlen)
-                    4'b1: begin
-                        mrdata = {{24{mrdata_tmp[7]}}, mrdata_tmp[7:0]};
-                    end
-                    4'b10: begin
-                        mrdata = {{16{mrdata_tmp[15]}}, mrdata_tmp[15:0]};
-                    end
-                    default: begin
-                        mrdata = mrdata_tmp;
-                    end
-                endcase
-            end
+            mrdata = read_memory(mraddr, {{28{1'b0}}, mrlen});
         end
         else begin
-            mrdata = mrdata_tmp;
+            mrdata = 32'b0;
         end
 
     end

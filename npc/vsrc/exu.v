@@ -29,7 +29,6 @@ module ysyx_24080020_EXU
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     // out mem
-    output reg is_mr_signed,
     output reg [`ysyx_24080020_WIDTH-1:0] mraddr,
     output reg [`ysyx_24080020_WIDTH-1:0] mwaddr,
     output reg [`ysyx_24080020_WIDTH-1:0] mwdata,
@@ -98,17 +97,14 @@ module ysyx_24080020_EXU
                 mraddr = val_raddr1 + imm;
                 wen = 1'b1;
                 waddr = rd;
-                is_mr_signed = 1'b0;
                 case(funct3)
                     `ysyx_24080020_LB: begin
                         wdata = {{24{mrdata[7]}}, mrdata[7:0]};
                         mrlen = 4'b001;
-                        is_mr_signed = 1'b1;
                     end
                     `ysyx_24080020_LH: begin
                         wdata = {{16{mrdata[15]}}, mrdata[15:0]};
                         mrlen = 4'b010;
-                        is_mr_signed = 1'b1;
                     end
                     `ysyx_24080020_LW: begin
                         wdata = mrdata;
