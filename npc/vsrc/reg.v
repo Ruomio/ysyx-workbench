@@ -69,7 +69,7 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_WIDTH-1:0] result;
 
     // assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
-    always @(mrdata_wb or alu_out_wb) begin
+    always @(is_load_wb) begin
         if(is_load_wb) begin
             result = mrdata_wb;
         end
