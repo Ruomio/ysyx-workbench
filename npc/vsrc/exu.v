@@ -104,12 +104,14 @@ module ysyx_24080020_EXU
             mwdata_exu = src2_exu;
         end
         else begin
-
+            mwaddr_exu = 32'b0;
+            mwdata_exu = src2_exu;
         end
         if(mren_exu) begin
             mraddr_exu = alu_out;
         end
         else begin
+            mraddr_exu = 32'b0;
         end
     end
 
