@@ -14,27 +14,27 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] inst
 
 );
-    // import "DPI-C" function void write_memory(input int addr, input int len, input int data);
-    // import "DPI-C" function int read_memory(input int addr, input int len);
+    import "DPI-C" function void write_memory(input int addr, input int len, input int data);
+    import "DPI-C" function int read_memory(input int addr, input int len);
 
     reg [`ysyx_24080020_WIDTH-1:0] last_pc;
     reg [`ysyx_24080020_WIDTH-1:0] last_raddr;
    
 
-    reg [`ysyx_24080020_WIDTH-1:0] instMem [255:0];
-    reg [`ysyx_24080020_WIDTH-1:0] dataMem [255:0];
+    // reg [`ysyx_24080020_WIDTH-1:0] instMem [255:0];
+    // reg [`ysyx_24080020_WIDTH-1:0] dataMem [255:0];
 
-    wire [7:0] idx, idx_read, idx_write;
+    // wire [7:0] idx, idx_read, idx_write;
 
-    wire [31:0] idx_tmp, idx_read_tmp, idx_write_tmp;
+    // wire [31:0] idx_tmp, idx_read_tmp, idx_write_tmp;
 
-    assign idx_tmp = (pc - 32'h80000000);
-    assign idx_read_tmp = (mraddr - 32'h80000000);
-    assign idx_write_tmp = (mwaddr - 32'h80000000);
+    // assign idx_tmp = (pc - 32'h80000000);
+    // assign idx_read_tmp = (mraddr - 32'h80000000);
+    // assign idx_write_tmp = (mwaddr - 32'h80000000);
 
-    assign idx = idx_tmp[7:0];
-    assign idx_read = idx_read_tmp[7:0];
-    assign idx_write = idx_write_tmp[7:0];
+    // assign idx = idx_tmp[7:0];
+    // assign idx_read = idx_read_tmp[7:0];
+    // assign idx_write = idx_write_tmp[7:0];
 
     // read mrdata
     always @(mraddr or mrlen or rst) begin
@@ -42,8 +42,8 @@ module ysyx_24080020_MEM(
             mrdata = 32'b0;
         end
         else if(mraddr != 32'b0) begin
-            // mrdata = read_memory(mraddr, {{28{1'b0}}, mrlen});
-            mrdata = dataMem[idx_read];
+            mrdata = read_memory(mraddr, {{28{1'b0}}, mrlen});
+            // mrdata = dataMem[idx_read];
         end
         else begin
             mrdata = 32'b0;
@@ -52,14 +52,14 @@ module ysyx_24080020_MEM(
     end
 
     // read inst
-    always @(pc or pc_len or rst) begin
+    always @(*) begin
         if(!rst) begin
             inst <= 32'b0;
             last_pc <= 32'b0;
         end
         else if(pc != last_pc) begin
-            // inst <= read_memory(pc, {{28{1'b0}}, pc_len});
-            inst <= instMem[idx];
+            inst <= read_memory(pc, {{28{1'b0}}, pc_len});
+            // inst <= instMem[idx];
             last_pc <= pc;
         end
         else begin
@@ -73,8 +73,8 @@ module ysyx_24080020_MEM(
         if(!rst) begin
         end
         else if(mwen) begin
-            // write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
-            dataMem[idx_write] <= mwdata;
+            write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
+            // dataMem[idx_write] <= mwdata;
         end
 
     end
