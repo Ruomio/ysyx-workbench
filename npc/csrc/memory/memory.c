@@ -1,4 +1,5 @@
 #include "memory/memory.h"
+#include "common.h"
 #include "define.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -127,7 +128,7 @@ void write_memory(int addr, int len, int data) {
 }
 
 static uint64_t u_time;
-int paddr_read(int addr, int len) {
+word_t paddr_read(int addr, int len) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE,
