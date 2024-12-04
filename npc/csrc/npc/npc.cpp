@@ -13,6 +13,10 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 
+#ifdef CONFIG_WAVEFILE
+#define MAX_WAVE_STEP 10000
+static uint32_t g_totle_wave_step = 0;
+#endif
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -106,8 +110,10 @@ void exec_once_npc(uint32_t pc) {
     top->clk ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
-    tfp->dump(contextp->time());
-    contextp->timeInc(1);
+    if(g_totle_wave_step++ < MAX_WAVE_STEP) {
+      tfp->dump(contextp->time());
+      contextp->timeInc(1);
+    }
 #endif
     if(last_pc != top->pc) {
       break;
