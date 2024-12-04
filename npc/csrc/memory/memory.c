@@ -125,6 +125,7 @@ void paddr_write(paddr_t addr, int len, word_t data) {
 }
 
 int read_memory(int addr, int len) {
+  assert(0);
   paddr_read(addr, len);
   return 0;
 }
