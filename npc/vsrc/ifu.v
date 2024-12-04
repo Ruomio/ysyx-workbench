@@ -4,22 +4,25 @@ module ysyx_24080020_IFU (
     input rst,
     input [`ysyx_24080020_WIDTH-1:0] pc,
     input [3:0] len,
-    output [`ysyx_24080020_WIDTH-1:0] snpc
+    // output [`ysyx_24080020_WIDTH-1:0] snpc
+    output [`ysyx_24080020_WIDTH-1:0] inst
 
 );
 
-    reg [`ysyx_24080020_WIDTH-1:0] snpc_reg;
+    reg [`ysyx_24080020_WIDTH-1:0] instMem [255:0];
+
+    wire [7:0] idx;
+
+    assign idx = pc - 32'h80000000;
 
 
     always @(posedge clk) begin
         if(!rst) begin
-            snpc_reg <= pc;
+            inst <= 32'b0;
         end
         else begin
-            snpc_reg <= pc + {{28{1'b0}}, len};
+            inst <= instMem[idx];
         end
     end
-
-    assign snpc = snpc_reg;
 
 endmodule
