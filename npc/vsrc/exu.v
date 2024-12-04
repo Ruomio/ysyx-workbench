@@ -53,6 +53,7 @@ module ysyx_24080020_EXU
     always @(inst or mrdata or rcsrdata) begin
         // initial
         is_dnpc = 1'b0;
+        dnpc = 32'b0;
         mwen = 1'b0;
         wen = 1'b0;
         mraddr = 32'b0;
