@@ -26,8 +26,9 @@ module ysyx_24080020_MEM(
 
     reg [7:0] idx, idx_read, idx_write;
 
-    assign idx_read = mraddr - 32'h80000000;
-    assign idx_write = mwaddr - 32'h80000000;
+    assign idx = (pc - 32'h80000000)[7:0];
+    assign idx_read = (mraddr - 32'h80000000)[7:0];
+    assign idx_write = (mwaddr - 32'h80000000)[7:0];
 
     // read mrdata
     always @(mraddr or mrlen or rst) begin
