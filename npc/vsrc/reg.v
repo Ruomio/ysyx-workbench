@@ -73,7 +73,7 @@ module ysyx_24080020_REG
         end
     end
 
-    always @(wcsraddr or rcsraddr or wcsraddr2) begin
+    always @(*) begin
         case(wcsraddr)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
             `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;

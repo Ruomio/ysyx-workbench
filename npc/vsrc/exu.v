@@ -217,7 +217,10 @@ module ysyx_24080020_EXU
             `ysyx_24080020_CSR_TYPE: begin
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
-                        if(imm == 32'b1)  ebreak();
+                        if(imm == 32'b1) begin
+
+                            // ebreak();
+                        end
                         else if(imm == 32'b0) begin
                             // ecall
                             // csrs[mepc] = pc;
