@@ -24,11 +24,17 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] instMem [255:0];
     reg [`ysyx_24080020_WIDTH-1:0] dataMem [255:0];
 
-    reg [7:0] idx, idx_read, idx_write;
+    wire [7:0] idx, idx_read, idx_write;
 
-    assign idx = (pc - 32'h80000000)[7:0];
-    assign idx_read = (mraddr - 32'h80000000)[7:0];
-    assign idx_write = (mwaddr - 32'h80000000)[7:0];
+    wire [31:0] idx_tmp, idx_read_tmp, idx_write_tmp;
+
+    assign idx_tmp = (pc - 32'h80000000);
+    assign idx_read_tmp = (mraddr - 32'h80000000);
+    assign idx_write_tmp = (mwaddr - 32'h80000000);
+
+    assign idx = idx_tmp[7:0];
+    assign idx_read = idx_read_tmp[7:0];
+    assign idx_write = idx_write_tmp[7:0];
 
     // read mrdata
     always @(mraddr or mrlen or rst) begin
