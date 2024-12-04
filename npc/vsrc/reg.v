@@ -53,7 +53,7 @@ module ysyx_24080020_REG
         end
     end
 
-    always @(posedge clk or rst) begin
+    always @(posedge clk) begin
         if(!rst) begin
             for(i = 0; i<3'd5; i = i+1) csrs[i] <= 32'b0;
             csrs[1] <= 32'h1800;
@@ -73,7 +73,7 @@ module ysyx_24080020_REG
         end
     end
 
-    always @(wcsraddr or rcsraddr or wcsraddr2) begin
+    always @(*) begin
         case(wcsraddr)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
             `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;

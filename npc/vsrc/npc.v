@@ -72,13 +72,13 @@ module ysyx_24080020_NPC(
         .inst(inst)
     );
     
-    ysyx_24080020_IFU ifu(
-        .clk(clk), 
-        .rst(rst), 
-        .pc(pc), 
-        .len(`ysyx_24080020_LEN), 
-        .snpc(snpc)
-    );
+    // ysyx_24080020_IFU ifu(
+    //     .clk(clk), 
+    //     .rst(rst), 
+    //     .pc(pc), 
+    //     .len(`ysyx_24080020_LEN), 
+    //     .snpc(snpc)
+    // );
 
     ysyx_24080020_IDU idu(
         .inst(inst), 
