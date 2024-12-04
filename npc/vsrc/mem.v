@@ -52,7 +52,7 @@ module ysyx_24080020_MEM(
     end
 
     // read inst
-    always @(posedge clk) begin
+    always @(pc or pc_len or rst) begin
         if(!rst) begin
             inst <= 32'b0;
             last_pc <= 32'b0;
