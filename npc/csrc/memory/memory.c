@@ -115,7 +115,7 @@ word_t paddr_read(paddr_t addr, int len) {
   return 0;
 }
 
-void paddr_write(int addr, int len, int data) {
+void paddr_write(paddr_t addr, int len, word_t data) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, data));
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE,
