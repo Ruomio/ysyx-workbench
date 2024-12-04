@@ -124,7 +124,6 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   out_of_bound(addr);
 }
 
-
 int read_memory(int addr, int len) {
   paddr_read(addr, len);
   return 0;
