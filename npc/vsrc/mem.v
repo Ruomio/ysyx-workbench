@@ -186,7 +186,7 @@ module ysyx_24080020_MEM(
                         4'd1:   mrdata_mem <= rdata[7:0];
                         4'd2:   mrdata_mem <= rdata[15:0];
                         4'd4:   mrdata_mem <= rdata;
-                        default: mrdata_mem <= 32'd-1;
+                        default: mrdata_mem <= 32'hffffffff;
                     endcase
                 end
                 else begin
@@ -195,7 +195,7 @@ module ysyx_24080020_MEM(
                         4'd1:   mrdata_mem <= {{24{rdata[7]}}, rdata[7:0]};
                         4'd2:   mrdata_mem <= {{16{rdata[15]}}, rdata[15:0]};
                         4'd4:   mrdata_mem <= rdata;
-                        default: mrdata_mem <= 32'd-1;
+                        default: mrdata_mem <= 32'hffffffff;
                     endcase
                 end
                 
@@ -203,7 +203,7 @@ module ysyx_24080020_MEM(
             end
             else begin
                 // read error
-                mrdata_mem <= 32'd-1;
+                mrdata_mem <= 32'hffffffff;
             end
         end
         else begin
