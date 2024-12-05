@@ -13,10 +13,7 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 
-#ifdef CONFIG_WAVEFILE
 #define MAX_WAVE_STEP 10000
-static uint32_t g_totle_wave_step = 0;
-#endif
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -40,10 +37,12 @@ VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
+static uint32_t g_pc;
 static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
+static uint32_t total_wave_stop = 0; 
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -110,17 +109,18 @@ void exec_once_npc(uint32_t pc) {
     top->clk ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
-    if(g_totle_wave_step++ < MAX_WAVE_STEP) {
+    if(total_wave_stop++ < MAX_WAVE_STEP) {
       tfp->dump(contextp->time());
       contextp->timeInc(1);
     }
 #endif
-    if(last_pc != top->pc) {
+    if(last_pc != g_get_pc()) {
       break;
     }
   }
 
   g_nr_guest_inst ++;
+
 
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
@@ -151,6 +151,12 @@ void exec_once_npc(uint32_t pc) {
 #endif
 }
 
+void exec_all_npc() {
+  while(u_npc_state.state == NPC_RUNNING) {
+    exec_once_npc(g_get_pc());
+    trace_and_difftest(g_get_dnpc());
+  }
+}
 
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
@@ -164,15 +170,6 @@ static void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
-
-
-void exec_all_npc() {
-  while(u_npc_state.state == NPC_RUNNING) {
-    exec_once_npc(top->pc);
-    trace_and_difftest(g_get_dnpc());
-  }
-}
-
 void exec_npc(int n) {
   g_print_step = n < 10;
   switch (u_npc_state.state) {
@@ -182,8 +179,8 @@ void exec_npc(int n) {
     default: u_npc_state.state = NPC_RUNNING;
   }
 
-
   uint64_t timer_start = get_time();
+
 
   if(n < 0) {
     exec_all_npc();
@@ -191,7 +188,7 @@ void exec_npc(int n) {
   else {
     for(; n>0; n--) {
       if (u_npc_state.state != NPC_RUNNING) break;
-      exec_once_npc(top->pc);
+      exec_once_npc(g_get_pc());
       trace_and_difftest(g_get_dnpc());
     }
   }
@@ -204,8 +201,10 @@ void exec_npc(int n) {
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
+      // break;
 
-    case NPC_QUIT: statistic();
+    case NPC_QUIT: statistic(); break;;
+    default: break;;
   }
 }
 
@@ -258,7 +257,12 @@ void check_trap(npc_state u_npc_state) {
 }
 
 uint32_t g_get_pc() {
-  return top->pc;
+  g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
+  return g_pc;
+}
+
+void g_set_pc(uint32_t pc) {
+  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 }
 
 uint32_t g_get_reg(int i) {
@@ -266,19 +270,18 @@ uint32_t g_get_reg(int i) {
 }
 
 uint32_t g_get_snpc() {
-  // return top->rootp->top__DOT__u_npc__DOT__ifu__DOT__snpc_reg;
-  return g_get_pc() + 4;
+  return g_pc + 4;
 }
 
 uint32_t g_get_dnpc() {
-  return top->rootp->top__DOT__u_npc__DOT__dnpc;
+  return top->rootp->top__DOT__u_npc__DOT__dnpc_wb;
 }
 
 uint32_t g_get_rs1() {
-  return BITS(top->rootp->top__DOT__u_npc__DOT__inst, 19, 15);
+  return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 19, 15);
 }
 uint32_t g_get_rd() {
-  return BITS(top->rootp->top__DOT__u_npc__DOT__inst, 11, 7);
+  return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 11, 7);
 }
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
@@ -303,5 +306,6 @@ void update_dut() {
   for(int i=0; i<32; i++) {
     top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
   }
-  top->pc = npc_cpu.pc;
+  // top->pc = npc_cpu.pc;
+  g_set_pc(npc_cpu.pc);
 }
