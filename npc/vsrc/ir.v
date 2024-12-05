@@ -96,7 +96,7 @@ module ysyx_24080020_IR(
 
         .bresp(bresp),
         .bvalid(bvalid),
-        .bready(bready)
+        .bready(1'b0)
     );
 
 endmodule
