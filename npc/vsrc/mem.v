@@ -70,7 +70,7 @@ module ysyx_24080020_MEM(
     // axi-lite
     wire [5:0] lfsr;
     reg arvalid;
-    wire arready
+    wire arready;
     wire [`ysyx_24080020_WIDTH-1:0] araddr;
 
     reg rready
