@@ -157,7 +157,7 @@ module ysyx_24080020_MEM(
 
 
 
-    assign lfsr = 6'd8;
+    assign lfsr = 6'd20;
     assign araddr = mraddr_mem;
     
     always @(posedge clk) begin
@@ -299,73 +299,4 @@ module ysyx_24080020_MEM(
         .bready(bready)
     );
    
-    // always @(posedge clk) begin
-    //     if(mren_mem) begin
-    //         mrdata_tmp <= read_memory(mraddr_mem, {{28{1'b0}}, mrlen_mem});
-    //     end
-    //     else begin
-    //         mrdata_tmp <= mrdata_tmp;
-    //     end
-    // end
-
-    // // read mrdata
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         mrdata_mem <= 32'b0;
-    //     end
-    //     else if(mraddr_mem != 32'b0 && mren_mem) begin
-    //         if(mrtype_mem) begin
-    //             // zero extension
-    //             mrdata_mem <= mrdata_tmp;
-    //         end
-    //         else begin
-    //             // signed extension
-    //             case(mrlen_mem)
-    //                 4'b0001: begin
-    //                     mrdata_mem <= {{24{mrdata_tmp[7]}}, mrdata_tmp[7:0]};
-    //                 end
-    //                 4'b0010: begin
-    //                     mrdata_mem <= {{16{mrdata_tmp[15]}}, mrdata_tmp[15:0]};
-    //                 end
-    //                 4'b0100: begin
-    //                     mrdata_mem <= mrdata_tmp;
-    //                 end
-    //                 default: begin
-    //                     mrdata_mem <= ~32'b0;
-    //                 end
-    //             endcase
-
-    //         end
-    //         mren_mem <= 1'b0;
-    //         mem_wb_valid <= 1'b1;
-    //     end
-    //     else begin
-    //         mrdata_mem <= mrdata_mem;
-    //     end
-
-    // end
-
-    // reg cnt;
-    // // write
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         cnt <= 1'b0;
-    //     end
-    //     else if(mwen_mem) begin
-    //         if(cnt) begin
-    //             write_memory(mwaddr_mem, {{28{1'b0}},mwmask_mem}, mwdata_mem);
-    //             // mem_wb_valid <= 1'b1;
-    //             mwen_mem <= 1'b0;
-    //             mem_wb_valid <= 1'b1;
-
-    //             cnt <= 1'b0;
-    //         end
-    //         else cnt <= 1'b1;
-    //     end
-
-    // end
-
-
-
-
 endmodule

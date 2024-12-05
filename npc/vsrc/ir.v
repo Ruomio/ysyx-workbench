@@ -19,7 +19,7 @@ module ysyx_24080020_IR(
     
     reg arvalid, arready, rready;
 
-    assign lfsr = 6'd1;
+    assign lfsr = 6'd10;
 
 
     // always @(posedge clk) begin
