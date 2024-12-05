@@ -89,7 +89,7 @@ module ysyx_24080020_SRAM(
         end
         else if(rready) begin
             rvalid <= 1'b0;
-            rresp <= 1'b0;
+            rresp <= 2'b0;
         end
         else begin
             rvalid <= rvalid;

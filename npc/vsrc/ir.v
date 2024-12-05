@@ -11,8 +11,8 @@ module ysyx_24080020_IR(
 );
     // import "DPI-C" function int read_memory(input int addr, input int len);
 
-    wire rvalid, awready;
-    wire [1:0] rresp;
+    wire rvalid, awready, wready, bvalid;
+    wire [1:0] rresp, bresp;
     wire [5:0] lfsr;
     wire [`ysyx_24080020_WIDTH-1:0] rdata;
     
@@ -92,11 +92,11 @@ module ysyx_24080020_IR(
         .wdata(32'b0),
         .wstrb(4'b0),
         .wvalid(1'b0),
-        .wready(1'b0),
+        .wready(wready),
 
-        .bresp(2'b0),
-        .bvalid(1'b0),
-        .bready(1'b0)
+        .bresp(bresp),
+        .bvalid(bvalid),
+        .bready(bready)
     );
 
 endmodule
