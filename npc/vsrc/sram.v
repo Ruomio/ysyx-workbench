@@ -25,7 +25,7 @@ module ysyx_24080020_SRAN(
 
     output reg [1:0] bresp,
     output reg bvalid,
-    input bready,
+    input bready
 );
 
     import "DPI-C" function int read_memory(input int addr, input int len);
