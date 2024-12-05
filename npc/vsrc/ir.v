@@ -18,8 +18,13 @@ module ysyx_24080020_IR(
             inst <= 32'b0;
         end
         else if(if_en) begin
+            cnt <= 1'b1;
+        end
+        else if(cnt) begin
             inst <= read_memory(addr, 32'b100);
             inst_fin <= 1'b1;
+
+            cnt <= 1'b0;
         end
         else begin
             inst <= inst;
