@@ -275,7 +275,7 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             b_fin <= 1'b0;
         end
-        else if(w_fin) begin
+        else if(b_fin) begin
             mem_wb_valid <= 1'b1;
 
             b_fin <= 1'b0;
