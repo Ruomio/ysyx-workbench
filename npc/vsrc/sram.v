@@ -150,7 +150,7 @@ module ysyx_24080020_SRAM(
                     write_en <= 1'b1;
                 end
                 else if(!wready) begin
-                    write_memory(paddr, write_data, 32'd4);
+                    write_memory(paddr, 32'd4, write_data);
                     b_en <= 1'b1;
 
                     wready <= 1'b1;
