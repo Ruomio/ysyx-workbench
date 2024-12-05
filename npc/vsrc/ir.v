@@ -56,15 +56,16 @@ module ysyx_24080020_IR(
         if(!rst) begin
             rready <= 1'b0;
         end
-        else if(rvalid && rresp == 2'b0) begin
+        else if(rvalid) begin
             rready <= 1'b1;
 
             inst <= rdata;
             inst_fin <= 1'b1;
+
+            // rresp != 2'b0 : error
         end
         else begin
-            rready <= rready;
-
+            rready <= 1'b0;
             inst <= inst;
             inst_fin <= 1'b0;
         end

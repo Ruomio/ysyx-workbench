@@ -185,6 +185,7 @@ module ysyx_24080020_SRAM(
                 bvalid <= 1'b1;
                 bresp <= 2'b0;
 
+                b_en <= 1'b0;
                 b_cnt <= 6'b0;
             end
         end
