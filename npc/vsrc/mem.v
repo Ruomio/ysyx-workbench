@@ -69,21 +69,26 @@ module ysyx_24080020_MEM(
 
     // axi-lite
     wire [5:0] lfsr;
-    wire arvalid, arready;
+    reg arvalid;
+    wire arready
     wire [`ysyx_24080020_WIDTH-1:0] araddr;
 
-    wire rready, rvalid;
+    reg rready
+    wire rvalid;
     wire [1:0] rresp;
     wire [`ysyx_24080020_WIDTH-1:0] rdata;
 
-    wire awvalid, awready;
+    reg awvalid;
+    wire awready;
     wire [`ysyx_24080020_WIDTH-1:0] awaddr;
 
-    wire wvalid, wready;
+    reg wvalid;
+    wire wready;
     wire [3:0] wstrb;
     wire [`ysyx_24080020_WIDTH-1:0] wdata; 
 
-    wire bvalid, bready;
+    reg bready;
+    wire bvalid;
     wire [1:0] bresp;
 
 
@@ -183,8 +188,8 @@ module ysyx_24080020_MEM(
                 if(mrtype_mem) begin
                     // zero extension
                     case(mrlen_mem)
-                        4'd1:   mrdata_mem <= rdata[7:0];
-                        4'd2:   mrdata_mem <= rdata[15:0];
+                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata[7:0]};
+                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata[15:0]};
                         4'd4:   mrdata_mem <= rdata;
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
