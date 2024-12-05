@@ -15,7 +15,7 @@ module ysyx_24080020_SRAM(
     output reg rvalid,
 
     input [`ysyx_24080020_WIDTH-1:0] awaddr,
-    input awvalid.
+    input awvalid,
     output reg awready,
 
     input [`ysyx_24080020_WIDTH-1:0] wdata,
