@@ -195,7 +195,7 @@ void exec_npc(int n) {
 
 
   uint64_t timer_end = get_time();
-  g_timer += timer_end - timer_start;
+  g_timer = timer_end - timer_start;
 
 
   switch(u_npc_state.state) {
