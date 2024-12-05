@@ -1,5 +1,5 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
-module ysyx_24080020_SRAN(
+module ysyx_24080020_SRAM(
     input clk,
     input rst,
 
