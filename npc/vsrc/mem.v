@@ -44,6 +44,7 @@ module ysyx_24080020_MEM(
     output reg is_dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
+    // bus
     input exu_mem_valid,
     input wb_mem_ready,
     output reg mem_exu_ready,
@@ -64,6 +65,33 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
 
     reg state; // 0: idle;   1: wait_ready
+
+
+    // axi-lite
+    wire [5:0] lfsr;
+    reg arvalid;
+    wire arready;
+    wire [`ysyx_24080020_WIDTH-1:0] araddr;
+
+    reg rready;
+    wire rvalid;
+    wire [1:0] rresp;
+    wire [`ysyx_24080020_WIDTH-1:0] rdata;
+
+    reg awvalid;
+    wire awready;
+    wire [`ysyx_24080020_WIDTH-1:0] awaddr;
+
+    reg wvalid;
+    wire wready;
+    wire [3:0] wstrb;
+    wire [`ysyx_24080020_WIDTH-1:0] wdata; 
+
+    reg bready;
+    wire bvalid;
+    wire [1:0] bresp;
+
+
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -126,72 +154,149 @@ module ysyx_24080020_MEM(
         end
 
     end
-   
+
+
+
+    assign lfsr = 6'd8;
+    assign araddr = mraddr_mem;
+    
     always @(posedge clk) begin
-        if(mren_mem) begin
-            mrdata_tmp <= read_memory(mraddr_mem, {{28{1'b0}}, mrlen_mem});
+        if(!rst) begin
+            arvalid <= 1'b0;
+        end
+        else if(arvalid && arready) begin
+            arvalid <= 1'b0;
+        end
+        else if(mren_mem) begin
+            arvalid <= 1'b1;
+
+            mren_mem <= 1'b0;
         end
         else begin
-            mrdata_tmp <= mrdata_tmp;
+            arvalid <= arvalid;
         end
     end
 
-    // read mrdata
     always @(posedge clk) begin
         if(!rst) begin
+            rready <= 1'b0;
             mrdata_mem <= 32'b0;
         end
-        else if(mraddr_mem != 32'b0 && mren_mem) begin
-            if(mrtype_mem) begin
-                // zero extension
-                mrdata_mem <= mrdata_tmp;
+        else if(rvalid) begin
+            rready <= 1'b1;
+            if(rresp == 2'b0) begin
+                if(mrtype_mem) begin
+                    // zero extension
+                    case(mrlen_mem)
+                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata[7:0]};
+                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata[15:0]};
+                        4'd4:   mrdata_mem <= rdata;
+                        default: mrdata_mem <= 32'hffffffff;
+                    endcase
+                end
+                else begin
+                    // signed extension
+                    case(mrlen_mem)
+                        4'd1:   mrdata_mem <= {{24{rdata[7]}}, rdata[7:0]};
+                        4'd2:   mrdata_mem <= {{16{rdata[15]}}, rdata[15:0]};
+                        4'd4:   mrdata_mem <= rdata;
+                        default: mrdata_mem <= 32'hffffffff;
+                    endcase
+                end
+                
+                mem_wb_valid <= 1'b1;
             end
             else begin
-                // signed extension
-                case(mrlen_mem)
-                    4'b0001: begin
-                        mrdata_mem <= {{24{mrdata_tmp[7]}}, mrdata_tmp[7:0]};
-                    end
-                    4'b0010: begin
-                        mrdata_mem <= {{16{mrdata_tmp[15]}}, mrdata_tmp[15:0]};
-                    end
-                    4'b0100: begin
-                        mrdata_mem <= mrdata_tmp;
-                    end
-                    default: begin
-                        mrdata_mem <= ~32'b0;
-                    end
-                endcase
-
+                // read error
+                mrdata_mem <= 32'hffffffff;
             end
-            mren_mem <= 1'b0;
-            mem_wb_valid <= 1'b1;
         end
         else begin
-            mrdata_mem <= mrdata_mem;
+            rready <= 1'b0;
         end
-
     end
 
-    reg cnt;
-    // write
+    assign awaddr = mwaddr_mem;
     always @(posedge clk) begin
         if(!rst) begin
-            cnt <= 1'b0;
+            awvalid <= 1'b0;
+        end
+        else if(awvalid && awready) begin
+            awvalid <= 1'b0;
+            wvalid <= 1'b1;
         end
         else if(mwen_mem) begin
-            if(cnt) begin
-                write_memory(mwaddr_mem, {{28{1'b0}},mwmask_mem}, mwdata_mem);
-                // mem_wb_valid <= 1'b1;
-                mwen_mem <= 1'b0;
-                mem_wb_valid <= 1'b1;
+            awvalid <= 1'b1;
 
-                cnt <= 1'b0;
-            end
-            else cnt <= 1'b1;
+            mwen_mem <= 1'b0;
         end
+        else begin
+            awvalid <= awvalid;
+        end
+    end
 
+    assign wdata = mwdata_mem;
+    assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
+                   mwmask_mem == 4'b10 ? 4'b11 :
+                   mwmask_mem == 4'b100 ? 4'b1111 : 
+                   4'b0;
+    always @(posedge clk) begin
+        if(!rst) begin
+            wvalid <= 1'b0;
+        end
+        else if(wvalid && wready) begin
+            wvalid <= 1'b0;
+        end
+        else begin
+            wvalid <= wvalid;
+        end
     end
 
 
+    always @(posedge clk) begin
+        if(!rst) begin
+            bready <= 1'b0;
+        end
+        else if(bvalid) begin
+            bready <= 1'b1;
+
+            // b_fin <= 1'b1;
+            mem_wb_valid <= 1'b1;
+            // bresp != 0 : error
+        end
+        else begin
+            bready <= 1'b0;
+        end
+    end
+
+
+    // axi-lite sram
+    ysyx_24080020_SRAM u_mem_sram(
+        .clk(clk),
+        .rst(rst),
+        .lfsr(lfsr),
+
+        .arvalid(arvalid),
+        .araddr(araddr),
+        .arready(arready),
+
+        .rready(rready),
+        .rdata(rdata),
+        .rresp(rresp),
+        .rvalid(rvalid),
+
+        .awaddr(awaddr),
+        .awvalid(awvalid),
+        .awready(awready),
+
+        .wdata(wdata),
+        .wstrb(wstrb),
+        .wvalid(wvalid),
+        .wready(wready),
+
+        .bresp(bresp),
+        .bvalid(bvalid),
+        .bready(bready)
+    );
+   
 endmodule
