@@ -91,8 +91,6 @@ module ysyx_24080020_MEM(
     wire bvalid;
     wire [1:0] bresp;
 
-    reg b_fin;
-
 
 
     always @(posedge clk) begin
@@ -268,20 +266,6 @@ module ysyx_24080020_MEM(
         end
         else begin
             bready <= 1'b0;
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            b_fin <= 1'b0;
-        end
-        else if(b_fin) begin
-            mem_wb_valid <= 1'b1;
-
-            b_fin <= 1'b0;
-        end
-        else begin
-            
         end
     end
 
