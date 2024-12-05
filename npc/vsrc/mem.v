@@ -45,27 +45,27 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
     // AXI-lite
-    input arvalid,
-    input [`ysyx_24080020_WIDTH-1:0] araddr,
-    output arready,
+    // input arvalid,
+    // input [`ysyx_24080020_WIDTH-1:0] araddr,
+    // output arready,
 
-    output [`ysyx_24080020_WIDTH-1:0] rdata,
-    output rresp,
-    output rvalid,
-    input rready,
+    // output [`ysyx_24080020_WIDTH-1:0] rdata,
+    // output rresp,
+    // output rvalid,
+    // input rready,
 
-    input [`ysyx_24080020_WIDTH-1:0] awaddr,
-    input awvalid.
-    output awready,
+    // input [`ysyx_24080020_WIDTH-1:0] awaddr,
+    // input awvalid.
+    // output awready,
 
-    input [`ysyx_24080020_WIDTH-1:0] wdata,
-    input [3:0] wstrb,
-    input wvalid,
-    output wready,
+    // input [`ysyx_24080020_WIDTH-1:0] wdata,
+    // input [3:0] wstrb,
+    // input wvalid,
+    // output wready,
 
-    output bresp,
-    output bvalid,
-    input bready,
+    // output bresp,
+    // output bvalid,
+    // input bready,
 
 
 
