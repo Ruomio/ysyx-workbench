@@ -73,7 +73,7 @@ module ysyx_24080020_MEM(
     wire arready;
     wire [`ysyx_24080020_WIDTH-1:0] araddr;
 
-    reg rready
+    reg rready;
     wire rvalid;
     wire [1:0] rresp;
     wire [`ysyx_24080020_WIDTH-1:0] rdata;
