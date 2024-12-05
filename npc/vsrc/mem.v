@@ -260,11 +260,25 @@ module ysyx_24080020_MEM(
         else if(bvalid) begin
             bready <= 1'b1;
 
-            mem_wb_valid <= 1'b1;
+            w_fin <= 1'b1;
             // bresp != 0 : error
         end
         else begin
             bready <= 1'b0;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            w_fin <= 1'b0;
+        end
+        else if(w_fin) begin
+            mem_wb_valid <= 1'b1;
+
+            w_fin <= 1'b0;
+        end
+        else begin
+            mem_wb_valid <= 
         end
     end
 

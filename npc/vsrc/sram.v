@@ -100,7 +100,7 @@ module ysyx_24080020_SRAM(
             rresp <= 2'b0;
         end
         else begin
-            rvalid <= rvalid;
+            rvalid <= 1'b0;
             rresp <= rresp;
         end
     end
@@ -193,7 +193,7 @@ module ysyx_24080020_SRAM(
             bresp <= 2'b0;
         end
         else begin
-            bvalid <= bvalid;
+            bvalid <= 1'b0;
             bresp <= bresp;
         end
 
