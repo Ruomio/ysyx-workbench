@@ -278,7 +278,7 @@ module ysyx_24080020_MEM(
             w_fin <= 1'b0;
         end
         else begin
-            mem_wb_valid <= 
+            
         end
     end
 
