@@ -33,11 +33,11 @@ module ysyx_24080020_SRAM(
 
     reg [`ysyx_24080020_WIDTH-1:0] paddr;
     reg [`ysyx_24080020_WIDTH-1:0] write_data;
-    reg read_en, write_en;
+    reg read_en, write_en, b_en;
     reg read_before_write;
 
-    reg [5:0] r_cnt;
-    reg [5:0] w_cnt;
+    reg [5:0] ar_cnt, aw_cnt, w_cnt;
+    reg [5:0] r_cnt, b_cnt;
 
 
     wire [`ysyx_24080020_WIDTH-1:0] wstrb_full;
@@ -49,11 +49,19 @@ module ysyx_24080020_SRAM(
         if(!rst) begin
             arready <= 1'b0;
             read_en <= 1'b0;
+            ar_cnt <= 6'b0;
         end
         else if(arvalid) begin
-            paddr <= araddr;
-            read_en <= 1'b1;
-            arready <= 1'b1;
+            if(ar_cnt < lfsr) begin
+                ar_cnt <= ar_cnt + 6'b1;
+            end
+            else begin
+                paddr <= araddr;
+                read_en <= 1'b1;
+                arready <= 1'b1;
+
+                ar_cnt <= 6'b0;
+            end
         end
         else begin
             arready <= 1'b0;
@@ -104,8 +112,15 @@ module ysyx_24080020_SRAM(
             awready <= 1'b0;
         end
         else if(awvalid) begin
-            paddr <= awaddr;
-            awready <= 1'b1;
+            if(aw_cnt < lfsr) begin
+                aw_cnt <= aw_cnt + 6'b1;
+            end
+            else begin
+                paddr <= awaddr;
+                awready <= 1'b1;
+
+                aw_cnt <= 6'b0;
+            end
         end
         else begin
             awready <= 1'b0;
@@ -136,6 +151,7 @@ module ysyx_24080020_SRAM(
                 end
                 else if(!wready) begin
                     write_memory(paddr, write_data, 32'd4);
+                    b_en <= 1'b1;
 
                     wready <= 1'b1;
                 end
@@ -158,18 +174,27 @@ module ysyx_24080020_SRAM(
         if(!rst) begin
             bvalid <= 1'b0;
             bresp <= 2'b0;
+            b_en <= 1'b0;
+            w_cnt <= 6'b0;
+        end
+        else if(b_en) begin
+            if(b_cnt < lfsr) begin
+                b_cnt <= b_cnt + 6'b1;
+            end
+            else begin
+                bvalid <= 1'b1;
+                bresp <= 2'b0;
+
+                b_cnt <= 6'b0;
+            end
         end
         else if(bready) begin
             bvalid <= 1'b0;
             bresp <= 2'b0;
         end
-        else if(wready) begin
-            bvalid <= 1'b1;
-            bresp <= 2'b0;
-        end
         else begin
-            bvalid <= 1'b0;
-            bresp <= 2'b0;
+            bvalid <= bvalid;
+            bresp <= bresp;
         end
 
     end
