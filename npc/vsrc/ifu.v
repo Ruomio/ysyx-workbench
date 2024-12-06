@@ -9,6 +9,17 @@ module ysyx_24080020_IFU (
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
 
+    // axi-lite
+    input arready,
+    output reg arvalid,
+    output reg [`ysyx_24080020_WIDTH-1:0] araddr,
+
+    input rvalid,
+    input [1:0] rresp,
+    input [`ysyx_24080020_WIDTH-1:0] rdata,
+    output reg rready,
+
+
     input wb_ifu_valid,
     input idu_ifu_ready,
     output reg ifu_wb_ready,
@@ -120,7 +131,17 @@ module ysyx_24080020_IFU (
         .if_en(if_en),
         .addr(addr),
         .inst(inst_ifu),
-        .inst_fin(inst_fin)
+        .inst_fin(inst_fin),
+
+        // axi-lite
+        .arvalid(arvalid),
+        .araddr(araddr),
+        .arready(arready),
+
+        .rvalid(rvalid),
+        .rresp(rresp),
+        .rdata(rdata),
+        .rready(rready)
     );
 
 

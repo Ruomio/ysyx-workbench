@@ -3,7 +3,7 @@ module ysyx_24080020_SRAM(
     input clk,
     input rst,
 
-    input [5:0] lfsr, // the number of delay cycle
+    // input [5:0] lfsr, // the number of delay cycle
     // AXI-lite
     input arvalid,
     input [`ysyx_24080020_WIDTH-1:0] araddr,
@@ -41,8 +41,10 @@ module ysyx_24080020_SRAM(
 
 
     wire [`ysyx_24080020_WIDTH-1:0] wstrb_full;
+    wire [5:0] lfsr;    // the number of delay cycle
 
     assign wstrb_full = {{8{wstrb[3]}}, {8{wstrb[2]}}, {8{wstrb[1]}}, {8{wstrb[0]}}};
+    assign lfsr = 6'd5;
 
     // AR
     always @(posedge clk) begin

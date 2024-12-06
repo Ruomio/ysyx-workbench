@@ -44,6 +44,30 @@ module ysyx_24080020_MEM(
     output reg is_dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
+    // axi-lite
+    input [5:0] lfsr,
+    output reg arvalid,
+    output reg [`ysyx_24080020_WIDTH-1:0] araddr,
+    input arready,
+
+    output reg rready,
+    input rvalid,
+    input [1:0] rresp,
+    input [`ysyx_24080020_WIDTH-1:0] rdata,
+
+    output reg awvalid,
+    input awready,
+    output reg [`ysyx_24080020_WIDTH-1:0] awaddr,
+
+    output reg wvalid,
+    input wready,
+    output reg [3:0] wstrb,
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata, 
+
+    output reg bready,
+    input bvalid,
+    input [1:0] bresp,
+
     // bus
     input exu_mem_valid,
     input wb_mem_ready,
@@ -68,30 +92,7 @@ module ysyx_24080020_MEM(
     reg state; // 0: idle;   1: wait_ready
 
 
-    // axi-lite
-    wire [5:0] lfsr;
-    reg arvalid;
-    wire arready;
-    wire [`ysyx_24080020_WIDTH-1:0] araddr;
-
-    reg rready;
-    wire rvalid;
-    wire [1:0] rresp;
-    wire [`ysyx_24080020_WIDTH-1:0] rdata;
-
-    reg awvalid;
-    wire awready;
-    wire [`ysyx_24080020_WIDTH-1:0] awaddr;
-
-    reg wvalid;
-    wire wready;
-    wire [3:0] wstrb;
-    wire [`ysyx_24080020_WIDTH-1:0] wdata; 
-
-    reg bready;
-    wire bvalid;
-    wire [1:0] bresp;
-
+    
 
 
     always @(posedge clk) begin
@@ -181,7 +182,6 @@ module ysyx_24080020_MEM(
 
 
 
-    assign lfsr = 6'd8;
     assign araddr = mraddr_mem;
     
     always @(posedge clk) begin
@@ -294,33 +294,33 @@ module ysyx_24080020_MEM(
     end
 
 
-    // axi-lite sram
-    ysyx_24080020_SRAM u_mem_sram(
-        .clk(clk),
-        .rst(rst),
-        .lfsr(lfsr),
+    // // axi-lite sram
+    // ysyx_24080020_SRAM u_mem_sram(
+    //     .clk(clk),
+    //     .rst(rst),
+    //     // .lfsr(lfsr),
 
-        .arvalid(arvalid),
-        .araddr(araddr),
-        .arready(arready),
+    //     .arvalid(arvalid),
+    //     .araddr(araddr),
+    //     .arready(arready),
 
-        .rready(rready),
-        .rdata(rdata),
-        .rresp(rresp),
-        .rvalid(rvalid),
+    //     .rready(rready),
+    //     .rdata(rdata),
+    //     .rresp(rresp),
+    //     .rvalid(rvalid),
 
-        .awaddr(awaddr),
-        .awvalid(awvalid),
-        .awready(awready),
+    //     .awaddr(awaddr),
+    //     .awvalid(awvalid),
+    //     .awready(awready),
 
-        .wdata(wdata),
-        .wstrb(wstrb),
-        .wvalid(wvalid),
-        .wready(wready),
+    //     .wdata(wdata),
+    //     .wstrb(wstrb),
+    //     .wvalid(wvalid),
+    //     .wready(wready),
 
-        .bresp(bresp),
-        .bvalid(bvalid),
-        .bready(bready)
-    );
+    //     .bresp(bresp),
+    //     .bvalid(bvalid),
+    //     .bready(bready)
+    // );
    
 endmodule
