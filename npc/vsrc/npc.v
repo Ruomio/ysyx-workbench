@@ -360,7 +360,8 @@ module ysyx_24080020_NPC(
         .rst(rst),
 
         // master-1 ifu
-        .wb_ifu_shake_hands(wb_ifu_shake_hands),
+        // .wb_ifu_shake_hands(wb_ifu_shake_hands),
+        .wb_ifu_shake_hands(if_en),
         .arvalid_ifu(arvalid_ifu),
         .araddr_ifu(araddr_ifu),
         .arready_ifu(arready_ifu),
@@ -397,8 +398,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        // .arvalid(arvalid_arbiter_slave),
-        .arvalid(if_en),
+        .arvalid(arvalid_arbiter_slave),
         .araddr(araddr_arbiter_slave),
         .arready(arready_arbiter_master),
 
