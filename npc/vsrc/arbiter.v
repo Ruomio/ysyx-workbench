@@ -125,7 +125,9 @@ module ysyx_24080020_ARBITER(
 
     always @(posedge clk) begin
         if(!rst) begin
-            rresp_slave_arbiter <= 2'b0;
+            rvalid_ifu <= 1'b0;
+            rvalid_mem <= 1'b0;
+
         end
         else if(!ifu_or_mem) begin
             rvalid_ifu <= rvalid_slave_arbiter;
