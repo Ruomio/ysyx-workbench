@@ -415,7 +415,7 @@ module ysyx_24080020_NPC(
 
         .bresp(bresp),
         .bvalid(bvalid),
-        .bready(bready),
+        .bready(bready)
     );
 
 
