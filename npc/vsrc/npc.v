@@ -89,7 +89,7 @@ module ysyx_24080020_NPC(
   wire [1:0] rresp_mem;
   wire [`ysyx_24080020_WIDTH-1:0] rdata_mem;
 
-  wire arvalid_arbiter_slave, arready_arbiter_master, arready_slave_arbiter;
+  wire arvalid_arbiter_slave, arready_slave_arbiter;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_arbiter_slave;
 
   wire rvalid_slave_arbiter, rready_arbiter_master;
@@ -386,7 +386,6 @@ module ysyx_24080020_NPC(
         // arbiter deside
         .arvalid_arbiter_slave(arvalid_arbiter_slave),
         .araddr_arbiter_slave(araddr_arbiter_slave),
-        .arready_arbiter_master(arready_arbiter_master),
         .arready_slave_arbiter(arready_slave_arbiter),
 
         .rdata_slave_arbiter(rdata_slave_arbiter),
