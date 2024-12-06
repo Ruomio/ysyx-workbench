@@ -68,6 +68,7 @@ module ysyx_24080020_NPC(
   // ifu -> idu.
   wire ifu_idu_valid;
   wire idu_ifu_ready;
+  wire wb_ifu_shake_hands;
 
   // idu -> exu
   wire idu_exu_valid;
@@ -76,6 +77,7 @@ module ysyx_24080020_NPC(
   // exu -> mem;
   wire exu_mem_valid;
   wire mem_exu_ready;
+  wire exu_mem_shake_hands;
 
   // mem -> reg
   wire mem_wb_valid;
@@ -84,7 +86,6 @@ module ysyx_24080020_NPC(
   // WB -> IFU
   wire wb_ifu_valid;
   wire ifu_wb_ready;
-  wire wb_ifu_shake_hand;
 
     
     ysyx_24080020_IFU ifu(
@@ -98,7 +99,7 @@ module ysyx_24080020_NPC(
         .idu_ifu_ready(idu_ifu_ready),
         .ifu_idu_valid(ifu_idu_valid),
         .ifu_wb_ready(ifu_wb_ready),
-        .wb_ifu_shake_hand(wb_ifu_shake_hand)
+        .wb_ifu_shake_hands(wb_ifu_shake_hands)
     );
 
     ysyx_24080020_IDU idu(
@@ -299,7 +300,8 @@ module ysyx_24080020_NPC(
         .exu_mem_valid(exu_mem_valid),
         .wb_mem_ready(wb_mem_ready),
         .mem_exu_ready(mem_exu_ready),
-        .mem_wb_valid(mem_wb_valid)
+        .mem_wb_valid(mem_wb_valid),
+        .exu_mem_shake_hands(exu_mem_shake_hands)
     );
 
 endmodule

@@ -48,7 +48,8 @@ module ysyx_24080020_MEM(
     input exu_mem_valid,
     input wb_mem_ready,
     output reg mem_exu_ready,
-    output reg mem_wb_valid
+    output reg mem_wb_valid,
+    output reg exu_mem_shake_hands
 
 );
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
@@ -108,41 +109,16 @@ module ysyx_24080020_MEM(
     end
 
     always @(posedge clk) begin
-        if(exu_mem_valid) begin
+        if(!rst) begin
+            mem_exu_ready <= 1'b0;
+        end
+        else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
             else begin
                 mem_exu_ready <= 1'b1;
 
-                // update reg
-                wen_mem <= wen_exu;
-                waddr_mem <= waddr_exu;
-
-                is_load_mem <= is_load_exu;
-                is_dnpc_mem <= is_dnpc_exu;
-                dnpc_mem <= dnpc_new_exu;
-
-                mren_mem <= mren_exu;
-                mrtype_mem <= mrtype_exu;
-                mrlen_mem <= mrlen_exu;
-                mraddr_mem <= mraddr_exu;
-                mwen_mem <= mwen_exu;
-                mwmask_mem <= mwmask_exu;
-                mwaddr_mem <= mwaddr_exu;
-                mwdata_mem <= mwdata_exu;
-
-                alu_out_mem <= alu_out_exu;
-
-                wcsren_mem <= wcsren_exu;
-                wcsraddr_mem <= wcsraddr_exu;
-                wcsrdata_mem <= wcsrdata_exu;
-                wcsren2_mem <= wcsren2_exu;
-                wcsraddr2_mem <= wcsraddr2_exu;
-                wcsrdata2_mem <= wcsrdata2_exu;
-
-                // mem_wb_valid <= 1'b1;
-                if(!mwen_exu && !mren_exu) begin
-                    mem_wb_valid <= 1'b1;
-                end
+                exu_mem_shake_hands <= 1'b1;
+                
             end
         end
         else if(wb_mem_ready && state) begin
@@ -153,6 +129,53 @@ module ysyx_24080020_MEM(
             mem_exu_ready <= 1'b0;
         end
 
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            exu_mem_shake_hands <= 1'b0;
+        end
+        else if(exu_mem_shake_hands) begin
+            exu_mem_shake_hands <= 1'b0;
+
+            // update reg
+            wen_mem <= wen_exu;
+            waddr_mem <= waddr_exu;
+
+            is_load_mem <= is_load_exu;
+            is_dnpc_mem <= is_dnpc_exu;
+            dnpc_mem <= dnpc_new_exu;
+
+            mren_mem <= mren_exu;
+            mrtype_mem <= mrtype_exu;
+            mrlen_mem <= mrlen_exu;
+            mraddr_mem <= mraddr_exu;
+            mwen_mem <= mwen_exu;
+            mwmask_mem <= mwmask_exu;
+            mwaddr_mem <= mwaddr_exu;
+            mwdata_mem <= mwdata_exu;
+
+            alu_out_mem <= alu_out_exu;
+
+            wcsren_mem <= wcsren_exu;
+            wcsraddr_mem <= wcsraddr_exu;
+            wcsrdata_mem <= wcsrdata_exu;
+            wcsren2_mem <= wcsren2_exu;
+            wcsraddr2_mem <= wcsraddr2_exu;
+            wcsrdata2_mem <= wcsrdata2_exu;
+
+            // mem_wb_valid <= 1'b1;
+            if(!mwen_exu && !mren_exu) begin
+                mem_wb_valid <= 1'b1;
+            end
+            else begin
+                mem_wb_valid <= 1'b0;
+            end
+
+        end
+        else begin
+            exu_mem_shake_hands <= 1'b0;
+        end
     end
 
 
