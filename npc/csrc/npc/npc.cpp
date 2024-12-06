@@ -151,7 +151,7 @@ void exec_once_npc(uint32_t pc) {
 #endif
 
 
-  trace_and_difftest(g_pc);
+  trace_and_difftest(g_get_pc());
 }
 
 void exec_all_npc() {
