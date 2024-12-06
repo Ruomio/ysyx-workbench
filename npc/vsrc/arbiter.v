@@ -37,8 +37,8 @@ module ysyx_24080020_ARBITER(
     output rready_arbiter_master
 );
     wire [2:0] max_cnt;
-    wire [2:0] ifu_wait_cnt;
-    wire [2:0] mem_wait_cnt;
+    reg [2:0] ifu_wait_cnt;
+    reg [2:0] mem_wait_cnt;
 
     reg ifu_or_mem;
     reg wait_rdata;
