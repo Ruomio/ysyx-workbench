@@ -45,7 +45,6 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
     // axi-lite
-    input [5:0] lfsr,
     output reg arvalid,
     output reg [`ysyx_24080020_WIDTH-1:0] araddr,
     input arready,
