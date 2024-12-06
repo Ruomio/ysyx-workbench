@@ -97,6 +97,7 @@ void init_npc(int argc, char **argv) {
       break;
     }
   }
+  g_get_pc();
 }
 
 void exec_once_npc(uint32_t pc) {
