@@ -83,7 +83,7 @@ module ysyx_24080020_SRAM(
                 r_cnt <= r_cnt + 6'b1;
             end
             else begin
-                printf_info();
+                // printf_info();
                 rdata <= read_memory(paddr, 32'd4);
                 if(wvalid) begin
                     read_before_write <= 1'b1;
