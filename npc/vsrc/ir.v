@@ -55,33 +55,5 @@ module ysyx_24080020_IR(
         end
     end
 
-    // ysyx_24080020_SRAM u_ir_sram(
-    //     .clk(clk),
-    //     .rst(rst),
-
-    //     // .lfsr(lfsr),
-    //     // axi-lite
-    //     .araddr(addr),
-    //     .arvalid(arvalid),
-    //     .arready(arready),
-
-    //     .rready(rready),
-    //     .rdata(rdata),
-    //     .rresp(rresp),
-    //     .rvalid(rvalid),
-
-    //     .awaddr(32'b0),
-    //     .awvalid(1'b0),
-    //     .awready(awready),
-
-    //     .wdata(32'b0),
-    //     .wstrb(4'b0),
-    //     .wvalid(1'b0),
-    //     .wready(wready),
-
-    //     .bresp(bresp),
-    //     .bvalid(bvalid),
-    //     .bready(1'b0)
-    // );
 
 endmodule
