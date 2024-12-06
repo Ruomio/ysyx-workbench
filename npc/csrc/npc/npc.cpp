@@ -37,7 +37,7 @@ VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
 
-static uint32_t g_pc;
+uint32_t g_pc;
 static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
