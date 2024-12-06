@@ -174,7 +174,8 @@ module ysyx_24080020_MEM(
             exu_mem_shake_hands <= 1'b0;
         end
         else begin
-            exu_mem_shake_hands <= 1'b0;
+            // exu_mem_shake_hands <= 1'b0;
+            mem_exu_ready <= 1'b0;
         end
     end
 
