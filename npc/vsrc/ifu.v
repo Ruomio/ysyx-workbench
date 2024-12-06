@@ -62,7 +62,7 @@ module ysyx_24080020_IFU (
         end
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
-            pc_ifu <= addr;
+            pc_ifu <= araddr;
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
