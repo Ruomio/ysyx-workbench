@@ -27,7 +27,7 @@ module ysyx_24080020_SRAM(
     output reg bvalid,
     input bready
 );
-
+    import "DPI-C" function void printf_info();
     import "DPI-C" function int read_memory(input int addr, input int len);
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
 
@@ -83,6 +83,7 @@ module ysyx_24080020_SRAM(
                 r_cnt <= r_cnt + 6'b1;
             end
             else begin
+                printf_info();
                 rdata <= read_memory(paddr, 32'd4);
                 if(wvalid) begin
                     read_before_write <= 1'b1;

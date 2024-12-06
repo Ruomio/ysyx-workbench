@@ -89,7 +89,6 @@ void init_npc(int argc, char **argv) {
     top->clk ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
-    total_wave_stop++;
     tfp->dump(contextp->time());
     contextp->timeInc(1);
 #endif
@@ -309,4 +308,9 @@ void update_dut() {
   }
   // top->pc = npc_cpu.pc;
   g_set_pc(npc_cpu.pc);
+}
+
+void printf_info() {
+  printf("araddr arbiter = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__araddr_arbiter_slave);
+  printf("araddr ifu = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr);
 }
