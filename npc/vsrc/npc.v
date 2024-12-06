@@ -85,7 +85,7 @@ module ysyx_24080020_NPC(
   wire arvalid_mem, arready_mem;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_mem;
   wire rready_mem, rvalid_mem;
-  wire [1:0] rresp_ifu;
+  wire [1:0] rresp_mem;
   wire [`ysyx_24080020_WIDTH-1:0] rdata_mem;
 
   wire arvalid_arbiter_slave, arready_arbiter_master, arready_slave_arbiter;
@@ -324,7 +324,6 @@ module ysyx_24080020_NPC(
         .is_dnpc_mem(is_dnpc_mem),
 
         // axi-lite
-        .lfsr(lfsr),
         .arvalid(arvalid_mem),
         .araddr(araddr_mem),
         .arready(arready_mem),
@@ -403,6 +402,7 @@ module ysyx_24080020_NPC(
         .rdata(rdata_slave_arbiter),
         .rresp(rresp_slave_arbiter),
         .rvalid(rvalid_slave_arbiter),
+        .rready(rready_arbiter_master),
 
         .awaddr(mwaddr_mem),
         .awvalid(mwen_mem),
