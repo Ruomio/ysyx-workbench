@@ -149,12 +149,14 @@ void exec_once_npc(uint32_t pc) {
 #endif
   // RingBuffer_write(inst_buf, strlen(inst_buf));
 #endif
+
+
+  trace_and_difftest(g_pc);
 }
 
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
     exec_once_npc(g_get_pc());
-    trace_and_difftest(g_get_dnpc());
   }
 }
 
@@ -189,7 +191,6 @@ void exec_npc(int n) {
     for(; n>0; n--) {
       if (u_npc_state.state != NPC_RUNNING) break;
       exec_once_npc(g_get_pc());
-      trace_and_difftest(g_get_dnpc());
     }
   }
 
