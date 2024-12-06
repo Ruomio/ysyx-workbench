@@ -136,7 +136,6 @@ module ysyx_24080020_MEM(
             exu_mem_shake_hands <= 1'b0;
         end
         else if(exu_mem_shake_hands) begin
-            exu_mem_shake_hands <= 1'b0;
 
             // update reg
             wen_mem <= wen_exu;
@@ -172,6 +171,7 @@ module ysyx_24080020_MEM(
                 mem_wb_valid <= 1'b0;
             end
 
+            exu_mem_shake_hands <= 1'b0;
         end
         else begin
             exu_mem_shake_hands <= 1'b0;
