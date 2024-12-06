@@ -84,6 +84,7 @@ module ysyx_24080020_NPC(
   // WB -> IFU
   wire wb_ifu_valid;
   wire ifu_wb_ready;
+  wire wb_ifu_shake_hand;
 
     
     ysyx_24080020_IFU ifu(
@@ -96,7 +97,8 @@ module ysyx_24080020_NPC(
         .wb_ifu_valid(wb_ifu_valid),
         .idu_ifu_ready(idu_ifu_ready),
         .ifu_idu_valid(ifu_idu_valid),
-        .ifu_wb_ready(ifu_wb_ready)
+        .ifu_wb_ready(ifu_wb_ready),
+        .wb_ifu_shake_hand(wb_ifu_shake_hand)
     );
 
     ysyx_24080020_IDU idu(
