@@ -372,7 +372,8 @@ module ysyx_24080020_NPC(
         .rvalid_ifu(rvalid_ifu),
 
         // master-2 mem
-        .exu_mem_shake_hands(exu_mem_shake_hands),
+        // .exu_mem_shake_hands(exu_mem_shake_hands),
+        .exu_mem_shake_hands(mren_mem),
         .arvalid_mem(arvalid_mem),
         .araddr_mem(araddr_mem),
         .arready_mem(arready_mem),
