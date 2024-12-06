@@ -3,7 +3,7 @@ module ysyx_24080020_IR(
     input clk,
     input rst,
     input if_en,
-    // input [`ysyx_24080020_WIDTH-1:0] addr,
+    input [`ysyx_24080020_WIDTH-1:0] addr,
 
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
     output reg inst_fin,
@@ -26,6 +26,7 @@ module ysyx_24080020_IR(
         end
         else if(if_en) begin
             arvalid <= 1'b1;
+            araddr <= addr;
         end
         else if(arready && arvalid) begin
             arvalid <= 1'b0;
