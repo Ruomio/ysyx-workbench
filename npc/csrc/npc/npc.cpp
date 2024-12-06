@@ -89,6 +89,7 @@ void init_npc(int argc, char **argv) {
     top->clk ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
+    total_wave_stop++;
     tfp->dump(contextp->time());
     contextp->timeInc(1);
 #endif
