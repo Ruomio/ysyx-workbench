@@ -400,7 +400,7 @@ module ysyx_24080020_NPC(
 
         .arvalid(arvalid_arbiter_slave),
         .araddr(araddr_arbiter_slave),
-        .arready(arready_arbiter_master),
+        .arready(arready_slave_arbiter),
 
         .rdata(rdata_slave_arbiter),
         .rresp(rresp_slave_arbiter),
