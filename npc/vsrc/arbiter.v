@@ -29,7 +29,6 @@ module ysyx_24080020_ARBITER(
     output arvalid_arbiter_slave,
     output [`ysyx_24080020_WIDTH-1:0] araddr_arbiter_slave,
     input arready_slave_arbiter,
-    output reg arready_arbiter_master,
 
     input [`ysyx_24080020_WIDTH-1:0] rdata_slave_arbiter,
     input [1:0] rresp_slave_arbiter,
@@ -105,13 +104,14 @@ module ysyx_24080020_ARBITER(
 
     always @(posedge clk) begin
         if(!rst) begin
-            arready_arbiter_master <= 1'b0;
+            arready_ifu <= 1'b0;
+            arready_mem <= 1'b0;
         end
         else if(!ifu_or_mem) begin
-            arready_arbiter_master <= arready_ifu;
+            arready_ifu <= arready_slave_arbiter;
         end
         else begin
-            arready_arbiter_master <= arready_mem;
+            arready_mem <= arready_slave_arbiter;
         end
     end
 
