@@ -312,7 +312,7 @@ void update_dut() {
 }
 
 void printf_info() {
-  printf("araddr arbiter = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__araddr_arbiter_slave);
+  printf("araddr arbiter = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr);
   printf("araddr ifu = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr);
   printf("pc ifu = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__pc_ifu);
 
