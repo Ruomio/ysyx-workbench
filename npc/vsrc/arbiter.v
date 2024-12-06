@@ -42,18 +42,31 @@ module ysyx_24080020_ARBITER(
 
     reg ifu_or_mem;
     reg wait_rdata;
+    reg ar_tmp;
 
     assign max_cnt = 3'd7;
     
 
     always @(posedge clk) begin
         if(!rst) begin
+            ar_tmp <= 1'b0;
             ifu_wait_cnt <= 3'b0;
             mem_wait_cnt <= 3'b0;
         end
+        else if(ar_tmp) begin
+            if(!ifu_or_mem) begin
+                arvalid_arbiter_slave <= arvalid_ifu;
+                araddr_arbiter_slave <= araddr_ifu;
+            end
+            else begin
+                arvalid_arbiter_slave <= arvalid_mem;
+                araddr_arbiter_slave <= araddr_mem;
+            end
+
+            ar_tmp <= 1'b0;
+        end
         else if(wb_ifu_shake_hands && ifu_wait_cnt == max_cnt) begin
-            arvalid_arbiter_slave <= arvalid_ifu;
-            araddr_arbiter_slave <= araddr_ifu;
+            ar_tmp <= 1'b1;
 
             ifu_or_mem <= 1'b0;
 
@@ -61,8 +74,7 @@ module ysyx_24080020_ARBITER(
             mem_wait_cnt <= mem_wait_cnt + 3'b1;
         end
         else if(exu_mem_shake_hands && mem_wait_cnt == max_cnt) begin
-            arvalid_arbiter_slave <= arvalid_mem;
-            araddr_arbiter_slave <= araddr_mem;
+            ar_tmp <= 1'b1;
 
             ifu_or_mem <= 1'b1;
 
@@ -70,8 +82,7 @@ module ysyx_24080020_ARBITER(
             ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
         end
         else if(wb_ifu_shake_hands) begin
-            arvalid_arbiter_slave <= arvalid_ifu;
-            araddr_arbiter_slave <= araddr_ifu;
+            ar_tmp <= 1'b1;
 
             ifu_or_mem <= 1'b0;
 
@@ -79,8 +90,7 @@ module ysyx_24080020_ARBITER(
             mem_wait_cnt <= mem_wait_cnt + 3'b1;
         end
         else if(exu_mem_shake_hands) begin
-            arvalid_arbiter_slave <= arvalid_mem;
-            araddr_arbiter_slave <= araddr_mem;
+            ar_tmp <= 1'b1;
 
             ifu_or_mem <= 1'b1;
 
