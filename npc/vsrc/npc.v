@@ -97,7 +97,6 @@ module ysyx_24080020_NPC(
 
 
   // AXI-lite
-  wire [5:0] lfsrl
   wire awvalid, awready, wvalid, wready, bvalid, bready;
   wire [`ysyx_24080020_WIDTH-1:0] awaddr, wdata_axi;
   wire [1:0] bresp;
