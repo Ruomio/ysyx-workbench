@@ -13,7 +13,7 @@ extern char *img_file;
 extern long img_size;
 extern npc_state u_npc_state;
 
-extern uint32_t g_get_pc();
+extern uint32_t g_pc;
 
 #ifdef CONFIG_MTRACE
   struct MtraceBuf {
@@ -49,7 +49,7 @@ extern uint32_t g_get_pc();
 static void out_of_bound(paddr_t addr) {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-      addr, PMEM_LEFT, PMEM_RIGHT, g_get_pc());
+      addr, PMEM_LEFT, PMEM_RIGHT, g_pc);
 }
 
 

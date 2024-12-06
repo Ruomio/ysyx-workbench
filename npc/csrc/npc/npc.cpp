@@ -62,7 +62,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   if (ITRACE_COND) { log_write("%s\n", inst_buf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(g_get_pc(), g_get_dnpc()));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(g_pc, g_get_dnpc()));
 
 #ifdef CONFIG_WATCH_POINT
   // scan and print all watch point and break point
@@ -151,12 +151,12 @@ void exec_once_npc(uint32_t pc) {
 #endif
 
 
-  trace_and_difftest(g_get_pc());
+  trace_and_difftest(g_pc);
 }
 
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
-    exec_once_npc(g_get_pc());
+    exec_once_npc(g_pc);
   }
 }
 
@@ -190,7 +190,7 @@ void exec_npc(int n) {
   else {
     for(; n>0; n--) {
       if (u_npc_state.state != NPC_RUNNING) break;
-      exec_once_npc(g_get_pc());
+      exec_once_npc(g_pc);
     }
   }
 
@@ -235,7 +235,7 @@ void update_ftrace_dpi() {
 void ebreak() {
   u_npc_state.state = NPC_END;
   u_npc_state.ret = false;
-  u_npc_state.pc = g_get_pc();
+  u_npc_state.pc = g_pc;
 }
 
 void invalid_inst() {
@@ -292,7 +292,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
       return false;
     }
   }
-  if(pc != g_get_pc()) return false;
+  if(pc != g_pc) return false;
   return true;
 }
 
@@ -300,7 +300,7 @@ void update_npc_cpu() {
   for(int i=0; i<32; i++) {
     npc_cpu.gpr[i] = g_get_reg(i);
   }
-  npc_cpu.pc = g_get_pc();
+  npc_cpu.pc = g_pc;
 }
 
 void update_dut() {
