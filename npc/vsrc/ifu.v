@@ -12,7 +12,8 @@ module ysyx_24080020_IFU (
     input wb_ifu_valid,
     input idu_ifu_ready,
     output reg ifu_wb_ready,
-    output reg ifu_idu_valid
+    output reg ifu_idu_valid,
+    output reg wb_ifu_shake_hand
 
 );
     wire if_en;
@@ -45,6 +46,7 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
+            ifu_idu_valid <= 1'b0;
         end
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
@@ -58,7 +60,7 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-
+            ifu_wb_ready <= 1'b0;
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
@@ -68,12 +70,8 @@ module ysyx_24080020_IFU (
                 // shake hands
                 ifu_wb_ready <= 1'b1;
 
-                // update
-                dnpc <= dnpc_wb;
-                is_dnpc <= is_dnpc_wb;
+                wb_ifu_shake_hand <= 1'b1;
 
-                is_update_pc <= 1'b1;
-                // if_en <= 1'b1;
             end
         end
         else if(idu_ifu_ready && state) begin
@@ -87,6 +85,27 @@ module ysyx_24080020_IFU (
             // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
         end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            wb_ifu_shake_hand <= 1'b0;
+        end
+        else if(wb_ifu_shake_hand) begin
+            // update
+            dnpc <= dnpc_wb;
+            is_dnpc <= is_dnpc_wb;
+
+            is_update_pc <= 1'b1;
+            // if_en <= 1'b1;
+
+            wb_ifu_shake_hand <= 1'b0;
+
+        end
+        else begin
+            wb_ifu_shake_hand <= 1'b0;
+        end
+
     end
 
 

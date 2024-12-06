@@ -157,7 +157,7 @@ module ysyx_24080020_MEM(
 
 
 
-    assign lfsr = 6'd20;
+    assign lfsr = 6'd8;
     assign araddr = mraddr_mem;
     
     always @(posedge clk) begin
