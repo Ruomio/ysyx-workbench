@@ -13,6 +13,7 @@ module ysyx_24080020_NPC(
   wire is_jalr_idu;
 
   // inst
+  wire if_en;
   wire [`ysyx_24080020_WIDTH-1:0] inst_ifu, inst_idu;
   wire [4:0] rs1;
   wire [4:0] rs2;
@@ -110,6 +111,7 @@ module ysyx_24080020_NPC(
         .is_dnpc_wb(is_dnpc_wb),
         .pc_ifu(pc_ifu), 
         .inst_ifu(inst_ifu),
+        .if_en(if_en),
 
         // axi-lite
         .arvalid(arvalid_ifu),
@@ -395,7 +397,8 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .arvalid(arvalid_arbiter_slave),
+        // .arvalid(arvalid_arbiter_slave),
+        .arvalid(if_en),
         .araddr(araddr_arbiter_slave),
         .arready(arready_arbiter_master),
 

@@ -8,6 +8,7 @@ module ysyx_24080020_IFU (
 
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
+    output reg if_en,
 
     // axi-lite
     input arready,
@@ -27,7 +28,7 @@ module ysyx_24080020_IFU (
     output reg wb_ifu_shake_hands
 
 );
-    wire if_en;
+    // wire if_en;
     wire inst_fin;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
     // wire [`ysyx_24080020_WIDTH-1:0] snpc;
