@@ -77,10 +77,10 @@ module ysyx_24080020_IFU (
         else if(idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
         end
-        else if(!ifu_idu_valid) begin
-            // process
-            is_update_pc <= 1'b0;
-        end
+        // else if(!ifu_idu_valid) begin
+        //     // process
+        //     is_update_pc <= 1'b0;
+        // end
         else begin
             // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
@@ -104,6 +104,7 @@ module ysyx_24080020_IFU (
         end
         else begin
             wb_ifu_shake_hand <= 1'b0;
+            is_update_pc <= 1'b0;
         end
 
     end
