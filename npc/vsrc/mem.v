@@ -44,6 +44,29 @@ module ysyx_24080020_MEM(
     output reg is_dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
+    // axi-lite
+    output reg arvalid,
+    output reg [`ysyx_24080020_WIDTH-1:0] araddr,
+    input arready,
+
+    output reg rready,
+    input rvalid,
+    input [1:0] rresp,
+    input [`ysyx_24080020_WIDTH-1:0] rdata,
+
+    output reg awvalid,
+    input awready,
+    output reg [`ysyx_24080020_WIDTH-1:0] awaddr,
+
+    output reg wvalid,
+    input wready,
+    output reg [3:0] wstrb,
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata, 
+
+    output reg bready,
+    input bvalid,
+    input [1:0] bresp,
+
     // bus
     input exu_mem_valid,
     input wb_mem_ready,
@@ -59,38 +82,22 @@ module ysyx_24080020_MEM(
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
+    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
     reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
+    reg exu_mem_shake_hands;
 
     reg state; // 0: idle;   1: wait_ready
 
-
-    // axi-lite
-    wire [5:0] lfsr;
-    reg arvalid;
-    wire arready;
-    wire [`ysyx_24080020_WIDTH-1:0] araddr;
-
-    reg rready;
-    wire rvalid;
-    wire [1:0] rresp;
-    wire [`ysyx_24080020_WIDTH-1:0] rdata;
-
-    reg awvalid;
-    wire awready;
-    wire [`ysyx_24080020_WIDTH-1:0] awaddr;
-
-    reg wvalid;
-    wire wready;
-    wire [3:0] wstrb;
-    wire [`ysyx_24080020_WIDTH-1:0] wdata; 
-
-    reg bready;
-    wire bvalid;
-    wire [1:0] bresp;
-
+    assign araddr = mraddr_mem;
+    assign wdata = mwdata_mem;
+    assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
+                   mwmask_mem == 4'b10 ? 4'b11 :
+                   mwmask_mem == 4'b100 ? 4'b1111 : 
+                   4'b0;
+    assign awaddr = mwaddr_mem;
+    
 
 
     always @(posedge clk) begin
@@ -108,41 +115,15 @@ module ysyx_24080020_MEM(
     end
 
     always @(posedge clk) begin
-        if(exu_mem_valid) begin
+        if(!rst) begin
+            mem_exu_ready <= 1'b0;
+        end
+        else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
             else begin
                 mem_exu_ready <= 1'b1;
 
-                // update reg
-                wen_mem <= wen_exu;
-                waddr_mem <= waddr_exu;
-
-                is_load_mem <= is_load_exu;
-                is_dnpc_mem <= is_dnpc_exu;
-                dnpc_mem <= dnpc_new_exu;
-
-                mren_mem <= mren_exu;
-                mrtype_mem <= mrtype_exu;
-                mrlen_mem <= mrlen_exu;
-                mraddr_mem <= mraddr_exu;
-                mwen_mem <= mwen_exu;
-                mwmask_mem <= mwmask_exu;
-                mwaddr_mem <= mwaddr_exu;
-                mwdata_mem <= mwdata_exu;
-
-                alu_out_mem <= alu_out_exu;
-
-                wcsren_mem <= wcsren_exu;
-                wcsraddr_mem <= wcsraddr_exu;
-                wcsrdata_mem <= wcsrdata_exu;
-                wcsren2_mem <= wcsren2_exu;
-                wcsraddr2_mem <= wcsraddr2_exu;
-                wcsrdata2_mem <= wcsrdata2_exu;
-
-                // mem_wb_valid <= 1'b1;
-                if(!mwen_exu && !mren_exu) begin
-                    mem_wb_valid <= 1'b1;
-                end
+                exu_mem_shake_hands <= 1'b1;
             end
         end
         else if(wb_mem_ready && state) begin
@@ -155,10 +136,56 @@ module ysyx_24080020_MEM(
 
     end
 
+    always @(posedge clk) begin
+        if(!rst) begin
+            exu_mem_shake_hands <= 1'b0;
+        end
+        else if(exu_mem_shake_hands) begin
+
+            // update reg
+            wen_mem <= wen_exu;
+            waddr_mem <= waddr_exu;
+
+            is_load_mem <= is_load_exu;
+            is_dnpc_mem <= is_dnpc_exu;
+            dnpc_mem <= dnpc_new_exu;
+
+            mren_mem <= mren_exu;
+            mrtype_mem <= mrtype_exu;
+            mrlen_mem <= mrlen_exu;
+            mraddr_mem <= mraddr_exu;
+            mwen_mem <= mwen_exu;
+            mwmask_mem <= mwmask_exu;
+            mwaddr_mem <= mwaddr_exu;
+            mwdata_mem <= mwdata_exu;
+
+            alu_out_mem <= alu_out_exu;
+
+            wcsren_mem <= wcsren_exu;
+            wcsraddr_mem <= wcsraddr_exu;
+            wcsrdata_mem <= wcsrdata_exu;
+            wcsren2_mem <= wcsren2_exu;
+            wcsraddr2_mem <= wcsraddr2_exu;
+            wcsrdata2_mem <= wcsrdata2_exu;
+
+            // mem_wb_valid <= 1'b1;
+            if(!mwen_exu && !mren_exu) begin
+                mem_wb_valid <= 1'b1;
+            end
+            else begin
+                mem_wb_valid <= 1'b0;
+            end
+
+            exu_mem_shake_hands <= 1'b0;
+        end
+        else begin
+            // exu_mem_shake_hands <= 1'b0;
+            mem_exu_ready <= 1'b0;
+        end
+    end
 
 
-    assign lfsr = 6'd8;
-    assign araddr = mraddr_mem;
+
     
     always @(posedge clk) begin
         if(!rst) begin
@@ -216,7 +243,6 @@ module ysyx_24080020_MEM(
         end
     end
 
-    assign awaddr = mwaddr_mem;
     always @(posedge clk) begin
         if(!rst) begin
             awvalid <= 1'b0;
@@ -224,6 +250,8 @@ module ysyx_24080020_MEM(
         else if(awvalid && awready) begin
             awvalid <= 1'b0;
             wvalid <= 1'b1;
+
+            mwen_mem <= 1'b0;
         end
         else if(mwen_mem) begin
             awvalid <= 1'b1;
@@ -235,11 +263,7 @@ module ysyx_24080020_MEM(
         end
     end
 
-    assign wdata = mwdata_mem;
-    assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
-                   mwmask_mem == 4'b10 ? 4'b11 :
-                   mwmask_mem == 4'b100 ? 4'b1111 : 
-                   4'b0;
+
     always @(posedge clk) begin
         if(!rst) begin
             wvalid <= 1'b0;
@@ -268,35 +292,5 @@ module ysyx_24080020_MEM(
             bready <= 1'b0;
         end
     end
-
-
-    // axi-lite sram
-    ysyx_24080020_SRAM u_mem_sram(
-        .clk(clk),
-        .rst(rst),
-        .lfsr(lfsr),
-
-        .arvalid(arvalid),
-        .araddr(araddr),
-        .arready(arready),
-
-        .rready(rready),
-        .rdata(rdata),
-        .rresp(rresp),
-        .rvalid(rvalid),
-
-        .awaddr(awaddr),
-        .awvalid(awvalid),
-        .awready(awready),
-
-        .wdata(wdata),
-        .wstrb(wstrb),
-        .wvalid(wvalid),
-        .wready(wready),
-
-        .bresp(bresp),
-        .bvalid(bvalid),
-        .bready(bready)
-    );
    
 endmodule

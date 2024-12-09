@@ -3,7 +3,6 @@ module ysyx_24080020_SRAM(
     input clk,
     input rst,
 
-    input [5:0] lfsr, // the number of delay cycle
     // AXI-lite
     input arvalid,
     input [`ysyx_24080020_WIDTH-1:0] araddr,
@@ -27,7 +26,7 @@ module ysyx_24080020_SRAM(
     output reg bvalid,
     input bready
 );
-
+    import "DPI-C" function void printf_info();
     import "DPI-C" function int read_memory(input int addr, input int len);
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
 
@@ -41,8 +40,10 @@ module ysyx_24080020_SRAM(
 
 
     wire [`ysyx_24080020_WIDTH-1:0] wstrb_full;
+    wire [5:0] lfsr;    // the number of delay cycle
 
     assign wstrb_full = {{8{wstrb[3]}}, {8{wstrb[2]}}, {8{wstrb[1]}}, {8{wstrb[0]}}};
+    assign lfsr = 6'd5;
 
     // AR
     always @(posedge clk) begin
@@ -81,6 +82,7 @@ module ysyx_24080020_SRAM(
                 r_cnt <= r_cnt + 6'b1;
             end
             else begin
+                // printf_info();
                 rdata <= read_memory(paddr, 32'd4);
                 if(wvalid) begin
                     read_before_write <= 1'b1;
