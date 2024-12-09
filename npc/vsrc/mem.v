@@ -116,8 +116,12 @@ module ysyx_24080020_MEM(
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
             else begin
                 mem_exu_ready <= 1'b1;
-
-                exu_mem_shake_hands <= 1'b1;
+                if(exu_mem_valid && mem_exu_ready) begin
+                    exu_mem_shake_hands <= 1'b1;
+                end
+                else begin
+                    exu_mem_shake_hands <= 1'b0;
+                end
                 
             end
         end
@@ -247,11 +251,13 @@ module ysyx_24080020_MEM(
         else if(awvalid && awready) begin
             awvalid <= 1'b0;
             wvalid <= 1'b1;
+
+            mwen_mem <= 1'b0;
         end
         else if(mwen_mem) begin
             awvalid <= 1'b1;
 
-            mwen_mem <= 1'b0;
+            // mwen_mem <= 1'b0;
         end
         else begin
             awvalid <= awvalid;
