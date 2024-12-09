@@ -5,9 +5,7 @@ module ysyx_24080020_NPC(
 );
 
   // pc
-  // wire [3:0] pc_len;
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu;
-  // wire [`ysyx_24080020_WIDTH-1:0] snpc, snpc_ifu, snpc_idu, snpc_exu;
   wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem, dnpc_wb;
   wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, is_dnpc_wb;
   wire is_jalr_idu;
@@ -61,14 +59,12 @@ module ysyx_24080020_NPC(
   // bus control
   wire ifu_idu_valid;
   wire idu_ifu_ready;
-  wire wb_ifu_shake_hands;
   // idu -> exu
   wire idu_exu_valid;
   wire exu_idu_ready;
   // exu -> mem
   wire exu_mem_valid;
   wire mem_exu_ready;
-  wire exu_mem_shake_hands;
   // mem -> reg
   wire mem_wb_valid;
   wire wb_mem_ready;
@@ -126,8 +122,7 @@ module ysyx_24080020_NPC(
         .wb_ifu_valid(wb_ifu_valid),
         .idu_ifu_ready(idu_ifu_ready),
         .ifu_idu_valid(ifu_idu_valid),
-        .ifu_wb_ready(ifu_wb_ready),
-        .wb_ifu_shake_hands(wb_ifu_shake_hands)
+        .ifu_wb_ready(ifu_wb_ready)
     );
 
     ysyx_24080020_IDU idu(
@@ -141,14 +136,12 @@ module ysyx_24080020_NPC(
         .pc_ifu(pc_ifu),
         .imm_idu(imm_idu), 
         .branch_src1_idu(branch_src1_idu),
-        // .snpc_ifu(snpc_ifu),
         .wen_idu(wen_idu),
         .waddr_idu(waddr_idu),
         .wdata_idu(wdata_idu),
         .is_load_idu(is_load_idu),
         .is_dnpc_idu(is_dnpc_idu),
         .is_jalr_idu(is_jalr_idu),
-        // .is_btype_idu(is_btype_idu),
         .is_csrtype_idu(is_csrtype_idu),
         .dnpc_idu(dnpc_idu),
 
@@ -193,7 +186,6 @@ module ysyx_24080020_NPC(
 
         .wen_mem(wen_mem), 
         .waddr_mem(waddr_mem), 
-        // .wdata_mem(wdata_mem), 
         .mrdata_mem(mrdata_mem),
         .alu_out_mem(alu_out_mem),
 
@@ -225,7 +217,6 @@ module ysyx_24080020_NPC(
 
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
-        // .is_btype_idu(is_btype_idu),
         .branch_src1_idu(branch_src1_idu),
         .dnpc_idu(dnpc_idu),
         .is_dnpc_exu(is_dnpc_exu),
@@ -243,7 +234,6 @@ module ysyx_24080020_NPC(
         .wdata_idu(wdata_idu),
         .wen_exu(wen_exu),
         .waddr_exu(waddr_exu),
-        // .wdata_exu(wdata_exu),
 
         //memory
         .mwen_idu(mwen_idu),
@@ -351,8 +341,7 @@ module ysyx_24080020_NPC(
         .exu_mem_valid(exu_mem_valid),
         .wb_mem_ready(wb_mem_ready),
         .mem_exu_ready(mem_exu_ready),
-        .mem_wb_valid(mem_wb_valid),
-        .exu_mem_shake_hands(exu_mem_shake_hands)
+        .mem_wb_valid(mem_wb_valid)
     );
 
     ysyx_24080020_ARBITER u_arbiter(
@@ -360,8 +349,6 @@ module ysyx_24080020_NPC(
         .rst(rst),
 
         // master-1 ifu
-        // .wb_ifu_shake_hands(wb_ifu_shake_hands),
-        // .wb_ifu_shake_hands(if_en),
         .arvalid_ifu(arvalid_ifu),
         .araddr_ifu(araddr_ifu),
         .arready_ifu(arready_ifu),
@@ -372,8 +359,6 @@ module ysyx_24080020_NPC(
         .rvalid_ifu(rvalid_ifu),
 
         // master-2 mem
-        // .exu_mem_shake_hands(exu_mem_shake_hands),
-        // .exu_mem_shake_hands(mren_mem),
         .arvalid_mem(arvalid_mem),
         .araddr_mem(araddr_mem),
         .arready_mem(arready_mem),

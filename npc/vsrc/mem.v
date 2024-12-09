@@ -71,8 +71,7 @@ module ysyx_24080020_MEM(
     input exu_mem_valid,
     input wb_mem_ready,
     output reg mem_exu_ready,
-    output reg mem_wb_valid,
-    output reg exu_mem_shake_hands
+    output reg mem_wb_valid
 
 );
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
@@ -87,6 +86,7 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
+    reg exu_mem_shake_hands;
 
     reg state; // 0: idle;   1: wait_ready
 
@@ -292,35 +292,5 @@ module ysyx_24080020_MEM(
             bready <= 1'b0;
         end
     end
-
-
-    // // axi-lite sram
-    // ysyx_24080020_SRAM u_mem_sram(
-    //     .clk(clk),
-    //     .rst(rst),
-    //     // .lfsr(lfsr),
-
-    //     .arvalid(arvalid),
-    //     .araddr(araddr),
-    //     .arready(arready),
-
-    //     .rready(rready),
-    //     .rdata(rdata),
-    //     .rresp(rresp),
-    //     .rvalid(rvalid),
-
-    //     .awaddr(awaddr),
-    //     .awvalid(awvalid),
-    //     .awready(awready),
-
-    //     .wdata(wdata),
-    //     .wstrb(wstrb),
-    //     .wvalid(wvalid),
-    //     .wready(wready),
-
-    //     .bresp(bresp),
-    //     .bvalid(bvalid),
-    //     .bready(bready)
-    // );
    
 endmodule

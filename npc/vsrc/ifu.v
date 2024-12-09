@@ -24,21 +24,17 @@ module ysyx_24080020_IFU (
     input wb_ifu_valid,
     input idu_ifu_ready,
     output reg ifu_wb_ready,
-    output reg ifu_idu_valid,
-    output reg wb_ifu_shake_hands
-
+    output reg ifu_idu_valid
 );
-    // wire if_en;
     wire inst_fin;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
-    // wire [`ysyx_24080020_WIDTH-1:0] snpc;
 
     reg is_dnpc;
     reg is_update_pc;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
 
+    reg wb_ifu_shake_hands;
 
-    // reg [`ysyx_24080020_WIDTH-1:0] inst_ifu;
 
     reg state; // 0: idle  ;  1: wait_ready
 

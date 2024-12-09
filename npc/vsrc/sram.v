@@ -3,7 +3,6 @@ module ysyx_24080020_SRAM(
     input clk,
     input rst,
 
-    // input [5:0] lfsr, // the number of delay cycle
     // AXI-lite
     input arvalid,
     input [`ysyx_24080020_WIDTH-1:0] araddr,
