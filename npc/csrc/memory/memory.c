@@ -1,5 +1,4 @@
 #include "memory/memory.h"
-#include "common.h"
 #include "define.h"
 #include <stdint.h>
 #include <stdio.h>
