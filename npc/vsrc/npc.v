@@ -407,13 +407,13 @@ module ysyx_24080020_NPC(
         .rvalid(rvalid_slave_arbiter),
         .rready(rready_arbiter_master),
 
-        .awaddr(mwaddr_mem),
-        .awvalid(mwen_mem),
+        .awaddr(awaddr),
+        .awvalid(awvalid),
         .awready(awready),
 
-        .wdata(mwdata_mem),
-        .wstrb(mwmask_mem),
-        .wvalid(),
+        .wdata(wdata_axi),
+        .wstrb(wstrb),
+        .wvalid(wvalid),
         .wready(wready),
 
         .bresp(bresp),

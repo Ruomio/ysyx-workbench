@@ -83,14 +83,20 @@ module ysyx_24080020_MEM(
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
+    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
     reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
 
     reg state; // 0: idle;   1: wait_ready
 
-
+    assign araddr = mraddr_mem;
+    assign wdata = mwdata_mem;
+    assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
+                   mwmask_mem == 4'b10 ? 4'b11 :
+                   mwmask_mem == 4'b100 ? 4'b1111 : 
+                   4'b0;
+    assign awaddr = mwaddr_mem;
     
 
 
@@ -180,7 +186,6 @@ module ysyx_24080020_MEM(
 
 
 
-    assign araddr = mraddr_mem;
     
     always @(posedge clk) begin
         if(!rst) begin
@@ -238,7 +243,6 @@ module ysyx_24080020_MEM(
         end
     end
 
-    assign awaddr = mwaddr_mem;
     always @(posedge clk) begin
         if(!rst) begin
             awvalid <= 1'b0;
@@ -252,18 +256,14 @@ module ysyx_24080020_MEM(
         else if(mwen_mem) begin
             awvalid <= 1'b1;
 
-            // mwen_mem <= 1'b0;
+            mwen_mem <= 1'b0;
         end
         else begin
             awvalid <= awvalid;
         end
     end
 
-    assign wdata = mwdata_mem;
-    assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
-                   mwmask_mem == 4'b10 ? 4'b11 :
-                   mwmask_mem == 4'b100 ? 4'b1111 : 
-                   4'b0;
+
     always @(posedge clk) begin
         if(!rst) begin
             wvalid <= 1'b0;
