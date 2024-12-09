@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "define.h"
 #include "svdpi.h"
-// #include "Vtop__Dpi.h"
+#include "Vtop__Dpi.h"
 #include "paddr.h"
 #include "vaddr.h"
 
