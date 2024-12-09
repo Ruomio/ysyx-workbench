@@ -162,7 +162,7 @@ module ysyx_24080020_REG
     end
 
     // csrs write
-    always @(posedge clk or rst) begin
+    always @(posedge clk) begin
         if(!rst) begin
             for(i = 0; i<3'd5; i = i+1) csrs[i] <= 32'b0;
             csrs[1] <= 32'h1800;

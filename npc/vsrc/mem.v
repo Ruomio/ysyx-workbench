@@ -46,7 +46,7 @@ module ysyx_24080020_MEM(
 
     // axi-lite
     output reg arvalid,
-    output reg [`ysyx_24080020_WIDTH-1:0] araddr,
+    output [`ysyx_24080020_WIDTH-1:0] araddr,
     input arready,
 
     output reg rready,
@@ -56,12 +56,12 @@ module ysyx_24080020_MEM(
 
     output reg awvalid,
     input awready,
-    output reg [`ysyx_24080020_WIDTH-1:0] awaddr,
+    output [`ysyx_24080020_WIDTH-1:0] awaddr,
 
     output reg wvalid,
     input wready,
-    output reg [3:0] wstrb,
-    output reg [`ysyx_24080020_WIDTH-1:0] wdata, 
+    output [3:0] wstrb,
+    output [`ysyx_24080020_WIDTH-1:0] wdata, 
 
     output reg bready,
     input bvalid,
@@ -74,8 +74,6 @@ module ysyx_24080020_MEM(
     output reg mem_wb_valid
 
 );
-    import "DPI-C" function void write_memory(input int addr, input int len, input int data);
-    import "DPI-C" function int read_memory(input int addr, input int len);
 
     reg mren_mem;
     reg mwen_mem;
