@@ -41,9 +41,8 @@ static inline void host_write(void *addr, int len, word_t data) {
 }
 
 
-#define paddr_read read_memory  
-
-#define paddr_write write_memory
+// #define paddr_read read_memory  
+// #define paddr_write write_memory
 
 
 #endif
