@@ -141,7 +141,7 @@ module ysyx_24080020_IDU (
 
 
 
-    always @(*) begin
+    always @(inst_idu or val_raddr1 or val_raddr2 or rcsrdata) begin
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
