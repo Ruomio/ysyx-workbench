@@ -361,7 +361,7 @@ module ysyx_24080020_NPC(
 
         // master-1 ifu
         // .wb_ifu_shake_hands(wb_ifu_shake_hands),
-        .wb_ifu_shake_hands(if_en),
+        // .wb_ifu_shake_hands(if_en),
         .arvalid_ifu(arvalid_ifu),
         .araddr_ifu(araddr_ifu),
         .arready_ifu(arready_ifu),
@@ -373,7 +373,7 @@ module ysyx_24080020_NPC(
 
         // master-2 mem
         // .exu_mem_shake_hands(exu_mem_shake_hands),
-        .exu_mem_shake_hands(mren_mem),
+        // .exu_mem_shake_hands(mren_mem),
         .arvalid_mem(arvalid_mem),
         .araddr_mem(araddr_mem),
         .arready_mem(arready_mem),

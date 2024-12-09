@@ -4,7 +4,7 @@ module ysyx_24080020_ARBITER(
     input rst,
 
     // master-1 ifu
-    input wb_ifu_shake_hands,
+    // input wb_ifu_shake_hands,
     input arvalid_ifu,
     input [`ysyx_24080020_WIDTH-1:0] araddr_ifu,
     output reg arready_ifu,
@@ -15,7 +15,7 @@ module ysyx_24080020_ARBITER(
     output reg rvalid_ifu,
 
     // master-2 mem
-    input exu_mem_shake_hands,
+    // input exu_mem_shake_hands,
     input arvalid_mem,
     input [`ysyx_24080020_WIDTH-1:0] araddr_mem,
     output reg arready_mem,
@@ -53,62 +53,50 @@ module ysyx_24080020_ARBITER(
             ifu_wait_cnt <= 3'b0;
             mem_wait_cnt <= 3'b0;
         end
-        // else if(ar_tmp) begin
-        //     if(!ifu_or_mem) begin
-        //         arvalid_arbiter_slave <= arvalid_ifu;
-        //         araddr_arbiter_slave <= araddr_ifu;
-        //     end
-        //     else begin
-        //         arvalid_arbiter_slave <= arvalid_mem;
-        //         araddr_arbiter_slave <= araddr_mem;
-        //     end
-
-        //     ar_tmp <= 1'b0;
-        // end
-        else if(wb_ifu_shake_hands && ifu_wait_cnt == max_cnt) begin
+        else if(arvalid_ifu && ifu_wait_cnt == max_cnt) begin
             // ar_tmp <= 1'b1;
-
-            ifu_or_mem <= 1'b0;
-
-            ifu_wait_cnt <= 3'b0;
-            mem_wait_cnt <= mem_wait_cnt + 3'b1;
-        end
-        else if(exu_mem_shake_hands && mem_wait_cnt == max_cnt) begin
-            // ar_tmp <= 1'b1;
-
-            ifu_or_mem <= 1'b1;
-
-            mem_wait_cnt <= 3'b0;
-            ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
-        end
-        else if(wb_ifu_shake_hands) begin
-            // ar_tmp <= 1'b1;
-
-            ifu_or_mem <= 1'b0;
-
-            ifu_wait_cnt <= 3'b0;
-            mem_wait_cnt <= mem_wait_cnt + 3'b1;
-        end
-        else if(exu_mem_shake_hands) begin
-            // ar_tmp <= 1'b1;
-
-            ifu_or_mem <= 1'b1;
-
-            mem_wait_cnt <= 3'b0;
-            ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
-        end
-        else if(!ifu_or_mem) begin
             arvalid_arbiter_slave <= arvalid_ifu;
             araddr_arbiter_slave <= araddr_ifu;
+
+            ifu_or_mem <= 1'b0;
+
+            ifu_wait_cnt <= 3'b0;
+            mem_wait_cnt <= mem_wait_cnt + 3'b1;
         end
-        else begin
+        else if(arvalid_mem && mem_wait_cnt == max_cnt) begin
+            // ar_tmp <= 1'b1;
             arvalid_arbiter_slave <= arvalid_mem;
             araddr_arbiter_slave <= araddr_mem;
+
+            ifu_or_mem <= 1'b1;
+
+            mem_wait_cnt <= 3'b0;
+            ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
         end
-        // else begin
-        //     ifu_wait_cnt <= ifu_wait_cnt;
-        //     mem_wait_cnt <= mem_wait_cnt;
-        // end
+        else if(arvalid_ifu) begin
+            // ar_tmp <= 1'b1;
+            arvalid_arbiter_slave <= arvalid_ifu;
+            araddr_arbiter_slave <= araddr_ifu;
+
+            ifu_or_mem <= 1'b0;
+
+            ifu_wait_cnt <= 3'b0;
+            mem_wait_cnt <= mem_wait_cnt + 3'b1;
+        end
+        else if(arvalid_mem) begin
+            // ar_tmp <= 1'b1;
+            arvalid_arbiter_slave <= arvalid_mem;
+            araddr_arbiter_slave <= araddr_mem;
+
+            ifu_or_mem <= 1'b1;
+
+            mem_wait_cnt <= 3'b0;
+            ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+        end
+        else begin
+            ifu_wait_cnt <= ifu_wait_cnt;
+            mem_wait_cnt <= mem_wait_cnt;
+        end
     end
 
     // arready: slave -> arbiter
@@ -125,22 +113,6 @@ module ysyx_24080020_ARBITER(
         end
     end
 
-    // arready: arbiter -> master
-    always @(posedge clk) begin
-        if(!rst) begin
-            arready_ifu <= 1'b0;
-            arready_mem <= 1'b0;
-        end
-        else if(ifu_or_mem == 1'b0) begin
-            arready_ifu <= arready_slave_arbiter;
-            arready_mem <= 1'b0;
-        end
-        else begin
-            arready_mem <= arready_slave_arbiter;
-            arready_ifu <= 1'b0;
-        end
-
-    end
 
     // rvalid: arbiter -> master
     always @(posedge clk) begin
