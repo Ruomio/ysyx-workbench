@@ -39,12 +39,23 @@ module ysyx_24080020_SRAM(
     reg [5:0] ar_cnt, aw_cnt, w_cnt;
     reg [5:0] r_cnt, b_cnt;
 
+    integer i;
+
 
     wire [`ysyx_24080020_WIDTH-1:0] wstrb_full;
     wire [5:0] lfsr;    // the number of delay cycle
 
     assign wstrb_full = {{8{wstrb[3]}}, {8{wstrb[2]}}, {8{wstrb[1]}}, {8{wstrb[0]}}};
     assign lfsr = 6'd5;
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            for(i=32'd0; i<32'd512; i=i+1) begin
+                sram[i] <= i;
+            end
+        end
+
+    end
 
     // AR
     always @(posedge clk) begin

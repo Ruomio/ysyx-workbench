@@ -26,14 +26,14 @@ module ysyx_24080020_ARBITER(
     output reg rvalid_mem,
 
     // arbiter deside
-    output arvalid_arbiter_slave,
-    output [`ysyx_24080020_WIDTH-1:0] araddr_arbiter_slave,
+    output reg arvalid_arbiter_slave,
+    output reg [`ysyx_24080020_WIDTH-1:0] araddr_arbiter_slave,
     input arready_slave_arbiter,
 
     input [`ysyx_24080020_WIDTH-1:0] rdata_slave_arbiter,
     input [1:0] rresp_slave_arbiter,
     input rvalid_slave_arbiter,
-    output rready_arbiter_master
+    output reg rready_arbiter_master
 );
     wire [2:0] max_cnt;
     reg [2:0] ifu_wait_cnt;

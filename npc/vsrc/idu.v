@@ -27,7 +27,7 @@ module ysyx_24080020_IDU (
 
     // csrs
     input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
-    output [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
     output reg wcsren_idu,
     output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu,
@@ -141,7 +141,7 @@ module ysyx_24080020_IDU (
 
 
 
-    always @(inst_idu or val_raddr1 or val_raddr2 or rcsrdata) begin
+    always @(*) begin
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
