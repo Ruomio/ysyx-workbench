@@ -74,8 +74,6 @@ module ysyx_24080020_MEM(
     output reg mem_wb_valid
 
 );
-    import "DPI-C" function void write_memory(input int addr, input int len, input int data);
-    import "DPI-C" function int read_memory(input int addr, input int len);
 
     reg mren_mem;
     reg mwen_mem;
