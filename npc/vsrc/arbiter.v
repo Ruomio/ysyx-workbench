@@ -109,9 +109,15 @@ module ysyx_24080020_ARBITER(
         end
         else if(!ifu_or_mem) begin
             arready_ifu <= arready_slave_arbiter;
+
+            // maybe error: first set arvalid_arbiter_slave low , second set arvalid_ifu low
+            arvalid_arbiter_slave <= 1'b0;;
         end
         else begin
             arready_mem <= arready_slave_arbiter;
+
+            // maybe error
+            arvalid_arbiter_slave <= 1'b0;
         end
     end
 
