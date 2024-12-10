@@ -57,10 +57,10 @@ module ysyx_24080020_IDU (
     output reg idu_exu_valid
 
 );
-    import "DPI-C" function void ebreak();
-    import "DPI-C" function void invalid_inst();
-    import "DPI-C" function void halt();
-    import "DPI-C" function void update_ftrace_dpi();
+    // import "DPI-C" function void ebreak();
+    // import "DPI-C" function void invalid_inst();
+    // import "DPI-C" function void halt();
+    // import "DPI-C" function void update_ftrace_dpi();
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
@@ -152,6 +152,31 @@ module ysyx_24080020_IDU (
         mwen_idu = 1'b0;
         wen_idu = 1'b0;
 
+        rcsraddr <= 12'b0;
+        branch_src1_idu <= 32'b0;
+
+        waddr_idu <= 5'b0;
+        wdata_idu <= 32'b0;
+        is_csrtype_idu <= 1'b0;
+        dnpc_idu <= 32'b0;
+
+        wcsren_idu <= 1'b0;
+        wcsraddr_idu <= 12'b0;
+        wcsrdata_idu <= 32'b0;
+        wcsren2_idu <= 1'b0;
+        wcsraddr2_idu <= 12'b0;
+        wcsrdata2_idu <= 32'b0;
+
+        alu_op_idu <= `ysyx_24080020_ALU_OP_WIDTH-1'b0;
+        alu_src2_con_idu <= 1'b0;
+        src1_idu <= 32'b0;
+        src2_idu <= 32'b0;
+
+        mrtype_idu <= 1'b0;
+        mwmask_idu <= 4'b0;
+        mrlen_idu <= 4'b0;
+
+
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
@@ -241,7 +266,7 @@ module ysyx_24080020_IDU (
                     default: begin
                         mren_idu = 1'b0;
                         wen_idu = 1'b0;
-                        invalid_inst();
+                        // invalid_inst();
                     end
 
                 endcase
@@ -312,7 +337,7 @@ module ysyx_24080020_IDU (
                     end
 
                     default: begin
-                        invalid_inst();
+                        // invalid_inst();
                     end
 
                 endcase
@@ -382,7 +407,7 @@ module ysyx_24080020_IDU (
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
                         if(imm_idu == 32'b1) begin
-                            ebreak();
+                            // ebreak();
                         end
                         else if(imm_idu == 32'b0) begin
                             // ecall
@@ -410,7 +435,7 @@ module ysyx_24080020_IDU (
                         end
                         else begin
                             is_csrtype_idu = 1'b0;
-                            invalid_inst();
+                            // invalid_inst();
                         end
                     end
                     
@@ -441,7 +466,7 @@ module ysyx_24080020_IDU (
 
                     default: begin
                         is_csrtype_idu = 1'b0;
-                        invalid_inst();
+                        // invalid_inst();
                     end
 
                 endcase
@@ -463,9 +488,9 @@ module ysyx_24080020_IDU (
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
 
-                update_ftrace_dpi();
+                // update_ftrace_dpi();
                 if(imm_idu == 32'b0) begin
-                    halt();
+                    // halt();
                 end
             end
 
@@ -530,7 +555,7 @@ module ysyx_24080020_IDU (
 
             default: begin
                 imm_idu = 32'b0;
-                invalid_inst();
+                // invalid_inst();
             end
         endcase
     end
