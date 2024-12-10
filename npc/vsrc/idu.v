@@ -167,7 +167,7 @@ module ysyx_24080020_IDU (
         wcsraddr2_idu = 12'b0;
         wcsrdata2_idu = 32'b0;
 
-        alu_op_idu = `ysyx_24080020_ALU_OP_WIDTH-1'b0;
+        alu_op_idu = 4'b0;
         alu_src2_con_idu = 1'b0;
         src1_idu = 32'b0;
         src2_idu = 32'b0;
