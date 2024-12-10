@@ -545,7 +545,7 @@ module ysyx_24080020_IDU (
             end
 
             // rst
-            7'b0000000 : begin
+            7'b0000000: begin
                 imm_idu = 32'b0;
             end
             /* `ysyx_24080020_EBREAK: begin
