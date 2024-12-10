@@ -152,29 +152,29 @@ module ysyx_24080020_IDU (
         mwen_idu = 1'b0;
         wen_idu = 1'b0;
 
-        rcsraddr <= 12'b0;
-        branch_src1_idu <= 32'b0;
+        rcsraddr = 12'b0;
+        branch_src1_idu = 32'b0;
 
-        waddr_idu <= 5'b0;
-        wdata_idu <= 32'b0;
-        is_csrtype_idu <= 1'b0;
-        dnpc_idu <= 32'b0;
+        waddr_idu = 5'b0;
+        wdata_idu = 32'b0;
+        is_csrtype_idu = 1'b0;
+        dnpc_idu = 32'b0;
 
-        wcsren_idu <= 1'b0;
-        wcsraddr_idu <= 12'b0;
-        wcsrdata_idu <= 32'b0;
-        wcsren2_idu <= 1'b0;
-        wcsraddr2_idu <= 12'b0;
-        wcsrdata2_idu <= 32'b0;
+        wcsren_idu = 1'b0;
+        wcsraddr_idu = 12'b0;
+        wcsrdata_idu = 32'b0;
+        wcsren2_idu = 1'b0;
+        wcsraddr2_idu = 12'b0;
+        wcsrdata2_idu = 32'b0;
 
-        alu_op_idu <= `ysyx_24080020_ALU_OP_WIDTH-1'b0;
-        alu_src2_con_idu <= 1'b0;
-        src1_idu <= 32'b0;
-        src2_idu <= 32'b0;
+        alu_op_idu = `ysyx_24080020_ALU_OP_WIDTH-1'b0;
+        alu_src2_con_idu = 1'b0;
+        src1_idu = 32'b0;
+        src2_idu = 32'b0;
 
-        mrtype_idu <= 1'b0;
-        mwmask_idu <= 4'b0;
-        mrlen_idu <= 4'b0;
+        mrtype_idu = 1'b0;
+        mwmask_idu = 4'b0;
+        mrlen_idu = 4'b0;
 
 
         case(opcode)
