@@ -1,3 +1,4 @@
+`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_ADDER (
     input [`ysyx_24080020_WIDTH-1:0] a,
     input [`ysyx_24080020_WIDTH-1:0] b,
