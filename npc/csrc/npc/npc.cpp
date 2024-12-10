@@ -8,7 +8,7 @@
 #include "isa.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
-#include "Vtop__Dpi.h"
+// #include "Vtop__Dpi.h"
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
