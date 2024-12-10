@@ -2,87 +2,293 @@
 module ysyx_24080020_MEM(
     input clk,
     input rst,
-    input [`ysyx_24080020_WIDTH-1:0] pc,
-    input [3:0] pc_len,
-    input [3:0] mrlen,
-    input [3:0] mwlen,
-    input [`ysyx_24080020_WIDTH-1:0] mraddr,
-    input [`ysyx_24080020_WIDTH-1:0] mwaddr,
-    input [`ysyx_24080020_WIDTH-1:0] mwdata,
-    input mwen,
-    output reg [`ysyx_24080020_WIDTH-1:0] mrdata,
-    output reg [`ysyx_24080020_WIDTH-1:0] inst
+
+    // memory
+    input mren_exu,
+    input mrtype_exu,
+    input [3:0] mrlen_exu,
+    input mwen_exu,
+    input [3:0] mwmask_exu,
+    input [`ysyx_24080020_WIDTH-1:0] mraddr_exu,
+    input [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
+    input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
+
+    input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
+
+    // csrs
+    input wcsren_exu,
+    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_exu,
+    input [`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
+    input wcsren2_exu,
+    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_exu,
+    input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
+    output reg wcsren_mem,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
+    output reg wcsren2_mem,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
+    // regs
+    input wen_exu,
+    input [4:0] waddr_exu,
+    output reg wen_mem,
+    output reg [4:0] waddr_mem,
+
+    input reg is_load_exu,
+    output reg is_load_mem,
+
+    input is_dnpc_exu,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    output reg is_dnpc_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
+
+    // axi-lite
+    output reg arvalid,
+    output [`ysyx_24080020_WIDTH-1:0] araddr,
+    input arready,
+
+    output reg rready,
+    input rvalid,
+    input [1:0] rresp,
+    input [`ysyx_24080020_WIDTH-1:0] rdata,
+
+    output reg awvalid,
+    input awready,
+    output [`ysyx_24080020_WIDTH-1:0] awaddr,
+
+    output reg wvalid,
+    input wready,
+    output [3:0] wstrb,
+    output [`ysyx_24080020_WIDTH-1:0] wdata, 
+
+    output reg bready,
+    input bvalid,
+    input [1:0] bresp,
+
+    // bus
+    input exu_mem_valid,
+    input wb_mem_ready,
+    output reg mem_exu_ready,
+    output reg mem_wb_valid
 
 );
-    // import "DPI-C" function void write_memory(input int addr, input int len, input int data);
-    // import "DPI-C" function int read_memory(input int addr, input int len);
 
-    reg [31:0] all_sram [511:0];
+    reg mren_mem;
+    reg mwen_mem;
+    reg mrtype_mem;
+    reg [3:0] mrlen_mem;
+    reg [3:0] mwmask_mem;
+    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
+    reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
+    reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
+    reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
+    reg exu_mem_shake_hands;
 
-    reg [`ysyx_24080020_WIDTH-1:0] last_pc;
-    reg [`ysyx_24080020_WIDTH-1:0] last_raddr;
-   
+    reg state; // 0: idle;   1: wait_ready
 
-    // reg [`ysyx_24080020_WIDTH-1:0] instMem [255:0];
-    // reg [`ysyx_24080020_WIDTH-1:0] dataMem [255:0];
+    assign araddr = mraddr_mem;
+    assign wdata = mwdata_mem;
+    assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
+                   mwmask_mem == 4'b10 ? 4'b11 :
+                   mwmask_mem == 4'b100 ? 4'b1111 : 
+                   4'b0;
+    assign awaddr = mwaddr_mem;
+    
 
-    // wire [7:0] idx, idx_read, idx_write;
 
-    // wire [31:0] idx_tmp, idx_read_tmp, idx_write_tmp;
-
-    // assign idx_tmp = (pc - 32'h80000000);
-    // assign idx_read_tmp = (mraddr - 32'h80000000);
-    // assign idx_write_tmp = (mwaddr - 32'h80000000);
-
-    // assign idx = idx_tmp[7:0];
-    // assign idx_read = idx_read_tmp[7:0];
-    // assign idx_write = idx_write_tmp[7:0];
-
-    // read mrdata
-    always @(mraddr or mrlen or rst) begin
-        if(!rst) begin
-            mrdata = 32'b0;
-        end
-        else if(mraddr != 32'b0) begin
-            // mrdata = read_memory(mraddr, {{28{1'b0}}, mrlen});
-            mrdata = all_sram[mraddr];
-            // mrdata = dataMem[idx_read];
-        end
-        else begin
-            mrdata = 32'b0;
-        end
-
-    end
-
-    // read inst
-    always @(pc or pc_len or rst) begin
-        if(!rst) begin
-            inst <= 32'b0;
-            last_pc <= 32'b0;
-        end
-        else if(pc != last_pc) begin
-            // inst <= read_memory(pc, {{28{1'b0}}, pc_len});
-            inst <= all_sram[pc];
-            // inst <= instMem[idx];
-            last_pc <= pc;
-        end
-        else begin
-            inst <= inst;
-        end
-
-    end
-
-    // write
     always @(posedge clk) begin
         if(!rst) begin
+            state <= 1'b0;
         end
-        else if(mwen) begin
-            // write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
-            all_sram[mwaddr] <= mwdata;
-            // dataMem[idx_write] <= mwdata;
+        else if(!state) begin
+            if(mem_wb_valid) state <= 1'b1;
+            else state <= 1'b0;
+        end
+        else begin
+            if(wb_mem_ready) state <= 1'b0;
+            else state <= 1'b1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            mem_exu_ready <= 1'b0;
+        end
+        else if(exu_mem_valid) begin
+            if(mem_wb_valid) mem_exu_ready <= 1'b0;
+            else begin
+                mem_exu_ready <= 1'b1;
+
+                exu_mem_shake_hands <= 1'b1;
+            end
+        end
+        else if(wb_mem_ready && state) begin
+            mem_wb_valid <= 1'b0;
+
+        end
+        else begin
+            mem_exu_ready <= 1'b0;
         end
 
     end
 
+    always @(posedge clk) begin
+        if(!rst) begin
+            exu_mem_shake_hands <= 1'b0;
+        end
+        else if(exu_mem_shake_hands) begin
 
+            // update reg
+            wen_mem <= wen_exu;
+            waddr_mem <= waddr_exu;
+
+            is_load_mem <= is_load_exu;
+            is_dnpc_mem <= is_dnpc_exu;
+            dnpc_mem <= dnpc_new_exu;
+
+            mren_mem <= mren_exu;
+            mrtype_mem <= mrtype_exu;
+            mrlen_mem <= mrlen_exu;
+            mraddr_mem <= mraddr_exu;
+            mwen_mem <= mwen_exu;
+            mwmask_mem <= mwmask_exu;
+            mwaddr_mem <= mwaddr_exu;
+            mwdata_mem <= mwdata_exu;
+
+            alu_out_mem <= alu_out_exu;
+
+            wcsren_mem <= wcsren_exu;
+            wcsraddr_mem <= wcsraddr_exu;
+            wcsrdata_mem <= wcsrdata_exu;
+            wcsren2_mem <= wcsren2_exu;
+            wcsraddr2_mem <= wcsraddr2_exu;
+            wcsrdata2_mem <= wcsrdata2_exu;
+
+            // mem_wb_valid <= 1'b1;
+            if(!mwen_exu && !mren_exu) begin
+                mem_wb_valid <= 1'b1;
+            end
+            else begin
+                mem_wb_valid <= 1'b0;
+            end
+
+            exu_mem_shake_hands <= 1'b0;
+        end
+        else begin
+            // exu_mem_shake_hands <= 1'b0;
+            mem_exu_ready <= 1'b0;
+        end
+    end
+
+
+
+    
+    always @(posedge clk) begin
+        if(!rst) begin
+            arvalid <= 1'b0;
+        end
+        else if(arvalid && arready) begin
+            arvalid <= 1'b0;
+        end
+        else if(mren_mem) begin
+            arvalid <= 1'b1;
+
+            mren_mem <= 1'b0;
+        end
+        else begin
+            arvalid <= arvalid;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            rready <= 1'b0;
+            mrdata_mem <= 32'b0;
+        end
+        else if(rvalid) begin
+            rready <= 1'b1;
+            if(rresp == 2'b0) begin
+                if(mrtype_mem) begin
+                    // zero extension
+                    case(mrlen_mem)
+                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata[7:0]};
+                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata[15:0]};
+                        4'd4:   mrdata_mem <= rdata;
+                        default: mrdata_mem <= 32'hffffffff;
+                    endcase
+                end
+                else begin
+                    // signed extension
+                    case(mrlen_mem)
+                        4'd1:   mrdata_mem <= {{24{rdata[7]}}, rdata[7:0]};
+                        4'd2:   mrdata_mem <= {{16{rdata[15]}}, rdata[15:0]};
+                        4'd4:   mrdata_mem <= rdata;
+                        default: mrdata_mem <= 32'hffffffff;
+                    endcase
+                end
+                
+                mem_wb_valid <= 1'b1;
+            end
+            else begin
+                // read error
+                mrdata_mem <= 32'hffffffff;
+            end
+        end
+        else begin
+            rready <= 1'b0;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            awvalid <= 1'b0;
+        end
+        else if(awvalid && awready) begin
+            awvalid <= 1'b0;
+            wvalid <= 1'b1;
+
+            mwen_mem <= 1'b0;
+        end
+        else if(mwen_mem) begin
+            awvalid <= 1'b1;
+
+            mwen_mem <= 1'b0;
+        end
+        else begin
+            awvalid <= awvalid;
+        end
+    end
+
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            wvalid <= 1'b0;
+        end
+        else if(wvalid && wready) begin
+            wvalid <= 1'b0;
+        end
+        else begin
+            wvalid <= wvalid;
+        end
+    end
+
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            bready <= 1'b0;
+        end
+        else if(bvalid) begin
+            bready <= 1'b1;
+
+            // b_fin <= 1'b1;
+            mem_wb_valid <= 1'b1;
+            // bresp != 0 : error
+        end
+        else begin
+            bready <= 1'b0;
+        end
+    end
+   
 endmodule
