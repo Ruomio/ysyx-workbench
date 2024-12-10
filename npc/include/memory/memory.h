@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "define.h"
 #include "svdpi.h"
-// #include "Vtop__Dpi.h"
+#include "Vtop__Dpi.h"
 #include "paddr.h"
 #include "vaddr.h"
 
@@ -40,6 +40,9 @@ static inline void host_write(void *addr, int len, word_t data) {
   }
 }
 
+
+// #define paddr_read read_memory  
+// #define paddr_write write_memory
 
 
 #endif

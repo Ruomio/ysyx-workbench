@@ -1,10 +1,8 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_NPC(
     input clk,
-    input rst,
-    output [31:0] pc
+    input rst
 );
-  assign pc = pc_ifu;
 
   // pc
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu;
