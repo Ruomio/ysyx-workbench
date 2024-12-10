@@ -14,8 +14,10 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] inst
 
 );
-    import "DPI-C" function void write_memory(input int addr, input int len, input int data);
-    import "DPI-C" function int read_memory(input int addr, input int len);
+    // import "DPI-C" function void write_memory(input int addr, input int len, input int data);
+    // import "DPI-C" function int read_memory(input int addr, input int len);
+
+    reg [31:0] all_sram [511:0];
 
     reg [`ysyx_24080020_WIDTH-1:0] last_pc;
     reg [`ysyx_24080020_WIDTH-1:0] last_raddr;
@@ -42,7 +44,8 @@ module ysyx_24080020_MEM(
             mrdata = 32'b0;
         end
         else if(mraddr != 32'b0) begin
-            mrdata = read_memory(mraddr, {{28{1'b0}}, mrlen});
+            // mrdata = read_memory(mraddr, {{28{1'b0}}, mrlen});
+            mrdata = all_sram[mraddr];
             // mrdata = dataMem[idx_read];
         end
         else begin
@@ -58,7 +61,8 @@ module ysyx_24080020_MEM(
             last_pc <= 32'b0;
         end
         else if(pc != last_pc) begin
-            inst <= read_memory(pc, {{28{1'b0}}, pc_len});
+            // inst <= read_memory(pc, {{28{1'b0}}, pc_len});
+            inst <= all_sram[pc];
             // inst <= instMem[idx];
             last_pc <= pc;
         end
@@ -73,7 +77,8 @@ module ysyx_24080020_MEM(
         if(!rst) begin
         end
         else if(mwen) begin
-            write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
+            // write_memory(mwaddr, {{28{1'b0}},mwlen}, mwdata);
+            all_sram[mwaddr] <= mwdata;
             // dataMem[idx_write] <= mwdata;
         end
 

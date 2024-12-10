@@ -45,10 +45,10 @@ module ysyx_24080020_EXU
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata2,
     output reg[`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr
 );
-    import "DPI-C" function void ebreak();
-    import "DPI-C" function void invalid_inst();
-    import "DPI-C" function void halt();
-    import "DPI-C" function void update_ftrace_dpi();
+    // import "DPI-C" function void ebreak();
+    // import "DPI-C" function void invalid_inst();
+    // import "DPI-C" function void halt();
+    // import "DPI-C" function void update_ftrace_dpi();
 
     always @(inst or mrdata or rcsrdata) begin
         // initial
@@ -218,7 +218,7 @@ module ysyx_24080020_EXU
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
                         if(imm == 32'b1) begin
-                            ebreak();
+                            // ebreak();
                         end
                         else if(imm == 32'b0) begin
                             // ecall
@@ -244,7 +244,7 @@ module ysyx_24080020_EXU
                             is_dnpc = 1'b1;
                         end
                         else begin
-                            invalid_inst();
+                            // invalid_inst();
                         end
                     end
                     `ysyx_24080020_CSRRW: begin
@@ -271,7 +271,7 @@ module ysyx_24080020_EXU
 
                     end
                     default: begin
-                        invalid_inst();
+                        // invalid_inst();
                     end
                 endcase
             end
@@ -287,9 +287,9 @@ module ysyx_24080020_EXU
                 waddr = rd;
             end
             `ysyx_24080020_JAL: begin
-                update_ftrace_dpi();
+                // update_ftrace_dpi();
                 if(imm == 32'b0) begin
-                    halt();
+                    // halt();
                 end
                 else begin
                     wdata = pc + 4;
@@ -300,7 +300,7 @@ module ysyx_24080020_EXU
                 end
             end
             `ysyx_24080020_JALR: begin
-                update_ftrace_dpi();
+                // update_ftrace_dpi();
                 wdata = pc + 4;
                 wen = 1'b1;
                 waddr = rd;
@@ -315,7 +315,7 @@ module ysyx_24080020_EXU
                 mwen = 1'b0;
             end
             default: begin
-                invalid_inst();
+                // invalid_inst();
                 wdata = 32'b0;
                 wen = 1'b0;
                 mwen = 1'b0;
