@@ -1,60 +1,13 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
 module ysyx_24080020_IDU (
-    input clk,
-    input rst,
-    input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
-    input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
-    input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
+    input [`ysyx_24080020_WIDTH-1:0] inst,
+    output [6:0] opcode,
+    output [4:0] rd,
+    output [2:0] funct3,
     output [4:0] rs1,
     output [4:0] rs2,
-    // input [`ysyx_24080020_WIDTH-1:0] snpc_ifu,
-    input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
-
-    output reg [`ysyx_24080020_WIDTH-1:0] imm_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
-
-    // reg
-    output reg wen_idu,
-    output reg [4:0] waddr_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
-    output reg is_load_idu,
-    output reg is_dnpc_idu,
-    // output reg is_jal_idu,
-    output reg is_jalr_idu,
-    // output reg [2:0] is_btype_idu,
-    output reg is_csrtype_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
-
-    // csrs
-    input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
-    output reg [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
-    output reg wcsren_idu,
-    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu,
-    output reg wcsren2_idu,
-    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu,
-
-    // alu control
-    output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
-    output reg alu_src2_con_idu,
-    // output reg reg_dst_con_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] src1_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] src2_idu,
-
-    // memory
-    output reg mren_idu,
-    output reg mrtype_idu,
-    output reg mwen_idu,
-    output reg [3:0] mwmask_idu,
-    output reg [3:0] mrlen_idu,
-
-
-    input ifu_idu_valid,
-    input exu_idu_ready,
-    output reg idu_ifu_ready,
-    output reg idu_exu_valid
+    output reg [`ysyx_24080020_WIDTH-1:0] imm,
+    output [6:0] funct7
 
 );
     // import "DPI-C" function void ebreak();
@@ -62,491 +15,56 @@ module ysyx_24080020_IDU (
     // import "DPI-C" function void halt();
     // import "DPI-C" function void update_ftrace_dpi();
 
-    wire [6:0] opcode, funct7;
-    wire [2:0] funct3;
-    wire [4:0] rd;
-    
+    assign opcode = inst[`ysyx_24080020_OPCODE];
+    assign rd = inst[`ysyx_24080020_RD];
+    assign funct3 = inst[`ysyx_24080020_FUNCT3];
+    assign rs1 = inst == `ysyx_24080020_ECALL ? 5'hf : inst[`ysyx_24080020_RS1];
+    assign rs2 = inst[`ysyx_24080020_RS2];
+    assign funct7 = inst[`ysyx_24080020_FUNCT7];
 
 
-    reg state; // 0: idle;    1: wait_ready
-
-    reg cnt;
-
-
-
-    reg [`ysyx_24080020_WIDTH-1:0] inst_idu;
-
-    assign opcode = inst_idu[`ysyx_24080020_OPCODE];
-    assign rd = inst_idu[`ysyx_24080020_RD];
-    assign funct3 = inst_idu[`ysyx_24080020_FUNCT3];
-    assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 5'hf : inst_idu[`ysyx_24080020_RS1];
-    assign rs2 = inst_idu[`ysyx_24080020_RS2];
-    assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
-
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            state <= 1'b0;
-        end
-        else if(!state) begin
-            if(idu_exu_valid) state <= 1'b1;
-            else state <= 1'b0;
-        end
-        else begin
-            if(exu_idu_ready) state <= 1'b0;
-            else begin
-                state <= 1'b1;
-            end
-        end
-    end
-
-    always @(posedge clk) begin
-        if(ifu_idu_valid) begin
-            if(idu_exu_valid) idu_ifu_ready <= 1'b0;
-            else begin
-                // shake hands successfully
-                idu_ifu_ready <= 1'b1;
-
-                // update inst reg
-                pc_idu <= pc_ifu;
-                inst_idu <= inst_ifu;
-
-                // idu_exu_valid <= 1'b1;
-                cnt <= 1'b1;
-            end
-        end
-        else if(idu_exu_valid && exu_idu_ready && state) begin
-            idu_exu_valid <= 1'b0;
-        end
-        else begin
-            // idu_exu_valid <= 1'b0;
-            idu_ifu_ready <= 1'b0;
-        end
-
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            cnt <= 1'b0;
-        end
-        else if(cnt == 1'b1) begin
-            idu_exu_valid <= 1'b1;
-            cnt <= 1'b0;
-        end
-        else begin
-            cnt <= 1'b0;
-        end
-
-    end
-
-
-
-    always @(inst_idu or val_raddr1 or val_raddr2 or rcsrdata) begin
-        // initial
-        is_dnpc_idu = 1'b0;
-        is_load_idu = 1'b0;
-        // is_jal_idu = 1'b0;
-        is_jalr_idu = 1'b0;
-        // is_btype_idu = 3'b0;
-        mren_idu = 1'b0;
-        mwen_idu = 1'b0;
-        wen_idu = 1'b0;
-
-        rcsraddr = 12'b0;
-        branch_src1_idu = 32'b0;
-
-        waddr_idu = 5'b0;
-        wdata_idu = 32'b0;
-        is_csrtype_idu = 1'b0;
-        dnpc_idu = 32'b0;
-
-        wcsren_idu = 1'b0;
-        wcsraddr_idu = 12'b0;
-        wcsrdata_idu = 32'b0;
-        wcsren2_idu = 1'b0;
-        wcsraddr2_idu = 12'b0;
-        wcsrdata2_idu = 32'b0;
-
-        alu_op_idu = 5'b0;
-        alu_src2_con_idu = 1'b0;
-        src1_idu = 32'b0;
-        src2_idu = 32'b0;
-
-        mrtype_idu = 1'b0;
-        mwmask_idu = 4'b0;
-        mrlen_idu = 4'b0;
-
+    always @(*) begin
 
         case(opcode)
-            `ysyx_24080020_I_TYPE: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                alu_src2_con_idu = 1'b1;
-
-                mwen_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-
-                src1_idu = val_raddr1;
-                src2_idu = 32'b0;
-                alu_src2_con_idu = 1'b1;
-                case(funct3)
-                    `ysyx_24080020_ADDI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_ADD;
-                    end
-                    `ysyx_24080020_SLTI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLT;
-                    end
-                    `ysyx_24080020_SLTU: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLTU;
-                    end
-                    `ysyx_24080020_XORI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_XOR;
-                    end
-                    `ysyx_24080020_ORI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_OR;
-                    end
-                    `ysyx_24080020_ANDI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_AND;
-                    end
-                    `ysyx_24080020_SLLI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLL;
-                    end
-                    `ysyx_24080020_SRLAI: begin
-                        alu_op_idu = imm_idu[10] == 0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
-                    end
-
-                    default: begin
-                        wen_idu = 1'b0;
-                    end
-                endcase
-            end 
-
-            `ysyx_24080020_I_TYPEI: begin
-                // load
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                alu_src2_con_idu = 1'b1;
-
-                mwen_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-
-                src1_idu = val_raddr1;
-                src2_idu = 32'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-                is_load_idu = 1'b1;
-
-                mren_idu = 1'b1;
-                
-                case(funct3)
-                    `ysyx_24080020_LB: begin
-                        mrlen_idu = 4'b001;
-                        mrtype_idu = 1'b0;
-                    end
-                    `ysyx_24080020_LH: begin
-                        mrlen_idu = 4'b010;
-                        mrtype_idu = 1'b0;
-                    end
-                    `ysyx_24080020_LW: begin
-                        mrlen_idu = 4'b100;
-                        mrtype_idu = 1'b0;
-                    end
-                    `ysyx_24080020_LBU: begin
-                        mrlen_idu = 4'b001;
-                        mrtype_idu = 1'b1;
-                    end
-                    `ysyx_24080020_LHU: begin
-                        mrlen_idu = 4'b010;
-                        mrtype_idu = 1'b1;
-                    end
-                    default: begin
-                        mren_idu = 1'b0;
-                        wen_idu = 1'b0;
-                        // invalid_inst();
-                    end
-
-                endcase
+            `ysyx_24080020_I_TYPE, `ysyx_24080020_I_TYPEI: begin
+                imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+            end
+            `ysyx_24080020_JALR: begin
+                imm = {{20{inst[31]}}, inst[`ysyx_24080020_IMM_I]};
+                // update_ftrace_dpi();
             end
 
-            `ysyx_24080020_S_TYPE: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[31:25], inst_idu[11:7]};
-                alu_src2_con_idu = 1'b1;
-
-                wen_idu = 1'b0;
-                mwen_idu = 1'b1;
-                
-                src1_idu = val_raddr1;
-                src2_idu = val_raddr2;
-                alu_op_idu = `ysyx_24080020_ALU_ADD; 
-
-                case(funct3)
-                    `ysyx_24080020_SB: begin
-                        mwmask_idu = 4'b1;
-                    end
-                    `ysyx_24080020_SH: begin
-                        mwmask_idu = 4'b10;
-                    end
-                    `ysyx_24080020_SW: begin
-                        mwmask_idu = 4'b100;
-                    end
-                    default: begin
-                        mwmask_idu = 4'b0;
-                        mwen_idu = 1'b0;
-                    end
-
-                endcase
-            end
-
-            `ysyx_24080020_B_TYPE: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[7], inst_idu[30:25], inst_idu[11:8], 1'b0};
-                alu_src2_con_idu = 1'b1;
-
-                wen_idu = 1'b0;
-                mwen_idu = 1'b0;
-
-                src1_idu = val_raddr1;
-                src2_idu = val_raddr2;
-
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-                // is_dnpc_idu = 1'b1;
-                // is_btype_idu = 1'b1;
-
-                case(funct3)
-                    `ysyx_24080020_BEQ: begin
-                        is_dnpc_idu = src1_idu == src2_idu ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BNE: begin
-                        is_dnpc_idu = src1_idu != src2_idu ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BLT: begin
-                        is_dnpc_idu = $signed(src1_idu) < $signed(src2_idu) ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BGE: begin
-                        is_dnpc_idu = $signed(src1_idu) >= $signed(src2_idu) ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BLTU: begin
-                        is_dnpc_idu = src1_idu < src2_idu ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BGEU: begin
-                        is_dnpc_idu = src1_idu >= src2_idu ? 1'b1 : 1'b0;
-                    end
-
-                    default: begin
-                        // invalid_inst();
-                    end
-
-                endcase
-
-
-            end
-
-            `ysyx_24080020_R_TYPE: begin
-                imm_idu = 32'b0;
-                alu_src2_con_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-                src1_idu = val_raddr1;
-                src2_idu = val_raddr2;
-                alu_src2_con_idu = 1'b0;
-
-                case(funct3)
-                    `ysyx_24080020_ADD_SUB:begin
-                        alu_op_idu = funct7[5] == 1'b0 ? `ysyx_24080020_ALU_ADD : `ysyx_24080020_ALU_SUB;
-                    end
-                    `ysyx_24080020_SLL: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLL;
-                    end
-                    `ysyx_24080020_SLT: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLT;
-                    end
-                    `ysyx_24080020_SLTU: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLTU;
-                    end
-                    `ysyx_24080020_XOR: begin
-                        alu_op_idu = `ysyx_24080020_ALU_XOR;
-                    end
-                    `ysyx_24080020_SRLA: begin
-                        alu_op_idu = funct7[5] == 1'b0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
-                    end
-                    `ysyx_24080020_OR: begin
-                        alu_op_idu = `ysyx_24080020_ALU_OR;
-                    end
-                    `ysyx_24080020_AND: begin
-                        alu_op_idu = `ysyx_24080020_ALU_AND;
-                    end
-
-                    default: begin
-                        wen_idu = 1'b0;
-                    end
-
-                endcase
-
-
-            end
-
-            `ysyx_24080020_CSR_TYPE: begin
-                imm_idu = {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]};
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-
-                rcsraddr = imm_idu[11:0];
-
-                src1_idu = val_raddr1;
-                alu_src2_con_idu = 1'b1;
-
-                is_csrtype_idu = 1'b1;
-
-                case(funct3)
-                    `ysyx_24080020_ECALL_EBREAK: begin
-                        if(imm_idu == 32'b1) begin
-                            // ebreak();
-                        end
-                        else if(imm_idu == 32'b0) begin
-                            // ecall
-                            // csrs[mepc] = pc;
-                            wcsraddr_idu = `ysyx_24080020_MEPC_ADDR;
-                            wcsrdata_idu = pc_idu;
-                            wcsren_idu = 1'b1;
-
-                            // csrs[mcause] = R[a5];
-                            wcsraddr2_idu = `ysyx_24080020_MCAUSE_ADDR;
-                            wcsrdata2_idu = val_raddr1;
-                            wcsren2_idu = 1'b1;
-
-                            // dnpc = csrs[mtvec];
-                            rcsraddr = `ysyx_24080020_MTVEC_ADDR;
-                            dnpc_idu = rcsrdata;
-
-                            is_dnpc_idu = 1'b1;
-                        end
-                        else if(imm_idu == 32'b1100000010) begin
-                            // mret
-                            rcsraddr = `ysyx_24080020_MEPC_ADDR;
-                            dnpc_idu = rcsrdata;
-                            is_dnpc_idu = 1'b1;
-                        end
-                        else begin
-                            is_csrtype_idu = 1'b0;
-                            // invalid_inst();
-                        end
-                    end
-                    
-                    `ysyx_24080020_CSRRW: begin
-                        wcsraddr_idu = imm_idu[11:0];
-                        wcsrdata_idu = val_raddr1;
-                        wcsren_idu = 1'b1;
-
-                        rcsraddr = imm_idu[11:0];
-
-                        waddr_idu = rd;
-                        wdata_idu = rcsrdata;
-                        wen_idu = 1'b1;
-                    end
-                    `ysyx_24080020_CSRRS: begin
-                        rcsraddr = imm_idu[11:0];
-
-                        wcsraddr_idu = imm_idu[11:0];
-                        src1_idu = val_raddr1;
-                        src2_idu = rcsrdata;
-                        alu_op_idu = `ysyx_24080020_ALU_OR;
-                        wcsren_idu = 1'b1;
-
-                        waddr_idu = rd;
-                        wdata_idu = rcsrdata;
-                        wen_idu = 1'b1;
-                    end
-
-                    default: begin
-                        is_csrtype_idu = 1'b0;
-                        // invalid_inst();
-                    end
-
-                endcase
-
+            `ysyx_24080020_AUIPC, `ysyx_24080020_LUI: begin
+                imm = {inst[`ysyx_24080020_IMM_U], {12{1'b0}}};
             end
 
             `ysyx_24080020_JAL: begin
-                imm_idu = {{12{inst_idu[31]}}, inst_idu[19:12], inst_idu[20], inst_idu[30:21], 1'b0};
-                is_dnpc_idu = 1'b1;
-
-                mwen_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-                src1_idu = pc_idu;
-                src2_idu = 32'b100;
-                alu_src2_con_idu = 1'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-
+                imm = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
                 // update_ftrace_dpi();
-                if(imm_idu == 32'b0) begin
-                    // halt();
-                end
+                // if(imm == 32'b0) begin
+                //     halt();
+                // end
             end
 
-            `ysyx_24080020_JALR: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                is_dnpc_idu = 1'b1;
-
-                mwen_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-                src1_idu = pc_idu;
-                src2_idu = 32'b100;
-                alu_src2_con_idu = 1'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-                branch_src1_idu = val_raddr1;
-
-                is_jalr_idu = 1'b1;
-                // update_ftrace_dpi();
+            `ysyx_24080020_S_TYPE: begin
+                imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
             end
 
-            `ysyx_24080020_AUIPC: begin
-                imm_idu = {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                alu_src2_con_idu = 1'b1;
-
-                mwen_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-
-                src1_idu = pc_idu;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-            
+            `ysyx_24080020_B_TYPE: begin
+                imm = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
             end
-            `ysyx_24080020_LUI: begin
-                imm_idu = {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                alu_src2_con_idu = 1'b1;
 
-                mwen_idu = 1'b0;
+            `ysyx_24080020_R_TYPE: begin
+                imm = 32'b0;
+            end
 
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-
-                src1_idu = 32'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
+            `ysyx_24080020_CSR_TYPE: begin
+                imm = {{20{1'b0}}, inst[`ysyx_24080020_IMM_I]};
             end
 
             // rst
-            7'b0000000: begin
-                imm_idu = 32'b0;
+            7'b0000000 : begin
+                imm = 32'b0;
             end
             /* `ysyx_24080020_EBREAK: begin
                 imm = 32'b0;
@@ -554,12 +72,9 @@ module ysyx_24080020_IDU (
             end */
 
             default: begin
-                imm_idu = 32'b0;
+                imm = 32'b0;
                 // invalid_inst();
             end
         endcase
     end
-
-
-
 endmodule
