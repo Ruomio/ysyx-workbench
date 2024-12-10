@@ -94,6 +94,7 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             wb_ifu_shake_hands <= 1'b0;
+            is_dnpc <= 1'b0;
         end
         else if(wb_ifu_shake_hands) begin
             // update
