@@ -5,25 +5,25 @@ module ysyx_24080020_CLINT(
 
     input [31:0] araddr,
     input arvalid,
-    output arready,
+    output reg arready,
 
     input rready,
-    output rvalid,
-    output [1:0] rresp,
-    output [31:0] rdata,
+    output reg rvalid,
+    output reg [1:0] rresp,
+    output reg [31:0] rdata,
 
     input awvalid,
     input [31:0] awaddr,
-    output awready,
+    output reg awready,
 
     input wvalid,
     input [3:0] wstrb,
     input [31:0] wdata,
-    output wready,
+    output reg wready,
 
     input bready,
-    output bvalid,
-    output [1:0] bresp
+    output reg bvalid,
+    output reg [1:0] bresp
 );
 
     reg [31:0] timel;
