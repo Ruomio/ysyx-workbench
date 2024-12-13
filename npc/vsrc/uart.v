@@ -76,7 +76,7 @@ module ysyx_24080020_UART(
             if(awvalid) begin
                 awready <= 1'b1;
 
-                $display("awaddr: 0x%h", awaddr);
+                // $display("awaddr: 0x%h", awaddr);
             end
             else begin
                 awready <= 1'b0;
@@ -90,7 +90,8 @@ module ysyx_24080020_UART(
             wready <= 1'b0;
         end
         else if(wvalid) begin
-            $write("uart output: %c\n", wdata[7:0]);
+            // $write("uart output: %c\n", wdata[7:0]);
+            $write("%c", wdata[7:0]);
             wready <= 1'b1;
 
             wfin <= 1'b1;
