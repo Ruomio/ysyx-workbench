@@ -111,7 +111,7 @@ module ysyx_24080020_UART(
 
             wfin <= 1'b0;
         end
-        else if(brady) begin
+        else if(bready) begin
             bresp <= 2'b0;
             bvalid <= 1'b0;
         end

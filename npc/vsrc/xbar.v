@@ -97,7 +97,7 @@ module ysyx_24080020_XBAR(
     assign araddr_xbar_sram = device_addr == 3'd1 ? araddr_arbiter : 32'b0;
     assign arvalid_xbar_sram = device_addr == 3'd1 ? arvalid_arbiter : 1'b0;
 
-    assign aradddr_xbar_uart = device_addr == 3'd2 ? araddr_arbiter : 32'b0;
+    assign araddr_xbar_uart = device_addr == 3'd2 ? araddr_arbiter : 32'b0;
     assign arvalid_xbar_uart = device_addr == 3'd2 ? arvalid_arbiter : 1'b0;
 
     assign arready_xbar = device_addr == 3'd1 ? arready_sram :

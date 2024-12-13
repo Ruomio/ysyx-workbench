@@ -481,7 +481,7 @@ module ysyx_24080020_NPC(
 
         .bvalid_sram(bvalid_sram),
         .bresp_sram(bresp_sram),
-        .bready_xbar_sram(brady_xbar_sram),
+        .bready_xbar_sram(bready_xbar_sram),
 
         // xbar -> uart
         .arvalid_xbar_uart(arvalid_xbar_uart),
@@ -504,7 +504,7 @@ module ysyx_24080020_NPC(
 
         .bvalid_uart(bvalid_uart),
         .bresp_uart(bresp_uart),
-        .bready_xbar_uart(brady_xbar_uart)
+        .bready_xbar_uart(bready_xbar_uart)
     );
 
     ysyx_24080020_UART u_uart(
@@ -516,7 +516,7 @@ module ysyx_24080020_NPC(
         .arready(arready_uart),
 
         .rdata(rdata_uart),
-        .rresp(resp_uart),
+        .rresp(rresp_uart),
         .rvalid(rvalid_uart),
         .rready(ready_xbar_uart),
 
