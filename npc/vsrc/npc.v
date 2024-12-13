@@ -400,7 +400,7 @@ module ysyx_24080020_NPC(
         .awvalid_mem(awvalid_mem),
         .awready_arbiter(awready_mem),
 
-        .wdata_mem(wdata_mem),
+        .wdata_mem(wdata_axi_mem),
         .wstrb_mem(wstrb_mem),
         .wvalid_mem(wvalid_mem),
         .wready_arbiter(wready_mem),
