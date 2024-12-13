@@ -16,7 +16,7 @@ module ysyx_24080020_NPC(
   wire [4:0] rs1;
   wire [4:0] rs2;
   wire [`ysyx_24080020_WIDTH-1:0] imm_idu, imm_exu;
-  
+
   wire is_load_idu, is_load_exu, is_load_mem, is_load_wb;
   wire alu_src2_con_idu, alu_src2_con_exu;
   wire [`ysyx_24080020_WIDTH-1:0] branch_src1_idu;
@@ -78,34 +78,62 @@ module ysyx_24080020_NPC(
   wire rready_ifu, rvalid_ifu;
   wire [1:0] rresp_ifu;
   wire [`ysyx_24080020_WIDTH-1:0] rdata_ifu;
-  
+
   wire arvalid_mem, arready_mem;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_mem;
   wire rready_mem, rvalid_mem;
   wire [1:0] rresp_mem;
   wire [`ysyx_24080020_WIDTH-1:0] rdata_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] awaddr_mem;
+  wire awvalid_mem;
+  wire awready_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] wdata_axi_mem;
+  wire [3:0] wstrb_mem;
+  wire wvalid_mem;
+  wire wready_mem;
+  wire bvalid_mem, bready_mem
+  wire [1:0] bresp_mem;
 
-  wire arvalid_arbiter_slave, arready_slave_arbiter;
-  wire [`ysyx_24080020_WIDTH-1:0] araddr_arbiter_slave;
+  wire arvalid_arbiter, arready_xbar;
+  wire [`ysyx_24080020_WIDTH-1:0] araddr_arbiter;
+  wire rvalid_xbar, rready_arbiter;
+  wire [1:0] rresp_xbar;
+  wire [`ysyx_24080020_WIDTH-1:0] rdata_xbar;
+  wire awvalid_arbiter, awready_xbar;
+  wire [`ysyx_24080020_WIDTH-1:0] wdata_arbiter;
+  wire [3:0] wstrb_arbiter;
+  wire wvalid_arbiter, wready_xbar;
+  wire bvalid_xbar, bready_arbiter;
+  wire [1:0] bresp_xbar;
 
-  wire rvalid_slave_arbiter, rready_arbiter_master;
-  wire [1:0] rresp_slave_arbiter;
-  wire [`ysyx_24080020_WIDTH-1:0] rdata_slave_arbiter;
+  // Xbar
+  wire arvalid_xbar_sram, arready_sram, arvalid_xbar_uart, arready_uart;
+  wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram, araddr_xbar_uart;
+
+  wire rvalid_sram, rvalid_uart, rready_xbar_sram, rready_xbar_uart;
+  wire [1:0] rresp_sram, rresp_uart;
+  wire [`ysyx_240080020_WIDTH-1:0] rdata_sram, rdata_uart;
+
+  wire awvalid_xbar_sram, awvalid_xbar_uart, awready_sram, awready_uart;
+  wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart;
+
+  wire wvalid_xbar_sram, wready_sram, wvalid_xbar_uart, wready_uart;
+  wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart;
+  wire [31:0] wdata_xbar_sram, wdata_xbar_uart;
+
+  wire bvalid_sram, bvalid_uart, bready_xbar_sram, bready_xbar_uart;
+  wire [1:0] bresp_sram, bresp_uart;
+
+  // UART
 
 
-  // AXI-lite
-  wire awvalid, awready, wvalid, wready, bvalid, bready;
-  wire [`ysyx_24080020_WIDTH-1:0] awaddr, wdata_axi;
-  wire [1:0] bresp;
-  wire [3:0] wstrb;
 
-    
     ysyx_24080020_IFU ifu(
-        .clk(clk), 
-        .rst(rst), 
+        .clk(clk),
+        .rst(rst),
         .dnpc_wb(dnpc_wb),
         .is_dnpc_wb(is_dnpc_wb),
-        .pc_ifu(pc_ifu), 
+        .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
         .if_en(if_en),
 
@@ -128,13 +156,13 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IDU idu(
         .clk(clk),
         .rst(rst),
-        .inst_ifu(inst_ifu), 
+        .inst_ifu(inst_ifu),
         .rs1(rs1),
         .rs2(rs2),
         .val_raddr1(val_raddr1),
         .val_raddr2(val_raddr2),
         .pc_ifu(pc_ifu),
-        .imm_idu(imm_idu), 
+        .imm_idu(imm_idu),
         .branch_src1_idu(branch_src1_idu),
         .wen_idu(wen_idu),
         .waddr_idu(waddr_idu),
@@ -173,10 +201,10 @@ module ysyx_24080020_NPC(
     );
 
     ysyx_24080020_REG u_reg(
-        .clk(clk), 
-        .rst(rst), 
-        .raddr1(rs1), 
-        .raddr2(rs2), 
+        .clk(clk),
+        .rst(rst),
+        .raddr1(rs1),
+        .raddr2(rs2),
 
         .is_load_mem(is_load_mem),
         .is_dnpc_mem(is_dnpc_mem),
@@ -184,8 +212,8 @@ module ysyx_24080020_NPC(
         .dnpc_mem(dnpc_mem),
         .dnpc_wb(dnpc_wb),
 
-        .wen_mem(wen_mem), 
-        .waddr_mem(waddr_mem), 
+        .wen_mem(wen_mem),
+        .waddr_mem(waddr_mem),
         .mrdata_mem(mrdata_mem),
         .alu_out_mem(alu_out_mem),
 
@@ -196,7 +224,7 @@ module ysyx_24080020_NPC(
         .wcsraddr2_mem(wcsraddr2_mem),
         .wcsrdata2_mem(wcsrdata2_mem),
 
-        .val_raddr1(val_raddr1), 
+        .val_raddr1(val_raddr1),
         .val_raddr2(val_raddr2),
         .rcsraddr(rcsraddr),
         .rcsrdata(rcsrdata),
@@ -274,8 +302,8 @@ module ysyx_24080020_NPC(
 
 
     ysyx_24080020_MEM u_mem(
-        .clk(clk), 
-        .rst(rst), 
+        .clk(clk),
+        .rst(rst),
         .mren_exu(mren_exu),
         .mrtype_exu(mrtype_exu),
         .mrlen_exu(mrlen_exu),
@@ -285,7 +313,7 @@ module ysyx_24080020_NPC(
         .mwaddr_exu(mwaddr_exu),
         .mwdata_exu(mwdata_exu),
         .mrdata_mem(mrdata_mem),
-        
+
         .alu_out_exu(alu_out_exu),
         .alu_out_mem(alu_out_mem),
 
@@ -325,18 +353,18 @@ module ysyx_24080020_NPC(
         .rresp(rresp_mem),
         .rdata(rdata_mem),
 
-        .awvalid(awvalid),
-        .awaddr(awaddr),
-        .awready(awready),
+        .awvalid(awvalid_mem),
+        .awaddr(awaddr_mem),
+        .awready(awready_mem),
 
-        .wvalid(wvalid),
-        .wstrb(wstrb),
-        .wdata(wdata_axi),
-        .wready(wready),
+        .wvalid(wvalid_mem),
+        .wstrb(wstrb_mem),
+        .wdata(wdata_axi_mem),
+        .wready(wready_mem),
 
-        .bready(bready),
-        .bvalid(bvalid),
-        .bresp(bresp),
+        .bready(bready_mem),
+        .bvalid(bvalid_mem),
+        .bresp(bresp_mem),
 
         .exu_mem_valid(exu_mem_valid),
         .wb_mem_ready(wb_mem_ready),
@@ -368,42 +396,169 @@ module ysyx_24080020_NPC(
         .rresp_mem(rresp_mem),
         .rvalid_mem(rvalid_mem),
 
-        // arbiter deside
-        .arvalid_arbiter_slave(arvalid_arbiter_slave),
-        .araddr_arbiter_slave(araddr_arbiter_slave),
-        .arready_slave_arbiter(arready_slave_arbiter),
+        .awaddr_mem(awaddr_mem),
+        .awvalid_mem(awvalid_mem),
+        .awready_arbiter(awready_mem),
 
-        .rdata_slave_arbiter(rdata_slave_arbiter),
-        .rresp_slave_arbiter(rresp_slave_arbiter),
-        .rvalid_slave_arbiter(rvalid_slave_arbiter),
-        .rready_arbiter_master(rready_arbiter_master)
+        .wdata_mem(wdata_mem),
+        .wstrb_mem(wstrb_mem),
+        .wvalid_mem(wvalid_mem),
+        .wready_arbiter(wready_mem),
+
+        .bresp_arbiter(bresp_mem),
+        .bvalid_arbiter(bvalid_mem),
+        .bready_mem(bready_mem),
+
+        // arbiter deside
+        .arvalid_arbiter(arvalid_arbiter),
+        .araddr_arbiter(araddr_arbiter),
+        .arready_xbar(arready_xbar),
+
+        .rdata_xbar(rdata_xbar),
+        .rresp_xbar(rresp_xbar),
+        .rvalid_xbar(rvalid_xbar),
+        .rready_arbiter(rready_arbiter),
+
+        .awaddr_arbiter(awaddr_arbiter),
+        .awvalid_arbiter(awvalid_arbiter),
+        .awready_xbar(awready_xbar),
+
+        .wdata_arbiter(wdata_arbiter),
+        .wstrb_arbiter(wstrb_arbiter),
+        .wvalid_arbiter(wvalid_arbiter),
+        .wready_xbar(wready_xbar),
+
+        .bresp_xbar(bresp_xbar),
+        .bvalid_xbar(bvalid_xbar),
+        .bready_arbiter(bready_arbiter)
+    );
+
+    ysyx_24080020_XBAR u_xbar(
+        .clk(clk),
+        .rst(rst),
+
+        // arbiter -> xbar
+        .arvalid_arbiter(arvalid_arbiter),
+        .araddr_arbiter(araddr_arbiter),
+        .arready_xbar(arready_xbar),
+
+        .rdata_xbar(rdata_xbar),
+        .rresp_xbar(rresp_xbar),
+        .rvalid_xbar(rvalid_xbar),
+        .rready_arbiter(rready_arbiter),
+
+        .awaddr_arbiter(awaddr_arbiter),
+        .awvalid_arbiter(awvalid_arbiter),
+        .awready_xbar(awready_xbar),
+
+        .wdata_arbiter(wdata_arbiter),
+        .wstrb_arbiter(wstrb_arbiter),
+        .wvalid_arbiter(wvalid_arbiter),
+        .wready_xbar(wready_xbar),
+
+        .bready_arbiter(bready_arbiter),
+        .bvalid_xbar(bvalid_xbar),
+        .bresp_xbar(bresp_xbar),
+
+        // xbar -> sram
+        .arvalid_xbar_sram(arvalid_xbar_sram),
+        .araddr_xbar_sram(araddr_xbar_sram),
+        .arready_sram(arready_sram),
+
+        .rdata_sram(rdata_sram),
+        .rresp_sram(rresp_sram),
+        .rvalid_sram(rvalid_sram),
+        .rready_xbar_sram(rready_xbar_sram),
+
+        .awaddr_xbar_sram(awaddr_xbar_sram),
+        .awvalid_xbar_sram(awvalid_xbar_sram),
+        .awready_sram(awready_sram),
+
+        .wdata_xbar_sram(wdata_xbar_sram),
+        .wstrb_xbar_sram(wstrb_xbar_sram),
+        .wvalid_xbar_sram(wvalid_xbar_sram),
+        .wready_sram(wready_sram),
+
+        .bvalid_sram(bvalid_sram),
+        .bresp_sram(bresp_sram),
+        .bready_xbar_sram(brady_xbar_sram),
+
+        // xbar -> uart
+        .arvalid_xbar_uart(arvalid_xbar_uart),
+        .araddr_xbar_uart(araddr_xbar_uart),
+        .arready_uart(arready_uart),
+
+        .rdata_uart(rdata_uart),
+        .rresp_uart(rresp_uart),
+        .rvalid_uart(rvalid_uart),
+        .rready_xbar_uart(rready_xbar_uart),
+
+        .awaddr_xbar_uart(awaddr_xbar_uart),
+        .awvalid_xbar_uart(awvalid_xbar_uart),
+        .awready_uart(awready_uart),
+
+        .wdata_xbar_uart(wdata_xbar_uart),
+        .wstrb_xbar_uart(wstrb_xbar_uart),
+        .wvalid_xbar_uart(wvalid_xbar_uart),
+        .wready_uart(wready_uart),
+
+        .bvalid_uart(bvalid_uart),
+        .bresp_uart(bresp_uart),
+        .bready_xbar_uart(brady_xbar_uart)
+    );
+
+    ysyx_24080020_UART u_uart(
+        .clk(clk),
+        .rst(rst),
+
+        .araddr(araddr_xbar_uart),
+        .arvalid(arvalid_xbar_uart),
+        .arready(arready_uart),
+
+        .rdata(rdata_uart),
+        .rresp(resp_uart),
+        .rvalid(rvalid_uart),
+        .rready(ready_xbar_uart),
+
+        .awaddr(awaddr_xbar_uart),
+        .awvalid(awvalid_xbar_uart),
+        .awready(awready_uart),
+
+        .wdata(wdata_xbar_uart),
+        .wstrb(wstrb_xbar_uart),
+        .wvalid(wvalid_xbar_uart),
+        .wready(wready_uart),
+
+        .bready(bready_xbar_uart),
+        .bresp(bresp_uart),
+        .bvalid(bvalid_uart)
     );
 
     ysyx_24080020_SRAM u_sram(
         .clk(clk),
         .rst(rst),
 
-        .arvalid(arvalid_arbiter_slave),
-        .araddr(araddr_arbiter_slave),
-        .arready(arready_slave_arbiter),
+        .arvalid(arvalid_xbar_sram),
+        .araddr(araddr_xbar_sram),
+        .arready(arready_sram),
 
-        .rdata(rdata_slave_arbiter),
-        .rresp(rresp_slave_arbiter),
-        .rvalid(rvalid_slave_arbiter),
-        .rready(rready_arbiter_master),
+        .rdata(rdata_sram),
+        .rresp(rresp_sram),
+        .rvalid(rvalid_sram),
+        .rready(rready_xbar_sram),
 
-        .awaddr(awaddr),
-        .awvalid(awvalid),
-        .awready(awready),
+        .awaddr(awaddr_xbar_sram),
+        .awvalid(awvalid_xbar_sram),
+        .awready(awready_sram),
 
-        .wdata(wdata_axi),
-        .wstrb(wstrb),
-        .wvalid(wvalid),
-        .wready(wready),
+        .wdata(wdata_xbar_sram),
+        .wstrb(wstrb_xbar_sram),
+        .wvalid(wvalid_xbar_sram),
+        .wready(wready_sram),
 
-        .bresp(bresp),
-        .bvalid(bvalid),
-        .bready(bready)
+        .bresp(bresp_sram),
+        .bvalid(bvalid_sram),
+        .bready(bready_xbar_sram)
     );
 
 
