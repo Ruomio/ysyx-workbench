@@ -6,25 +6,25 @@ module ysyx_24080020_UART(
     // axi-lite
     input [31:0] araddr,
     input arvalid,
-    output arready,
+    output reg arready,
 
-    output [31:0] rdata,
-    output [1:0] rresp,
-    output rvalid,
+    output reg [31:0] rdata,
+    output reg [1:0] rresp,
+    output reg rvalid,
     input rready,
 
     input [31:0] awaddr,
     input awvalid,
-    output awready,
+    output reg awready,
 
     input [31:0] wdata,
     input [3:0] wstrb,
     input wvalid,
-    output wready,
+    output reg wready,
 
     input bready,
-    output [1:0] bresp,
-    output bvalid
+    output reg [1:0] bresp,
+    output reg bvalid
 );
 
     reg wfin, ren;

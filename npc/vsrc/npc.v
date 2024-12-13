@@ -98,7 +98,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] araddr_arbiter;
   wire rvalid_xbar, rready_arbiter;
   wire [1:0] rresp_xbar;
-  wire [`ysyx_24080020_WIDTH-1:0] rdata_xbar;
+  wire [`ysyx_24080020_WIDTH-1:0] rdata_xbar, awaddr_arbiter;
   wire awvalid_arbiter, awready_xbar;
   wire [`ysyx_24080020_WIDTH-1:0] wdata_arbiter;
   wire [3:0] wstrb_arbiter;
@@ -518,7 +518,7 @@ module ysyx_24080020_NPC(
         .rdata(rdata_uart),
         .rresp(rresp_uart),
         .rvalid(rvalid_uart),
-        .rready(ready_xbar_uart),
+        .rready(rready_xbar_uart),
 
         .awaddr(awaddr_xbar_uart),
         .awvalid(awvalid_xbar_uart),
