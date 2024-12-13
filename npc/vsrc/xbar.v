@@ -108,7 +108,7 @@ module ysyx_24080020_XBAR(
         if(awvalid_arbiter) begin
             device_addr = ((awaddr_arbiter >= `ysyx_24080020_MBASE) && (awaddr_arbiter < 32'h81000000)) ? 3'd1 :
                             (awaddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 :
-                            (awaddr_arbiter == `ysyx_24080020_RET_ADDR || awaddr_arbiter == `ysyx_24080020_RTC_ADDR + 32'h4) ? 3'd3 :
+                            (awaddr_arbiter == `ysyx_24080020_RTC_ADDR || awaddr_arbiter == `ysyx_24080020_RTC_ADDR + 32'h4) ? 3'd3 :
                             3'd0;
         end
         else if(arvalid_arbiter) begin
