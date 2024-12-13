@@ -211,7 +211,6 @@ module ysyx_24080020_EXU
             // cnt <= cnt;
         end
     end
-    
 
     assign alu_src1 = src1_exu;
     assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
@@ -223,7 +222,7 @@ module ysyx_24080020_EXU
         .alu_out(alu_out)
     );
 
-    assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu : 
+    assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
                             is_csrtype_exu == 1'b1 ? dnpc_exu : pc_exu;
     assign branch_src2 = is_csrtype_idu == 1'b1 ? 32'b0 : imm_exu;
 

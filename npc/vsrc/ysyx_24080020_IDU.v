@@ -65,7 +65,6 @@ module ysyx_24080020_IDU (
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
     wire [4:0] rd;
-    
 
 
     reg state; // 0: idle;    1: wait_ready
@@ -196,7 +195,7 @@ module ysyx_24080020_IDU (
                         wen_idu = 1'b0;
                     end
                 endcase
-            end 
+            end
 
             `ysyx_24080020_I_TYPEI: begin
                 // load
@@ -216,7 +215,7 @@ module ysyx_24080020_IDU (
                 is_load_idu = 1'b1;
 
                 mren_idu = 1'b1;
-                
+
                 case(funct3)
                     `ysyx_24080020_LB: begin
                         mrlen_idu = 4'b001;
@@ -253,10 +252,10 @@ module ysyx_24080020_IDU (
 
                 wen_idu = 1'b0;
                 mwen_idu = 1'b1;
-                
+
                 src1_idu = val_raddr1;
                 src2_idu = val_raddr2;
-                alu_op_idu = `ysyx_24080020_ALU_ADD; 
+                alu_op_idu = `ysyx_24080020_ALU_ADD;
 
                 case(funct3)
                     `ysyx_24080020_SB: begin
@@ -413,7 +412,7 @@ module ysyx_24080020_IDU (
                             invalid_inst();
                         end
                     end
-                    
+
                     `ysyx_24080020_CSRRW: begin
                         wcsraddr_idu = imm_idu[11:0];
                         wcsrdata_idu = val_raddr1;
@@ -502,7 +501,7 @@ module ysyx_24080020_IDU (
                 src1_idu = pc_idu;
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
-            
+
             end
             `ysyx_24080020_LUI: begin
                 imm_idu = {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
