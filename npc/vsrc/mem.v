@@ -61,7 +61,7 @@ module ysyx_24080020_MEM(
     output reg wvalid,
     input wready,
     output [3:0] wstrb,
-    output [`ysyx_24080020_WIDTH-1:0] wdata, 
+    output [`ysyx_24080020_WIDTH-1:0] wdata,
 
     output reg bready,
     input bvalid,
@@ -92,10 +92,10 @@ module ysyx_24080020_MEM(
     assign wdata = mwdata_mem;
     assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
                    mwmask_mem == 4'b10 ? 4'b11 :
-                   mwmask_mem == 4'b100 ? 4'b1111 : 
+                   mwmask_mem == 4'b100 ? 4'b1111 :
                    4'b0;
     assign awaddr = mwaddr_mem;
-    
+
 
 
     always @(posedge clk) begin
@@ -184,7 +184,7 @@ module ysyx_24080020_MEM(
 
 
 
-    
+
     always @(posedge clk) begin
         if(!rst) begin
             arvalid <= 1'b0;
@@ -228,7 +228,7 @@ module ysyx_24080020_MEM(
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
                 end
-                
+
                 mem_wb_valid <= 1'b1;
             end
             else begin
@@ -290,5 +290,5 @@ module ysyx_24080020_MEM(
             bready <= 1'b0;
         end
     end
-   
+
 endmodule
