@@ -91,7 +91,7 @@ module ysyx_24080020_UART(
         end
         else if(wvalid) begin
             // $write("uart output: %c\n", wdata[7:0]);
-            $write("%c", wdata[7:0]);
+            // $write("%c", wdata[7:0]);
             wready <= 1'b1;
 
             wfin <= 1'b1;
