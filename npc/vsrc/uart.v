@@ -88,7 +88,7 @@ module ysyx_24080020_UART(
             wfin <= 1'b0;
             wready <= 1'b0;
         end
-        else if(wvalid) begin
+        else if(wvalid && !wready) begin
             $write("%c", wdata[7:0]);
             wready <= 1'b1;
 
