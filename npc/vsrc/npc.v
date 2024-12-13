@@ -126,13 +126,13 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart, awaddr_xbar_clint;
 
   wire wvalid_xbar_sram, wready_sram,
-       wvalid_xbar_uart, wready_uart
+       wvalid_xbar_uart, wready_uart,
        wvalid_xbar_clint, wready_clint;
   wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart, wstrb_xbar_clint;
   wire [31:0] wdata_xbar_sram, wdata_xbar_uart, wdata_xbar_clint;
 
   wire bvalid_sram, bready_xbar_sram,
-       bvalid_uart,  bready_xbar_uart
+       bvalid_uart,  bready_xbar_uart,
        bvalid_clint, bready_xbar_clint;
   wire [1:0] bresp_sram, bresp_uart, bresp_clint;
 
