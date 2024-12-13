@@ -85,8 +85,7 @@ module ysyx_24080020_XBAR(
         (awaddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 :
                          arvalid_arbiter ?
         (araddr_arbiter >= `ysyx_24080020_MBASE && araddr_arbiter < 32'h81000000) ? 3'b1 :
-        (araddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 :
-                         3'b0 : 3'b0 ;
+        (araddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 : 3'b0;
 
     /* AR: Xbar -> UART
                 |
