@@ -112,7 +112,7 @@ module ysyx_24080020_NPC(
 
   wire rvalid_sram, rvalid_uart, rready_xbar_sram, rready_xbar_uart;
   wire [1:0] rresp_sram, rresp_uart;
-  wire [`ysyx_240080020_WIDTH-1:0] rdata_sram, rdata_uart;
+  wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart;
 
   wire awvalid_xbar_sram, awvalid_xbar_uart, awready_sram, awready_uart;
   wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart;
