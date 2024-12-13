@@ -91,7 +91,7 @@ module ysyx_24080020_NPC(
   wire [3:0] wstrb_mem;
   wire wvalid_mem;
   wire wready_mem;
-  wire bvalid_mem, bready_mem
+  wire bvalid_mem, bready_mem;
   wire [1:0] bresp_mem;
 
   wire arvalid_arbiter, arready_xbar;

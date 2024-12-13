@@ -83,7 +83,7 @@ module ysyx_24080020_XBAR(
     assign device_addr = awvalid_arbiter ? (awaddr_arbiter >= `ysyx_24080020_MBASE &&
                                             awaddr_arbiter < 32'h81000000) ? 3'b1 :
                                             (awaddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 :
-                         arvalid_arbiter ? (araddr_arbiter >= `ysyx_240080020_MBASE &&
+                         arvalid_arbiter ? (araddr_arbiter >= `ysyx_24080020_MBASE &&
                                             araddr_arbiter < 32'h81000000) ? 3'b1 :
                                             (araddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 :
                                             3'b0;
