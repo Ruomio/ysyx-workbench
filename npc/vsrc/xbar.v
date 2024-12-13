@@ -70,43 +70,61 @@ module ysyx_24080020_XBAR(
 
     input bvalid_uart,
     input [1:0] bresp_uart,
-    output reg bready_xbar_uart
+    output reg bready_xbar_uart,
+
+    // Xbar -> slave2 -> CLINT
+    output reg arvalid_xbar_clint,
+    output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_clint,
+    input arready_clint,
+
+    input [`ysyx_24080020_WIDTH-1:0] rdata_clint,
+    input [1:0] rresp_clint,
+    input rvalid_clint,
+    output reg rready_xbar_clint,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_clint,
+    output reg awvalid_xbar_clint,
+    input awready_clint,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_clint,
+    output reg [3:0] wstrb_xbar_clint,
+    output reg wvalid_xbar_clint,
+    input wready_clint,
+
+    input bvalid_clint,
+    input [1:0] bresp_clint,
+    output reg bready_xbar_clint
 );
     /* Xbar target device
      * 3'd0: error
      * 3'd1: sram
      * 3'd2: uart
+     * 3'd3: clint
      * ...
     */
     reg [2:0] device_addr;
 
     always @(awvalid_arbiter or arvalid_arbiter) begin
         if(awvalid_arbiter) begin
-            device_addr = ((awaddr_arbiter >= `ysyx_24080020_MBASE) && (awaddr_arbiter < 32'h81000000)) ?
-                            3'd1 : (awaddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 : 3'd0;
+            device_addr = ((awaddr_arbiter >= `ysyx_24080020_MBASE) && (awaddr_arbiter < 32'h81000000)) ? 3'd1 :
+                            (awaddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 :
+                            (awaddr_arbiter == `ysyx_24080020_RTC_ADDR || awaddr_arbiter == `ysyx_24080020_RTC_ADDR + 32'h4) ? 3'd3 :
+                            3'd0;
         end
         else if(arvalid_arbiter) begin
-            device_addr = ((araddr_arbiter >= `ysyx_24080020_MBASE) && (araddr_arbiter < 32'h81000000)) ?
-                            3'd1 : (araddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 : 3'd0;
+            device_addr = ((araddr_arbiter >= `ysyx_24080020_MBASE) && (araddr_arbiter < 32'h81000000)) ? 3'd1 :
+                            (araddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 :
+                            (araddr_arbiter == `ysyx_24080020_RTC_ADDR || araddr_arbiter == `ysyx_24080020_RTC_ADDR + 32'h4) ? 3'd3 :
+                            3'd0;
         end
         else begin
             device_addr = device_addr;
         end
     end
 
-    // assign device_addr = awvalid_arbiter == 1'b1 ?
-    //         ((awaddr_arbiter >= `ysyx_24080020_MBASE) && (awaddr_arbiter < 32'h81000000)) ?
-    //             3'd1 : (awaddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 : 3'd0
-    //         :
-    //         ((arvalid_arbiter == 1'b1) ?
-    //             ((araddr_arbiter >= `ysyx_24080020_MBASE) && (araddr_arbiter < 32'h81000000)) ?
-    //                 3'd1 : (araddr_arbiter == `ysyx_24080020_SERIAL_PORT) ? 3'd2 : 3'd0
-    //             :
-    //             3'd0);
-
-    /* AR: Xbar -> UART
-                |
-                -> SRAM
+    /* AR: Xbar |-> UART
+                |-> SRAM
+                |-> CLINT
     */
     assign araddr_xbar_sram = device_addr == 3'd1 ? araddr_arbiter : 32'b0;
     assign arvalid_xbar_sram = device_addr == 3'd1 ? arvalid_arbiter : 1'b0;
@@ -114,26 +132,38 @@ module ysyx_24080020_XBAR(
     assign araddr_xbar_uart = device_addr == 3'd2 ? araddr_arbiter : 32'b0;
     assign arvalid_xbar_uart = device_addr == 3'd2 ? arvalid_arbiter : 1'b0;
 
+    assign araddr_xbar_clint = device_addr == 3'd3 ? araddr_arbiter : 32'b0;
+    assign arvalid_xbar_clint = device_addr == 3'd3 ? arvalid_arbiter : 1'b0;
+
     assign arready_xbar = device_addr == 3'd1 ? arready_sram :
-                          device_addr == 3'd2 ? arready_uart : 1'b0;
+                          device_addr == 3'd2 ? arready_uart :
+                          device_addr == 3'd3 ? arready_clint :
+                          1'b0;
 
 
-    /* R:  UART ---
-                  |---> Xbar
-           SRAM ---
+    /* R:  UART --- |
+           CLINT ---|---> Xbar
+           SRAM --- |
     */
     assign rdata_xbar = device_addr == 3'd1 ? rdata_sram :
-                        device_addr == 3'd2 ? rdata_uart : 32'b0;
+                        device_addr == 3'd2 ? rdata_uart :
+                        device_addr == 3'd3 ? rdata_clint :
+                        32'b0;
     assign rresp_xbar = device_addr == 3'd1 ? rresp_sram :
-                        device_addr == 3'd2 ? rresp_uart : 2'b0;
+                        device_addr == 3'd2 ? rresp_uart :
+                        device_addr == 3'd3 ? rresp_clint :
+                        2'b0;
     assign rvalid_xbar = device_addr == 3'd1 ? rvalid_sram :
-                         device_addr == 3'd2 ? rvalid_uart : 1'b0;
+                         device_addr == 3'd2 ? rvalid_uart :
+                         device_addr == 3'd3 ? rvalid_clint :
+                         1'b0;
     assign rready_xbar_sram = device_addr == 3'd1 ? rready_arbiter : 1'b0;
     assign rready_xbar_uart = device_addr == 3'd2 ? rready_arbiter : 1'b0;
+    assign rready_xbar_clint = device_addr == 3'd3 ? rready_arbiter : 1'b0;
 
-    /* AW: Xbar --> UART
-                |
-                -> SRAM
+    /* AW: Xbar |-> UART
+                |-> SRAM
+                |-> CLINT
     */
     assign awaddr_xbar_sram = device_addr == 3'd1 ? awaddr_arbiter : 32'b0;
     assign awvalid_xbar_sram = device_addr == 3'd1 ? awvalid_arbiter : 1'b0;
@@ -141,12 +171,17 @@ module ysyx_24080020_XBAR(
     assign awaddr_xbar_uart = device_addr == 3'd2 ? awaddr_arbiter : 32'b0;
     assign awvalid_xbar_uart = device_addr == 3'd2 ? awvalid_arbiter : 1'b0;
 
-    assign awready_xbar = device_addr == 3'd1 ? awready_sram :
-                          device_addr == 3'd2 ? awready_uart : 1'b0;
+    assign awaddr_xbar_clint = device_addr == 3'd3 ? awaddr_arbiter : 32'b0;
+    assign awvalid_xbar_clint = device_addr == 3'd3 ? awvalid_arbiter : 1'b0;
 
-    /* W: Xbar --> UART
-                |
-                -> SRAM
+    assign awready_xbar = device_addr == 3'd1 ? awready_sram :
+                          device_addr == 3'd2 ? awready_uart :
+                          device_addr == 3'd3 ? awready_clint :
+                          1'b0;
+
+    /* W: Xbar  |-> UART
+                |-> SRAM
+                |-> CLINT
     */
     assign wdata_xbar_sram = device_addr == 3'd1 ? wdata_arbiter : 32'b0;
     assign wstrb_xbar_sram = device_addr == 3'd1 ? wstrb_arbiter : 4'b0;
@@ -156,18 +191,29 @@ module ysyx_24080020_XBAR(
     assign wstrb_xbar_uart = device_addr == 3'd2 ? wstrb_arbiter : 4'b0;
     assign wvalid_xbar_uart = device_addr == 3'd2 ? wvalid_arbiter : 1'b0;
 
-    assign wready_xbar = device_addr == 3'd1 ? wready_sram :
-                         device_addr == 3'd2 ? wready_uart : 1'b0;
+    assign wdata_xbar_clint = device_addr == 3'd3 ? wdata_arbiter : 32'b0;
+    assign wstrb_xbar_clint = device_addr == 3'd3 ? wstrb_arbiter : 4'b0;
+    assign wvalid_xbar_clint = device_addr == 3'd3 ? wvalid_arbiter : 1'b0;
 
-    /* B: UART ---
-                 |---> Xbar
-          SRAM ---
+    assign wready_xbar = device_addr == 3'd1 ? wready_sram :
+                         device_addr == 3'd2 ? wready_uart :
+                         device_addr == 3'd3 ? wready_clint :
+                         1'b0;
+
+    /* B: UART ----|
+          CLINT ---|---> Xbar
+          SRAM ----|
     */
     assign bresp_xbar = device_addr == 3'd1 ? bresp_sram :
-                        device_addr == 3'd2 ? bresp_uart : 2'b0;
+                        device_addr == 3'd2 ? bresp_uart :
+                        device_addr == 3'd3 ? bresp_clint :
+                        2'b0;
     assign bvalid_xbar = device_addr == 3'd1 ? bvalid_sram :
-                         device_addr == 3'd2 ? bvalid_uart : 1'b0;
+                         device_addr == 3'd2 ? bvalid_uart :
+                         device_addr == 3'd2 ? bvalid_clint :
+                         1'b0;
     assign bready_xbar_sram = device_addr == 3'd1 ? bready_arbiter : 1'b0;
     assign bready_xbar_uart = device_addr == 3'd2 ? bready_arbiter : 1'b0;
+    assign bready_xbar_clint = device_addr == 3'd3 ? bready_arbiter : 1'b0;
 
 endmodule

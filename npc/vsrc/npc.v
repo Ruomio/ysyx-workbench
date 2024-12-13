@@ -107,24 +107,35 @@ module ysyx_24080020_NPC(
   wire [1:0] bresp_xbar;
 
   // Xbar
-  wire arvalid_xbar_sram, arready_sram, arvalid_xbar_uart, arready_uart;
-  wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram, araddr_xbar_uart;
+  wire arvalid_xbar_sram, arready_sram,
+        arvalid_xbar_uart, arready_uart,
+        arvalid_xbar_clint, arready_clint;
+  wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
+                                  araddr_xbar_uart,
+                                  araddr_xbar_clint;
 
-  wire rvalid_sram, rvalid_uart, rready_xbar_sram, rready_xbar_uart;
-  wire [1:0] rresp_sram, rresp_uart;
-  wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart;
+  wire rvalid_sram, rready_xbar_sram,
+        rvalid_uart, rready_xbar_uart,
+        rvalid_clint, rready_xbar_clint;
+  wire [1:0] rresp_sram, rresp_uart, rresp_clint;
+  wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart, rdata_clint;
 
-  wire awvalid_xbar_sram, awvalid_xbar_uart, awready_sram, awready_uart;
-  wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart;
+  wire awvalid_xbar_sram, awready_sram,
+        awvalid_xbar_uart, awready_uart,
+        awready_clint, awvalid_xbar_clint;
+  wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart, awaddr_xbar_clint;
 
-  wire wvalid_xbar_sram, wready_sram, wvalid_xbar_uart, wready_uart;
-  wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart;
-  wire [31:0] wdata_xbar_sram, wdata_xbar_uart;
+  wire wvalid_xbar_sram, wready_sram,
+       wvalid_xbar_uart, wready_uart,
+       wvalid_xbar_clint, wready_clint;
+  wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart, wstrb_xbar_clint;
+  wire [31:0] wdata_xbar_sram, wdata_xbar_uart, wdata_xbar_clint;
 
-  wire bvalid_sram, bvalid_uart, bready_xbar_sram, bready_xbar_uart;
-  wire [1:0] bresp_sram, bresp_uart;
+  wire bvalid_sram, bready_xbar_sram,
+       bvalid_uart,  bready_xbar_uart,
+       bvalid_clint, bready_xbar_clint;
+  wire [1:0] bresp_sram, bresp_uart, bresp_clint;
 
-  // UART
 
 
 
@@ -504,7 +515,30 @@ module ysyx_24080020_NPC(
 
         .bvalid_uart(bvalid_uart),
         .bresp_uart(bresp_uart),
-        .bready_xbar_uart(bready_xbar_uart)
+        .bready_xbar_uart(bready_xbar_uart),
+
+        // xbar -> clint
+        .arvalid_xbar_clint(arvalid_xbar_clint),
+        .araddr_xbar_clint(araddr_xbar_clint),
+        .arready_clint(arready_clint),
+
+        .rdata_clint(rdata_clint),
+        .rresp_clint(rresp_clint),
+        .rvalid_clint(rvalid_clint),
+        .rready_xbar_clint(rready_xbar_clint),
+
+        .awaddr_xbar_clint(awaddr_xbar_clint),
+        .awvalid_xbar_clint(awvalid_xbar_clint),
+        .awready_clint(awready_clint),
+
+        .wdata_xbar_clint(wdata_xbar_clint),
+        .wstrb_xbar_clint(wstrb_xbar_clint),
+        .wvalid_xbar_clint(wvalid_xbar_clint),
+        .wready_clint(wready_clint),
+
+        .bvalid_clint(bvalid_clint),
+        .bresp_clint(bresp_clint),
+        .bready_xbar_clint(bready_xbar_clint)
     );
 
     ysyx_24080020_UART u_uart(
@@ -561,5 +595,31 @@ module ysyx_24080020_NPC(
         .bready(bready_xbar_sram)
     );
 
+    ysyx_24080020_CLINT u_clint(
+        .clk(clk),
+        .rst(rst),
+
+        .arvalid(arvalid_xbar_clint),
+        .araddr(araddr_xbar_clint),
+        .arready(arready_clint),
+
+        .rdata(rdata_clint),
+        .rresp(rresp_clint),
+        .rvalid(rvalid_clint),
+        .rready(rready_xbar_clint),
+
+        .awaddr(awaddr_xbar_clint),
+        .awvalid(awvalid_xbar_clint),
+        .awready(awready_clint),
+
+        .wdata(wdata_xbar_clint),
+        .wstrb(wstrb_xbar_clint),
+        .wvalid(wvalid_xbar_clint),
+        .wready(wready_clint),
+
+        .bresp(bresp_clint),
+        .bvalid(bvalid_clint),
+        .bready(bready_xbar_clint)
+    );
 
 endmodule
