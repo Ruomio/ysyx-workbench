@@ -11,7 +11,9 @@ remove_quote = $(patsubst "%",%,$(1))
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-INC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+
 VSRC += $(shell find $(abspath vsrc) -name "*.v") 
 VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
 VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
@@ -65,6 +67,8 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
+
+VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH))
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
