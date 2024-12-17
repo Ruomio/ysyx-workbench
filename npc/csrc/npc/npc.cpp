@@ -29,7 +29,7 @@ extern void difftest_skip_ref();
 extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
-Vtop *top = NULL;
+VysyxSoCFull *top = NULL;
 #ifdef CONFIG_WAVEFILE
 VerilatedVcdC *tfp = NULL;
 #endif
@@ -78,7 +78,7 @@ void init_npc(int argc, char **argv) {
 
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
-  top = new Vtop(contextp);
+  top = new VysyxSoCFull(contextp);
 #ifdef CONFIG_WAVEFILE
   tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);
@@ -86,16 +86,16 @@ void init_npc(int argc, char **argv) {
   tfp->open("build/wave.vcd");
 #endif
   int i = 0;
-  top->rst = 0;
+  top->reset = 0;
   while(!contextp->gotFinish()) {
-    top->clk ^= 1;
+    top->clock ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
     tfp->dump(contextp->time());
     contextp->timeInc(1);
 #endif
     if(i++ > 20) {
-      top->rst = 1;
+      top->reset = 1;
       break;
     }
   }
@@ -109,7 +109,7 @@ void exec_once_npc(uint32_t pc) {
       u_npc_state.pc = pc;
       return;
     }
-    top->clk ^= 1;
+    top->clock ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
     if(total_wave_stop++ < MAX_WAVE_STEP) {
@@ -261,16 +261,19 @@ void check_trap(npc_state u_npc_state) {
 }
 
 uint32_t g_get_pc() {
-  g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
+  // g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
+  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
   return g_pc;
 }
 
 void g_set_pc(uint32_t pc) {
-  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 }
 
 uint32_t g_get_reg(int i) {
-  return (top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
+  // return (top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
+  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
 }
 
 uint32_t g_get_snpc() {
@@ -278,14 +281,17 @@ uint32_t g_get_snpc() {
 }
 
 uint32_t g_get_dnpc() {
-  return top->rootp->top__DOT__u_npc__DOT__dnpc_wb;
+  // return top->rootp->top__DOT__u_npc__DOT__dnpc_wb;
+  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
 }
 
 uint32_t g_get_rs1() {
-  return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 19, 15);
+  // return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 19, 15);
+  return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 15);
 }
 uint32_t g_get_rd() {
-  return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 11, 7);
+  // return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 11, 7);
+  return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 7);
 }
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
@@ -308,16 +314,13 @@ void update_npc_cpu() {
 
 void update_dut() {
   for(int i=0; i<32; i++) {
-    top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+    // top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+    top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
   }
   // top->pc = npc_cpu.pc;
   g_set_pc(npc_cpu.pc);
 }
 
 void printf_info() {
-  printf("araddr arbiter = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr);
-  printf("araddr ifu = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr);
-  printf("pc ifu = 0x%x\n", top->rootp->top__DOT__u_npc__DOT__pc_ifu);
-
   printf("g_pc = 0x%x\n", g_pc);
 }
