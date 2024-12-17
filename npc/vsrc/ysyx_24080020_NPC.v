@@ -185,10 +185,10 @@ module ysyx_24080020_NPC(
   wire [3:0] bid_mem;
 
   wire arvalid_arbiter, arready_xbar;
-  wire [1:0] arburst_xbar;
-  wire [2:0] arsize_xbar;
-  wire [3:0] arid_xbar;
-  wire [7:0] arlen_xbar;
+  wire [1:0] arburst_arbiter;
+  wire [2:0] arsize_arbiter;
+  wire [3:0] arid_arbiter;
+  wire [7:0] arlen_arbiter;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_arbiter;
   wire rvalid_xbar, rready_arbiter;
   wire [1:0] rresp_xbar;
