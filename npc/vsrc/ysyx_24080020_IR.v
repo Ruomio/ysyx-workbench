@@ -33,7 +33,6 @@ module ysyx_24080020_IR(
         else if(if_en) begin
             arvalid <= 1'b1;
             araddr <= addr;
-            $display(araddr);
             arid <= 4'b0;
             arlen <= 8'b0;
             arsize <= 3'b10;
