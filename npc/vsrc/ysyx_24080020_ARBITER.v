@@ -180,7 +180,7 @@ module ysyx_24080020_ARBITER (
   assign wready_mem = wready_xbar;
 
   // B
-  assign bready_mem = bready_mem;
+  assign bready_arbiter = bready_mem;
   assign bresp_mem = bresp_xbar;
   assign bvalid_mem = bvalid_xbar;
   assign bid_mem = bid_xbar;

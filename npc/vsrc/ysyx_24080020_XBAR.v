@@ -335,7 +335,7 @@ module ysyx_24080020_XBAR(
                          1'b0;
     assign bid_xbar = device_addr == 3'd3 ? bid_clint :
                       device_addr == 3'd4 ? bid_soc :
-                      1'b0;
+                      4'b0;
 
     // assign bready_xbar_sram = device_addr == 3'd1 ? bready_arbiter : 1'b0;
     // assign bready_xbar_uart = device_addr == 3'd2 ? bready_arbiter : 1'b0;

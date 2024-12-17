@@ -208,7 +208,7 @@ module ysyx_24080020_MEM(
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= 8'b0;
-            arsize <= $clog2(mrlen_mem[2:0]);
+            arsize <= $clog2(mrlen_mem)[2:0];
             arburst <= 2'b0;
 
             mren_mem <= 1'b0;
@@ -273,7 +273,7 @@ module ysyx_24080020_MEM(
             awvalid <= 1'b1;
             awid <= 4'b0;
             awlen <= 8'b0;
-            awsize <= $clog2(mwmask_mem[2:0]);
+            awsize <= $clog2(mwmask_mem)[2:0];
             awburst <= 2'b0;
 
             mwen_mem <= 1'b0;
