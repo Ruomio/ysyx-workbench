@@ -212,6 +212,10 @@ module ysyx_24080020_NPC(
   wire arvalid_xbar_sram, arready_sram,
         arvalid_xbar_uart, arready_uart,
         arvalid_xbar_clint, arready_clint;
+  wire [1:0] arburst_xbar_clint, arburst_xbar_soc;
+  wire [2:0] arsize_xbar_clint, arsize_xbar_soc;
+  wire [3:0] arid_xbar_clint, arid_xbar_soc;
+  wire [7:0] arlen_xbar_clint, arlen_xbar_soc;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
                                   araddr_xbar_uart,
                                   araddr_xbar_clint;
@@ -219,23 +223,30 @@ module ysyx_24080020_NPC(
   wire rvalid_sram, rready_xbar_sram,
         rvalid_uart, rready_xbar_uart,
         rvalid_clint, rready_xbar_clint;
+  wire rlast_clint, rlast_soc;  
   wire [1:0] rresp_sram, rresp_uart, rresp_clint;
   wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart, rdata_clint;
 
   wire awvalid_xbar_sram, awready_sram,
         awvalid_xbar_uart, awready_uart,
         awready_clint, awvalid_xbar_clint;
+  wire [1:0] awburst_xbar_clint, awburst_xbar_soc;
+  wire [2:0] awsize_xbar_clint, awsize_xbar_soc;
+  wire [3:0] awid_xbar_clint, awid_xbar_soc;
+  wire [7:0] awlen_xbar_clint, awlen_xbar_soc;
   wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart, awaddr_xbar_clint;
 
   wire wvalid_xbar_sram, wready_sram,
        wvalid_xbar_uart, wready_uart,
        wvalid_xbar_clint, wready_clint;
+  wire wlast_xbar_clint, wlast_xbar_soc;
   wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart, wstrb_xbar_clint;
   wire [31:0] wdata_xbar_sram, wdata_xbar_uart, wdata_xbar_clint;
 
   wire bvalid_sram, bready_xbar_sram,
        bvalid_uart,  bready_xbar_uart,
        bvalid_clint, bready_xbar_clint;
+  wire [3:0] bid_clint, bid_soc;
   wire [1:0] bresp_sram, bresp_uart, bresp_clint;
 
 
