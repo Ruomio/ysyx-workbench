@@ -79,7 +79,7 @@ module ysyx_24080020(
     // encapsulation to change pins' name
     ysyx_24080020_NPC u_npc(
         .clk(clock),
-        .rst(!reset),
+        .rst(reset),
         // master
         // AR
         .io_master_arready(io_master_arready),
