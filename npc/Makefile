@@ -68,7 +68,6 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
-
 VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH))
 
 CSRC_NODIR := $(notdir $(CSRC))
@@ -99,7 +98,6 @@ sim:
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
 $(BIN): $(VSRC) $(CSRC) 
-	@echo $(CXXFLAGS)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
