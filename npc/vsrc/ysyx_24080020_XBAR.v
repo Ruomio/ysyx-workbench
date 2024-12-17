@@ -260,7 +260,7 @@ module ysyx_24080020_XBAR(
     // assign rready_xbar_sram = device_addr == 3'd1 ? rready_arbiter : 1'b0;
     // assign rready_xbar_uart = device_addr == 3'd2 ? rready_arbiter : 1'b0;
     assign rready_xbar_clint = device_addr == 3'd3 ? rready_arbiter : 1'b0;
-    assign rready_xbar_clint = device_addr == 3'd4 ? rready_arbiter : 1'b0;
+    assign rready_xbar_soc = device_addr == 3'd4 ? rready_arbiter : 1'b0;
 
     /* AW: Xbar |-> SOC
                 |-> CLINT
