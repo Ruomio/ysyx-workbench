@@ -1,6 +1,8 @@
 module ysyx_24080020(
     input clock,
     input reset,
+
+    input io_interrupt,
     // master
     // AR
     input io_master_arready,
