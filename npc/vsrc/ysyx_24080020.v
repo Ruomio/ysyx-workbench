@@ -32,7 +32,7 @@ module ysyx_24080020(
     output [3:0] io_master_wstrb,
     output io_master_wlast,
     // B
-    output io_master_brady,
+    output io_master_bready,
     input io_master_bvalid,
     input [1:0] io_master_bresp,
     input [3:0] io_master_bid,
@@ -68,7 +68,7 @@ module ysyx_24080020(
     input [3:0] io_slave_wstrb,
     input io_slave_wlast,
     // B
-    input io_slave_brady,
+    input io_slave_bready,
     output io_slave_bvalid,
     output [1:0] io_slave_bresp,
     output [3:0] io_slave_bid
@@ -109,7 +109,7 @@ module ysyx_24080020(
         .io_master_wstrb(io_master_wstrb),
         .io_master_wlast(io_master_wlast),
         // B
-        .io_master_brady(io_master_brady),
+        .io_master_bready(io_master_bready),
         .io_master_bvalid(io_master_bvalid),
         .io_master_bresp(io_master_bresp),
         .io_master_bid(io_master_bid),
@@ -145,7 +145,7 @@ module ysyx_24080020(
         .io_slave_wstrb(io_slave_wstrb),
         .io_slave_wlast(io_slave_wlast),
         // B
-        .io_slave_brady(io_slave_brady),
+        .io_slave_bready(io_slave_bready),
         .io_slave_bvalid(io_slave_bvalid),
         .io_slave_bresp(io_slave_bresp),
         .io_slave_bid(io_slave_bid)
