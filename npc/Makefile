@@ -94,6 +94,7 @@ sim:
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
 $(BIN): $(VSRC) $(CSRC) 
+	@echo $(INCFLAGS)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
