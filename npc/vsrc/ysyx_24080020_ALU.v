@@ -1,4 +1,5 @@
-`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/ysyx_24080020_DEFINE.v"
+// `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/ysyx_24080020_DEFINE.v"
+`include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ALU(
     input [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op,
     input [`ysyx_24080020_WIDTH-1:0] alu_src1,

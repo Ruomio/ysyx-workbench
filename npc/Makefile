@@ -13,6 +13,7 @@ CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c")
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
 
 VSRC += $(shell find $(abspath vsrc) -name "*.v") 
 VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
