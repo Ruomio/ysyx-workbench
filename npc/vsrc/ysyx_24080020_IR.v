@@ -34,7 +34,7 @@ module ysyx_24080020_IR(
             arvalid <= 1'b1;
             araddr <= addr;
             arid <= 4'b0;
-            arlen <= 8/b0;
+            arlen <= 8'b0;
             arsize <= 3'b10;
             arburst <<= 2'b0;
         end
