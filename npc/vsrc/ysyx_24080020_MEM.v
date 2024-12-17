@@ -1,4 +1,4 @@
-`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
+`include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_MEM(
     input clk,
     input rst,
@@ -44,28 +44,40 @@ module ysyx_24080020_MEM(
     output reg is_dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
-    // axi-lite
+    // axi-full
     output reg arvalid,
+    output reg [3:0] arid,
+    output reg [7:0] arlen,
+    output reg [2:0] arsize,
+    output reg [1:0] arburst,
     output [`ysyx_24080020_WIDTH-1:0] araddr,
     input arready,
 
     output reg rready,
     input rvalid,
     input [1:0] rresp,
+    input [3:0] rid,
+    input rlast,
     input [`ysyx_24080020_WIDTH-1:0] rdata,
 
-    output reg awvalid,
     input awready,
+    output reg awvalid,
+    output reg [3:0] awid,
+    output reg [7:0] awlen,
+    output reg [2:0] awsize,
+    output reg [1:0] awburst,
     output [`ysyx_24080020_WIDTH-1:0] awaddr,
 
-    output reg wvalid,
     input wready,
+    output reg wvalid,
+    output reg wlast,
     output [3:0] wstrb,
     output [`ysyx_24080020_WIDTH-1:0] wdata,
 
     output reg bready,
     input bvalid,
     input [1:0] bresp,
+    input [3:0] bid,
 
     // bus
     input exu_mem_valid,
@@ -194,6 +206,10 @@ module ysyx_24080020_MEM(
         end
         else if(mren_mem) begin
             arvalid <= 1'b1;
+            arid <= 4'b0;
+            arlen <= 8'b0;
+            arsize <= $clog2(mrlen_mem)[2:0];
+            arburst <= 2'b0;
 
             mren_mem <= 1'b0;
         end
@@ -234,6 +250,8 @@ module ysyx_24080020_MEM(
             else begin
                 // read error
                 mrdata_mem <= 32'hffffffff;
+                $display("rresp not be 0b00, ERROR");
+                mem_wb_valid <= 1'b1;
             end
         end
         else begin
@@ -253,6 +271,10 @@ module ysyx_24080020_MEM(
         end
         else if(mwen_mem) begin
             awvalid <= 1'b1;
+            awid <= 4'b0;
+            awlen <= 8'b0;
+            awsize <= $clog2(mwmask_mem)[2:0];
+            awburst <= 2'b0;
 
             mwen_mem <= 1'b0;
         end

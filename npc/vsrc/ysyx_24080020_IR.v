@@ -1,4 +1,4 @@
-`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
+`include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_IR(
     input clk,
     input rst,
@@ -10,11 +10,17 @@ module ysyx_24080020_IR(
 
     // axi-lite
     output reg arvalid,
+    output reg [1:0] arburst,
+    output reg [2:0] arsize,
+    output reg [3:0] arid,
+    output reg [7:0] arlen,
     output reg [`ysyx_24080020_WIDTH-1:0] araddr,
     input arready,
 
     input rvalid,
+    input rlast,
     input [1:0] rresp,
+    input [3:0] rid, 
     input [`ysyx_24080020_WIDTH-1:0] rdata,
     output reg rready
 
@@ -27,6 +33,10 @@ module ysyx_24080020_IR(
         else if(if_en) begin
             arvalid <= 1'b1;
             araddr <= addr;
+            arid <= 4'b0;
+            arlen <= 8'b0;
+            arsize <= 3'b10;
+            arburst <<= 2'b0;
         end
         else if(arready && arvalid) begin
             arvalid <= 1'b0;

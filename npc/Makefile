@@ -1,8 +1,9 @@
 VERILATOR=verilator
 VERILATOR_CFLAGS += -MMD --build -cc  \
-					-O3 --x-assign fast --x-initial fast --noassert --trace
+					-O3 --x-assign fast --x-initial fast --noassert --trace \
+					--timescale "1ns/1ns" --no-timing
 
-TOPNAME=top
+TOPNAME=ysyxSoCFull
 NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
@@ -10,7 +11,13 @@ remove_quote = $(patsubst "%",%,$(1))
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-VSRC=$(shell find $(abspath vsrc) -name "*.v") 
+
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
+
+VSRC += $(shell find $(abspath vsrc) -name "*.v") 
+VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
+VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=$(shell pwd)/build
@@ -61,6 +68,7 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
+VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH))
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
