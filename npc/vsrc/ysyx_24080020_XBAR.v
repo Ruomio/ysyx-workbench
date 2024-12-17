@@ -1,0 +1,345 @@
+`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
+module ysyx_24080020_XBAR(
+    input clk,
+    input rst,
+
+    // AXI-lite arbiter -> xbar
+    input arvalid_arbiter,
+    input [`ysyx_24080020_WIDTH-1:0] araddr_arbiter,
+    input [3:0] arid_arbiter,
+    input [7:0] arlen_arbiter,
+    input [2:0] arsize_arbiter,
+    input [1:0] arburst_arbiter,
+    output reg arready_xbar,
+
+    input rready_arbiter,
+    output reg [`ysyx_24080020_WIDTH-1:0] rdata_xbar,
+    output reg [1:0] rresp_xbar,
+    output reg rvalid_xbar,
+    output reg [3:0] rid_xbar,
+    output reg rlast_xbar,
+
+    input [`ysyx_24080020_WIDTH-1:0] awaddr_arbiter,
+    input awvalid_arbiter,
+    input [3:0] awid_arbiter,
+    input [7:0] awlen_arbiter,
+    input [2:0] awsize_arbiter,
+    input [1:0] awburst_arbiter,
+    output reg awready_xbar,
+
+    input [`ysyx_24080020_WIDTH-1:0] wdata_arbiter,
+    input [3:0] wstrb_arbiter,
+    input wvalid_arbiter,
+    input wlast_arbiter,
+    output reg wready_xbar,
+
+    input bready_arbiter,
+    output reg bvalid_xbar,
+    output reg [3:0] bid_xbar,
+    output reg [1:0] bresp_xbar,
+
+    // // XBar -> slave1 -> SRAM
+    // output reg arvalid_xbar_sram,
+    // output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
+    // output reg [3:0] arid_xbar_sram,
+    // output reg [7:0] arlen_xbar_sram,
+    // output reg [2:0] arsize_xbar_sram,
+    // output reg [1:0] arburst_xbar_sram,
+    // input arready_sram,
+
+    // input [`ysyx_24080020_WIDTH-1:0] rdata_sram,
+    // input [1:0] rresp_sram,
+    // input rvalid_sram,
+    // input [3:0] rid_sram,
+    // input rlast_sram,
+    // output reg rready_xbar_sram,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram,
+    // output reg awvalid_xbar_sram,
+    // output reg [3:0] awid_xbar_sram,
+    // output reg [7:0] awlen_xbar_sram,
+    // output reg [2:0] awsize_xbar_sram,
+    // output reg [1:0] awburst_xbar_sram,
+    // input awready_sram,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_sram,
+    // output reg [3:0] wstrb_xbar_sram,
+    // output reg wvalid_xbar_sram,
+    // output reg wlast_xbar_sram,
+    // input wready_sram,
+
+    // input bvalid_sram,
+    // input [1:0] bresp_sram,
+    // input [3:0] bid_sram,
+    // output reg bready_xbar_sram,
+
+    // // Xbar -> slave2 -> UART
+    // output reg arvalid_xbar_uart,
+    // output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_uart,
+    // output reg [3:0] arid_xbar_uart,
+    // output reg [7:0] arlen_xbar_uart,
+    // output reg [2:0] arsize_xbar_uart,
+    // output reg [1:0] arburst_xbar_uart,
+    // input arready_uart,
+
+    // input [`ysyx_24080020_WIDTH-1:0] rdata_uart,
+    // input [1:0] rresp_uart,
+    // input rvalid_uart,
+    // input [3:0] rid_uart,
+    // input rlast_uart,
+    // output reg rready_xbar_uart,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_uart,
+    // output reg awvalid_xbar_uart,
+    // output reg [3:0] awid_xbar_uart,
+    // output reg [7:0] awlen_xbar_uart,
+    // output reg [2:0] awsize_xbar_uart,
+    // output reg [1:0] awburst_xbar_uart,
+    // input awready_uart,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_uart,
+    // output reg [3:0] wstrb_xbar_uart,
+    // output reg wvalid_xbar_uart,
+    // output reg wlast_xbar_uart,
+    // input wready_uart,
+
+    // input bvalid_uart,
+    // input [1:0] bresp_uart,
+    // input [3:0] bid_uart,
+    // output reg bready_xbar_uart,
+
+    // Xbar -> slave3 -> CLINT
+    output reg arvalid_xbar_clint,
+    output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_clint,
+    output reg [3:0] arid_xbar_clint,
+    output reg [7:0] arlen_xbar_clint,
+    output reg [2:0] arsize_xbar_clint,
+    output reg [1:0] arburst_xbar_clint,
+    input arready_clint,
+
+    input [`ysyx_24080020_WIDTH-1:0] rdata_clint,
+    input [1:0] rresp_clint,
+    input rvalid_clint,
+    input [3:0] rid_clint,
+    input rlast_clint,
+    output reg rready_xbar_clint,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_clint,
+    output reg awvalid_xbar_clint,
+    output reg [3:0] awid_xbar_clint,
+    output reg [7:0] awlen_xbar_clint,
+    output reg [2:0] awsize_xbar_clint,
+    output reg [1:0] awburst_xbar_clint,
+    input awready_clint,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_clint,
+    output reg [3:0] wstrb_xbar_clint,
+    output reg wvalid_xbar_clint,
+    output reg wlast_xbar_clint,
+    input wready_clint,
+
+    input bvalid_clint,
+    input [1:0] bresp_clint,
+    input [3:0] bid_clint,
+    output reg bready_xbar_clint,
+
+    // XBar -> slave4 -> SOC
+    output reg arvalid_xbar_soc,
+    output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_soc,
+    output reg [3:0] arid_xbar_soc,
+    output reg [7:0] arlen_xbar_soc,
+    output reg [2:0] arsize_xbar_soc,
+    output reg [1:0] arburst_xbar_soc,
+    input arready_soc,
+
+    input [`ysyx_24080020_WIDTH-1:0] rdata_soc,
+    input [1:0] rresp_soc,
+    input rvalid_soc,
+    input [3:0] rid_soc,
+    input rlast_soc,
+    output reg rready_xbar_soc,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_soc,
+    output reg awvalid_xbar_soc,
+    output reg [3:0] awid_xbar_soc,
+    output reg [7:0] awlen_xbar_soc,
+    output reg [2:0] awsize_xbar_soc,
+    output reg [1:0] awburst_xbar_soc,
+    input awready_soc,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_soc,
+    output reg [3:0] wstrb_xbar_soc,
+    output reg wvalid_xbar_soc,
+    output reg wlast_xbar_soc,
+    input wready_soc,
+
+    input bvalid_soc,
+    input [1:0] bresp_soc,
+    input [3:0] bid_soc,
+    output reg bready_xbar_soc
+);
+    /* Xbar target device
+     * 3'd0: error
+     * 3'd1: sram
+     * 3'd2: uart
+     * 3'd3: clint
+     * 3'd4: soc
+     * ...
+    */
+    reg [2:0] device_addr;
+
+    /* 
+     *   if clint: -> clint
+     *   else: -> soc
+    */
+    always @(awvalid_arbiter or arvalid_arbiter) begin
+        if(awvalid_arbiter) begin
+            device_addr = (awaddr_arbiter == `ysyx_24080020_RTC_ADDR || awaddr_arbiter == `ysyx_24080020_RTC_ADDR + 32'h4) ? 3'd3 :
+                            3'd4;
+        end
+        else if(arvalid_arbiter) begin
+            device_addr = (araddr_arbiter == `ysyx_24080020_RTC_ADDR || araddr_arbiter == `ysyx_24080020_RTC_ADDR + 32'h4) ? 3'd3 :
+                            3'd4;
+        end
+        else begin
+            device_addr = device_addr;
+        end
+    end
+
+    /* AR: Xbar |-> SOC
+                |-> CLINT
+    */
+    // assign araddr_xbar_sram = device_addr == 3'd1 ? araddr_arbiter : 32'b0;
+    // assign arvalid_xbar_sram = device_addr == 3'd1 ? arvalid_arbiter : 1'b0;
+    // assign arburst_xbar_sram = device_addr == 3'd1 ? arburst_arbiter : 2'b0;
+    // assign arsize_xbar_sram = device_addr == 3'd1 ? arsize_arbiter : 3'b0;
+    // assign arlen_xbar_sram = device_addr == 3'd1 ? arlen_arbiter : 8'b0;
+    // assign arid_xbar_sram = device_addr == 3'd1 ? arid_arbiter : 4'b0;
+
+    // assign araddr_xbar_uart = device_addr == 3'd2 ? araddr_arbiter : 32'b0;
+    // assign arvalid_xbar_uart = device_addr == 3'd2 ? arvalid_arbiter : 1'b0;
+    // assign arburst_xbar_uart = device_addr == 3'd2 ? arburst_arbiter : 2'b0;
+    // assign arsize_xbar_uart = device_addr == 3'd2 ? arsize_arbiter : 3'b0;
+    // assign arlen_xbar_uart = device_addr == 3'd2 ? arlen_arbiter : 8'b0;
+    // assign arid_xbar_uart = device_addr == 3'd2 ? arid_arbiter : 4'b0;
+
+    assign araddr_xbar_clint = device_addr == 3'd3 ? araddr_arbiter : 32'b0;
+    assign arvalid_xbar_clint = device_addr == 3'd3 ? arvalid_arbiter : 1'b0;
+    assign arburst_xbar_clint = device_addr == 3'd3 ? arburst_arbiter : 2'b0;
+    assign arsize_xbar_clint = device_addr == 3'd3 ? arsize_arbiter : 3'b0;
+    assign arlen_xbar_clint = device_addr == 3'd3 ? arlen_arbiter : 8'b0;
+    assign arid_xbar_clint = device_addr == 3'd3 ? arid_arbiter : 4'b0;
+
+    assign araddr_xbar_soc = device_addr == 3'd4 ? araddr_arbiter : 32'b0;
+    assign arvalid_xbar_soc = device_addr == 3'd4 ? arvalid_arbiter : 1'b0;
+    assign arburst_xbar_soc = device_addr == 3'd4 ? arburst_arbiter : 2'b0;
+    assign arsize_xbar_soc = device_addr == 3'd4 ? arsize_arbiter : 3'b0;
+    assign arlen_xbar_soc = device_addr == 3'd4 ? arlen_arbiter : 8'b0;
+    assign arid_xbar_soc = device_addr == 3'd4 ? arid_arbiter : 4'b0;
+
+    assign arready_xbar = device_addr == 3'd3 ? arready_clint :
+                          device_addr == 3'd4 ? arready_soc : 
+                          1'b0;
+
+
+    /* R:  SOC  --- |
+           CLINT ---|---> Xbar
+    */
+    assign rdata_xbar = device_addr == 3'd3 ? rdata_clint :
+                        device_addr == 3'd4 ? rdata_soc :
+                        32'b0;
+    assign rresp_xbar = device_addr == 3'd3 ? rresp_clint :
+                        device_addr == 3'd4 ? rresp_soc :
+                        2'b0;
+    assign rvalid_xbar = device_addr == 3'd3 ? rvalid_clint :
+                         device_addr == 3'd4 ? rvalid_soc :
+                         1'b0;
+    assign rid_xbar = device_addr == 3'd3 ? rid_clint :
+                      device_addr == 3'd4 ? rid_soc :
+                      4'b0;
+    // assign rready_xbar_sram = device_addr == 3'd1 ? rready_arbiter : 1'b0;
+    // assign rready_xbar_uart = device_addr == 3'd2 ? rready_arbiter : 1'b0;
+    assign rready_xbar_clint = device_addr == 3'd3 ? rready_arbiter : 1'b0;
+    assign rready_xbar_clint = device_addr == 3'd4 ? rready_arbiter : 1'b0;
+
+    /* AW: Xbar |-> SOC
+                |-> CLINT
+    */
+    // assign awaddr_xbar_sram = device_addr == 3'd1 ? awaddr_arbiter : 32'b0;
+    // assign awvalid_xbar_sram = device_addr == 3'd1 ? awvalid_arbiter : 1'b0;
+    // assign awburst_xbar_sram = device_addr == 3'd1 ? awburst_arbiter : 2'b0;
+    // assign awsize_xbar_sram = device_addr == 3'd1 ? awsize_arbiter : 3'b0;
+    // assign awlen_xbar_sram = device_addr == 3'd1 ? awlen_arbiter : 8'b0;
+    // assign awid_xbar_sram = device_addr == 3'd1 ? awid_arbiter : 4'b0;
+
+    // assign awaddr_xbar_uart = device_addr == 3'd2 ? awaddr_arbiter : 32'b0;
+    // assign awvalid_xbar_uart = device_addr == 3'd2 ? awvalid_arbiter : 1'b0;
+    // assign awburst_xbar_uart = device_addr == 3'd2 ? awburst_arbiter : 2'b0;
+    // assign awsize_xbar_uart = device_addr == 3'd2 ? awsize_arbiter : 3'b0;
+    // assign awlen_xbar_uart = device_addr == 3'd2 ? awlen_arbiter : 8'b0;
+    // assign awid_xbar_uart = device_addr == 3'd2 ? awid_arbiter : 4'b0;
+
+    assign awaddr_xbar_clint = device_addr == 3'd3 ? awaddr_arbiter : 32'b0;
+    assign awvalid_xbar_clint = device_addr == 3'd3 ? awvalid_arbiter : 1'b0;
+    assign awburst_xbar_clint = device_addr == 3'd3 ? awburst_arbiter : 2'b0;
+    assign awsize_xbar_clint = device_addr == 3'd3 ? awsize_arbiter : 3'b0;
+    assign awlen_xbar_clint = device_addr == 3'd3 ? awlen_arbiter : 8'b0;
+    assign awid_xbar_clint = device_addr == 3'd3 ? awid_arbiter : 4'b0;
+
+    assign awaddr_xbar_soc = device_addr == 3'd4 ? awaddr_arbiter : 32'b0;
+    assign awvalid_xbar_soc = device_addr == 3'd4 ? awvalid_arbiter : 1'b0;
+    assign awburst_xbar_soc = device_addr == 3'd4 ? awburst_arbiter : 2'b0;
+    assign awsize_xbar_soc = device_addr == 3'd4 ? awsize_arbiter : 3'b0;
+    assign awlen_xbar_soc = device_addr == 3'd4 ? awlen_arbiter : 8'b0;
+    assign awid_xbar_soc = device_addr == 3'd4 ? awid_arbiter : 4'b0;
+
+    assign awready_xbar = device_addr == 3'd3 ? awready_clint :
+                          device_addr == 3'd4 ? awready_soc :
+                          1'b0;
+
+    /* W: Xbar  |-> SOC
+                |-> CLINT
+    */
+    // assign wdata_xbar_sram = device_addr == 3'd1 ? wdata_arbiter : 32'b0;
+    // assign wstrb_xbar_sram = device_addr == 3'd1 ? wstrb_arbiter : 4'b0;
+    // assign wvalid_xbar_sram = device_addr == 3'd1 ? wvalid_arbiter : 1'b0;
+    // assign wlast_xbar_sram = device_addr == 3'd1 ? wlast_arbiter : 1'b0;
+
+    // assign wdata_xbar_uart = device_addr == 3'd2 ? wdata_arbiter : 32'b0;
+    // assign wstrb_xbar_uart = device_addr == 3'd2 ? wstrb_arbiter : 4'b0;
+    // assign wvalid_xbar_uart = device_addr == 3'd2 ? wvalid_arbiter : 1'b0;
+    // assign wlast_xbar_uart = device_addr == 3'd2 ? wlast_arbiter : 1'b0;
+
+    assign wdata_xbar_clint = device_addr == 3'd3 ? wdata_arbiter : 32'b0;
+    assign wstrb_xbar_clint = device_addr == 3'd3 ? wstrb_arbiter : 4'b0;
+    assign wvalid_xbar_clint = device_addr == 3'd3 ? wvalid_arbiter : 1'b0;
+    assign wlast_xbar_clint = device_addr == 3'd3 ? wlast_arbiter : 1'b0;
+
+    assign wdata_xbar_soc = device_addr == 3'd4 ? wdata_arbiter : 32'b0;
+    assign wstrb_xbar_soc = device_addr == 3'd4 ? wstrb_arbiter : 4'b0;
+    assign wvalid_xbar_soc = device_addr == 3'd4 ? wvalid_arbiter : 1'b0;
+    assign wlast_xbar_soc = device_addr == 3'd4 ? wlast_arbiter : 1'b0;
+
+    assign wready_xbar = device_addr == 3'd3 ? wready_clint :
+                         device_addr == 3'd4 ? wready_soc :
+                         1'b0;
+
+    /* B: SOC  ----|
+          CLINT ---|---> Xbar
+    */
+    assign bresp_xbar = device_addr == 3'd3 ? bresp_clint :
+                        device_addr == 3'd4 ? bresp_soc :
+                        2'b0;
+    assign bvalid_xbar = device_addr == 3'd3 ? bvalid_clint :
+                         device_addr == 3'd4 ? bvalid_soc :
+                         1'b0;
+    assign bid_xbar = device_addr == 3'd3 ? bid_clint :
+                      device_addr == 3'd4 ? bid_soc :
+                      1'b0;
+
+    // assign bready_xbar_sram = device_addr == 3'd1 ? bready_arbiter : 1'b0;
+    // assign bready_xbar_uart = device_addr == 3'd2 ? bready_arbiter : 1'b0;
+    assign bready_xbar_clint = device_addr == 3'd3 ? bready_arbiter : 1'b0;
+    assign bready_xbar_soc = device_addr == 3'd4 ? bready_arbiter : 1'b0;
+
+endmodule

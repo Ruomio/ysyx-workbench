@@ -1,8 +1,9 @@
 VERILATOR=verilator
 VERILATOR_CFLAGS += -MMD --build -cc  \
-					-O3 --x-assign fast --x-initial fast --noassert --trace
+					-O3 --x-assign fast --x-initial fast --noassert --trace \
+					--timescale "1ns/1ns" --no-timing
 
-TOPNAME=top
+TOPNAME=ysyxSocFull
 NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
@@ -10,7 +11,10 @@ remove_quote = $(patsubst "%",%,$(1))
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-VSRC=$(shell find $(abspath vsrc) -name "*.v") 
+INC_PATH += $(shell find $(ysyxSoc)/perip -type d -name "rtl")
+VSRC += $(shell find $(abspath vsrc) -name "*.v") 
+VSRC += $(shell find $(ysyxSoc)/perip -name "*.v")
+VSRC += $(shell find $(ysyxSoc)/build -name "*.v")
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=$(shell pwd)/build

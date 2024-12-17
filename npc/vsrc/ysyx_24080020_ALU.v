@@ -16,29 +16,29 @@ module ysyx_24080020_ALU(
             end
             `ysyx_24080020_ALU_SLT: begin
                 alu_out = $signed(alu_src1) < $signed(alu_src2) ? 32'b1 : 32'b0;
-            end 
+            end
             `ysyx_24080020_ALU_SLTU: begin
                 alu_out = alu_src1 < alu_src2 ? 32'b1 : 32'b0;
-            end 
+            end
             `ysyx_24080020_ALU_OR : begin
                 alu_out = alu_src1 | alu_src2;
-            end 
+            end
             `ysyx_24080020_ALU_XOR: begin
                 alu_out = alu_src1 ^ alu_src2;
-            end 
+            end
             `ysyx_24080020_ALU_AND: begin
                 alu_out = alu_src1 & alu_src2;
-            end 
+            end
             `ysyx_24080020_ALU_SLL: begin
                 alu_out = alu_src1 << alu_src2[4:0];
-            end 
+            end
             `ysyx_24080020_ALU_SRL: begin
                 alu_out = alu_src1 >> alu_src2[4:0];
-            end 
+            end
             `ysyx_24080020_ALU_SRA: begin
                 alu_out = alu_src1 >> alu_src2[4:0] | ({32{alu_src1[31]}} & ~(32'hffffffff >> alu_src2[4:0]));
-            end 
-            
+            end
+
             default: begin
                 alu_out = 32'b0;
             end

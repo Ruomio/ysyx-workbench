@@ -1,5 +1,5 @@
 `include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/define.v"
-module ysyx_24080020_REG  
+module ysyx_24080020_REG
 (
     input clk,
     input rst,
@@ -48,7 +48,7 @@ module ysyx_24080020_REG
     integer  i;
 
     reg is_load_wb;
- 
+
     reg [2:0] wcsr_idx;
     reg [2:0] wcsr_idx2;
     reg [2:0] rcsr_idx;
@@ -58,7 +58,7 @@ module ysyx_24080020_REG
 
     reg wen_wb;
     reg [4:0] waddr_wb;
-    
+
     reg wcsren_wb;
     reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_wb;
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_wb;
@@ -177,7 +177,7 @@ module ysyx_24080020_REG
         else if(wcsren2_wb) begin
             csrs[wcsr_idx2] <= wcsrdata2_wb;
         end
-        else begin 
+        else begin
             csrs[4] <= 32'b0;
         end
     end

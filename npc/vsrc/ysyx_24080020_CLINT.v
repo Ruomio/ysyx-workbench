@@ -5,24 +5,36 @@ module ysyx_24080020_CLINT(
 
     input [31:0] araddr,
     input arvalid,
+    input [3:0] arid,
+    input [7:0] arlen,
+    input [2:0] arsize,
+    input [1:0] arburst,
     output reg arready,
 
     input rready,
     output reg rvalid,
     output reg [1:0] rresp,
     output reg [31:0] rdata,
+    output reg [3:0] rid,
+    output reg rlast,
 
     input awvalid,
     input [31:0] awaddr,
+    input [3:0] awid,
+    input [7:0] awlen,
+    input [2:0] awsize,
+    input [1:0] awburst,
     output reg awready,
 
     input wvalid,
     input [3:0] wstrb,
     input [31:0] wdata,
+    input wlast,
     output reg wready,
 
     input bready,
     output reg bvalid,
+    output reg [3:0] bid,
     output reg [1:0] bresp
 );
 

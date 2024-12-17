@@ -13,10 +13,16 @@ module ysyx_24080020_IFU (
     // axi-lite
     input arready,
     output reg arvalid,
+    output reg [1:0] arburst,
+    output reg [2:0] arsize,
+    output reg [3:0] arid,
+    output reg [7:0] arlen,
     output reg [`ysyx_24080020_WIDTH-1:0] araddr,
 
     input rvalid,
+    input rlast,
     input [1:0] rresp,
+    input [3:0] rid, 
     input [`ysyx_24080020_WIDTH-1:0] rdata,
     output reg rready,
 
@@ -133,9 +139,15 @@ module ysyx_24080020_IFU (
         // axi-lite
         .arvalid(arvalid),
         .araddr(araddr),
+        .arburst(arburst),
+        .arsize(arsize),
+        .arid(arid),
+        .arlen(arlen),
         .arready(arready),
 
         .rvalid(rvalid),
+        .rlast(rlast),
+        .rid(rid),
         .rresp(rresp),
         .rdata(rdata),
         .rready(rready)
