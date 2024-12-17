@@ -601,24 +601,36 @@ module ysyx_24080020_NPC(
         // arbiter -> xbar
         .arvalid_arbiter(arvalid_arbiter),
         .araddr_arbiter(araddr_arbiter),
+        .arid_arbiter(arid_arbiter),
+        .arlen_arbiter(arlen_arbiter),
+        .arsize_arbiter(arsize_arbiter),
+        .arburst_arbiter(arburst_arbiter),
         .arready_xbar(arready_xbar),
 
         .rdata_xbar(rdata_xbar),
         .rresp_xbar(rresp_xbar),
         .rvalid_xbar(rvalid_xbar),
+        .rid_xbar(rid_xbar),
+        .rlast_xbar(rlast_xbar),
         .rready_arbiter(rready_arbiter),
 
         .awaddr_arbiter(awaddr_arbiter),
         .awvalid_arbiter(awvalid_arbiter),
+        .awid_arbiter(awid_arbiter),
+        .awlen_arbiter(awlen_arbiter),
+        .awsize_arbiter(awsize_arbiter),
+        .awburst_arbiter(awburst_arbiter),
         .awready_xbar(awready_xbar),
 
         .wdata_arbiter(wdata_arbiter),
         .wstrb_arbiter(wstrb_arbiter),
         .wvalid_arbiter(wvalid_arbiter),
+        .wlast_arbiter(wlast_arbiter),
         .wready_xbar(wready_xbar),
 
         .bready_arbiter(bready_arbiter),
         .bvalid_xbar(bvalid_xbar),
+        .bid_xbar(bid_xbar),
         .bresp_xbar(bresp_xbar),
 
         // // xbar -> sram
