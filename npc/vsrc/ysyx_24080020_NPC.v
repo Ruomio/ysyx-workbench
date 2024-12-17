@@ -223,7 +223,8 @@ module ysyx_24080020_NPC(
   wire rvalid_sram, rready_xbar_sram,
         rvalid_uart, rready_xbar_uart,
         rvalid_clint, rready_xbar_clint;
-  wire rlast_clint, rlast_soc;  
+  wire rlast_clint, rlast_soc;
+  wire [3:0] rid_clint, rid_soc;
   wire [1:0] rresp_sram, rresp_uart, rresp_clint;
   wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart, rdata_clint;
 
