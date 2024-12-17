@@ -86,7 +86,7 @@ void init_npc(int argc, char **argv) {
   tfp->open("build/wave.vcd");
 #endif
   int i = 0;
-  top->reset = 0;
+  top->reset = 1;
   while(!contextp->gotFinish()) {
     top->clock ^= 1;
     top->eval();
@@ -95,7 +95,7 @@ void init_npc(int argc, char **argv) {
     contextp->timeInc(1);
 #endif
     if(i++ > 20) {
-      top->reset = 1;
+      top->reset = 0;
       break;
     }
   }
