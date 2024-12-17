@@ -130,7 +130,7 @@ module ysyx_24080020_MEM(
         end
         else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
-            else if(exu_mem_valid && mem_exu_ready) begin
+            else if(mem_exu_ready) begin
                 exu_mem_shake_hands <= 1'b1;
             end
             else begin
