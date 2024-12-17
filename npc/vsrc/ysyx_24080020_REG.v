@@ -1,4 +1,4 @@
-`include "/home/papillon/Documents/All_codes/ysyx-workbench/npc/vsrc/ysyx_24080020_DEFINE.v"
+`include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_REG
 (
     input clk,
