@@ -34,7 +34,7 @@ module ysyx_24080020_NPC(
     output [3:0] io_master_wstrb,
     output io_master_wlast,
     // B
-    output io_master_brady,
+    output io_master_bready,
     input io_master_bvalid,
     input [1:0] io_master_bresp,
     input [3:0] io_master_bid,
@@ -70,7 +70,7 @@ module ysyx_24080020_NPC(
     input [3:0] io_slave_wstrb,
     input io_slave_wlast,
     // B
-    input io_slave_brady,
+    input io_slave_bready,
     output io_slave_bvalid,
     output [1:0] io_slave_bresp,
     output [3:0] io_slave_bid
