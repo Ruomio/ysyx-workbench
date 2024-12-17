@@ -2,13 +2,13 @@
 #include <readline/chardefs.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "Vtop.h"
-#include "Vtop___024root.h"
+#include "VysyxSoCFull.h"
+#include "VysyxSoCFull___024root.h"
 #include "define.h"
 #include "isa.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
-#include "Vtop__Dpi.h"
+#include "VysyxSoCFull__Dpi.h"
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
