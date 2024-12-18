@@ -67,8 +67,8 @@ void init_memory() {
   fseek(fp, 0, SEEK_END);
   img_size = ftell(fp);
 
-  assert(img_size <= CONFIG_MSIZE);
   printf("The image is %s, size = %ld\n", img_file, img_size);
+  assert(img_size <= CONFIG_MSIZE);
 
   fseek(fp, 0, SEEK_SET);
 
