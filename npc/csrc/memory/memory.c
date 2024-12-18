@@ -67,8 +67,8 @@ void init_memory() {
   fseek(fp, 0, SEEK_END);
   img_size = ftell(fp);
 
-  printf("The image is %s, size = 0x%x\n", img_file, img_size);
   assert(img_size <= CONFIG_MSIZE);
+  printf("The image is %s, size = %ld\n", img_file, img_size);
 
   fseek(fp, 0, SEEK_SET);
 
@@ -135,6 +135,5 @@ void write_memory(int addr, int len, int data) {
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
-  *data = paddr_read(addr, 4);
-  // printf("mrom_read: addr = 0x%x\tdata = 0x%x\n", addr, *data);
+  *data = 0x00100073;
 }
