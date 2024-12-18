@@ -143,29 +143,18 @@ module ysyx_24080020_REG
 
     end
 
-    reg tmp;
     // regs write
     always @(posedge clk) begin
         if(!rst) begin
             for(i = 0; i<6'd32; i = i+1 ) begin
                 regs[i] <= 32'b0;
             end
-            tmp <= 1'b0;
         end
-        else if(tmp) begin
+        else if(wen_wb) begin
             regs[waddr_wb] <= result;
             wb_ifu_valid <= 1'b1;
             wen_wb <= 1'b0;
             regs[0] <= 32'b0;
-
-            tmp <= 1'b0;
-        end
-        else if(wen_wb) begin
-            tmp <= 1'b1;
-            // regs[waddr_wb] <= result;
-            // wb_ifu_valid <= 1'b1;
-            // wen_wb <= 1'b0;
-            // regs[0] <= 32'b0;
         end
         else begin
             regs[0] <= 32'b0;
