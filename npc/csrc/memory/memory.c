@@ -95,6 +95,7 @@ paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 static word_t pmem_read(paddr_t addr, int len) {
   if(addr >= CONFIG_SRAM_BASE && addr <= CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE) {
     word_t rdata = *(volatile uint32_t *)(uintptr_t)(addr + CONFIG_SRAM_BASE);
+    printf("sram rdata : 0x%x\n", rdata);
     switch(len){
       case 1: return (char)rdata;
       case 2: return (short)rdata;
