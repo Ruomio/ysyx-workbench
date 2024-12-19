@@ -101,14 +101,26 @@ module ysyx_24080020_MEM(
 
     reg state; // 0: idle;   1: wait_ready
 
-    assign araddr = mraddr_mem;
-    assign wdata = mwdata_mem;
-    assign wstrb = mwmask_mem == 4'b1 ? 4'b1 :
-                   mwmask_mem == 4'b10 ? 4'b11 :
-                   mwmask_mem == 4'b100 ? 4'b1111 :
-                   4'b0;
-    assign awaddr = mwaddr_mem;
+    wire [31:0] rdata_shift;
 
+    assign araddr = mraddr_mem;
+    assign wdata =  wstrb == 4'b1111 ? mwdata_mem :
+                    wstrb == 4'b1110 ? mwdata_mem << 8 :
+                    wstrb == 4'b1100 ? mwdata_mem << 16 :
+                    wstrb == 4'b1000 ? mwdata_mem << 24 :
+                    32'b0;
+    assign wstrb = mwaddr_mem[1:0] == 2'b00 ? 4'b1111 :
+                   mwaddr_mem[1:0] == 2'b01 ? 4'b1110 :
+                   mwaddr_mem[1:0] == 2'b10 ? 4'b1100 :
+                   mwaddr_mem[1:0] == 2'b11 ? 4'b1000 :
+                   4'b0;
+    assign awaddr = mwaddr_mem & ~32'b11;
+
+    assign rdata_shift = araddr[1:0] == 2'b00 ? rdata :
+                        araddr[1:0] == 2'b01 ? rdata >> 8 :
+                        araddr[1:0] == 2'b10 ? rdata >> 16 :
+                        araddr[1:0] == 2'b11 ? rdata >> 24 :
+                        32'b0; 
 
 
     always @(posedge clk) begin
@@ -234,8 +246,8 @@ module ysyx_24080020_MEM(
                 if(mrtype_mem) begin
                     // zero extension
                     case(mrlen_mem)
-                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata[7:0]};
-                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata[15:0]};
+                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
+                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
                         4'd4:   mrdata_mem <= rdata;
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
@@ -243,8 +255,8 @@ module ysyx_24080020_MEM(
                 else begin
                     // signed extension
                     case(mrlen_mem)
-                        4'd1:   mrdata_mem <= {{24{rdata[7]}}, rdata[7:0]};
-                        4'd2:   mrdata_mem <= {{16{rdata[15]}}, rdata[15:0]};
+                        4'd1:   mrdata_mem <= {{24{rdata[7]}}, rdata_shift[7:0]};
+                        4'd2:   mrdata_mem <= {{16{rdata[15]}}, rdata_shift[15:0]};
                         4'd4:   mrdata_mem <= rdata;
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
