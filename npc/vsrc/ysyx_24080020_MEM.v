@@ -114,7 +114,7 @@ module ysyx_24080020_MEM(
                    mwaddr_mem[1:0] == 2'b10 ? 4'b1100 :
                    mwaddr_mem[1:0] == 2'b11 ? 4'b1000 :
                    4'b0;
-    assign awaddr = mwaddr_mem & ~32'b11;
+    assign awaddr = mwaddr_mem;
 
     assign rdata_shift = araddr[1:0] == 2'b00 ? rdata :
                         araddr[1:0] == 2'b01 ? rdata >> 8 :
