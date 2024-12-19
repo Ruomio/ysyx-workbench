@@ -19,6 +19,7 @@
 #include <memory/paddr.h>
 
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
+  printf("difftest memcpy paddr:0x%x\n", addr);
   if(direction == DIFFTEST_TO_REF) likely(in_pmem(addr)) ? memcpy(guest_to_host(addr), buf, n) : assert(0);
   else likely(in_pmem(addr)) ? memcpy(buf, guest_to_host(addr), n) : assert(0);
 }

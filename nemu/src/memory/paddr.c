@@ -63,9 +63,10 @@ static uint8_t sram[CONFIG_SRAM_SIZE] = {};
 
 uint8_t* guest_to_host(paddr_t paddr) {
 #ifdef CONFIG_IS_MROM_SRAM
+  printf("guest to host paddr:0x%x\n", paddr);
   if(paddr >= CONFIG_MROM_BASE && paddr <= CONFIG_MROM_BASE + CONFIG_MROM_SIZE) return mrom + paddr - CONFIG_MROM_BASE;
   if(paddr >= CONFIG_SRAM_BASE && paddr <= CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE) return sram + paddr - CONFIG_SRAM_BASE;
-  Assert(0, "paddr are not in mrom and sram");
+  Assert(0, "paddr are not in mrom and sram: 0x%x", paddr);
 #elif
   return pmem + paddr - CONFIG_MBASE;
 #endif
