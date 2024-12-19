@@ -13,12 +13,10 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "debug.h"
 #include <memory/host.h>
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
-#include <stdint.h>
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;

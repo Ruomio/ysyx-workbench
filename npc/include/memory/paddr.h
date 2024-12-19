@@ -23,13 +23,6 @@
 // #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
 #define RESET_VECTOR (PMEM_LEFT + 0x0)
 
-// #define CONFIG_SRAM_BASE 0x0f000000
-// #define CONFIG_SRAM_SIZE 0x00002000
-// 
-// #define SRAM_LEFT ((paddr_t)CONFIG_SRAM_BASE)
-// #define SRAM_RIGHT ((paddr_t)CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE - 1)
-// #define RESET_VECTOR_SRAM (SRAM_LEFT)
-
 /* convert the guest physical address in the guest program to host virtual address in NEMU */
 uint8_t* guest_to_host(paddr_t paddr);
 /* convert the host virtual address in NEMU to guest physical address in the guest program */
