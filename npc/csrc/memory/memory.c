@@ -74,7 +74,7 @@ void init_memory() {
   fseek(fp, 0, SEEK_SET);
 
   memory = (uint8_t *)calloc(1, CONFIG_MSIZE);
-  printf("memory addr is %p\n", memory);
+  // printf("memory addr is %p\n", memory);
   int ret = fread(memory, img_size, 1, fp);
   assert(ret == 1);
 
