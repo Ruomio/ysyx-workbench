@@ -23,6 +23,9 @@ static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
+#ifdef CONFIG_IS_SRAM
+static uint8_t sram[CONFIG_SRAM_SIZE] = {};
+#endif
 
 #ifdef CONFIG_MTRACE_COND
   struct MtraceBuf {
@@ -55,7 +58,15 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
 #endif
 
-uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+uint8_t* guest_to_host(paddr_t paddr) {
+#ifdef CONFIG_IS_SRAM
+  if(paddr >= CONFIG_SRAM_BASE && paddr <= CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE) return sram + paddr - CONFIG_SRAM_BASE;
+  if(paddr >= CONFIG_MBASE && paddr <= CONFIG_MBASE + CONFIG_MSIZE) return pmem + paddr - CONFIG_MBASE;
+  Assert(0, "paddr are not in mrom and sram: 0x%x", paddr);
+#elif
+  return pmem + paddr - CONFIG_MBASE;
+#endif
+}
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr, int len) {
