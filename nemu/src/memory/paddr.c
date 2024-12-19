@@ -25,8 +25,7 @@ static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
-#ifdef CONFIG_IS_MROM_SRAM
-static uint8_t mrom[CONFIG_MROM_SIZE] = {};
+#ifdef CONFIG_IS_SRAM
 static uint8_t sram[CONFIG_SRAM_SIZE] = {};
 #endif
 
@@ -62,10 +61,9 @@ static uint8_t sram[CONFIG_SRAM_SIZE] = {};
 #endif
 
 uint8_t* guest_to_host(paddr_t paddr) {
-#ifdef CONFIG_IS_MROM_SRAM
-  printf("guest to host paddr:0x%x\n", paddr);
-  if(paddr >= CONFIG_MROM_BASE && paddr <= CONFIG_MROM_BASE + CONFIG_MROM_SIZE) return mrom + paddr - CONFIG_MROM_BASE;
+#ifdef CONFIG_IS_SRAM
   if(paddr >= CONFIG_SRAM_BASE && paddr <= CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE) return sram + paddr - CONFIG_SRAM_BASE;
+  if(paddr >= CONFIG_MBASE && paddr <= CONFIG_MBASE + CONFIG_MSIZE) return pmem + paddr - CONFIG_MBASE;
   Assert(0, "paddr are not in mrom and sram: 0x%x", paddr);
 #elif
   return pmem + paddr - CONFIG_MBASE;

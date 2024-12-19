@@ -31,28 +31,18 @@ config MEM_RANDOM
   help
     This may help to find undefined behaviors.
 
-config IS_MROM_SRAM
+config IS_SRAM
   depends on TARGET_SHARE
   bool "enable mrom and sram to adapt ysyxsoc difftest"
   default n
 
-config MROM_BASE
-  depends on IS_MROM_SRAM
-  hex "MROM base address"
-  default 0x20000000
-
-config MROM_SIZE
-  depends on IS_MROM_SRAM
-  hex "MROM size, default 4k"
-  default 0x1000
-
 config SRAM_BASE
-  depends on IS_MROM_SRAM
+  depends on IS_SRAM
   hex "SRAM base address"
   default 0x0f000000
 
 config SRAM_SIZE
-  depends on IS_MROM_SRAM
+  depends on IS_SRAM
   hex "SRAM size, defalut 8k"
   default 0x2000
 
