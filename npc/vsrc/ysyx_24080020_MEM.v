@@ -104,9 +104,9 @@ module ysyx_24080020_MEM(
     assign araddr = mraddr_mem;
     assign wdata = mwdata_mem;
     assign wstrb = mwaddr_mem[1:0] == 2'b00 ? 4'b1111 :
-                   mwaddr_mem[1:0] == 2'b01 ? 4'b1110 :
-                   mwaddr_mem[1:0] == 2'b10 ? 4'b1100 :
-                   mwaddr_mem[1:0] == 2'b11 ? 4'b1000 :
+                   mwaddr_mem[1:0] == 2'b01 ? 4'b0111 :
+                   mwaddr_mem[1:0] == 2'b10 ? 4'b0011 :
+                   mwaddr_mem[1:0] == 2'b11 ? 4'b0001 :
                    4'b0;
     assign awaddr = mwaddr_mem;
 
