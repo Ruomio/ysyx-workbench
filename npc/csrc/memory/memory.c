@@ -1,4 +1,5 @@
 #include "memory/memory.h"
+#include "common.h"
 #include "define.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -92,6 +93,15 @@ uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr, int len) {
+  if(addr >= CONFIG_SRAM_BASE && addr <= CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE) {
+    word_t rdata = *(volatile uint32_t *)(uintptr_t)(addr + CONFIG_SRAM_BASE);
+    switch(len){
+      case 1: return (char)rdata;
+      case 2: return (short)rdata;
+      case 4: return rdata;
+      default: assert(0);
+    }
+  }
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
