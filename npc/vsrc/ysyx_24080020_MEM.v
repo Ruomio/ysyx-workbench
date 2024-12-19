@@ -104,12 +104,11 @@ module ysyx_24080020_MEM(
     wire [31:0] rdata_shift;
 
     assign araddr = mraddr_mem;
-    assign wdata = mwdata_mem;
-    // assign wdata =  wstrb == 4'b1111 ? mwdata_mem :
-    //                 wstrb == 4'b1110 ? mwdata_mem << 8 :
-    //                 wstrb == 4'b1100 ? mwdata_mem << 16 :
-    //                 wstrb == 4'b1000 ? mwdata_mem << 24 :
-    //                 32'b0;
+    assign wdata =  wstrb == 4'b1111 ? mwdata_mem :
+                    wstrb == 4'b1110 ? mwdata_mem << 8 :
+                    wstrb == 4'b1100 ? mwdata_mem << 16 :
+                    wstrb == 4'b1000 ? mwdata_mem << 24 :
+                    32'b0;
     assign wstrb = mwaddr_mem[1:0] == 2'b00 ? 4'b1111 :
                    mwaddr_mem[1:0] == 2'b01 ? 4'b1110 :
                    mwaddr_mem[1:0] == 2'b10 ? 4'b1100 :
