@@ -358,7 +358,8 @@ module ysyx_24080020_MEM(
                 mem_wb_valid <= 1'b1;
             end
         end
-        else if(rvalid) begin
+        else if(rvalid && !rlast) begin
+            // muti read, and the first read 
             rready <= 1'b1;
             if(rresp == 2'b0) begin
                 rdata1 <= rdata;
