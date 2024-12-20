@@ -361,6 +361,7 @@ module ysyx_24080020_MEM(
             if(rresp == 2'b0) begin
                 rdata1 <= rdata;
                 rdata2 <= 32'b0;
+                arlen_cnt <= 1'b1;
             end
             else begin
                 // read error
