@@ -115,12 +115,12 @@ module ysyx_24080020_MEM(
     assign araddr = mraddr_mem;
     assign arburst = 2'b1;
     assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
-    assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata1 :
+    assign rdata_shift_2 = araddr[1:0] == 2'b00 ? rdata1 :
                         araddr[1:0] == 2'b01 ? rdata1 >> 8 :
                         araddr[1:0] == 2'b10 ? rdata1 >> 16 :
                         araddr[1:0] == 2'b11 ? rdata1 >> 24 :
                         32'b0;
-    assign rdata_shift_2 =  araddr[1:0] == 2'b01 ?
+    assign rdata_shift_1 =  araddr[1:0] == 2'b01 ?
                                 mrlen_mem == 4'b100 ? rdata2 << 24 :
                                 32'b0 :
                             araddr[1:0] == 2'b10 ?
@@ -412,10 +412,10 @@ module ysyx_24080020_MEM(
             wstrb <= wstrb_1;
         end
         else if(!awlen_cnt && awlen[0]) begin
-            // muti write, the seconnd write
+            // muti write, the first write
             awlen_cnt <= 1'b1;
-            wdata <= wdata_2;
-            wstrb <= wstrb_2;
+            wdata <= wdata_1;
+            wstrb <= wstrb_1;
             wlast <= 1'b0;
             // $display("first write");
         end
@@ -441,11 +441,11 @@ module ysyx_24080020_MEM(
         end
         else if(wvalid && wready) begin
             // next W 
-            // muti write, the first write
+            // muti write, the second write
             wlast <= 1'b1;
             wvalid <= 1'b1;
-            wdata <= wdata_1;
-            wstrb <= wstrb_1;
+            wdata <= wdata_2;
+            wstrb <= wstrb_2;
             // $display("second write");
         end
         else begin
