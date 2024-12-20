@@ -128,7 +128,7 @@ module ysyx_24080020_MEM(
                                 32'b0 :
                             araddr[1:0] == 2'b11 ?
                                 mrlen_mem == 4'b100 ? rdata2 << 24 :
-                                mrlen_mem == 3'b010 ? rdata2 << 8 :
+                                mrlen_mem == 4'b010 ? rdata2 << 8 :
                                 32'b0 :
                             32'b0; 
 
@@ -421,7 +421,7 @@ module ysyx_24080020_MEM(
         else if(wvalid && wready && wlast) begin
             wvalid <= 1'b0;
             wlast <= 1'b0;
-            awlen_cnt <= 8'b0;
+            awlen_cnt <= 1'b0;
         end
         else if(wvalid && wready) begin
             // next W 
