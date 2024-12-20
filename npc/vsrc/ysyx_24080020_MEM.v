@@ -406,6 +406,7 @@ module ysyx_24080020_MEM(
             wlast <= 1'b1;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
+            $display("first write");
         end
         else if(!wlast) begin
             // muti write, the first write
