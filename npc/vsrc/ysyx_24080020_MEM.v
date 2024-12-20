@@ -413,7 +413,7 @@ module ysyx_24080020_MEM(
             wdata <= wdata_1;
             wstrb <= wstrb_1;
             wlast <= 1'b0;
-            $display("first write");
+            // $display("first write");
         end
         else begin
             tmp <= 1'b0;
@@ -442,7 +442,7 @@ module ysyx_24080020_MEM(
             wvalid <= 1'b1;
             wdata <= wdata_2;
             wstrb <= wstrb_2;
-            $display("second write");
+            // $display("second write");
         end
         else begin
             tmp <= 1'b0;
