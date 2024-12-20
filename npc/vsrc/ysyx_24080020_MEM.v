@@ -407,7 +407,7 @@ module ysyx_24080020_MEM(
             wdata <= wdata_1;
             wstrb <= wstrb_1;
         end
-        else if(!wlast) begin
+        else if(!wlast && awlen_cnt != awlen[0]) begin
             // muti write, the first write
             awlen_cnt <= awlen_cnt + 1'b1;
             wdata <= wdata_1;
