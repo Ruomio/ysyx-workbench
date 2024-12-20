@@ -138,10 +138,15 @@ module ysyx_24080020_MEM(
     assign awburst = 2'b1;
     assign awsize = 3'b10;
     assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem - 4'b1) > 4'b100 ? 1'b1 : 1'b0;
-    assign awaddr = mwaddr_mem & ~32'b11;
+    assign awaddr = mwaddr_mem;
     assign wdata_1 =  wstrb == 4'b1111 ? mwdata_mem :
+                    wstrb == 4'b0011 ? mwdata_mem :
+                    wstrb == 4'b0001 ? mwdata_mem :
                     wstrb == 4'b1110 ? mwdata_mem << 8 :
+                    wstrb == 4'b0110 ? mwdata_mem << 8 :
+                    wstrb == 4'b0010 ? mwdata_mem << 8 :
                     wstrb == 4'b1100 ? mwdata_mem << 16 :
+                    wstrb == 4'b0100 ? mwdata_mem << 16 :
                     wstrb == 4'b1000 ? mwdata_mem << 24 :
                     32'b0;
     assign wstrb_1 = mwaddr_mem[1:0] == 2'b00 ?
