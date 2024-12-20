@@ -114,7 +114,7 @@ module ysyx_24080020_MEM(
     assign arsize = 3'b10;
     assign araddr = mraddr_mem;
     assign arburst = 2'b1;
-    assign get_arlen = (mraddr_mem[1:0] + mrlen_mem - 1) / (1 << arsize);
+    assign get_arlen = ({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem - 4'b1) / (1 << arsize)[3:0];
     assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata1 :
                         araddr[1:0] == 2'b01 ? rdata1 >> 8 :
                         araddr[1:0] == 2'b10 ? rdata1 >> 16 :
@@ -295,6 +295,7 @@ module ysyx_24080020_MEM(
         else if(mren_mem) begin
             arvalid <= 1'b1;
             arid <= 4'b0;
+            arlen <= {7{{1'b0}},get_arlen};
 
             mren_mem <= 1'b0;
         end
@@ -381,7 +382,7 @@ module ysyx_24080020_MEM(
         else if(mwen_mem) begin
             awvalid <= 1'b1;
             awid <= 4'b0;
-            awlen <= get_awlen;
+            awlen <= {{7{1'b0}}, get_awlen};
 
             mwen_mem <= 1'b0;
         end
