@@ -257,6 +257,9 @@ module ysyx_24080020_XBAR(
     assign rid_xbar = device_addr == 3'd3 ? rid_clint :
                       device_addr == 3'd4 ? rid_soc :
                       4'b0;
+    assign rlast_xbar = device_addr == 3'd3 ? rlast_clint :
+                        device_addr == 3'd4 ? rlast_soc :
+                        1'b0;
     // assign rready_xbar_sram = device_addr == 3'd1 ? rready_arbiter : 1'b0;
     // assign rready_xbar_uart = device_addr == 3'd2 ? rready_arbiter : 1'b0;
     assign rready_xbar_clint = device_addr == 3'd3 ? rready_arbiter : 1'b0;
