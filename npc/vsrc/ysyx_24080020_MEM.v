@@ -403,7 +403,7 @@ module ysyx_24080020_MEM(
         end
         else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0) begin
             // just once write
-            wlast <= 1'b1;
+            wlast <= 1'b0;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
         end
