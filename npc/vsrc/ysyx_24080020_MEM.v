@@ -48,8 +48,8 @@ module ysyx_24080020_MEM(
     output reg arvalid,
     output reg [3:0] arid,
     output reg [7:0] arlen,
-    output reg [2:0] arsize,
-    output reg [1:0] arburst,
+    output [2:0] arsize,
+    output [1:0] arburst,
     output [`ysyx_24080020_WIDTH-1:0] araddr,
     input arready,
 
@@ -64,14 +64,14 @@ module ysyx_24080020_MEM(
     output reg awvalid,
     output reg [3:0] awid,
     output reg [7:0] awlen,
-    output reg [2:0] awsize,
-    output reg [1:0] awburst,
+    output [2:0] awsize,
+    output [1:0] awburst,
     output [`ysyx_24080020_WIDTH-1:0] awaddr,
 
     input wready,
     output reg wvalid,
     output reg wlast,
-    output [3:0] wstrb,
+    output reg [3:0] wstrb,
     output [`ysyx_24080020_WIDTH-1:0] wdata,
 
     output reg bready,
@@ -99,28 +99,104 @@ module ysyx_24080020_MEM(
     reg exu_mem_shake_hands;
     reg tmp;
 
+    reg arlen_cnt;
+    reg awlen_cnt;
+    reg [31:0] rdata1, rdata2;
+
     reg state; // 0: idle;   1: wait_ready
 
-    wire [31:0] rdata_shift;
+    wire [31:0] rdata_shift_1, rdata_shift_2, rdata_shift;
+    wire get_arlen;
+    wire get_awlen;
+    wire [3:0] wstrb_1, wstrb_2;
+    wire [31:0] wdata_1, wdata_2;
 
+    assign arsize = 3'b10;
     assign araddr = mraddr_mem;
-    assign wdata =  wstrb == 4'b1111 ? mwdata_mem :
+    assign arburst = 2'b1;
+    assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem - 4'b1) > 4'b100) ? 1'b1 : 1'b0;
+    assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata1 :
+                        araddr[1:0] == 2'b01 ? rdata1 >> 8 :
+                        araddr[1:0] == 2'b10 ? rdata1 >> 16 :
+                        araddr[1:0] == 2'b11 ? rdata1 >> 24 :
+                        32'b0;
+    assign rdata_shift_2 =  araddr[1:0] == 2'b01 ?
+                                mrlen_mem == 4'b100 ? rdata2 << 24 :
+                                32'b0 :
+                            araddr[1:0] == 2'b10 ?
+                                mrlen_mem == 4'b100 ? rdata2 << 16 :
+                                32'b0 :
+                            araddr[1:0] == 2'b11 ?
+                                mrlen_mem == 4'b100 ? rdata2 << 24 :
+                                mrlen_mem == 4'b010 ? rdata2 << 8 :
+                                32'b0 :
+                            32'b0; 
+
+    assign rdata_shift = rdata_shift_1 | rdata_shift_2;
+
+
+    assign awburst = 2'b1;
+    assign awsize = 3'b10;
+    assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem - 4'b1) > 4'b100 ? 1'b1 : 1'b0;
+    assign awaddr = mwaddr_mem;
+    assign wdata_1 =  wstrb == 4'b1111 ? mwdata_mem :
+                    wstrb == 4'b0011 ? mwdata_mem :
+                    wstrb == 4'b0001 ? mwdata_mem :
                     wstrb == 4'b1110 ? mwdata_mem << 8 :
+                    wstrb == 4'b0110 ? mwdata_mem << 8 :
+                    wstrb == 4'b0010 ? mwdata_mem << 8 :
                     wstrb == 4'b1100 ? mwdata_mem << 16 :
+                    wstrb == 4'b0100 ? mwdata_mem << 16 :
                     wstrb == 4'b1000 ? mwdata_mem << 24 :
                     32'b0;
-    assign wstrb = mwaddr_mem[1:0] == 2'b00 ? 4'b1111 :
-                   mwaddr_mem[1:0] == 2'b01 ? 4'b1110 :
-                   mwaddr_mem[1:0] == 2'b10 ? 4'b1100 :
-                   mwaddr_mem[1:0] == 2'b11 ? 4'b1000 :
-                   4'b0;
-    assign awaddr = mwaddr_mem & ~32'b11;
+    assign wstrb_1 = mwaddr_mem[1:0] == 2'b00 ?
+                        mwmask_mem == 4'b100 ? 4'b1111 :
+                        mwmask_mem == 4'b010 ? 4'b0011 :
+                        mwmask_mem == 4'b001 ? 4'b0001 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b01 ?
+                        mwmask_mem == 4'b100 ? 4'b1110 :
+                        mwmask_mem == 4'b010 ? 4'b0110 :
+                        mwmask_mem == 4'b001 ? 4'b0010 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b10 ?
+                        mwmask_mem == 4'b100 ? 4'b1100 :
+                        mwmask_mem == 4'b010 ? 4'b1100 :
+                        mwmask_mem == 4'b001 ? 4'b0100 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b11 ?
+                        mwmask_mem == 4'b100 ? 4'b1000 :
+                        mwmask_mem == 4'b010 ? 4'b1000 :
+                        mwmask_mem == 4'b001 ? 4'b1000 :
+                        4'b0000 :
+                    4'b0000;
 
-    assign rdata_shift = araddr[1:0] == 2'b00 ? rdata :
-                        araddr[1:0] == 2'b01 ? rdata >> 8 :
-                        araddr[1:0] == 2'b10 ? rdata >> 16 :
-                        araddr[1:0] == 2'b11 ? rdata >> 24 :
-                        32'b0; 
+    assign wdata_2 =  wstrb == 4'b1111 ? mwdata_mem :
+                    wstrb == 4'b0001 ? mwdata_mem >> 24 :
+                    wstrb == 4'b0011 ? mwdata_mem >> 16 :
+                    wstrb == 4'b0111 ? mwdata_mem >> 24 :
+                    32'b0;
+    assign wstrb_2 = mwaddr_mem[1:0] == 2'b00 ?
+                        mwmask_mem == 4'b100 ? 4'b0000 :
+                        mwmask_mem == 4'b010 ? 4'b0000 :
+                        mwmask_mem == 4'b001 ? 4'b0000 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b01 ?
+                        mwmask_mem == 4'b100 ? 4'b0001 :
+                        mwmask_mem == 4'b010 ? 4'b0000 :
+                        mwmask_mem == 4'b001 ? 4'b0000 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b10 ?
+                        mwmask_mem == 4'b100 ? 4'b0011 :
+                        mwmask_mem == 4'b010 ? 4'b0000 :
+                        mwmask_mem == 4'b001 ? 4'b0000 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b11 ?
+                        mwmask_mem == 4'b100 ? 4'b0111 :
+                        mwmask_mem == 4'b010 ? 4'b0001 :
+                        mwmask_mem == 4'b001 ? 4'b0000 :
+                        4'b0000 :
+                    4'b0000;
 
 
     always @(posedge clk) begin
@@ -224,14 +300,13 @@ module ysyx_24080020_MEM(
         else if(mren_mem) begin
             arvalid <= 1'b1;
             arid <= 4'b0;
-            arlen <= 8'b0;
-            arsize <= $clog2(mrlen_mem)[2:0];
-            arburst <= 2'b0;
+            arlen <= {{7{1'b0}},get_arlen};
 
             mren_mem <= 1'b0;
         end
         else begin
-            arvalid <= arvalid;
+            tmp <= 1'b0;
+            // arvalid <= arvalid;
         end
     end
 
@@ -239,30 +314,53 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             rready <= 1'b0;
             mrdata_mem <= 32'b0;
+            arlen_cnt <= 1'b0;
         end
-        else if(rvalid) begin
+        else if(rvalid && rlast) begin
             rready <= 1'b1;
-            if(rresp == 2'b0) begin
+
+            if(rresp != 2'b0) begin
+                // rresp fault;
+                $display("rresp not be 0b00, ERROR");
+            end
+            else begin
+                if(arlen_cnt == 1'b0) begin
+                    rdata1 <= rdata;
+                    rdata2 <= 32'b0;
+                end
+                else begin
+                    // second read
+                    rdata2 <= rdata;
+                end
+
+                // finish all read
                 if(mrtype_mem) begin
                     // zero extension
                     case(mrlen_mem)
                         4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
                         4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
-                        4'd4:   mrdata_mem <= rdata;
+                        4'd4:   mrdata_mem <= rdata_shift;
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
                 end
                 else begin
                     // signed extension
                     case(mrlen_mem)
-                        4'd1:   mrdata_mem <= {{24{rdata[7]}}, rdata_shift[7:0]};
-                        4'd2:   mrdata_mem <= {{16{rdata[15]}}, rdata_shift[15:0]};
-                        4'd4:   mrdata_mem <= rdata;
+                        4'd1:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
+                        4'd2:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
+                        4'd4:   mrdata_mem <= rdata_shift;
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
                 end
-
+                arlen_cnt <= 1'b0;
                 mem_wb_valid <= 1'b1;
+            end
+        end
+        else if(rvalid) begin
+            rready <= 1'b1;
+            if(rresp == 2'b0) begin
+                rdata1 <= rdata;
+                rdata2 <= 32'b0;
             end
             else begin
                 // read error
@@ -289,9 +387,7 @@ module ysyx_24080020_MEM(
         else if(mwen_mem) begin
             awvalid <= 1'b1;
             awid <= 4'b0;
-            awlen <= 8'b0;
-            awsize <= $clog2(mwmask_mem)[2:0];
-            awburst <= 2'b0;
+            awlen <= {{7{1'b0}}, get_awlen};
 
             mwen_mem <= 1'b0;
         end
@@ -300,16 +396,47 @@ module ysyx_24080020_MEM(
         end
     end
 
+    always @(posedge clk) begin
+        if(!rst) begin
+            awlen_cnt <= 1'b0;
+            wlast <= 1'b0;
+        end
+        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0) begin
+            // just once write
+            wlast <= 1'b1;
+            wdata <= wdata_1;
+            wstrb <= wstrb_1;
+        end
+        else if(!wlast) begin
+            // muti write, the first write
+            awlen_cnt <= awlen_cnt + 1'b1;
+            wdata <= wdata_1;
+            wstrb <= wstrb_1;
+        end
+        else begin
+            tmp <= 1'b0;
+        end
+    end
+
 
     always @(posedge clk) begin
         if(!rst) begin
             wvalid <= 1'b0;
         end
-        else if(wvalid && wready) begin
+        else if(wvalid && wready && wlast) begin
             wvalid <= 1'b0;
+            wlast <= 1'b0;
+            awlen_cnt <= 1'b0;
+        end
+        else if(wvalid && wready) begin
+            // next W 
+            // muti write, the second write
+            wlast <= 1'b1;
+            wdata <= wdata_2;
+            wstrb <= wstrb_2;
         end
         else begin
-            wvalid <= wvalid;
+            tmp <= 1'b0;
         end
     end
 
@@ -323,7 +450,12 @@ module ysyx_24080020_MEM(
 
             // b_fin <= 1'b1;
             mem_wb_valid <= 1'b1;
-            // bresp != 0 : error
+            if(bresp != 2'b0) begin
+                $display("the bresp are not 2'b0");
+            end
+            else begin
+                tmp <= 1'b0;
+            end
         end
         else begin
             bready <= 1'b0;
