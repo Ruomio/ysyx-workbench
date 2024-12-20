@@ -115,12 +115,12 @@ module ysyx_24080020_MEM(
     assign araddr = mraddr_mem;
     assign arburst = 2'b1;
     assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
-    assign rdata_shift_2 = araddr[1:0] == 2'b00 ? rdata1 :
+    assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata1 :
                         araddr[1:0] == 2'b01 ? rdata1 >> 8 :
                         araddr[1:0] == 2'b10 ? rdata1 >> 16 :
                         araddr[1:0] == 2'b11 ? rdata1 >> 24 :
                         32'b0;
-    assign rdata_shift_1 =  araddr[1:0] == 2'b01 ?
+    assign rdata_shift_2 =  araddr[1:0] == 2'b01 ?
                                 mrlen_mem == 4'b100 ? rdata2 << 24 :
                                 32'b0 :
                             araddr[1:0] == 2'b10 ?
@@ -327,12 +327,12 @@ module ysyx_24080020_MEM(
             else begin
                 if(arlen_cnt == 1'b0) begin
                     // just read once
-                    rdata1 <= rdata;
-                    rdata2 <= 32'b0;
+                    rdata2 <= rdata;
+                    rdata1 <= 32'b0;
                 end
                 else begin
                     // second read
-                    rdata2 <= rdata;
+                    rdata1 <= rdata;
                 end
 
                 // finish all read
@@ -362,8 +362,8 @@ module ysyx_24080020_MEM(
             // muti read, and the first read 
             rready <= 1'b1;
             if(rresp == 2'b0) begin
-                rdata1 <= rdata;
-                rdata2 <= 32'b0;
+                rdata2 <= rdata;
+                rdata1 <= 32'b0;
                 arlen_cnt <= 1'b1;
             end
             else begin
