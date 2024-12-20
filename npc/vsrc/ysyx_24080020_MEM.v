@@ -137,7 +137,7 @@ module ysyx_24080020_MEM(
 
     assign awburst = 2'b1;
     assign awsize = 3'b10;
-    assign get_awlen = (mwaddr_mem[1:0] + mwmask_mem - 4'b1) > 4'b100 ? 1'b1 : 1'b0;
+    assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem - 4'b1) > 4'b100 ? 1'b1 : 1'b0;
     assign awaddr = mwaddr_mem;
     assign wdata_1 =  wstrb == 4'b1111 ? mwdata_mem :
                     wstrb == 4'b1110 ? mwdata_mem << 8 :
