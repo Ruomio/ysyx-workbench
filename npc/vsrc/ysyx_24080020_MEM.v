@@ -129,6 +129,7 @@ module ysyx_24080020_MEM(
                             araddr[1:0] == 2'b11 ?
                                 mrlen_mem == 4'b100 ? rdata2 << 24 :
                                 mrlen_mem == 3'b010 ? rdata2 << 8 :
+                                32'b0 :
                             32'b0; 
 
     assign rdata_shift = rdata_shift_1 | rdata_shift_2;
@@ -162,7 +163,8 @@ module ysyx_24080020_MEM(
                         mwmask_mem == 4'b100 ? 4'b1000 :
                         mwmask_mem == 4'b010 ? 4'b1000 :
                         mwmask_mem == 4'b001 ? 4'b1000 :
-                        4'b0000;
+                        4'b0000 :
+                    4'b0000;
 
     assign wdata_2 =  wstrb == 4'b1111 ? mwdata_mem :
                     wstrb == 4'b0001 ? mwdata_mem >> 24 :
@@ -188,7 +190,8 @@ module ysyx_24080020_MEM(
                         mwmask_mem == 4'b100 ? 4'b0111 :
                         mwmask_mem == 4'b010 ? 4'b0001 :
                         mwmask_mem == 4'b001 ? 4'b0000 :
-                        4'b0000;
+                        4'b0000 :
+                    4'b0000;
 
 
     always @(posedge clk) begin
