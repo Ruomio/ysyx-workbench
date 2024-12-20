@@ -295,7 +295,7 @@ module ysyx_24080020_MEM(
         else if(mren_mem) begin
             arvalid <= 1'b1;
             arid <= 4'b0;
-            arlen <= {7{{1'b0}},get_arlen};
+            arlen <= {{7{1'b0}},get_arlen};
 
             mren_mem <= 1'b0;
         end
