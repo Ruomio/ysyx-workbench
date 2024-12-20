@@ -327,12 +327,12 @@ module ysyx_24080020_MEM(
             else begin
                 if(arlen_cnt == 1'b0) begin
                     // just read once
-                    rdata2 <= rdata;
-                    rdata1 <= 32'b0;
+                    rdata1 <= rdata;
+                    rdata2 <= 32'b0;
                 end
                 else begin
                     // second read
-                    rdata1 <= rdata;
+                    rdata2 <= rdata;
                 end
 
                 // finish all read
@@ -362,8 +362,8 @@ module ysyx_24080020_MEM(
             // muti read, and the first read 
             rready <= 1'b1;
             if(rresp == 2'b0) begin
-                rdata2 <= rdata;
-                rdata1 <= 32'b0;
+                rdata1 <= rdata;
+                rdata2 <= 32'b0;
                 arlen_cnt <= 1'b1;
             end
             else begin
