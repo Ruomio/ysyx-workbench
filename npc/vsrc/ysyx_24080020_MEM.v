@@ -463,11 +463,4 @@ module ysyx_24080020_MEM(
         end
     end
 
-    always @(posedge clk) begin
-
-        if(get_awlen == 1'b1)
-            $display("awlen == 1");
-
-    end
-
 endmodule
