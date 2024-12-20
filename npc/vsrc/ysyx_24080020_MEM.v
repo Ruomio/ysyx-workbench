@@ -412,10 +412,10 @@ module ysyx_24080020_MEM(
             wstrb <= wstrb_1;
         end
         else if(!awlen_cnt && awlen[0]) begin
-            // muti write, the first write
+            // muti write, the seconnd write
             awlen_cnt <= 1'b1;
-            wdata <= wdata_1;
-            wstrb <= wstrb_1;
+            wdata <= wdata_2;
+            wstrb <= wstrb_2;
             wlast <= 1'b0;
             // $display("first write");
         end
@@ -441,11 +441,11 @@ module ysyx_24080020_MEM(
         end
         else if(wvalid && wready) begin
             // next W 
-            // muti write, the second write
+            // muti write, the first write
             wlast <= 1'b1;
             wvalid <= 1'b1;
-            wdata <= wdata_2;
-            wstrb <= wstrb_2;
+            wdata <= wdata_1;
+            wstrb <= wstrb_1;
             // $display("second write");
         end
         else begin
