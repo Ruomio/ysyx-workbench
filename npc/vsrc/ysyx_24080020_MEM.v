@@ -317,6 +317,7 @@ module ysyx_24080020_MEM(
             arlen_cnt <= 1'b0;
         end
         else if(rvalid && rlast) begin
+            // finish all read
             rready <= 1'b1;
 
             if(rresp != 2'b0) begin
@@ -325,6 +326,7 @@ module ysyx_24080020_MEM(
             end
             else begin
                 if(arlen_cnt == 1'b0) begin
+                    // just read once
                     rdata1 <= rdata;
                     rdata2 <= 32'b0;
                 end
