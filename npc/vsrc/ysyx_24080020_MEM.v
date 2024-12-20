@@ -412,6 +412,7 @@ module ysyx_24080020_MEM(
             awlen_cnt <= awlen_cnt + 1'b1;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
+            $display("second write");
         end
         else begin
             tmp <= 1'b0;
