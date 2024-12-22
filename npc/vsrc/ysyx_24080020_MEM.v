@@ -405,13 +405,13 @@ module ysyx_24080020_MEM(
             awlen_cnt <= 1'b0;
             wlast <= 1'b0;
         end
-        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0) begin
+        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0 && awvalid && awready) begin
             // just once write
             wlast <= 1'b1;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
         end
-        else if(!awlen_cnt && awlen[0]) begin
+        else if(!awlen_cnt && awlen[0] && awvalid && awready) begin
             // muti write, the first write
             awlen_cnt <= 1'b1;
             wdata <= wdata_1;
