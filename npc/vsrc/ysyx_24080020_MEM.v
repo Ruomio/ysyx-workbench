@@ -439,7 +439,7 @@ module ysyx_24080020_MEM(
             // wlast <= 1'b0;
             awlen_cnt <= 1'b0;
         end
-        else if(wvalid && wready) begin
+        else if(wvalid && wready && awlen_cnt && awlen[0]) begin
             // next W 
             // muti write, the second write
             wlast <= 1'b1;
