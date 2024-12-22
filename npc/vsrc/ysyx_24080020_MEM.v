@@ -114,7 +114,7 @@ module ysyx_24080020_MEM(
     assign arsize = 3'b10;
     assign araddr = mraddr_mem;
     assign arburst = 2'b1;
-    assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem - 4'b1) > 4'b100) ? 1'b1 : 1'b0;
+    assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
     assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata1 :
                         araddr[1:0] == 2'b01 ? rdata1 >> 8 :
                         araddr[1:0] == 2'b10 ? rdata1 >> 16 :
@@ -137,17 +137,17 @@ module ysyx_24080020_MEM(
 
     assign awburst = 2'b1;
     assign awsize = 3'b10;
-    assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem - 4'b1) > 4'b100 ? 1'b1 : 1'b0;
+    assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem) > 4'b100 ? 1'b1 : 1'b0;
     assign awaddr = mwaddr_mem;
-    assign wdata_1 =  wstrb == 4'b1111 ? mwdata_mem :
-                    wstrb == 4'b0011 ? mwdata_mem :
-                    wstrb == 4'b0001 ? mwdata_mem :
-                    wstrb == 4'b1110 ? mwdata_mem << 8 :
-                    wstrb == 4'b0110 ? mwdata_mem << 8 :
-                    wstrb == 4'b0010 ? mwdata_mem << 8 :
-                    wstrb == 4'b1100 ? mwdata_mem << 16 :
-                    wstrb == 4'b0100 ? mwdata_mem << 16 :
-                    wstrb == 4'b1000 ? mwdata_mem << 24 :
+    assign wdata_1 =  wstrb_1 == 4'b1111 ? mwdata_mem :
+                    wstrb_1 == 4'b0011 ? mwdata_mem :
+                    wstrb_1 == 4'b0001 ? mwdata_mem :
+                    wstrb_1 == 4'b1110 ? mwdata_mem << 8 :
+                    wstrb_1 == 4'b0110 ? mwdata_mem << 8 :
+                    wstrb_1 == 4'b0010 ? mwdata_mem << 8 :
+                    wstrb_1 == 4'b1100 ? mwdata_mem << 16 :
+                    wstrb_1 == 4'b0100 ? mwdata_mem << 16 :
+                    wstrb_1 == 4'b1000 ? mwdata_mem << 24 :
                     32'b0;
     assign wstrb_1 = mwaddr_mem[1:0] == 2'b00 ?
                         mwmask_mem == 4'b100 ? 4'b1111 :
@@ -171,10 +171,10 @@ module ysyx_24080020_MEM(
                         4'b0000 :
                     4'b0000;
 
-    assign wdata_2 =  wstrb == 4'b1111 ? mwdata_mem :
-                    wstrb == 4'b0001 ? mwdata_mem >> 24 :
-                    wstrb == 4'b0011 ? mwdata_mem >> 16 :
-                    wstrb == 4'b0111 ? mwdata_mem >> 24 :
+    assign wdata_2 =  wstrb_2 == 4'b1111 ? mwdata_mem :
+                    wstrb_2 == 4'b0001 ? mwdata_mem >> 24 :
+                    wstrb_2 == 4'b0011 ? mwdata_mem >> 16 :
+                    wstrb_2 == 4'b0111 ? mwdata_mem >> 24 :
                     32'b0;
     assign wstrb_2 = mwaddr_mem[1:0] == 2'b00 ?
                         mwmask_mem == 4'b100 ? 4'b0000 :
@@ -317,6 +317,7 @@ module ysyx_24080020_MEM(
             arlen_cnt <= 1'b0;
         end
         else if(rvalid && rlast) begin
+            // finish all read
             rready <= 1'b1;
 
             if(rresp != 2'b0) begin
@@ -325,6 +326,7 @@ module ysyx_24080020_MEM(
             end
             else begin
                 if(arlen_cnt == 1'b0) begin
+                    // just read once
                     rdata1 <= rdata;
                     rdata2 <= 32'b0;
                 end
@@ -356,11 +358,13 @@ module ysyx_24080020_MEM(
                 mem_wb_valid <= 1'b1;
             end
         end
-        else if(rvalid) begin
+        else if(rvalid && !rlast) begin
+            // muti read, and the first read 
             rready <= 1'b1;
             if(rresp == 2'b0) begin
                 rdata1 <= rdata;
                 rdata2 <= 32'b0;
+                arlen_cnt <= 1'b1;
             end
             else begin
                 // read error
@@ -401,17 +405,19 @@ module ysyx_24080020_MEM(
             awlen_cnt <= 1'b0;
             wlast <= 1'b0;
         end
-        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0) begin
+        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0 && awvalid && awready) begin
             // just once write
             wlast <= 1'b1;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
         end
-        else if(!wlast) begin
+        else if(!awlen_cnt && awlen[0] && awvalid && awready) begin
             // muti write, the first write
-            awlen_cnt <= awlen_cnt + 1'b1;
+            awlen_cnt <= 1'b1;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
+            wlast <= 1'b0;
+            // $display("first write");
         end
         else begin
             tmp <= 1'b0;
@@ -423,17 +429,24 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             wvalid <= 1'b0;
         end
-        else if(wvalid && wready && wlast) begin
+        else if(wvalid && wready && wlast && !awlen[0]) begin
+            // finish once
             wvalid <= 1'b0;
-            wlast <= 1'b0;
+        end
+        else if(wvalid && wready && wlast && awlen[0]) begin
+            // finish all
+            wvalid <= 1'b0;
+            // wlast <= 1'b0;
             awlen_cnt <= 1'b0;
         end
-        else if(wvalid && wready) begin
+        else if(wvalid && wready && awlen_cnt && awlen[0]) begin
             // next W 
             // muti write, the second write
             wlast <= 1'b1;
+            wvalid <= 1'b1;
             wdata <= wdata_2;
             wstrb <= wstrb_2;
+            // $display("second write");
         end
         else begin
             tmp <= 1'b0;
