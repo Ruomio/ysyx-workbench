@@ -132,7 +132,10 @@ void write_memory(int addr, int len, int data) {
   paddr_write(addr, len, data);
 }
 
-extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void flash_read(int32_t addr, int32_t *data) { 
+  // read inst
+  *data = paddr_read(addr | 0x30000000, 4);
+}
 
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
   assert(addr != 0);
