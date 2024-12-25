@@ -9,6 +9,7 @@ NXDC_FILES = constr/top.nxdc
 remove_quote = $(patsubst "%",%,$(1))
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
+HSRC=$(shell find $(abspath ./include) -name "*.h") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
@@ -96,6 +97,9 @@ sim:
 # 		--top-module $(TOPNAME) $^ \
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
+$(CSRC): $(HSRC)
+	@echo "header file changed"
 
 $(BIN): $(VSRC) $(CSRC) 
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
