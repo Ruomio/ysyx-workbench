@@ -63,7 +63,7 @@ uint8_t* guest_to_host(paddr_t paddr) {
   if(paddr >= CONFIG_SRAM_BASE && paddr <= CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE) return sram + paddr - CONFIG_SRAM_BASE;
   if(paddr >= CONFIG_MBASE && paddr <= CONFIG_MBASE + CONFIG_MSIZE) return pmem + paddr - CONFIG_MBASE;
   Assert(0, "paddr are not in mrom and sram: 0x%x", paddr);
-#elif
+#else
   return pmem + paddr - CONFIG_MBASE;
 #endif
 }
