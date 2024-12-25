@@ -138,6 +138,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 }
 
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
+  assert(0);
   assert(addr != 0);
   *data = paddr_read(addr, 4);
 }
