@@ -30,7 +30,7 @@ paddr_t host_to_guest(uint8_t *haddr);
 static inline bool in_pmem(paddr_t addr) {
 #ifdef CONFIG_IS_SRAM
   return (addr - CONFIG_MBASE < CONFIG_MSIZE) || (addr - CONFIG_SRAM_BASE < CONFIG_SRAM_SIZE);
-#elif
+#else
   return addr - CONFIG_MBASE < CONFIG_MSIZE;
 #endif
 }
