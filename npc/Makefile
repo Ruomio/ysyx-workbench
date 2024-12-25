@@ -101,7 +101,7 @@ sim:
 $(CSRC): $(HSRC)
 	@echo "header file changed" > /tmp/make_log.txt
 
-$(BIN): $(VSRC) $(CSRC) 
+$(BIN): $(VSRC) $(CSRC) $(HSRC)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $^ \
