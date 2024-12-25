@@ -99,7 +99,7 @@ sim:
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
 $(CSRC): $(HSRC)
-	@echo "header file changed"
+	@echo "header file changed" > /tmp/make_log.txt
 
 $(BIN): $(VSRC) $(CSRC) 
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
