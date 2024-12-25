@@ -5,6 +5,7 @@
 #include "VysyxSoCFull.h"
 #include "VysyxSoCFull___024root.h"
 #include "define.h"
+#include "difftest-def.h"
 #include "isa.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
@@ -35,7 +36,7 @@ VerilatedVcdC *tfp = NULL;
 #endif
 VerilatedContext *contextp = NULL;
 
-npc_state u_npc_state = {.state=NPC_RUNNING, .pc=0x80000000, .ret = true};
+npc_state u_npc_state = {.state=NPC_RUNNING, .pc=CONFIG_MBASE, .ret = true};
 
 uint32_t g_pc;
 static uint32_t last_pc;
