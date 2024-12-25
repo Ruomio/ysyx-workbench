@@ -98,9 +98,6 @@ sim:
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(CSRC): $(HSRC)
-	@echo "header file changed" > /tmp/make_log.txt
-
 $(BIN): $(VSRC) $(CSRC) $(HSRC)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
