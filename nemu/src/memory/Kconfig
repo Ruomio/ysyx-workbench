@@ -32,6 +32,7 @@ config MEM_RANDOM
     This may help to find undefined behaviors.
 
 config IS_SRAM
+  depends on TARGET_SHARE
   bool "enable mrom and sram to adapt ysyxsoc difftest"
   default n
 
