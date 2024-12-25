@@ -132,7 +132,7 @@ void exec_once_npc(uint32_t pc) {
   // int ilen = g_get_snpc() - last_pc;
   int ilen = 4;
   int i;
-  uint32_t last_inst = read_memory(last_pc, ilen);
+  uint32_t last_inst = paddr_read(last_pc, ilen);
   uint8_t *inst = (uint8_t *)&last_inst;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
