@@ -9,6 +9,7 @@ NXDC_FILES = constr/top.nxdc
 remove_quote = $(patsubst "%",%,$(1))
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
+HSRC=$(shell find $(abspath ./include) -name "*.h") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
@@ -97,10 +98,10 @@ sim:
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-$(BIN): $(VSRC) $(CSRC) 
+$(BIN): $(VSRC) $(CSRC) $(HSRC)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
