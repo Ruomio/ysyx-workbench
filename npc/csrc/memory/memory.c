@@ -134,7 +134,8 @@ void write_memory(int addr, int len, int data) {
 
 extern "C" void flash_read(int32_t addr, int32_t *data) { 
   // read inst
-  *data = paddr_read(addr | 0x30000000, 4);
+  // *data = paddr_read(addr | 0x30000000, 4);
+  *data = 0xabcd1234;
 }
 
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
