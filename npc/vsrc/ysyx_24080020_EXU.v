@@ -167,6 +167,7 @@ module ysyx_24080020_EXU
                 wcsraddr2_exu <= wcsraddr2_idu;
                 wcsrdata2_exu <= wcsrdata2_idu;
 
+                is_csrtype_exu <= is_csrtype_idu;
 
                 cnt <= 1'b1;
 
@@ -224,7 +225,7 @@ module ysyx_24080020_EXU
 
     assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
                             is_csrtype_exu == 1'b1 ? dnpc_exu : pc_exu;
-    assign branch_src2 = is_csrtype_idu == 1'b1 ? 32'b0 : imm_exu;
+    assign branch_src2 = is_csrtype_exu == 1'b1 ? 32'b0 : imm_exu;
 
     ysyx_24080020_ADDER u_branch(
         .a(branch_src1),
