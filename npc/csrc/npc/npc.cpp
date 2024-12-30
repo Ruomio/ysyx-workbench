@@ -13,7 +13,6 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 
-
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 extern void MtraceBuf_add_arrow();
