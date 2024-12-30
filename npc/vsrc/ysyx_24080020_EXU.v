@@ -229,7 +229,7 @@ module ysyx_24080020_EXU
 
     ysyx_24080020_ADDER u_branch(
         .a(branch_src1),
-        .b(imm_exu),
+        .b(branch_src2),
         .c(branch_dnpc)
     );
 
