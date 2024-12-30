@@ -200,8 +200,8 @@ module ysyx_24080020_REG
             `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx2 = 3'd1;
             `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx2 = 3'd2;
             `ysyx_24080020_MTVEC_ADDR:    wcsr_idx2 = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: wcsr_idx = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
+            `ysyx_24080020_MVENDORID_ADDR: wcsr_idx2 = 3'd4;
+            `ysyx_24080020_MARCHID_ADDR: wcsr_idx2 = 3'd5;
             default: wcsr_idx2 = 3'd7;
         endcase
 
@@ -210,8 +210,8 @@ module ysyx_24080020_REG
             `ysyx_24080020_MSTATUS_ADDR:  rcsr_idx = 3'd1;
             `ysyx_24080020_MCAUSE_ADDR:   rcsr_idx = 3'd2;
             `ysyx_24080020_MTVEC_ADDR:    rcsr_idx = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: wcsr_idx = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
+            `ysyx_24080020_MVENDORID_ADDR: rcsr_idx = 3'd4;
+            `ysyx_24080020_MARCHID_ADDR: rcsr_idx = 3'd5;
             default: rcsr_idx = 3'd7;
         endcase
     end
