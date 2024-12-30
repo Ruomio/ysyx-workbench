@@ -41,7 +41,7 @@ module ysyx_24080020_REG
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[`ysyx_24080020_WIDTH-1:0];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec
-    reg [`ysyx_24080020_WIDTH-1:0] csrs[4:0];
+    reg [`ysyx_24080020_WIDTH-1:0] csrs[7:0];
 
     reg state; // 0:idle;    1:wait_ready
 
