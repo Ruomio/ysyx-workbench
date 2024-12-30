@@ -115,6 +115,8 @@ void exec_once_npc(uint32_t pc) {
       tfp->dump(contextp->time());
       contextp->timeInc(1);
     }
+    else 
+      total_wave_stop++;
 #endif
     if(last_pc != g_get_pc()) {
       break;
