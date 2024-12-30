@@ -339,18 +339,18 @@ module ysyx_24080020_MEM(
                 if(mrtype_mem) begin
                     // zero extension
                     case(mrlen_mem)
-                        4'd1:   mrdata_mem <= rvalid && !rready ? {{24{1'b0}}, rdata_shift[7:0]} : mrdata_mem;
-                        4'd2:   mrdata_mem <= rvalid && !rready ? {{16{1'b0}}, rdata_shift[15:0]} : mrdata_mem;
-                        4'd4:   mrdata_mem <= rvalid && !rready ? rdata_shift : mraddr_mem;
+                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
+                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
+                        4'd4:   mrdata_mem <= rdata_shift;
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
                 end
                 else begin
                     // signed extension
                     case(mrlen_mem)
-                        4'd1:   mrdata_mem <= rvalid && !rready ? {{24{rdata_shift[7]}}, rdata_shift[7:0]} : mrdata_mem;
-                        4'd2:   mrdata_mem <= rvalid && !rready ? {{16{rdata_shift[15]}}, rdata_shift[15:0]} : mrdata_mem;
-                        4'd4:   mrdata_mem <= rvalid && !rready ? rdata_shift : mrdata_mem;
+                        4'd1:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
+                        4'd2:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
+                        4'd4:   mrdata_mem <= rdata_shift;
                         default: mrdata_mem <= 32'hffffffff;
                     endcase
                 end
