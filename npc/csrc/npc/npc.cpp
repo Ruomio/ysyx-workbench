@@ -13,8 +13,6 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 
-#define MAX_WAVE_STEP 10000
-
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 extern void MtraceBuf_add_arrow();
@@ -112,10 +110,13 @@ void exec_once_npc(uint32_t pc) {
     top->clock ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
-    if(total_wave_stop++ < MAX_WAVE_STEP) {
+    if(total_wave_stop > CONFIG_BASE_WAVE_STEP && total_wave_stop < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
+      total_wave_stop++;
       tfp->dump(contextp->time());
       contextp->timeInc(1);
     }
+    else 
+      total_wave_stop++;
 #endif
     if(last_pc != g_get_pc()) {
       break;
