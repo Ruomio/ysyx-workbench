@@ -41,7 +41,7 @@ module ysyx_24080020_REG
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[`ysyx_24080020_WIDTH-1:0];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec
-    reg [`ysyx_24080020_WIDTH-1:0] csrs[4:0];
+    reg [`ysyx_24080020_WIDTH-1:0] csrs[7:0];
 
     reg state; // 0:idle;    1:wait_ready
 
@@ -166,6 +166,8 @@ module ysyx_24080020_REG
         if(!rst) begin
             for(i = 0; i<3'd5; i = i+1) csrs[i] <= 32'b0;
             csrs[1] <= 32'h1800;
+            csrs[4] <= 32'h79737978;
+            csrs[5] <= 32'h16f6e94;
         end
         else if(wcsren_wb && wcsren2_wb) begin
             csrs[wcsr_idx] <= wcsrdata_wb;
@@ -178,7 +180,7 @@ module ysyx_24080020_REG
             csrs[wcsr_idx2] <= wcsrdata2_wb;
         end
         else begin
-            csrs[4] <= 32'b0;
+            csrs[7] <= 32'b0;
         end
     end
 
@@ -188,7 +190,9 @@ module ysyx_24080020_REG
             `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
             `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
             `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
-            default: wcsr_idx = 3'd4;
+            `ysyx_24080020_MVENDORID_ADDR: wcsr_idx = 3'd4;
+            `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
+            default: wcsr_idx = 3'd7;
         endcase
 
         case(wcsraddr2_wb)
@@ -196,7 +200,9 @@ module ysyx_24080020_REG
             `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx2 = 3'd1;
             `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx2 = 3'd2;
             `ysyx_24080020_MTVEC_ADDR:    wcsr_idx2 = 3'd3;
-            default: wcsr_idx2 = 3'd4;
+            `ysyx_24080020_MVENDORID_ADDR: wcsr_idx2 = 3'd4;
+            `ysyx_24080020_MARCHID_ADDR: wcsr_idx2 = 3'd5;
+            default: wcsr_idx2 = 3'd7;
         endcase
 
         case(rcsraddr)
@@ -204,7 +210,9 @@ module ysyx_24080020_REG
             `ysyx_24080020_MSTATUS_ADDR:  rcsr_idx = 3'd1;
             `ysyx_24080020_MCAUSE_ADDR:   rcsr_idx = 3'd2;
             `ysyx_24080020_MTVEC_ADDR:    rcsr_idx = 3'd3;
-            default: rcsr_idx = 3'd4;
+            `ysyx_24080020_MVENDORID_ADDR: rcsr_idx = 3'd4;
+            `ysyx_24080020_MARCHID_ADDR: rcsr_idx = 3'd5;
+            default: rcsr_idx = 3'd7;
         endcase
     end
 

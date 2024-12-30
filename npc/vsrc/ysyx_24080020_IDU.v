@@ -144,6 +144,7 @@ module ysyx_24080020_IDU (
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
+        is_csrtype_idu = 1'b0;
         // is_jal_idu = 1'b0;
         is_jalr_idu = 1'b0;
         // is_btype_idu = 3'b0;
