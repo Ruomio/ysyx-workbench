@@ -26,6 +26,11 @@ menu "Build options"
     config WAVEFILE
         bool "is generate wave file"
         default n
+
+    config MAX_WAVE_STEP
+        depends on WAVEFILE
+        int "Max wave step"
+        default "20000"
 endmenu
 
 menu "Memory setting"
