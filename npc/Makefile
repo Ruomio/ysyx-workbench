@@ -1,6 +1,6 @@
 VERILATOR=verilator
 VERILATOR_CFLAGS += -MMD --build -cc \
-					-j 4 -threads 4  \
+					-j 2 -threads 4  \
 					-O3 --x-assign fast --x-initial fast --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
 
