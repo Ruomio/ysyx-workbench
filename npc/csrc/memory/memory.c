@@ -1,6 +1,6 @@
 #include "memory/memory.h"
+#include "common.h"
 #include "define.h"
-#include <memory>
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
@@ -15,6 +15,10 @@ extern long img_size;
 extern npc_state u_npc_state;
 
 extern uint32_t g_pc;
+
+#ifdef CONFIG_XSRAM
+uint8_t xsram[CONFIG_XSRAM_SIZE] = {};
+#endif
 
 #ifdef CONFIG_MTRACE
   struct MtraceBuf {
@@ -89,7 +93,15 @@ void free_memory() {
   }
 }
 
-uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
+uint8_t* guest_to_host(paddr_t paddr) { 
+#ifdef CONFIG_XSRAM
+  if(paddr > CONFIG_XSRAM_BASE && paddr < CONFIG_XSRAM_BASE + CONFIG_XSRAM_SIZE) {
+    return xsram + paddr - CONFIG_XSRAM_BASE;
+  }
+  return memory + paddr - CONFIG_MBASE; 
+#endif
+  return memory + paddr - CONFIG_MBASE; 
+}
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr, int len) {
