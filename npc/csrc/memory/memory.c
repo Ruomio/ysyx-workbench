@@ -96,6 +96,7 @@ void free_memory() {
 uint8_t* guest_to_host(paddr_t paddr) { 
 #ifdef CONFIG_XSRAM
   if(paddr > CONFIG_XSRAM_BASE && paddr < CONFIG_XSRAM_BASE + CONFIG_XSRAM_SIZE) {
+    printf("guest_to_host xsram\n");
     return xsram + paddr - CONFIG_XSRAM_BASE;
   }
   return memory + paddr - CONFIG_MBASE; 
