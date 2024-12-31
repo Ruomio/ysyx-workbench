@@ -143,8 +143,8 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
   *data = paddr_read(addr, 4);
 }
 
-extern "C" void psram_read(int raddr, int* rdata) {
-  *rdata = paddr_read(raddr | 0x80000000, 4);
+extern "C" int psram_read(int raddr) {
+  return paddr_read(raddr|0x80000000, 4);
 }
 extern "C" void psram_write(int waddr, int wdata) {
   paddr_write(waddr, 4, wdata);
