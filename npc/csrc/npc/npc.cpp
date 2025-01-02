@@ -4,7 +4,9 @@
 #include <stdint.h>
 #include "VysyxSoCFull.h"
 #include "VysyxSoCFull___024root.h"
+#include "debug.h"
 #include "define.h"
+#include "difftest-def.h"
 #include "isa.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
@@ -264,6 +266,9 @@ void check_trap(npc_state u_npc_state) {
 uint32_t g_get_pc() {
   // g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
   g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
+  if(g_pc >= CONFIG_MBASE + CONFIG_MSIZE) {
+    Assert(0, "pc is out of range, last pc = %x", last_pc);
+  }
   return g_pc;
 }
 
