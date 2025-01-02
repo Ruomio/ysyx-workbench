@@ -52,6 +52,8 @@ static vaddr_t *get_csr_reg(word_t csr) {
   else if(csr == MSTATUS_ADDR) { /*printf("mstatus = 0x%x\n", cpu.csrs[mstatus]);*/ return &cpu.csrs[mstatus];}
   else if(csr == MCAUSE_ADDR) { /*printf("mcause = 0x%x\n", cpu.csrs[mcause]);*/ return &cpu.csrs[mcause];}
   else if(csr == MTVEC_ADDR) { /*printf("mtvec = 0x%x\n", cpu.csrs[mtvec]);*/ return &cpu.csrs[mtvec];}
+  else if(csr == MVENDORID_ADDR) { /*printf("mtvec = 0x%x\n", cpu.csrs[mtvec]);*/ return &cpu.csrs[mvendorid];}
+  else if(csr == MARCHID_ADDR) { /*printf("mtvec = 0x%x\n", cpu.csrs[mtvec]);*/ return &cpu.csrs[marchid];}
   else { Assert(0, "Unknown csr reg."); }
 }
 static void ecall(Decode *s) {
