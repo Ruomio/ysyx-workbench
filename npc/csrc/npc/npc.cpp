@@ -334,3 +334,8 @@ void update_dut() {
 void printf_info() {
   printf("g_pc = 0x%x\n", g_pc);
 }
+
+
+extern "C" void npc_difftest_skip_ref() {
+  IFDEF(CONFIG_DIFFTEST, difftest_skip_ref());
+}
