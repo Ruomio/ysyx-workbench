@@ -99,6 +99,7 @@ uint8_t* guest_to_host(paddr_t paddr) {
     printf("guest_to_host xsram\n");
     return xsram + paddr - CONFIG_XSRAM_BASE;
   }
+  printf("guest_to_host flash\n");
   return memory + paddr - CONFIG_MBASE; 
 #endif
   return memory + paddr - CONFIG_MBASE; 
@@ -160,6 +161,6 @@ extern "C" int psram_read(int raddr) {
   return paddr_read(raddr|0x80000000, 4);
 }
 extern "C" void psram_write(int waddr, int wdata) {
-  printf("psram_write addr:0x%x, data: 0x%x\n", waddr, wdata);
+  printf("psram_write addr:0x%x, data: 0x%x\n", waddr|0x80000000, wdata);
   paddr_write(waddr|0x80000000, 4, wdata);
 }
