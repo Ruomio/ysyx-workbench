@@ -4,9 +4,7 @@
 #include <stdint.h>
 #include "VysyxSoCFull.h"
 #include "VysyxSoCFull___024root.h"
-#include "debug.h"
 #include "define.h"
-#include "difftest-def.h"
 #include "isa.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
