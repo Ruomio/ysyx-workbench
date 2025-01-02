@@ -267,7 +267,7 @@ uint32_t g_get_pc() {
   // g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
   g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
   if(g_pc >= CONFIG_MBASE + CONFIG_MSIZE) {
-    Assert(0, "pc is out of range, last pc = %x", last_pc);
+    Assert(0, "pc is out of range pc = %x, last pc = %x",g_pc, last_pc);
   }
   return g_pc;
 }
