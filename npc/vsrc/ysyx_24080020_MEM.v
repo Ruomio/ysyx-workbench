@@ -395,7 +395,7 @@ module ysyx_24080020_MEM(
             awlen <= {{7{1'b0}}, get_awlen};
 
             mwen_mem <= 1'b0;
-            if(awaddr >= 0x10000000 && awaddr < 0x10001000) begin
+            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000) begin
                 // skip uart
                 npc_difftest_skip_ref();
             end
