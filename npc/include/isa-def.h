@@ -22,6 +22,8 @@
 #define MSTATUS_ADDR 0x300
 #define MCAUSE_ADDR 0x342
 #define MTVEC_ADDR 0x305
+#define MVENDORID_ADDR 0xf11
+#define MARCHID_ADDR 0xf12
 
 enum {
   EVENT_NULL = 0,
@@ -33,13 +35,15 @@ enum {
   mepc = 0x0,
   mstatus,
   mcause,
-  mtvec
+  mtvec,
+  mvendorid,
+  marchid
 };
 
 typedef struct {
   word_t gpr[32];
   vaddr_t pc;
-  word_t csrs[4];   // 0: mepc, 0x341;   1: mstatus, 0x300;   2: mcause, 0x342;  3: mtvec, 0x305
+  word_t csrs[6];   // 0: mepc, 0x341;   1: mstatus, 0x300;   2: mcause, 0x342;  3: mtvec, 0x305
 } riscv32_CPU_state;
 
 // decode
