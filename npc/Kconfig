@@ -34,8 +34,8 @@ menu "Build options"
 
     config BASE_WAVE_STEP
         depends on WAVEFILE
-        hex "Base wave step when pc == x"
-        default "0x30000000"
+        int "Base wave step"
+        default "0"
 endmenu
 
 menu "Memory setting"
