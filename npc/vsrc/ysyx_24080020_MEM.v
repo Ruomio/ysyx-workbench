@@ -86,6 +86,7 @@ module ysyx_24080020_MEM(
     output reg mem_wb_valid
 
 );
+    import "DPI-C" function void npc_difftest_skip_ref();
 
     reg mren_mem;
     reg mwen_mem;
@@ -283,7 +284,7 @@ module ysyx_24080020_MEM(
         else begin
             // exu_mem_shake_hands <= 1'b0;
             // mem_exu_ready <= 1'b0;
-            tmp <= 1'b1;
+            tmp <= 1'b0;
         end
     end
 
@@ -394,6 +395,14 @@ module ysyx_24080020_MEM(
             awlen <= {{7{1'b0}}, get_awlen};
 
             mwen_mem <= 1'b0;
+            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000) begin
+                // skip uart
+                npc_difftest_skip_ref();
+            end
+            else begin
+                tmp <= 1'b0;
+            end
+
         end
         else begin
             awvalid <= awvalid;

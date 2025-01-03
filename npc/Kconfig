@@ -45,6 +45,19 @@ menu "Memory setting"
     config MSIZE
         hex "Memory size"
         default "0x0"
+
+    config XSRAM
+        bool "enable PSRAM SDRAM or ..."
+        default n
+    config XSRAM_BASE
+        depends on XSRAM
+        hex "XSRAM address"
+        default "0x80000000"
+    config XSRAM_SIZE
+        depends on XSRAM
+        hex "XSRAM size"
+        default "0x00200000"
+
 endmenu
 
 menu "Test and debug"

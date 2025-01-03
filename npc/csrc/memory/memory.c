@@ -15,6 +15,10 @@ extern npc_state u_npc_state;
 
 extern uint32_t g_pc;
 
+#ifdef CONFIG_XSRAM
+uint8_t xsram[CONFIG_XSRAM_SIZE] = {};
+#endif
+
 #ifdef CONFIG_MTRACE
   struct MtraceBuf {
     uint8_t m_buffer[64][64];
@@ -88,7 +92,15 @@ void free_memory() {
   }
 }
 
-uint8_t* guest_to_host(paddr_t paddr) { return memory + paddr - CONFIG_MBASE; }
+uint8_t* guest_to_host(paddr_t paddr) { 
+#ifdef CONFIG_XSRAM
+  if(paddr >= CONFIG_XSRAM_BASE && paddr < CONFIG_XSRAM_BASE + CONFIG_XSRAM_SIZE) {
+    return xsram + paddr - CONFIG_XSRAM_BASE;
+  }
+  return memory + paddr - CONFIG_MBASE; 
+#endif
+  return memory + paddr - CONFIG_MBASE; 
+}
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr, int len) {
@@ -140,4 +152,17 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
   assert(addr != 0);
   *data = paddr_read(addr, 4);
+}
+
+extern "C" int psram_read(int raddr) {
+  return paddr_read(raddr|0x80000000, 4);
+}
+extern "C" void psram_write(int waddr, int wdata, int wstrb) {
+  // printf("psram_write addr:0x%x, data: 0x%x\n", waddr|0x80000000, wdata);
+  switch(wstrb) {
+    case 0xf: paddr_write(waddr|0x80000000, 4, wdata); break;
+    case 0x3: paddr_write(waddr|0x80000000, 2, wdata); break;
+    case 0x1: paddr_write(waddr|0x80000000, 1, wdata); break;
+    default: break;
+  }
 }
