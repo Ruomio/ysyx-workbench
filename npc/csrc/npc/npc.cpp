@@ -119,7 +119,7 @@ void exec_once_npc(uint32_t pc) {
       total_wave_stop++;
 #endif
     if(last_pc != g_get_pc()) {
-      printf("exec pc: 0x%x\n", last_pc);
+      // printf("exec pc: 0x%x\n", last_pc);
       break;
     }
   }
