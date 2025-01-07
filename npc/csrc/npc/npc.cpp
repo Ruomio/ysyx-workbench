@@ -121,7 +121,7 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(last_pc != g_get_pc()) {
       printf("exec pc: 0x%x\n", last_pc);
-      Assert(g_pc < 0x30000000, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
+      Assert(g_pc >= 0x30000000, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
       break;
     }
   }
