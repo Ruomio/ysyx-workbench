@@ -118,9 +118,6 @@ word_t paddr_read(paddr_t addr, int len) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE,
-#ifdef CONFIG_DIFFTEST
-    npc_difftest_skip_ref();
-#endif
     if(addr == 0xa0000048 + 4) { u_time = get_time(); return u_time >> 32;}
     else if(addr == 0xa0000048) { return (uint32_t)u_time;}
     // return mmio_read(addr, len)
