@@ -152,6 +152,9 @@ module ysyx_24080020_IDU (
         mwen_idu = 1'b0;
         wen_idu = 1'b0;
 
+        wcsren_idu = 1'b0;
+        wcsren2_idu = 1'b0;
+
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};

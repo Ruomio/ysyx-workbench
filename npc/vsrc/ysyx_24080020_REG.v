@@ -111,11 +111,11 @@ module ysyx_24080020_REG
 
                 wcsren_wb <= wcsren_mem;
                 wcsraddr_wb <= wcsraddr_mem;
-                wcsrdata_wb <= wcsrdata_wb;
+                wcsrdata_wb <= wcsrdata_mem;
 
                 wcsren2_wb <= wcsren2_mem;
                 wcsraddr2_wb <= wcsraddr2_mem;
-                wcsrdata2_wb <= wcsrdata2_wb;
+                wcsrdata2_wb <= wcsrdata2_mem;
 
                 alu_out_wb <= alu_out_mem;
                 is_load_wb <= is_load_mem;
