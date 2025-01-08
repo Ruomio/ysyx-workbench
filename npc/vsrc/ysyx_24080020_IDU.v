@@ -405,12 +405,17 @@ module ysyx_24080020_IDU (
                             dnpc_idu = rcsrdata;
 
                             is_dnpc_idu = 1'b1;
+
+                            npc_difftest_skip_ref();
                         end
                         else if(imm_idu == 32'b1100000010) begin
                             // mret
                             rcsraddr = `ysyx_24080020_MEPC_ADDR;
                             dnpc_idu = rcsrdata;
                             is_dnpc_idu = 1'b1;
+
+
+                            npc_difftest_skip_ref();
                         end
                         else begin
                             is_csrtype_idu = 1'b0;
