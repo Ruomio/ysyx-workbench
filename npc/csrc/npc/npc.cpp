@@ -41,7 +41,6 @@ static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
-static bool wave_enable = false;
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
