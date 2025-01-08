@@ -24,6 +24,11 @@ config ISA
   default "loongarch32r" if ISA_loongarch32r
   default "none"
 
+config E_EXTENSION
+  depends on ISA_riscv32 || ISA_riscv64
+  bool "enable e extension"
+  default n
+
 config ISA64
   depends on ISA_riscv64
   bool
