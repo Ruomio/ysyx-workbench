@@ -58,9 +58,8 @@ static vaddr_t *get_csr_reg(word_t csr) {
 }
 static void ecall(Decode *s) {
   bool success;
-#ifdef __riscv_e
+#ifdef __ISA_RISCV32E__
   s->dnpc =  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);
-  assert(0);
 #else
   s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
   Assert(success, "isa_reg_str2val error.");
