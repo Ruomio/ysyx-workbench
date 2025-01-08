@@ -61,6 +61,7 @@ module ysyx_24080020_IDU (
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
+    import "DPI-C" function void npc_difftest_skip_ref();
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
@@ -151,6 +152,9 @@ module ysyx_24080020_IDU (
         mren_idu = 1'b0;
         mwen_idu = 1'b0;
         wen_idu = 1'b0;
+
+        wcsren_idu = 1'b0;
+        wcsren2_idu = 1'b0;
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
@@ -401,12 +405,17 @@ module ysyx_24080020_IDU (
                             dnpc_idu = rcsrdata;
 
                             is_dnpc_idu = 1'b1;
+
+                            npc_difftest_skip_ref();
                         end
                         else if(imm_idu == 32'b1100000010) begin
                             // mret
                             rcsraddr = `ysyx_24080020_MEPC_ADDR;
                             dnpc_idu = rcsrdata;
                             is_dnpc_idu = 1'b1;
+
+
+                            npc_difftest_skip_ref();
                         end
                         else begin
                             is_csrtype_idu = 1'b0;
@@ -424,6 +433,8 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
+
+                        npc_difftest_skip_ref();
                     end
                     `ysyx_24080020_CSRRS: begin
                         rcsraddr = imm_idu[11:0];
@@ -437,6 +448,8 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
+
+                        npc_difftest_skip_ref();
                     end
 
                     default: begin
