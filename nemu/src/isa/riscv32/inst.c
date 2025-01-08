@@ -62,6 +62,7 @@ static void ecall(Decode *s) {
   assert(0);
   s->dnpc =  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);
 #else
+  assert(0);
   s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
   Assert(success, "isa_reg_str2val error.");
 #endif
