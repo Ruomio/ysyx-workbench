@@ -61,6 +61,7 @@ module ysyx_24080020_IDU (
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
+    import "DPI-C" function void npc_difftest_skip_ref();
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
@@ -427,6 +428,8 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
+
+                        npc_difftest_skip_ref();
                     end
                     `ysyx_24080020_CSRRS: begin
                         rcsraddr = imm_idu[11:0];
@@ -440,6 +443,8 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
+
+                        npc_difftest_skip_ref();
                     end
 
                     default: begin
