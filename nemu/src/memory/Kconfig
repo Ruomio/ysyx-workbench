@@ -46,6 +46,20 @@ config SRAM_SIZE
   hex "SRAM size, defalut 8k"
   default 0x2000
 
+config IS_PSRAM
+  depends on TARGET_SHARE
+  bool "enable psram to adapt ysyxsoc difftest"
+  default n
+
+config PSRAM_BASE
+  depends on IS_PSRAM
+  hex "PSRAM base address"
+  default 0x80000000
+
+config PSRAM_SIZE
+  depends on IS_PSRAM
+  hex "PSRAM size, defalut 4M"
+  default 0x400000
 
 
 endmenu #MEMORY
