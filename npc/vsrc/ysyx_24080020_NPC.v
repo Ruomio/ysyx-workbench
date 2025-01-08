@@ -411,7 +411,7 @@ module ysyx_24080020_NPC(
 
         // csrs
         .is_csrtype_idu(is_csrtype_idu),
-        .wcsren_idu(wcsren2_idu),
+        .wcsren_idu(wcsren_idu),
         .wcsraddr_idu(wcsraddr_idu),
         .wcsrdata_idu(wcsrdata_idu),
         .wcsren2_idu(wcsren2_idu),
