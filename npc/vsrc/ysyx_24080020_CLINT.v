@@ -44,7 +44,7 @@ module ysyx_24080020_CLINT(
 
     wire l_or_h;
 
-    assign l_or_h = araddr == `ysyx_24080020_RTC_ADDR ? 1'b0 : 1'b1;
+    assign l_or_h = araddr == `ysyx_24080020_CLINT_ADDR ? 1'b0 : 1'b1;
 
     always @(posedge clk) begin
         if(!rst) begin
