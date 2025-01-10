@@ -16,3 +16,5 @@
 /yosys-sta
 /am-kernels
 /abstract-machine
+/rt-thread-am
+/ysyxSoC
