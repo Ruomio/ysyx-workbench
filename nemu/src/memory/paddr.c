@@ -83,12 +83,6 @@ static word_t pmem_read(paddr_t addr, int len) {
 }
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
-  printf("param addr: 0x%x,  len: %d,  data:0x%x\n", addr, len, data);
-  printf("pmem: 0x%p\n", pmem);
-  printf("sram: 0x%p\n", sram);
-  printf("psram: 0x%p\n", psram);
-  printf("sdram: 0x%p\n", sdram);
-  printf("g_to_h: 0x%p\n", guest_to_host(addr));
   host_write(guest_to_host(addr), len, data);
 }
 
