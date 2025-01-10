@@ -29,6 +29,9 @@ static uint8_t sram[CONFIG_SRAM_SIZE] = {};
 #ifdef CONFIG_IS_PSRAM
 static uint8_t psram[CONFIG_PSRAM_SIZE] = {};
 #endif
+#ifdef CONFIG_IS_SDRAM
+static uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
+#endif
 
 #ifdef CONFIG_MTRACE_COND
   struct MtraceBuf {
@@ -62,9 +65,10 @@ static uint8_t psram[CONFIG_PSRAM_SIZE] = {};
 #endif
 
 uint8_t* guest_to_host(paddr_t paddr) {
-#ifdef CONFIG_IS_SRAM
+#if defined(CONFIG_IS_SRAM) || defined(CONFIG_IS_PSRAM) || defined(CONFIG_IS_SDRAM)
   if(paddr >= CONFIG_SRAM_BASE && paddr <= CONFIG_SRAM_BASE + CONFIG_SRAM_SIZE) return sram + paddr - CONFIG_SRAM_BASE;
   if(paddr >= CONFIG_PSRAM_BASE && paddr <= CONFIG_PSRAM_BASE + CONFIG_PSRAM_SIZE) return psram + paddr - CONFIG_PSRAM_BASE;
+  if(paddr >= CONFIG_SDRAM_BASE && paddr <= CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE) return sdram + paddr - CONFIG_SDRAM_BASE;
   if(paddr >= CONFIG_MBASE && paddr <= CONFIG_MBASE + CONFIG_MSIZE) return pmem + paddr - CONFIG_MBASE;
   Assert(0, "paddr are not in mrom, sram or psram: 0x%x", paddr);
 #else
