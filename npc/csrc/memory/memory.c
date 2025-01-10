@@ -172,6 +172,7 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int *rdata
   addr |= 0xa0000000;
   *rdata = paddr_read(addr, 2);
   printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata);
+  assert(0);
 }
 extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wdata) {
   uint32_t addr = ba * 8192 * 512 * 2 + (row_addr * 8192 + col_addr)*2;
