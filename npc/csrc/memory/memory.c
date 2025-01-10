@@ -166,3 +166,14 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
     default: break;
   }
 }
+
+extern "C" void sdram_read(uint8_t ba, uint32_t row_addr, uint32_t col_addr, uint16_t *rdata) {
+  uint32_t addr = ba * 8192 * 512 * 2 + (row_addr * 8192 + col_addr)*2;
+  addr |= 0xa0000000;
+  *rdata = paddr_read(addr, 2);
+}
+extern "C" void sdram_write(uint8_t ba, uint32_t row_addr, uint32_t col_addr, uint16_t wdata) {
+  uint32_t addr = ba * 8192 * 512 * 2 + (row_addr * 8192 + col_addr)*2;
+  addr |= 0xa0000000;
+  paddr_write(addr, 2, wdata);
+}
