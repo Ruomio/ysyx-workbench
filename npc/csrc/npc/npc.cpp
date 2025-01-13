@@ -265,7 +265,7 @@ void check_trap(npc_state u_npc_state) {
 
 uint32_t g_get_pc() {
   // g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
-  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
+  // g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
   g_pc  = top->rootp->VysyxSoCFull_ysyx_24080020_IFU->__PVT__addr;
   if(g_pc >= CONFIG_MBASE + CONFIG_MSIZE) {
     Assert(0, "pc is out of range pc = %x, last pc = %x",g_pc, last_pc);
@@ -275,7 +275,8 @@ uint32_t g_get_pc() {
 
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
-  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  // top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  g_pc  = top->rootp->VysyxSoCFull_ysyx_24080020_IFU->__PVT__addr = pc;
 }
 
 uint32_t g_get_reg(int i) {
