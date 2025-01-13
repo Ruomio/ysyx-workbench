@@ -46,17 +46,41 @@ menu "Memory setting"
         hex "Memory size"
         default "0x0"
 
-    config XSRAM
-        bool "enable PSRAM SDRAM or ..."
-        default n
-    config XSRAM_BASE
-        depends on XSRAM
-        hex "XSRAM address"
+    config PSRAM
+        bool "enable PSRAM"
+        default y
+    config PSRAM_BASE
+        depends on PSRAM
+        hex "PSRAM address"
         default "0x80000000"
-    config XSRAM_SIZE
-        depends on XSRAM
-        hex "XSRAM size"
+    config PSRAM_SIZE
+        depends on PSRAM
+        hex "PSRAM size"
         default "0x00200000"
+
+    config SDRAM
+        bool "enable SDRAM"
+        default y
+    config SDRAM_BASE
+        depends on SDRAM
+        hex "SDRAM address"
+        default "0xa0000000"
+    config SDRAM_SIZE
+        depends on SDRAM
+        hex "SDRAM size"
+        default "0x02000000"
+
+    config SRAM
+        bool "enable SRAM"
+        default y
+    config SRAM_BASE
+        depends on SRAM
+        hex "SRAM address"
+        default "0x0f000000"
+    config SRAM_SIZE
+        depends on SRAM
+        hex "SRAM size"
+        default "0x00002000"
 
 endmenu
 

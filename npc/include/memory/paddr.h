@@ -29,8 +29,11 @@ uint8_t* guest_to_host(paddr_t paddr);
 paddr_t host_to_guest(uint8_t *haddr);
 
 static inline bool in_pmem(paddr_t addr) {
-#ifdef CONFIG_XSRAM
-  return addr - CONFIG_MBASE < CONFIG_MSIZE | addr - CONFIG_XSRAM_BASE < CONFIG_XSRAM_SIZE;
+#if defined(CONFIG_PSRAM) || defined(CONFIG_SDRAM) || defined(CONFIG_SRAM)
+  return addr - CONFIG_MBASE < CONFIG_MSIZE |
+         addr - CONFIG_PSRAM_BASE < CONFIG_PSRAM_SIZE |
+         addr - CONFIG_SRAM_BASE < CONFIG_SRAM_SIZE |
+         addr - CONFIG_SDRAM_BASE < CONFIG_SDRAM_SIZE;
 #endif
   return addr - CONFIG_MBASE < CONFIG_MSIZE;
 }
