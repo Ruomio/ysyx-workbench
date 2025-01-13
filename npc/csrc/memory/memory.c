@@ -1,4 +1,5 @@
 #include "memory/memory.h"
+#include "common.h"
 #include "define.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -15,8 +16,11 @@ extern npc_state u_npc_state;
 
 extern uint32_t g_pc;
 
-#ifdef CONFIG_XSRAM
-uint8_t xsram[CONFIG_XSRAM_SIZE] = {};
+#ifdef CONFIG_PSRAM
+uint8_t psram[CONFIG_PSRAM_SIZE] = {};
+#endif
+#ifdef CONFIG_SDRAM
+uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
 #endif
 
 #ifdef CONFIG_MTRACE
@@ -93,11 +97,17 @@ void free_memory() {
 }
 
 uint8_t* guest_to_host(paddr_t paddr) { 
-#ifdef CONFIG_XSRAM
-  if(paddr >= CONFIG_XSRAM_BASE && paddr < CONFIG_XSRAM_BASE + CONFIG_XSRAM_SIZE) {
-    return xsram + paddr - CONFIG_XSRAM_BASE;
+#if defined(CONFIG_PSRAM) || defined(CONFIG_SDRAM)
+  if(paddr >= CONFIG_PSRAM_BASE && paddr < CONFIG_PSRAM_BASE + CONFIG_PSRAM_SIZE) {
+    return psram + paddr - CONFIG_PSRAM_BASE;
   }
-  return memory + paddr - CONFIG_MBASE; 
+  else if(paddr >= CONFIG_SDRAM_BASE && paddr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE) { 
+    return sdram + paddr - CONFIG_SDRAM_BASE;
+  }
+  else if(paddr >= CONFIG_MBASE && paddr < CONFIG_MBASE + CONFIG_MSIZE) { 
+    return memory + paddr - CONFIG_MBASE; 
+  }
+  Assert(0,"paddr invalid!");
 #endif
   return memory + paddr - CONFIG_MBASE; 
 }
