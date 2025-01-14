@@ -55,8 +55,8 @@ menu "Memory setting"
         default "0x80000000"
     config PSRAM_SIZE
         depends on PSRAM
-        hex "PSRAM size"
-        default "0x00200000"
+        hex "PSRAM size, default 4M"
+        default "0x00400000"
 
     config SDRAM
         bool "enable SDRAM"
@@ -67,7 +67,7 @@ menu "Memory setting"
         default "0xa0000000"
     config SDRAM_SIZE
         depends on SDRAM
-        hex "SDRAM size"
+        hex "SDRAM size, default 32M"
         default "0x02000000"
 
     config SRAM
@@ -79,7 +79,7 @@ menu "Memory setting"
         default "0x0f000000"
     config SRAM_SIZE
         depends on SRAM
-        hex "SRAM size"
+        hex "SRAM size, default 8K"
         default "0x00002000"
 
 endmenu
