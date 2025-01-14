@@ -15,8 +15,11 @@ extern npc_state u_npc_state;
 
 extern uint32_t g_pc;
 
-#ifdef CONFIG_XSRAM
-uint8_t xsram[CONFIG_XSRAM_SIZE] = {};
+#ifdef CONFIG_PSRAM
+uint8_t psram[CONFIG_PSRAM_SIZE] = {};
+#endif
+#ifdef CONFIG_SDRAM
+uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
 #endif
 
 #ifdef CONFIG_MTRACE
@@ -93,11 +96,17 @@ void free_memory() {
 }
 
 uint8_t* guest_to_host(paddr_t paddr) { 
-#ifdef CONFIG_XSRAM
-  if(paddr >= CONFIG_XSRAM_BASE && paddr < CONFIG_XSRAM_BASE + CONFIG_XSRAM_SIZE) {
-    return xsram + paddr - CONFIG_XSRAM_BASE;
+#if defined(CONFIG_PSRAM) || defined(CONFIG_SDRAM)
+  if(paddr >= CONFIG_PSRAM_BASE && paddr < CONFIG_PSRAM_BASE + CONFIG_PSRAM_SIZE) {
+    return psram + paddr - CONFIG_PSRAM_BASE;
   }
-  return memory + paddr - CONFIG_MBASE; 
+  else if(paddr >= CONFIG_SDRAM_BASE && paddr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE) { 
+    return sdram + paddr - CONFIG_SDRAM_BASE;
+  }
+  else if(paddr >= CONFIG_MBASE && paddr < CONFIG_MBASE + CONFIG_MSIZE) { 
+    return memory + paddr - CONFIG_MBASE; 
+  }
+  Assert(0,"paddr invalid!");
 #endif
   return memory + paddr - CONFIG_MBASE; 
 }
@@ -164,5 +173,29 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
     case 0x3: paddr_write(waddr|0x80000000, 2, wdata); break;
     case 0x1: paddr_write(waddr|0x80000000, 1, wdata); break;
     default: break;
+  }
+}
+
+extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb, short int *rdata) {
+  uint32_t addr = ba * 8192 * 512 * 2 + (row_addr * 8192 + col_addr)*2;
+  addr |= 0xa0000000;
+  *rdata = paddr_read(addr, 2) & wstrb;
+  // printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata);
+}
+extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, short int wdata) {
+  uint32_t addr = ba * 8192 * 512 * 2 + (row_addr * 8192 + col_addr)*2;
+  addr |= 0xa0000000;
+  // printf("wstrb : 0x%x\n",wstrb);
+  if((wstrb & 0xffff) == 0xffff) {
+    paddr_write(addr, 2, wdata);
+    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+  }
+  else if((wstrb & 0xff) == 0xff) {
+    paddr_write(addr, 1, wdata);
+    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+  }
+  else if((wstrb & 0xff00) == 0xff00) {
+    paddr_write(addr + 0x1, 1, wdata >> 8);
+    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
 }
