@@ -191,7 +191,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     paddr_write(addr, 2, wdata);
     // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
-  else if(wstrb == 0xff) {
+  else if(wstrb & 0xff) {
     paddr_write(addr, 1, wdata);
     printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
