@@ -1,4 +1,3 @@
-`define SDRAM_APB
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_MEM(
     input clk,
