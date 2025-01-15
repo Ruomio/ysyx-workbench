@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <string.h>
 #include "debug.h"
+#include "difftest-def.h"
 #include "memory/paddr.h"
 
 
@@ -198,4 +199,5 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     paddr_write(addr + 0x1, 1, wdata >> 8);
     // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
+  Assert(addr <= CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE, "OUT OF SDARM ADDR");
 }
