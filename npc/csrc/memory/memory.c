@@ -178,7 +178,7 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
 }
 
 extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb, short int *rdata) {
-  uint32_t addr = (ba << 22) | (row_addr << 11) | col_addr * 2;
+  uint32_t addr = (ba << 22) | (row_addr << 12) | col_addr * 2 | ((row_addr) & 0x3) << 10;
   addr |= 0xa0000000;
   *rdata = paddr_read(addr, 2) & wstrb;
   printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata);
