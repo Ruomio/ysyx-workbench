@@ -189,7 +189,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   addr |= 0xa0000000;
   assert(col_addr < 512);
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
-  // printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x\n",wstrb, ba, row_addr, col_addr);
+  printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x\n",wstrb, ba, row_addr, col_addr);
   if((wstrb & 0xffff) == 0xffff) {
     paddr_write(addr, 2, wdata);
     printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
