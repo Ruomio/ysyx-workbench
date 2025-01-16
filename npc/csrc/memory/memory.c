@@ -178,13 +178,13 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
 }
 
 extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb, short int *rdata) {
-  uint32_t addr = (ba << 10) | (row_addr << 12) | col_addr << 1;
+  uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr >> 1) << 2;
   addr |= 0xa0000000;
   *rdata = paddr_read(addr, 2) & wstrb;
   // printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata);
 }
 extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, short int wdata) {
-  uint32_t addr = (ba << 10) | (row_addr << 12) | col_addr << 1;
+  uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr >> 1) << 2;
   
   addr |= 0xa0000000;
   // printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x\n",wstrb, ba, row_addr, col_addr);
