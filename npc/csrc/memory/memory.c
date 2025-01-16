@@ -201,5 +201,6 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
   assert(col_addr < 512);
+  assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE));
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
 }
