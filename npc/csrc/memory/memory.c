@@ -196,6 +196,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   else {
       if(addr != last_addr + 2) {
           printf("addr error, last_addr: 0x%x, addr: 0x%x", last_addr, addr);
+          assert(0);
       }
       else {
           last_addr = addr;
