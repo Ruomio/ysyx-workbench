@@ -187,8 +187,6 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   uint32_t addr = (ba << 22) | (row_addr << 12) | col_addr * 2 | ((row_addr) & 0x3) << 10;
   
   addr |= 0xa0000000;
-  assert(col_addr < 512);
-  Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
   printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x\n",wstrb, ba, row_addr, col_addr);
   if((wstrb & 0xffff) == 0xffff) {
     paddr_write(addr, 2, wdata);
@@ -202,4 +200,6 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     paddr_write(addr + 0x1, 1, wdata >> 8);
     // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
+  assert(col_addr < 512);
+  Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
 }
