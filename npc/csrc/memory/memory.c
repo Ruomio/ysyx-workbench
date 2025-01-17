@@ -180,37 +180,17 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
 extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb, int *rdata) {
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
-  // uint32_t res = (uint16_t)paddr_read(addr, 2) & wstrb;
-  // *rdata = res & 0x00ffff;
   *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
-  // printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
+  printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
 }
 extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
-  // static char h_or_l = 0;
-  // static uint32_t last_addr = 0;
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  // if(!h_or_l) {
-  //   last_addr = addr; 
-  //   h_or_l = 1;
-  // }
-  // else {
-  //     if(addr != last_addr + 2) {
-  //         printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x\n",wstrb, ba, row_addr, col_addr);
-  //         printf("addr error, last_addr: 0x%x, addr: 0x%x\n", last_addr, addr);
-  //         assert(0);
-  //     }
-  //     else {
-  //         last_addr = addr;
-  //     }
-  //     h_or_l = 0;
-  // }
-  
   // printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x, wdata: 0x%x\n",wstrb, ba, row_addr, col_addr, wdata);
   if((wstrb & 0xffff) == 0xffff) {
     paddr_write(addr, 2, wdata);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
   else if((wstrb & 0xff) == 0xff) {
     paddr_write(addr, 1, wdata);
