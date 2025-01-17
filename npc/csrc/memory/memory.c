@@ -205,7 +205,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
       h_or_l = 0;
   }
   
-  printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x\n",wstrb, ba, row_addr, col_addr);
+  printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x, wdata: 0x%x\n",wstrb, ba, row_addr, col_addr, wdata);
   if((wstrb & 0xffff) == 0xffff) {
     paddr_write(addr, 2, wdata);
     printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
