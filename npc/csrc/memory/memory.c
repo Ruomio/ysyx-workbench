@@ -183,7 +183,7 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
   *rdata = paddr_read(addr, 2) & wstrb;
   // printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata);
 }
-extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, short int wdata) {
+extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
   static char h_or_l = 0;
   static uint32_t last_addr = 0;
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
