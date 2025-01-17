@@ -181,7 +181,7 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
   uint32_t res = (uint16_t)paddr_read(addr, 2) & wstrb;
-  *rdata = res & 0x00ff;
+  *rdata = res & 0x00ffff;
   printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata);
 }
 extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
