@@ -158,6 +158,7 @@ void exec_once_npc(uint32_t pc) {
 
 
   trace_and_difftest(g_pc);
+  Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
 }
 
 void exec_all_npc() {
