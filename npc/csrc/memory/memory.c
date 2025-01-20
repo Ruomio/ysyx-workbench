@@ -181,7 +181,7 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
   *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
-  // printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
+  printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
 }
 extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
@@ -190,7 +190,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   // printf("wstrb : 0x%x, ba: 0x%x, row: 0x%x, col: 0x%x, wdata: 0x%x\n",wstrb, ba, row_addr, col_addr, wdata);
   if((wstrb & 0xffff) == 0xffff) {
     paddr_write(addr, 2, wdata);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
   else if((wstrb & 0xff) == 0xff) {
     paddr_write(addr, 1, wdata);
