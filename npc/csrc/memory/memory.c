@@ -168,7 +168,7 @@ extern "C" int psram_read(int raddr) {
   return paddr_read(raddr|0x80000000, 4);
 }
 extern "C" void psram_write(int waddr, int wdata, int wstrb) {
-  printf("psram_write addr:0x%x, data: 0x%x\n", waddr|0x80000000, wdata);
+  // printf("psram_write addr:0x%x, data: 0x%x\n", waddr|0x80000000, wdata);
   switch(wstrb) {
     case 0xf: paddr_write(waddr|0x80000000, 4, wdata); break;
     case 0x3: paddr_write(waddr|0x80000000, 2, wdata); break;
