@@ -150,6 +150,10 @@ static int cmd_w(char *args) {
   char *arg = strtok(NULL, " ");
   char buff[1024] = {0};
   int index = 0;
+  if(arg == NULL) {
+    printf("\033[0;31mCommand 'w': need expr parameter.\033[0m\n");
+    return 0;
+  }
   while(arg  != NULL) {
     strcpy(buff+index, arg);
     index += strlen(arg);
