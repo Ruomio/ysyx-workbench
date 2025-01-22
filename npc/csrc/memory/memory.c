@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <string.h>
 #include "debug.h"
-#include "difftest-def.h"
 #include "memory/paddr.h"
 
 
