@@ -37,6 +37,7 @@ module ysyx_24080020_CLINT(
     output reg [3:0] bid,
     output reg [1:0] bresp
 );
+    import "DPI-C" function void npc_difftest_skip_ref();
 
     reg [31:0] timel;
     reg [31:0] timeh;
@@ -67,6 +68,7 @@ module ysyx_24080020_CLINT(
         else if(arvalid) begin
             arready <= 1'b1;
             ren <= 1'b1;
+            npc_difftest_skip_ref();
         end
         else begin
             arready <= arready;
