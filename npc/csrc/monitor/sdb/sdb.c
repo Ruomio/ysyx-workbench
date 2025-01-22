@@ -78,6 +78,10 @@ static int cmd_si(char *args) {
 static int cmd_info(char *info) {
   char *arg = strtok(NULL, " ");
 
+  if(arg == NULL) {
+    printf("\033[0;31mCommand 'info': need parameter: 'r' or 'w'.\033[0m\n");
+    return 0;
+  }
   if(strcmp(arg, "r") == 0) {
     isa_reg_display();
   }
@@ -150,6 +154,10 @@ static int cmd_w(char *args) {
   char *arg = strtok(NULL, " ");
   char buff[1024] = {0};
   int index = 0;
+  if(arg == NULL) {
+    printf("\033[0;31mCommand 'w': need expr parameter.\033[0m\n");
+    return 0;
+  }
   while(arg  != NULL) {
     strcpy(buff+index, arg);
     index += strlen(arg);
