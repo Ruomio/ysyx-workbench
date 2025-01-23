@@ -183,20 +183,25 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  switch(sw_sdram_r) {
-    case 0: break;
-    case 1: addr += 0x2; break;
-    default: assert(0);
+  if((wstrb & 0xffff) == 0xffff) {
+    switch(sw_sdram_r) {
+      case 0: break;
+      case 1: addr += 0x2; break;
+      default: assert(0);
+    }
+
+    *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
+    printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
+
+    switch(sw_sdram_r) {
+      case 0: sw_sdram_r = 1; break;
+      case 1: sw_sdram_r = 0; break;
+      default: assert(0);
+    }
   }
-
-  *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
-
-  printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
-
-  switch(sw_sdram_r) {
-    case 0: sw_sdram_r = 1; break;
-    case 1: sw_sdram_r = 0; break;
-    default: assert(0);
+  else {
+    *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
+    printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
   }
 }
 extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
@@ -204,39 +209,65 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  switch(sw_sdram_w) {
-    case 0: break;
-    case 1: addr += 0x2; break;
-    default: assert(0);
+  if((wstrb & 0xffff) == 0xffff) {
+    switch(sw_sdram_w) {
+      case 0: break;
+      case 1: addr += 0x2; break;
+      default: assert(0);
+    }
+
+    if((wstrb & 0xffff) == 0xffff) {
+      len = 2;
+      // paddr_write(addr, 2, wdata);
+      // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+    else if((wstrb & 0xff) == 0xff) {
+      len = 1;
+      // paddr_write(addr, 1, wdata);
+      // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+    else if((wstrb & 0xff00) == 0xff00) {
+      len = 1;
+      wdata >>= 8;
+      // paddr_write(addr + 0x1, 1, wdata >> 8);
+      // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+    if(len) {
+      paddr_write(addr, len, wdata);
+      printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+
+    switch(sw_sdram_w) {
+      case 0: sw_sdram_w = 1; break;
+      case 1: sw_sdram_w = 0; break;
+      default: assert(0);
+    }
+
+  }
+  else {
+    if((wstrb & 0xffff) == 0xffff) {
+      len = 2;
+      // paddr_write(addr, 2, wdata);
+      // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+    else if((wstrb & 0xff) == 0xff) {
+      len = 1;
+      // paddr_write(addr, 1, wdata);
+      // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+    else if((wstrb & 0xff00) == 0xff00) {
+      len = 1;
+      wdata >>= 8;
+      // paddr_write(addr + 0x1, 1, wdata >> 8);
+      // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+    if(len) {
+      paddr_write(addr, len, wdata);
+      printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    }
+
   }
 
-  if((wstrb & 0xffff) == 0xffff) {
-    len = 2;
-    // paddr_write(addr, 2, wdata);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
-  }
-  else if((wstrb & 0xff) == 0xff) {
-    len = 1;
-    // paddr_write(addr, 1, wdata);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
-  }
-  else if((wstrb & 0xff00) == 0xff00) {
-    len = 1;
-    wdata >>= 8;
-    // paddr_write(addr + 0x1, 1, wdata >> 8);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
-  }
-  if(len) {
-    paddr_write(addr, len, wdata);
-    printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
-  }
   assert(col_addr < 512);
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
-
-  switch(sw_sdram_w) {
-    case 0: sw_sdram_w = 1; break;
-    case 1: sw_sdram_w = 0; break;
-    default: assert(0);
-  }
-
 }
