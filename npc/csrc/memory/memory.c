@@ -201,7 +201,6 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
 
 extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
   static int cnt = 0; 
-  printf("%dth \n", cnt++);
   char len = 0;
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
@@ -239,6 +238,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     default: assert(0);
   }
 
+  printf("%dth , sw_sdram_w: %d\n", cnt++, sw_sdram_w);
 
   assert(col_addr < 512);
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
