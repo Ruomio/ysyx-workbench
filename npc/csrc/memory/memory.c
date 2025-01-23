@@ -203,7 +203,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  if((wstrb & 0xffff) == 0xffff && (addr & 0x3) == 0x0) {
+  if((wstrb & 0xffff) == 0xffff && (addr & 0x3) != 0x0) {
     switch(sw_sdram_w) {
       case 0: break;
       case 1: addr += 0x2; break;
