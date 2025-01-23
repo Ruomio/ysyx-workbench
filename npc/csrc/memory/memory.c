@@ -233,7 +233,10 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     }
   }
   else {
-    if((wstrb & 0xff) == 0xff) {
+    if((wstrb & 0xffff) == 0xffff) {
+      len = 2;
+    }
+    else if((wstrb & 0xff) == 0xff) {
       len = 1;
     }
     else if((wstrb & 0xff00) == 0xff00) {
