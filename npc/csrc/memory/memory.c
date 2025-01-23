@@ -189,7 +189,7 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
     default: assert(0);
   }
   *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
-  // printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
+  printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
 
   switch(sw_sdram_r) {
     case 0: sw_sdram_r = 1; break;
