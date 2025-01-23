@@ -186,7 +186,7 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
   if((wstrb & 0xffff) == 0xffff) {
     switch(sw_sdram_r) {
       case 0: break;
-      case 1: addr += 0x2; break;
+      case 1: addr |= 0x2000000; break;
       default: assert(0);
     }
 
@@ -212,7 +212,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   if((wstrb & 0xffff) == 0xffff) {
     switch(sw_sdram_w) {
       case 0: break;
-      case 1: addr += 0x2; break;
+      case 1: addr |= 0x2000000; break;
       default: assert(0);
     }
 
