@@ -203,32 +203,55 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  switch(sw_sdram_w) {
-    case 0: break;
-    case 1: addr += 0x2; break;
-    default: assert(0);
-  }
-
-  if((wstrb & 0xffff) == 0xffff) {
-    len = 2;
-  }
-  else if((wstrb & 0xff) == 0xff) {
-    len = 1;
-  }
-  else if((wstrb & 0xff00) == 0xff00) {
-    len = 1;
-    wdata >>= 8;
-    addr += 1;
-  }
-  if(len) {
-    paddr_write(addr, len, wdata);
-    printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
-
+  if(wstrb == 0xffff) {
     switch(sw_sdram_w) {
-      case 0: sw_sdram_w = 1; break;
-      case 1: sw_sdram_w = 0; break;
+      case 0: break;
+      case 1: addr += 0x2; break;
       default: assert(0);
     }
+
+    if((wstrb & 0xffff) == 0xffff) {
+      len = 2;
+    }
+    else if((wstrb & 0xff) == 0xff) {
+      len = 1;
+    }
+    else if((wstrb & 0xff00) == 0xff00) {
+      len = 1;
+      wdata >>= 8;
+      addr += 1;
+    }
+    if(len) {
+      paddr_write(addr, len, wdata);
+      printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+
+      switch(sw_sdram_w) {
+        case 0: sw_sdram_w = 1; break;
+        case 1: sw_sdram_w = 0; break;
+        default: assert(0);
+      }
+    }
+  }
+  else {
+    if((wstrb & 0xff) == 0xff) {
+      len = 1;
+    }
+    else if((wstrb & 0xff00) == 0xff00) {
+      len = 1;
+      wdata >>= 8;
+      addr += 1;
+    }
+    if(len) {
+      paddr_write(addr, len, wdata);
+      printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+
+      switch(sw_sdram_w) {
+        case 0: sw_sdram_w = 1; break;
+        case 1: sw_sdram_w = 0; break;
+        default: assert(0);
+      }
+    }
+
   }
 
 
