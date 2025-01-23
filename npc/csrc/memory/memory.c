@@ -211,19 +211,14 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
 
   if((wstrb & 0xffff) == 0xffff) {
     len = 2;
-    // paddr_write(addr, 2, wdata);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
   else if((wstrb & 0xff) == 0xff) {
     len = 1;
-    // paddr_write(addr, 1, wdata);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
   }
   else if((wstrb & 0xff00) == 0xff00) {
     len = 1;
     wdata >>= 8;
-    // paddr_write(addr + 0x1, 1, wdata >> 8);
-    // printf("sdram write, addr: 0x%x,  data: 0x%x\n", addr, wdata);
+    addr += 1;
   }
   if(len) {
     paddr_write(addr, len, wdata);
