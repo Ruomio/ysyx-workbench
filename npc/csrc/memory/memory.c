@@ -176,9 +176,6 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
   }
 }
 
-static uint8_t sw_sdram_r = 0;
-static uint8_t sw_sdram_w = 0;
-
 extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, int wstrb, int *rdata) {
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
@@ -188,20 +185,6 @@ extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, int wst
   }
   *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
   // printf("sdram read, id:%d, addr: 0x%x,  rdata: 0x%x, wstrb:0x%x\n", id, addr, *rdata & wstrb, wstrb);
-
-/*   switch(sw_sdram_r) {
-    case 0: break;
-    case 1: addr += 0x2; break;
-    default: assert(0);
-  }
-  *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
-  // printf("sdram read, addr: 0x%x,  rdata: 0x%x\n", addr, *rdata & wstrb);
-
-  switch(sw_sdram_r) {
-    case 0: sw_sdram_r = 1; break;
-    case 1: sw_sdram_r = 0; break;
-    default: assert(0);
-  } */
 }
 
 extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int wstrb, int wdata) {
@@ -228,64 +211,9 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int ws
   }
   if(len) {
     paddr_write(addr, len, wdata);
-    printf("sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", id, addr, wdata, wstrb, len);
+    // printf("sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", id, addr, wdata, wstrb, len);
   }
 
-/*   if((wstrb & 0xffff) == 0xffff && ((addr & 0x3) == 0x0)) {
-    switch(sw_sdram_w) {
-      case 0: break;
-      case 1: addr += 0x2; break;
-      default: assert(0);
-    }
-
-    if((wstrb & 0xffff) == 0xffff) {
-      len = 2;
-    }
-    else if((wstrb & 0xff) == 0xff) {
-      len = 1;
-    }
-    else if((wstrb & 0xff00) == 0xff00) {
-      len = 1;
-      wdata >>= 8;
-      addr += 1;
-    }
-    if(len) {
-      paddr_write(addr, len, wdata);
-      printf("trans mode!     sw_sdram_w: %d, id:%d,  sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
-
-      switch(sw_sdram_w) {
-        case 0: sw_sdram_w = 1; break;
-        case 1: sw_sdram_w = 0; break;
-        default: assert(0);
-      }
-    }
-  }
-  else {
-    if((wstrb & 0xffff) == 0xffff) {
-      len = 2;
-    }
-    else if((wstrb & 0xff) == 0xff) {
-      len = 1;
-    }
-    else if((wstrb & 0xff00) == 0xff00) {
-      len = 1;
-      wdata >>= 8;
-      addr += 1;
-    }
-    if(len) {
-      paddr_write(addr, len, wdata);
-      printf("normal mode!    sw_sdram_w: %d, sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
-    }
-    printf("normal mode!    sw_sdram_w: %d, sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x, len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
-
-    switch(sw_sdram_w) {
-      case 0: sw_sdram_w = 1; break;
-      case 1: sw_sdram_w = 0; break;
-      default: assert(0);
-    }
-
-  }
- */
   assert(col_addr < 512);
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
 }
