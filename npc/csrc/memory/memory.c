@@ -187,7 +187,7 @@ extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, int wst
     addr += 2;
   }
   *rdata = (uint16_t)paddr_read(addr, 2) & wstrb;
-  printf("sdram read, id:%d, addr: 0x%x,  rdata: 0x%x, wstrb:0x%x\n", id, addr, *rdata & wstrb, wstrb);
+  // printf("sdram read, id:%d, addr: 0x%x,  rdata: 0x%x, wstrb:0x%x\n", id, addr, *rdata & wstrb, wstrb);
 
 /*   switch(sw_sdram_r) {
     case 0: break;
@@ -228,7 +228,7 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int ws
   }
   if(len) {
     paddr_write(addr, len, wdata);
-    printf("sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", id, addr, wdata, wstrb, len);
+    // printf("sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", id, addr, wdata, wstrb, len);
   }
 
 /*   if((wstrb & 0xffff) == 0xffff && ((addr & 0x3) == 0x0)) {
