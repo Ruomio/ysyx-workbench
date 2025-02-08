@@ -179,7 +179,7 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
 static uint8_t sw_sdram_r = 0;
 static uint8_t sw_sdram_w = 0;
 
-extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, short int wstrb, int *rdata) {
+extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, int wstrb, int *rdata) {
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
@@ -204,7 +204,7 @@ extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, short i
   } */
 }
 
-extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
+extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int wstrb, int wdata) {
   char len = 0;
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
