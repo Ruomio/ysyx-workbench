@@ -203,8 +203,21 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, short 
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  paddr_write(addr, len, wdata);
-  printf("trans mode!     sw_sdram_w: %d, id:%d,  sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
+  if((wstrb & 0xffff) == 0xffff) {
+    len = 2;
+  }
+  else if((wstrb & 0xff) == 0xff) {
+    len = 1;
+  }
+  else if((wstrb & 0xff00) == 0xff00) {
+    len = 1;
+    wdata >>= 8;
+    addr += 1;
+  }
+  if(len) {
+    paddr_write(addr, len, wdata);
+    printf("trans mode!     sw_sdram_w: %d, id:%d,  sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
+  }
 
 /*   if((wstrb & 0xffff) == 0xffff && ((addr & 0x3) == 0x0)) {
     switch(sw_sdram_w) {
