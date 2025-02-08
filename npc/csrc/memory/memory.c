@@ -221,11 +221,11 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int ws
   else if((wstrb & 0xff) == 0xff) {
     len = 1;
   }
-  else if((wstrb & 0xff00) == 0xff00) {
-    len = 1;
-    wdata >>= 8;
-    addr += 1;
-  }
+  // else if((wstrb & 0xff00) == 0xff00) {
+  //   len = 1;
+  //   wdata >>= 8;
+  //   addr += 1;
+  // }
   if(len) {
     paddr_write(addr, len, wdata);
     printf("sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", id, addr, wdata, wstrb, len);
