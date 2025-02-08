@@ -179,7 +179,7 @@ extern "C" void psram_write(int waddr, int wdata, int wstrb) {
 static uint8_t sw_sdram_r = 0;
 static uint8_t sw_sdram_w = 0;
 
-extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb, int *rdata) {
+extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, short int wstrb, int *rdata) {
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
@@ -198,7 +198,7 @@ extern "C" void sdram_read(char ba, int row_addr, int col_addr, short int wstrb,
   }
 }
 
-extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
+extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, short int wstrb, int wdata) {
   char len = 0;
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
@@ -223,7 +223,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     }
     if(len) {
       paddr_write(addr, len, wdata);
-      printf("trans mode!     sw_sdram_w: %d, sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, addr, wdata, wstrb, len);
+      printf("trans mode!     sw_sdram_w: %d, id:%d,  sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
 
       switch(sw_sdram_w) {
         case 0: sw_sdram_w = 1; break;
@@ -246,9 +246,9 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     }
     if(len) {
       paddr_write(addr, len, wdata);
-      printf("normal mode!    sw_sdram_w: %d, sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, addr, wdata, wstrb, len);
+      printf("normal mode!    sw_sdram_w: %d, sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
     }
-    printf("normal mode!    sw_sdram_w: %d, sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x, len:%d\n", sw_sdram_w, addr, wdata, wstrb, len);
+    printf("normal mode!    sw_sdram_w: %d, sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x, len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
 
     switch(sw_sdram_w) {
       case 0: sw_sdram_w = 1; break;
