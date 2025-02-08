@@ -203,7 +203,10 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, short 
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  if((wstrb & 0xffff) == 0xffff && ((addr & 0x3) == 0x0)) {
+  paddr_write(addr, len, wdata);
+  printf("trans mode!     sw_sdram_w: %d, id:%d,  sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", sw_sdram_w, id, addr, wdata, wstrb, len);
+
+/*   if((wstrb & 0xffff) == 0xffff && ((addr & 0x3) == 0x0)) {
     switch(sw_sdram_w) {
       case 0: break;
       case 1: addr += 0x2; break;
@@ -257,7 +260,7 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, short 
     }
 
   }
-
+ */
   assert(col_addr < 512);
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
 }
