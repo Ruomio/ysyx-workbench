@@ -209,7 +209,7 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, short 
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
-  if(id == 0 || id == 2) {
+  if((id == 0 || id == 2) && ((addr & 0x3) == 0x0 ) ) {
     addr += 2;
   }
   if((wstrb & 0xffff) == 0xffff) {
