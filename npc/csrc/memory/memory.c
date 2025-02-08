@@ -246,7 +246,7 @@ extern "C" void sdram_write(char ba, int row_addr, int col_addr, short int wstrb
     }
     if(len) {
       paddr_write(addr, len, wdata);
-      printf("normal: %d, sdram write, addr: 0x%x,  data: 0x%x\n", sw_sdram_w, addr, wdata);
+      printf("sw_sdram_w: %d, sdram write, addr: 0x%x,  data: 0x%x\n", sw_sdram_w, addr, wdata);
     }
 
     switch(sw_sdram_w) {
