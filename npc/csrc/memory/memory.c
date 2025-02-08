@@ -228,7 +228,7 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int ws
   }
   if(len) {
     paddr_write(addr, len, wdata);
-    printf("id:%d,  sdram write, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", id, addr, wdata, wstrb, len);
+    printf(" sdram write, id:%d, addr: 0x%x,  data: 0x%x,  wstrb:0x%x,  len:%d\n", id, addr, wdata, wstrb, len);
   }
 
 /*   if((wstrb & 0xffff) == 0xffff && ((addr & 0x3) == 0x0)) {
