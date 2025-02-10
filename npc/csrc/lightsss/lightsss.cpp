@@ -37,7 +37,7 @@ void ForkShareMemory::shwait() {
   while (true) {
     if (info->flag) {
       if (info->notgood) {
-        exit(0);
+        // exit(0);
         break;
       }
       else
