@@ -107,7 +107,10 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   forkshm.info->flag = true;
   int status = -1;
   printf("old pid:%d\n", pidSlot.back());
-  waitpid(pidSlot.back(), &status, 0);
+  while (waitpid(forkshm.info->oldest, &status, WNOHANG) == 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 短暂休眠以避免CPU过度占用
+    }
+  // waitpid(pidSlot.back(), &status, 0);
 
   printf("finish wakeup_child\n");
   return 0;
