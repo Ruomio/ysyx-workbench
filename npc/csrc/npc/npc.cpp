@@ -12,6 +12,7 @@
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
+#include <lightsss/lightsss.h>
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -41,6 +42,10 @@ static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
+
+// LightSSS
+LightSSS lightsss;
+static auto last_snapshot_time = std::chrono::steady_clock::now();
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -118,6 +123,16 @@ void exec_once_npc(uint32_t pc) {
     else 
       total_wave_step++;
 #endif
+#ifdef CONFIG_LIGHTSSS
+    if(lightsss.get_flag() && lightsss.get_notgood()) {
+      // total_wave_step++;
+      tfp->dump(contextp->time());
+      contextp->timeInc(1);
+    }
+    else {
+      // total_wave_step++;
+    }
+#endif
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
       Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
@@ -162,6 +177,15 @@ void exec_once_npc(uint32_t pc) {
 
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
+    int snapshot_interval_seconds = 5; // 快照间隔时间（秒）
+      
+    auto current_time = std::chrono::steady_clock::now();
+    auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(current_time - last_snapshot_time).count();
+    if (elapsed_seconds >= snapshot_interval_seconds) {
+      lightsss.do_fork(); // 创建子进程快照
+      last_snapshot_time = current_time;
+    }
+
     exec_once_npc(g_pc);
   }
 }
@@ -195,6 +219,15 @@ void exec_npc(int n) {
   }
   else {
     for(; n>0; n--) {
+      int snapshot_interval_seconds = 5; // 快照间隔时间（秒）
+      
+      auto current_time = std::chrono::steady_clock::now();
+      auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(current_time - last_snapshot_time).count();
+      if (elapsed_seconds >= snapshot_interval_seconds) {
+        lightsss.do_fork(); // 创建子进程快照
+        last_snapshot_time = current_time;
+      }
+
       if (u_npc_state.state != NPC_RUNNING) break;
       exec_once_npc(g_pc);
     }
@@ -209,6 +242,10 @@ void exec_npc(int n) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
       // break;
+      // 检测到结束或异常状态，通知最近的子进程生成波形
+      if (u_npc_state.state == NPC_ABORT) {
+        lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
+      }
 
     case NPC_QUIT: statistic(); break;;
     default: break;;
