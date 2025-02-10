@@ -177,7 +177,7 @@ void exec_once_npc(uint32_t pc) {
 
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
-    int snapshot_interval_seconds = 5; // 快照间隔时间（秒）
+    int snapshot_interval_seconds = 1; // 快照间隔时间（秒）
       
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(current_time - last_snapshot_time).count();
