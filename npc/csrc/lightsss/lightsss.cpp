@@ -106,7 +106,7 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
-  printf("finish wakeup_child0\n");
+  printf("old pid:%d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
 
   printf("finish wakeup_child\n");
