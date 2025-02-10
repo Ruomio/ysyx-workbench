@@ -82,6 +82,7 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   forkshm.info->endCycles = cycles;
   forkshm.info->oldest = pidSlot.back();
 
+  printf("3\n");
   // only the oldest is wantted, so kill others by parent process.
   for (auto pid: pidSlot) {
     if (pid != forkshm.info->oldest) {
@@ -93,10 +94,12 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   fflush(stdout);
   fflush(stderr);
 
+  printf("4\n");
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
   waitpid(pidSlot.back(), &status, 0);
+  printf("5\n");
   return 0;
 }
 
