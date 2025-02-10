@@ -65,6 +65,11 @@ class LightSSS {
   ForkShareMemory forkshm;
 
 public:
+
+  pid_t p_pid = -1;
+
+  LightSSS() { p_pid = getpid();}
+  ~LightSSS() {}
   int do_fork();
   int wakeup_child(uint64_t cycles);
   bool is_child();
