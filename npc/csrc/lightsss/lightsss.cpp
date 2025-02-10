@@ -109,8 +109,6 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   int status = -1;
   // printf("old pid:%d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
-
-  printf("finish wakeup_child\n");
   return 0;
 }
 
