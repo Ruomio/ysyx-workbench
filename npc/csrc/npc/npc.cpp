@@ -252,7 +252,12 @@ void exec_npc(int n) {
         }
       }
 
-    case NPC_QUIT: statistic(); break;;
+    case NPC_QUIT: 
+      if(lightsss.get_p_pid() == getpid()) {
+        lightsss.do_clear();
+      }
+      statistic(); 
+      break;
     default: break;;
   }
 }
