@@ -246,8 +246,8 @@ void exec_npc(int n) {
       // break;
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
-        lightsss.do_clear();
         lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
+        lightsss.do_clear();
       }
 
     case NPC_QUIT: statistic(); break;;
