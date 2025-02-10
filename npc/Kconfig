@@ -36,6 +36,11 @@ menu "Build options"
         depends on WAVEFILE
         int "Base wave step"
         default "0"
+    
+    config LIGHTSSS
+        depends on !WAVEFILE
+        bool "is enable lightsss"
+        default y
 endmenu
 
 menu "Memory setting"
