@@ -182,7 +182,7 @@ void exec_all_npc() {
       
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
-    printf("%ld, %ld, %ld\n", last_snapshot_time, current_time, elapsed_seconds);
+    // printf("%ld, %ld, %ld\n", last_snapshot_time, current_time, elapsed_seconds);
     if (elapsed_seconds >= snapshot_interval_seconds) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
@@ -246,6 +246,7 @@ void exec_npc(int n) {
       // break;
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
+        lightsss.do_clear();
         lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
       }
 
