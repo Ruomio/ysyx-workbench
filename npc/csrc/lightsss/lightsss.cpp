@@ -43,7 +43,7 @@ void ForkShareMemory::shwait() {
       else
         exit(0);
     } else {
-      printf("shawit\n");
+      // printf("shawit\n");
       sleep(WAIT_INTERVAL);
     }
   }
