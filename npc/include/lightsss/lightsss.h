@@ -28,6 +28,8 @@
 #include <unistd.h>
 // exit when error when fork
 #define FAIL_EXIT    exit(EXIT_FAILURE);
+#define SLOT_SIZE 5
+#define WAIT_INTERVAL 5
 
 typedef struct shinfo {
   bool flag;
