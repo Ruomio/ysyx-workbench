@@ -52,7 +52,6 @@ void ForkShareMemory::shwait() {
 int LightSSS::do_fork() {
   if(getpid() != p_pid) return 0;
 
-  printf("do_fork\n");
   //kill the oldest blocked checkpoint process
   if (slotCnt == SLOT_SIZE) {
     pid_t temp = pidSlot.back();
