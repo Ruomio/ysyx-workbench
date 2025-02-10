@@ -29,7 +29,7 @@ extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
 VysyxSoCFull *top = NULL;
-#ifdef CONFIG_WAVEFILE
+#if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
 VerilatedVcdC *tfp = NULL;
 #endif
 VerilatedContext *contextp = NULL;
@@ -82,7 +82,7 @@ void init_npc(int argc, char **argv) {
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
   top = new VysyxSoCFull(contextp);
-#ifdef CONFIG_WAVEFILE
+#if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
   tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
@@ -93,7 +93,7 @@ void init_npc(int argc, char **argv) {
   while(!contextp->gotFinish()) {
     top->clock ^= 1;
     top->eval();
-#ifdef CONFIG_WAVEFILE
+#if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
     tfp->dump(contextp->time());
     contextp->timeInc(1);
 #endif
