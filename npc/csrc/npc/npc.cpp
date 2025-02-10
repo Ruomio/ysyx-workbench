@@ -259,7 +259,7 @@ void exec_npc(int n) {
         lightsss.do_clear();
       }
       else {
-        return;
+        exit(-1);
       }
       break;
     default: break;;
