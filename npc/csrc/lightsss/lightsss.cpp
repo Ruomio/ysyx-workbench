@@ -93,8 +93,10 @@ int LightSSS::wakeup_child(uint64_t cycles) {
     if (pid != forkshm.info->oldest) {
       kill(pid, SIGKILL);
       waitpid(pid, NULL, 0);
+      slotCnt--;
     }
   }
+  printf("cnt %d\n",slotCnt);
   // flush before wake up child.
   fflush(stdout);
   fflush(stderr);
