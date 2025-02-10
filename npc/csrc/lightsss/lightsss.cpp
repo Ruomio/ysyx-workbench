@@ -81,6 +81,7 @@ int LightSSS::do_fork() {
 int LightSSS::wakeup_child(uint64_t cycles) {
   printf("a\n");
   forkshm.info->endCycles = cycles;
+  printf("b\n");
   forkshm.info->oldest = pidSlot.back();
 
   printf("3\n");
