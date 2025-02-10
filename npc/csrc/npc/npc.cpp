@@ -14,6 +14,7 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 #include <lightsss/lightsss.h>
+#include <unistd.h>
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -183,7 +184,7 @@ void exec_all_npc() {
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
     // printf("%ld, %ld, %ld\n", last_snapshot_time, current_time, elapsed_seconds);
-    if (elapsed_seconds >= snapshot_interval_seconds) {
+    if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
     }
@@ -225,7 +226,7 @@ void exec_npc(int n) {
       
       auto current_time = std::chrono::steady_clock::now();
       auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
-      if (elapsed_seconds >= snapshot_interval_seconds) {
+      if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
         lightsss.do_fork(); // 创建子进程快照
         last_snapshot_time = current_time;
       }
