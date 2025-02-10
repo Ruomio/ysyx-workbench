@@ -81,6 +81,9 @@ public:
   bool get_notgood() {
     return forkshm.info->notgood;
   }
+  pid_t get_p_pid() {
+    return p_pid;
+  }
 };
 
 #define FORK_PRINTF(format, args...)                                 \
