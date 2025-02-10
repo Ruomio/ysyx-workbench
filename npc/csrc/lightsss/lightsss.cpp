@@ -1,4 +1,5 @@
 #include "lightsss/lightsss.h"
+#include <unistd.h>
 
 ForkShareMemory::ForkShareMemory() {
   if ((key_n = ftok(".", 's') < 0)) {
@@ -40,7 +41,8 @@ void ForkShareMemory::shwait() {
       else
         exit(0);
     } else {
-      sleep(WAIT_INTERVAL);
+      // sleep(WAIT_INTERVAL);
+      pause();
     }
   }
 }
@@ -81,13 +83,10 @@ int LightSSS::do_fork() {
 }
 
 int LightSSS::wakeup_child(uint64_t cycles) {
-  printf("a\n");
   forkshm.info->endCycles = cycles;
-  printf("b\n");
   assert(!pidSlot.empty());
   forkshm.info->oldest = pidSlot.back();
 
-  printf("3\n");
   // only the oldest is wantted, so kill others by parent process.
   for (auto pid: pidSlot) {
     if (pid != forkshm.info->oldest) {
@@ -99,12 +98,10 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   fflush(stdout);
   fflush(stderr);
 
-  printf("4\n");
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
   waitpid(pidSlot.back(), &status, 0);
-  printf("5\n");
   return 0;
 }
 
