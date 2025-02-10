@@ -181,7 +181,7 @@ void exec_all_npc() {
       
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(current_time - last_snapshot_time).count();
-    printf("%ld\n", elapsed_seconds);
+    printf("%ld, %ld\n", last_snapshot_time, current_time);
     if (elapsed_seconds >= snapshot_interval_seconds) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
