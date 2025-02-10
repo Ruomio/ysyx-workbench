@@ -58,6 +58,7 @@ const int FORK_CHILD = 2;
 
 class LightSSS {
   pid_t pid = -1;
+  pid_t p_pid = -1;
   int slotCnt = 0;
   int waitProcess = 0;
   // front() is the newest. back() is the oldest.
@@ -65,9 +66,6 @@ class LightSSS {
   ForkShareMemory forkshm;
 
 public:
-
-  pid_t p_pid = -1;
-
   LightSSS() { p_pid = getpid();}
   ~LightSSS() {}
   int do_fork();
