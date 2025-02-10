@@ -41,8 +41,8 @@ void ForkShareMemory::shwait() {
       else
         exit(0);
     } else {
-      // sleep(WAIT_INTERVAL);
-      pause();
+      sleep(WAIT_INTERVAL);
+      // pause();
     }
   }
 }
