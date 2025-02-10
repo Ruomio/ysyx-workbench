@@ -35,6 +35,7 @@ ForkShareMemory::~ForkShareMemory() {
 
 void ForkShareMemory::shwait() {
   while (true) {
+      printf("shawit\n");
     if (info->flag) {
       if (info->notgood) {
         break;
