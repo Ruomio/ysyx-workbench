@@ -83,8 +83,8 @@ int LightSSS::do_fork() {
 }
 
 int LightSSS::wakeup_child(uint64_t cycles) {
+  if(pidSlot.empty()) return 0;
   forkshm.info->endCycles = cycles;
-  assert(!pidSlot.empty());
   forkshm.info->oldest = pidSlot.back();
 
   // only the oldest is wantted, so kill others by parent process.
