@@ -1,4 +1,3 @@
-#include <chrono>
 #include <cstdint>
 #include <readline/chardefs.h>
 #include <stdbool.h>
@@ -14,7 +13,6 @@
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
 #include <lightsss/lightsss.h>
-#include <unistd.h>
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
