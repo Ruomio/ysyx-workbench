@@ -91,7 +91,11 @@ $(OBJ_DIR)/%.o: %.cpp
 	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 
+ifdef CONFIG_NVBOARD
+all: nvboard
+else
 all: $(BIN)
+endif
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
