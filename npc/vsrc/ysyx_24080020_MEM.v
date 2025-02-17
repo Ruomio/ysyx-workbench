@@ -302,8 +302,9 @@ module ysyx_24080020_MEM(
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= {{7{1'b0}},get_arlen};
-            if(araddr >= 32'h10000000 && araddr < 32'h10001000 || araddr >= 32'h10002000 && araddr < 32'h1000200f) begin
-                // skip uart
+            if((araddr >= 32'h10000000 && araddr < 32'h10001000) || (araddr >= 32'h10002000 && araddr < 32'h1000200f)) begin
+                $display("skip dut");
+                // skip uart, gpio etc.
                 npc_difftest_skip_ref();
             end
             else begin
