@@ -91,7 +91,6 @@ $(OBJ_DIR)/%.o: %.cpp
 
 ifdef CONFIG_NVBOARD
 all: nvboard
-	$(info VSRC=$(VSRC))
 else
 all: $(BIN)
 endif
@@ -103,6 +102,7 @@ sim:
 
 ifdef CONFIG_NVBOARD
 nvboard: $(VSRCS) $(CSRCS) $(HSRC) $(NVBOARD_ARCHIVE)
+	echo $(VSRCS)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE) \
