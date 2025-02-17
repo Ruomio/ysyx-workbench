@@ -101,8 +101,8 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifdef CONFIG_NVBOARD
-nvboard: $(VSRCS) $(CSRCS) $(HSRC) $(NVBOARD_ARCHIVE)
-	echo $(VSRCS)
+nvboard: $(VSRC) $(CSRCS) $(HSRC) $(NVBOARD_ARCHIVE)
+	echo $(VSRC)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE) \
