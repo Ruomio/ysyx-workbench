@@ -14,6 +14,14 @@
 #include <cpu/difftest.h>
 #include <lightsss/lightsss.h>
 
+#ifdef CONFIG_NVBOARD
+#include <nvboard.h>
+
+static TOP_NAME dut;
+void nvboard_bind_all_pins(TOP_NAME *top);
+#endif
+
+
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 extern void MtraceBuf_add_arrow();
@@ -77,6 +85,10 @@ static void trace_and_difftest(vaddr_t dnpc) {
 }
 
 void init_npc(int argc, char **argv) {
+#ifdef CONFIG_NVBOARD
+  nvboard_bind_all_pins(&dut);
+  nvboard_init();
+#endif
   Verilated::commandArgs(argc, argv);
 
   contextp = new VerilatedContext;
@@ -101,6 +113,9 @@ void init_npc(int argc, char **argv) {
       top->reset = 0;
       break;
     }
+#ifdef CONFIG_NVBOARD
+    nvboard_update();
+#endif
   }
   g_get_pc();
 }
@@ -135,10 +150,21 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
-      Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
-      break;
+      // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
+      if(g_pc < CONFIG_MBASE) {
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
+      else
+        break;
     }
   }
+
+#ifdef CONFIG_NVBOARD
+    nvboard_update();
+#endif
 
   g_nr_guest_inst ++;
 
