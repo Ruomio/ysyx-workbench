@@ -12,7 +12,10 @@
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
+
+#ifdef CONFIG_LIGHTSSS
 #include <lightsss/lightsss.h>
+#endif
 
 #ifdef CONFIG_NVBOARD
 #include <nvboard.h>
@@ -50,9 +53,11 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
 
+#ifdef CONFIG_LIGHTSSS
 // LightSSS
 LightSSS lightsss;
 static auto last_snapshot_time = std::chrono::steady_clock::now();
+#endif
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -202,6 +207,7 @@ void exec_once_npc(uint32_t pc) {
 
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
+#ifdef CONFIG_LIGHTSSS
     int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
       
     auto current_time = std::chrono::steady_clock::now();
@@ -211,6 +217,7 @@ void exec_all_npc() {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
     }
+#endif
 
     exec_once_npc(g_pc);
   }
@@ -245,6 +252,7 @@ void exec_npc(int n) {
   }
   else {
     for(; n>0; n--) {
+#ifdef CONFIG_LIGHTSSS
       int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
       
       auto current_time = std::chrono::steady_clock::now();
@@ -253,6 +261,7 @@ void exec_npc(int n) {
         lightsss.do_fork(); // 创建子进程快照
         last_snapshot_time = current_time;
       }
+#endif
 
       if (u_npc_state.state != NPC_RUNNING) break;
       exec_once_npc(g_pc);
@@ -268,6 +277,7 @@ void exec_npc(int n) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
       // break;
+#ifdef CONFIG_LIGHTSSS
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
         if(lightsss.get_p_pid() == getpid()) {
@@ -275,18 +285,21 @@ void exec_npc(int n) {
           lightsss.do_clear();
         }
       }
+#endif
 
     case NPC_QUIT: 
       statistic(); 
 #ifdef CONFIG_NVBOARD
-    // nvboard_quit();
+    nvboard_quit();
 #endif
+#ifdef CONFIG_LIGHTSSS
       if(lightsss.get_p_pid() == getpid()) {
         lightsss.do_clear();
       }
       else {
         exit(-1);
       }
+#endif
       break;
     default: break;;
   }
