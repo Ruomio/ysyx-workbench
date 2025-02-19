@@ -292,6 +292,7 @@ void exec_npc(int n) {
 #ifdef CONFIG_NVBOARD
     nvboard_quit();
 #endif
+
 #ifdef CONFIG_LIGHTSSS
       if(lightsss.get_p_pid() == getpid()) {
         lightsss.do_clear();
