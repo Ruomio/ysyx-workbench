@@ -12,6 +12,8 @@
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
+
+#ifdef CONFIG_LIGHTSSS
 #include <lightsss/lightsss.h>
 
 // TRACE
@@ -135,8 +137,15 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
-      Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
-      break;
+      // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
+      if(g_pc < CONFIG_MBASE) {
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
+      else
+        break;
     }
   }
 
@@ -177,6 +186,7 @@ void exec_once_npc(uint32_t pc) {
 
 void exec_all_npc() {
   while(u_npc_state.state == NPC_RUNNING) {
+#ifdef CONFIG_LIGHTSSS
     int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
       
     auto current_time = std::chrono::steady_clock::now();
@@ -186,6 +196,7 @@ void exec_all_npc() {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
     }
+#endif
 
     exec_once_npc(g_pc);
   }
@@ -220,6 +231,7 @@ void exec_npc(int n) {
   }
   else {
     for(; n>0; n--) {
+#ifdef CONFIG_LIGHTSSS
       int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
       
       auto current_time = std::chrono::steady_clock::now();
@@ -228,6 +240,7 @@ void exec_npc(int n) {
         lightsss.do_fork(); // 创建子进程快照
         last_snapshot_time = current_time;
       }
+#endif
 
       if (u_npc_state.state != NPC_RUNNING) break;
       exec_once_npc(g_pc);
@@ -243,6 +256,7 @@ void exec_npc(int n) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
       // break;
+#ifdef CONFIG_LIGHTSSS
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
         if(lightsss.get_p_pid() == getpid()) {
@@ -250,6 +264,7 @@ void exec_npc(int n) {
           lightsss.do_clear();
         }
       }
+#endif
 
     case NPC_QUIT: 
       statistic(); 
