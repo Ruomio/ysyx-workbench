@@ -47,10 +47,16 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 
 
 
+ifdef CONFIG_NVBOARD
 # constraint file
-# SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
-# $(SRC_AUTO_BIND): $(NXDC_FILES)
-# 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
+$(SRC_AUTO_BIND): $(NXDC_FILES)
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+
+CSRC += $(SRC_AUTO_BIND)
+# rules for NVBoard
+include $(NVBOARD_HOME)/scripts/nvboard.mk
+endif
 
 # project source
 # VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
@@ -63,8 +69,6 @@ override ARGS += --diff=$(DIFFTEST_REF_SO) $(NPCFLAGS)
 override IMG +=
 
 
-# rules for NVBoard
-#include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
@@ -86,26 +90,32 @@ $(OBJ_DIR)/%.o: %.cpp
 	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 
+ifdef CONFIG_NVBOARD
+all: nvboard
+else
 all: $(BIN)
+endif
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self.!"
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
-# nvboard: $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
-# 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-# 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-# 		--top-module $(TOPNAME) $^ \
-# 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-# 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
-
+ifdef CONFIG_NVBOARD
+nvboard: $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(NVBOARD_ARCHIVE) \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+else
 $(BIN): $(VSRC) $(CSRC) $(HSRC)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+endif
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^

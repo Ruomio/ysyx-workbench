@@ -15,6 +15,14 @@
 
 #ifdef CONFIG_LIGHTSSS
 #include <lightsss/lightsss.h>
+#endif
+
+#ifdef CONFIG_NVBOARD
+#include <nvboard.h>
+
+void nvboard_bind_all_pins(TOP_NAME *top);
+#endif
+
 
 // TRACE
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -45,9 +53,11 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
 
+#ifdef CONFIG_LIGHTSSS
 // LightSSS
 LightSSS lightsss;
 static auto last_snapshot_time = std::chrono::steady_clock::now();
+#endif
 
 #ifdef CONFIG_ITRACE
 char inst_buf[128] = {};
@@ -90,6 +100,10 @@ void init_npc(int argc, char **argv) {
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
 #endif
+#ifdef CONFIG_NVBOARD
+  nvboard_bind_all_pins(top);
+  nvboard_init();
+#endif
   int i = 0;
   top->reset = 1;
   while(!contextp->gotFinish()) {
@@ -103,6 +117,9 @@ void init_npc(int argc, char **argv) {
       top->reset = 0;
       break;
     }
+#ifdef CONFIG_NVBOARD
+    nvboard_update();
+#endif
   }
   g_get_pc();
 }
@@ -148,6 +165,10 @@ void exec_once_npc(uint32_t pc) {
         break;
     }
   }
+
+#ifdef CONFIG_NVBOARD
+    nvboard_update();
+#endif
 
   g_nr_guest_inst ++;
 
@@ -268,12 +289,18 @@ void exec_npc(int n) {
 
     case NPC_QUIT: 
       statistic(); 
+#ifdef CONFIG_NVBOARD
+    nvboard_quit();
+#endif
+
+#ifdef CONFIG_LIGHTSSS
       if(lightsss.get_p_pid() == getpid()) {
         lightsss.do_clear();
       }
       else {
         exit(-1);
       }
+#endif
       break;
     default: break;;
   }
