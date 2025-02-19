@@ -102,8 +102,8 @@ void init_npc(int argc, char **argv) {
   tfp->open("build/wave.vcd");
 #endif
 #ifdef CONFIG_NVBOARD
-  nvboard_bind_all_pins(top);
   nvboard_bind_all_pins(&dut);
+  nvboard_bind_all_pins(top);
   nvboard_init();
 #endif
   int i = 0;
