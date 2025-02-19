@@ -278,6 +278,9 @@ void exec_npc(int n) {
 
     case NPC_QUIT: 
       statistic(); 
+#ifdef CONFIG_NVBOARD
+    nvboard_quit();
+#endif
       if(lightsss.get_p_pid() == getpid()) {
         lightsss.do_clear();
       }
