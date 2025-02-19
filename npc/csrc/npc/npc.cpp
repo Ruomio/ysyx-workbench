@@ -19,7 +19,6 @@
 
 #ifdef CONFIG_NVBOARD
 #include <nvboard.h>
-static TOP_NAME dut;
 
 void nvboard_bind_all_pins(TOP_NAME *top);
 #endif
@@ -90,11 +89,6 @@ static void trace_and_difftest(vaddr_t dnpc) {
 }
 
 void init_npc(int argc, char **argv) {
-#ifdef CONFIG_NVBOARD
-  nvboard_bind_all_pins(&dut);
-  // nvboard_bind_all_pins(top);
-  nvboard_init();
-#endif
   Verilated::commandArgs(argc, argv);
 
   contextp = new VerilatedContext;
@@ -105,6 +99,10 @@ void init_npc(int argc, char **argv) {
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
+#endif
+#ifdef CONFIG_NVBOARD
+  nvboard_bind_all_pins(top);
+  nvboard_init();
 #endif
   int i = 0;
   top->reset = 1;
