@@ -79,7 +79,7 @@ public:
   int wakeup_child(uint64_t cycles);
   bool is_child();
   int do_clear();
-  void signal_handler(int signum);
+  static void signal_handler(int signum);
   uint64_t get_end_cycles() {
     return forkshm.info->endCycles;
   }
