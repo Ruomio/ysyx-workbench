@@ -65,7 +65,7 @@ class LightSSS {
   int waitProcess = 0;
   // front() is the newest. back() is the oldest.
   std::deque<pid_t> pidSlot = {};
-  ForkShareMemory forkshm;
+  static ForkShareMemory forkshm;
 
 public:
   LightSSS() { 
@@ -80,6 +80,9 @@ public:
   bool is_child();
   int do_clear();
   static void signal_handler(int signum);
+  void set_dead() {
+    forkshm.info->is_p_dead = true;
+  }
   uint64_t get_end_cycles() {
     return forkshm.info->endCycles;
   }
