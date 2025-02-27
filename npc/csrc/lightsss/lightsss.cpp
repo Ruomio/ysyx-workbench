@@ -22,6 +22,7 @@ ForkShareMemory::ForkShareMemory() {
 
   info->flag = false;
   info->notgood = false;
+  info->is_p_dead = false;
   info->endCycles = 0;
   info->oldest = 0;
 }
@@ -43,9 +44,17 @@ void ForkShareMemory::shwait() {
       else
         exit(0);
     } else {
-      sleep(WAIT_INTERVAL);
+      if(info->is_p_dead)
+          exit(0);
+      else
+          sleep(WAIT_INTERVAL);
     }
   }
+}
+
+void LightSSS::signal_handler(int signum) {
+    forkshm.info->is_p_dead = true;
+    exit(EXIT_SUCCESS); // 退出当前进程
 }
 
 int LightSSS::do_fork() {
