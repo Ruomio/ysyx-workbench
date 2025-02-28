@@ -1,7 +1,7 @@
 #include "lightsss/lightsss.h"
 #include <unistd.h>
 
-ForkShareMemory LightSSS::forkshm;
+// ForkShareMemory LightSSS::forkshm;
 
 ForkShareMemory::ForkShareMemory() {
   if ((key_n = ftok(".", 's') < 0)) {
@@ -47,11 +47,11 @@ void ForkShareMemory::shwait() {
         exit(0);
     } else {
       if(info->is_p_dead) {
-        FORK_PRINTF("parent dead, I'm dead, too: pid: %d\n", getpid());
+        // FORK_PRINTF("parent dead, I'm dead, too: pid: %d\n", getpid());
         exit(0);
       }
       else {
-        FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
+        // FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
         sleep(WAIT_INTERVAL);
       }
     }
