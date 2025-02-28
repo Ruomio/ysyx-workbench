@@ -1,7 +1,7 @@
 #include "lightsss/lightsss.h"
 #include <unistd.h>
 
-std::deque<pid_t> pidSlot = {};
+std::deque<pid_t> LightSSS::pidSlot = {};
 ForkShareMemory LightSSS::forkshm;
 
 ForkShareMemory::ForkShareMemory() {
