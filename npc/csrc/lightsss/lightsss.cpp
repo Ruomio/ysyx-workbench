@@ -66,7 +66,7 @@ void LightSSS::signal_handler(int signum) {
 }
 void LightSSS::signal_handler_abort(int signum) {
   FORK_PRINTF("handler abort signum: %d, pidSlot size: %ld\n", signum, pidSlot.size());
-  if(pidSlot.empty()) return;
+  if(pidSlot.empty() || pidSlot.size() == 1) return;
   forkshm.info->endCycles = -1;
   forkshm.info->oldest = pidSlot.back();
 
