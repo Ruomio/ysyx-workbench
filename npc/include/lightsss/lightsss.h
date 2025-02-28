@@ -64,7 +64,7 @@ class LightSSS {
   int slotCnt = 0;
   int waitProcess = 0;
   // front() is the newest. back() is the oldest.
-  std::deque<pid_t> pidSlot = {};
+  static std::deque<pid_t> pidSlot = {};
   static ForkShareMemory forkshm;
 
 public:
@@ -72,7 +72,7 @@ public:
       p_pid = getpid();
       signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
       signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
-      signal(SIGABRT, signal_handler); // 注册SIGTERM处理器 assert faile
+      signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
   }
   ~LightSSS() {}
   int do_fork();
@@ -80,6 +80,7 @@ public:
   bool is_child();
   int do_clear();
   static void signal_handler(int signum);
+  static void signal_handler_abort(int signum);
   uint64_t get_end_cycles() {
     return forkshm.info->endCycles;
   }

@@ -1,6 +1,7 @@
 #include "lightsss/lightsss.h"
 #include <unistd.h>
 
+std::deque<pid_t> pidSlot = {};
 ForkShareMemory LightSSS::forkshm;
 
 ForkShareMemory::ForkShareMemory() {
@@ -61,6 +62,33 @@ void ForkShareMemory::shwait() {
 void LightSSS::signal_handler(int signum) {
     forkshm.info->is_p_dead = true;
     exit(EXIT_SUCCESS); // 退出当前进程
+}
+void LightSSS::signal_handler_abort(int signum) {
+  if(pidSlot.empty()) return;
+  forkshm.info->endCycles = -1;
+  forkshm.info->oldest = pidSlot.back();
+
+  // only the oldest is wantted, so kill others by parent process.
+  for (auto pid: pidSlot) {
+    if (pid != forkshm.info->oldest) {
+      kill(pid, SIGKILL);
+      waitpid(pid, NULL, 0);
+      // slotCnt--;
+    }
+  }
+  // flush before wake up child.
+  fflush(stdout);
+  fflush(stderr);
+
+  forkshm.info->notgood = true;
+  forkshm.info->flag = true;
+  int status = -1;
+  // printf("old pid:%d\n", pidSlot.back());
+  waitpid(pidSlot.back(), &status, 0);
+
+  sleep(5);
+  forkshm.info->is_p_dead = true;
+  exit(EXIT_SUCCESS); // 退出当前进程
 }
 
 int LightSSS::do_fork() {
