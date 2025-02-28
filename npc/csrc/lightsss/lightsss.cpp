@@ -1,6 +1,8 @@
 #include "lightsss/lightsss.h"
 #include <unistd.h>
 
+ForkShareMemory LightSSS::forkshm;
+
 ForkShareMemory::ForkShareMemory() {
   if ((key_n = ftok(".", 's') < 0)) {
     perror("Fail to ftok\n");
