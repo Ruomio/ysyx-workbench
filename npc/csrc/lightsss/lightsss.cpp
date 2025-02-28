@@ -87,6 +87,8 @@ void LightSSS::signal_handler_abort(int signum) {
   waitpid(pidSlot.back(), &status, 0);
 
   sleep(5);
+  forkshm.info->notgood = false;
+  forkshm.info->flag = false;
   forkshm.info->is_p_dead = true;
   exit(EXIT_SUCCESS); // 退出当前进程
 }
