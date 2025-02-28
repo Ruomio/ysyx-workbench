@@ -71,12 +71,14 @@ void LightSSS::signal_handler_abort(int signum) {
   forkshm.info->oldest = pidSlot.back();
 
   // only the oldest is wantted, so kill others by parent process.
-  for (auto pid: pidSlot) {
-    if (pid != forkshm.info->oldest) {
-      kill(pid, SIGKILL);
-      waitpid(pid, NULL, 0);
+  // for (auto pid: pidSlot) {
+  for (auto pid = pidSlot.begin(); pid != pidSlot.end(); pid ++) {
+    if (*pid != forkshm.info->oldest) {
+      kill(*pid, SIGKILL);
+      waitpid(*pid, NULL, 0);
+      pidSlot.erase(pid);
       // slotCnt--;
-      FORK_PRINTF("delete id: %d\n", pid);
+      FORK_PRINTF("delete id: %d\n", *pid);
     }
   }
   FORK_PRINTF("pidSlot size: %ld\n",pidSlot.size());
