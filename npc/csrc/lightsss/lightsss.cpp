@@ -1,4 +1,5 @@
 #include "lightsss/lightsss.h"
+#include <cstdlib>
 #include <unistd.h>
 
 std::deque<pid_t> LightSSS::pidSlot = {};
@@ -88,7 +89,7 @@ void LightSSS::signal_handler_abort(int signum) {
 
   sleep(5);
   forkshm.info->is_p_dead = true;
-  exit(EXIT_SUCCESS); // 退出当前进程
+  exit(EXIT_FAILURE); // 退出当前进程
 }
 
 int LightSSS::do_fork() {
