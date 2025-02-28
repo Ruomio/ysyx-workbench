@@ -70,7 +70,7 @@ class LightSSS {
 public:
   LightSSS() { 
       p_pid = getpid();
-      // signal(SIGINT, signal_handler); // 注册SIGINT处理器
+      signal(SIGINT, signal_handler); // 注册SIGINT处理器
       // signal(SIGTERM, signal_handler); // 注册SIGTERM处理器
 
   }
@@ -80,9 +80,6 @@ public:
   bool is_child();
   int do_clear();
   static void signal_handler(int signum);
-  void set_dead() {
-    forkshm.info->is_p_dead = true;
-  }
   uint64_t get_end_cycles() {
     return forkshm.info->endCycles;
   }
