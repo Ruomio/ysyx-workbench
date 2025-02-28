@@ -79,6 +79,7 @@ void LightSSS::signal_handler_abort(int signum) {
       FORK_PRINTF("delete id: %d\n", pid);
     }
   }
+  FORK_PRINTF("pidSlot size: %ld\n",pidSlot.size());
   // flush before wake up child.
   fflush(stdout);
   fflush(stderr);
