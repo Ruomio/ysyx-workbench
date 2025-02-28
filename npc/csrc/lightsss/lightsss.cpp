@@ -87,7 +87,7 @@ void LightSSS::signal_handler_abort(int signum) {
   // printf("old pid:%d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
 
-  sleep(5);
+  sleep(3);
   forkshm.info->notgood = false;
   forkshm.info->flag = false;
   forkshm.info->is_p_dead = true;
