@@ -1,7 +1,7 @@
 #include "lightsss/lightsss.h"
 #include <unistd.h>
 
-// ForkShareMemory LightSSS::forkshm;
+ForkShareMemory LightSSS::forkshm;
 
 ForkShareMemory::ForkShareMemory() {
   if ((key_n = ftok(".", 's') < 0)) {
@@ -55,7 +55,7 @@ void ForkShareMemory::shwait() {
 }
 
 void LightSSS::signal_handler(int signum) {
-    // forkshm.info->is_p_dead = true;
+    forkshm.info->is_p_dead = true;
     exit(EXIT_SUCCESS); // 退出当前进程
 }
 

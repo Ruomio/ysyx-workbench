@@ -65,13 +65,13 @@ class LightSSS {
   int waitProcess = 0;
   // front() is the newest. back() is the oldest.
   std::deque<pid_t> pidSlot = {};
-  ForkShareMemory forkshm;
+  static ForkShareMemory forkshm;
 
 public:
   LightSSS() { 
       p_pid = getpid();
-      // signal(SIGINT, signal_handler); // 注册SIGINT处理器
-      // signal(SIGTERM, signal_handler); // 注册SIGTERM处理器
+      signal(SIGINT, signal_handler); // 注册SIGINT处理器
+      signal(SIGTERM, signal_handler); // 注册SIGTERM处理器
 
   }
   ~LightSSS() {}
