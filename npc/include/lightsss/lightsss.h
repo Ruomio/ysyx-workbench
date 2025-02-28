@@ -72,6 +72,7 @@ public:
       p_pid = getpid();
       signal(SIGINT, signal_handler); // 注册SIGINT处理器
       signal(SIGTERM, signal_handler); // 注册SIGTERM处理器
+      signal(SIGABRT, signal_handler); // 注册SIGTERM处理器
 
   }
   ~LightSSS() {}
