@@ -142,6 +142,7 @@ int LightSSS::wakeup_child(uint64_t cycles) {
       kill(pid, SIGKILL);
       waitpid(pid, NULL, 0);
       slotCnt--;
+      FORK_PRINTF("delete id: %d\n", pid);
     }
   }
   // flush before wake up child.
