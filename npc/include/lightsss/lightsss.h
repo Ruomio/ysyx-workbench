@@ -61,7 +61,7 @@ const int FORK_CHILD = 2;
 class LightSSS {
   pid_t pid = -1;
   pid_t p_pid = -1;
-  int slotCnt = 0;
+  static int slotCnt;
   int waitProcess = 0;
   // front() is the newest. back() is the oldest.
   static std::deque<pid_t> pidSlot;

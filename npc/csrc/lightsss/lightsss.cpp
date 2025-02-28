@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <unistd.h>
 
+int LightSSS::slotCnt = 0;
 std::deque<pid_t> LightSSS::pidSlot = {};
 ForkShareMemory LightSSS::forkshm;
 
