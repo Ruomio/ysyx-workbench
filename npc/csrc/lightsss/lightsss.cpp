@@ -75,6 +75,7 @@ void LightSSS::signal_handler_abort(int signum) {
       kill(pid, SIGKILL);
       waitpid(pid, NULL, 0);
       // slotCnt--;
+      FORK_PRINTF("delete id: %d\n", pid);
     }
   }
   // flush before wake up child.
