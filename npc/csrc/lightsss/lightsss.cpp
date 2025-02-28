@@ -46,14 +46,14 @@ void ForkShareMemory::shwait() {
       else
         exit(0);
     } else {
-      // if(info->is_p_dead) {
-      //   printf("parent dead, I'm dead, too: pid: %d\n", getpid());
-      //   exit(0);
-      // }
-      // else
-      //     sleep(WAIT_INTERVAL);
-      printf("parent dead, I'm dead, too: pid: %d\n", getpid());
-      sleep(WAIT_INTERVAL);
+      if(info->is_p_dead) {
+        printf("parent dead, I'm dead, too: pid: %d\n", getpid());
+        exit(0);
+      }
+      else {
+        printf("parent not dead, I'm sleep: pid: %d\n", getpid());
+        sleep(WAIT_INTERVAL);
+      }
     }
   }
 }
