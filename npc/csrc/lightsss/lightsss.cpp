@@ -52,6 +52,7 @@ void ForkShareMemory::shwait() {
       // }
       // else
       //     sleep(WAIT_INTERVAL);
+      printf("parent dead, I'm dead, too: pid: %d\n", getpid());
       sleep(WAIT_INTERVAL);
     }
   }
