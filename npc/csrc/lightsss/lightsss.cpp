@@ -87,6 +87,7 @@ void LightSSS::signal_handler_abort(int signum) {
   forkshm.info->flag = true;
   int status = -1;
   // printf("old pid:%d\n", pidSlot.back());
+  FORK_PRINTF("delete pid: %d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
 
   sleep(3);
