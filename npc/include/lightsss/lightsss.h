@@ -26,6 +26,7 @@
 #include <sys/shm.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 // exit when error when fork
 #define FAIL_EXIT    exit(EXIT_FAILURE);
 #define SLOT_SIZE 3
@@ -34,6 +35,7 @@
 typedef struct shinfo {
   bool flag;
   bool notgood;
+  bool is_p_dead;
   uint64_t endCycles;
   pid_t oldest;
 } shinfo;
@@ -63,15 +65,21 @@ class LightSSS {
   int waitProcess = 0;
   // front() is the newest. back() is the oldest.
   std::deque<pid_t> pidSlot = {};
-  ForkShareMemory forkshm;
+  static ForkShareMemory forkshm;
 
 public:
-  LightSSS() { p_pid = getpid();}
+  LightSSS() { 
+      p_pid = getpid();
+      signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
+      signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
+      signal(SIGABRT, signal_handler); // 注册SIGTERM处理器 assert faile
+  }
   ~LightSSS() {}
   int do_fork();
   int wakeup_child(uint64_t cycles);
   bool is_child();
   int do_clear();
+  static void signal_handler(int signum);
   uint64_t get_end_cycles() {
     return forkshm.info->endCycles;
   }
