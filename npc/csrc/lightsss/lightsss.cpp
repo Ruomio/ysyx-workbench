@@ -80,10 +80,8 @@ void LightSSS::signal_handler_abort(int signum) {
       waitpid(*pid, NULL, 0);
       pidSlot.erase(pid);
       // slotCnt--;
-      FORK_PRINTF("delete id: %d\n", *pid);
     }
   }
-  FORK_PRINTF("pidSlot size: %ld\n",pidSlot.size());
   // flush before wake up child.
   fflush(stdout);
   fflush(stderr);
@@ -91,8 +89,7 @@ void LightSSS::signal_handler_abort(int signum) {
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
-  // printf("old pid:%d\n", pidSlot.back());
-  FORK_PRINTF("delete pid: %d\n", pidSlot.back());
+  // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
 
   sleep(3);
