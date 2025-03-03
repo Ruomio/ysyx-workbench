@@ -1,6 +1,8 @@
 #include "lightsss/lightsss.h"
 #include <unistd.h>
 
+pid_t LightSSS::p_pid = -1;
+std::deque<pid_t> LightSSS::pidSlot = {};
 ForkShareMemory LightSSS::forkshm;
 
 ForkShareMemory::ForkShareMemory() {
@@ -62,6 +64,41 @@ void LightSSS::signal_handler(int signum) {
     forkshm.info->is_p_dead = true;
     exit(EXIT_SUCCESS); // 退出当前进程
 }
+void LightSSS::signal_handler_abort(int signum) {
+  if(p_pid != getpid()) return;
+  if(pidSlot.empty()) return;
+  FORK_PRINTF("handler abort signum: %d, pidSlot size: %ld\n", signum, pidSlot.size());
+  forkshm.info->endCycles = -1;
+  forkshm.info->oldest = pidSlot.back();
+
+  // only the oldest is wantted, so kill others by parent process.
+  // for (auto pid: pidSlot) {
+  for (auto pid = pidSlot.begin(); pid != pidSlot.end(); pid ++) {
+    if (*pid != forkshm.info->oldest) {
+      kill(*pid, SIGKILL);
+      waitpid(*pid, NULL, 0);
+      pidSlot.erase(pid);
+      // slotCnt--;
+    }
+  }
+  // flush before wake up child.
+  fflush(stdout);
+  fflush(stderr);
+
+  forkshm.info->notgood = true;
+  forkshm.info->flag = true;
+  int status = -1;
+  // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
+  waitpid(pidSlot.back(), &status, 0);
+
+  sleep(3);
+  forkshm.info->notgood = false;
+  forkshm.info->flag = false;
+  forkshm.info->is_p_dead = true;
+  // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
+  // waitpid(pidSlot.back(), &status, 0);
+  exit(EXIT_FAILURE); // 退出当前进程
+}
 
 int LightSSS::do_fork() {
   if(getpid() != p_pid) return 0;
@@ -110,6 +147,7 @@ int LightSSS::wakeup_child(uint64_t cycles) {
       kill(pid, SIGKILL);
       waitpid(pid, NULL, 0);
       slotCnt--;
+      FORK_PRINTF("delete id: %d\n", pid);
     }
   }
   // flush before wake up child.
