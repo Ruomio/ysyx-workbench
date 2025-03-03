@@ -152,6 +152,9 @@ void exec_once_npc(uint32_t pc) {
       // total_wave_step++;
     }
 #endif
+#ifdef CONFIG_NVBOARD
+    nvboard_update();
+#endif
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
@@ -166,9 +169,7 @@ void exec_once_npc(uint32_t pc) {
     }
   }
 
-#ifdef CONFIG_NVBOARD
-    nvboard_update();
-#endif
+
 
   g_nr_guest_inst ++;
 
