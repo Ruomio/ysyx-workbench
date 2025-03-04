@@ -70,8 +70,8 @@ class LightSSS {
 public:
   LightSSS() { 
       p_pid = getpid();
-      signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
-      signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
+      // signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
+      // signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
   }
   ~LightSSS() {}
