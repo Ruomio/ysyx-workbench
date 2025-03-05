@@ -84,6 +84,7 @@ void LightSSS::signal_handler_abort(int signum) {
       pid++;
     }
   }
+  assert(pidSlot.back() == forkshm.info->oldest);
   // flush before wake up child.
   fflush(stdout);
   fflush(stderr);
