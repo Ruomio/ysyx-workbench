@@ -262,7 +262,7 @@ void exec_npc(int n) {
         lightsss.do_fork(); // 创建子进程快照
         last_snapshot_time = current_time;
       }
-      if(getpid() != lightsss.get_p_pid() && lightsss.get_ppid_state()) {
+      if(getpid() != lightsss.get_p_pid()) {
         printf("child process , will exit\n");
         // exit(-1);
       }
