@@ -40,10 +40,8 @@ ForkShareMemory::~ForkShareMemory() {
 
 void ForkShareMemory::shwait() {
   while (true) {
-    FORK_PRINTF("shwait pid: %d\n", getpid());
     if (info->flag) {
       if (info->notgood) {
-        FORK_PRINTF("shwait notgood && flag pid: %d\n", getpid());
         // exit(0);
         break;
       }
@@ -51,11 +49,11 @@ void ForkShareMemory::shwait() {
         exit(0);
     } else {
       if(info->is_p_dead) {
-        FORK_PRINTF("parent dead, I'm dead, too: pid: %d\n", getpid());
+        // FORK_PRINTF("parent dead, I'm dead, too: pid: %d\n", getpid());
         exit(0);
       }
       else {
-        FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
+        // FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
         sleep(WAIT_INTERVAL);
       }
     }
@@ -86,7 +84,6 @@ void LightSSS::signal_handler_abort(int signum) {
       pid++;
     }
   }
-  assert(pidSlot.back() == forkshm.info->oldest);
   // flush before wake up child.
   fflush(stdout);
   fflush(stderr);
@@ -94,14 +91,13 @@ void LightSSS::signal_handler_abort(int signum) {
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
-  FORK_PRINTF("info 1\n");
+  // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
-  sleep(3);
-  forkshm.info->notgood = false;
-  forkshm.info->flag = false;
-  forkshm.info->is_p_dead = true;
-  FORK_PRINTF("info 2\n");
 
+  // sleep(3);
+  // forkshm.info->notgood = false;
+  // forkshm.info->flag = false;
+  // forkshm.info->is_p_dead = true;
   // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
   // waitpid(pidSlot.back(), &status, 0);
   exit(EXIT_FAILURE); // 退出当前进程
@@ -133,17 +129,11 @@ int LightSSS::do_fork() {
   // for the fork child
   waitProcess = 1;
   forkshm.shwait();
-  if(getpid() != p_pid) {
-    FORK_PRINTF("after shwait pid: %d\n", getpid());
-  }
   //checkpoint process wakes up
   //start wave dumping
   if (forkshm.info->oldest != getpid()) {
     FORK_PRINTF("Error, non-oldest process should not live. Parent Process should kill the process manually.\n")
     return FORK_ERROR;
-  }
-  if(getpid() != p_pid) {
-    FORK_PRINTF("after shwait pid: %d\n", getpid());
   }
   return FORK_CHILD;
 }

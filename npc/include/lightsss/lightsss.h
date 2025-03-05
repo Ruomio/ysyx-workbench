@@ -70,7 +70,7 @@ class LightSSS {
 public:
   LightSSS() { 
       p_pid = getpid();
-      signal(SIGINT, signal_handler_abort); // 注册SIGINT处理器 ctrl c
+      signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
       signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
   }
@@ -89,9 +89,6 @@ public:
   }
   bool get_notgood() {
     return forkshm.info->notgood;
-  }
-  bool get_ppid_state() {
-    return forkshm.info->is_p_dead;
   }
   pid_t get_p_pid() {
     return p_pid;
