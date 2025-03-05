@@ -263,6 +263,9 @@ void exec_npc(int n) {
         last_snapshot_time = current_time;
       }
       if(getpid() != lightsss.get_p_pid()) {
+        FORK_PRINTF("after shwait to npc pid: %d\n", getpid());
+      }
+      if(getpid() != lightsss.get_p_pid()) {
         printf("child process , will exit\n");
         // exit(-1);
       }
