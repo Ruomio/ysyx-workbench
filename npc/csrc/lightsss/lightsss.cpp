@@ -133,6 +133,9 @@ int LightSSS::do_fork() {
   // for the fork child
   waitProcess = 1;
   forkshm.shwait();
+  if(getpid() != p_pid) {
+    FORK_PRINTF("after shwait pid: %d\n", getpid());
+  }
   //checkpoint process wakes up
   //start wave dumping
   if (forkshm.info->oldest != getpid()) {
