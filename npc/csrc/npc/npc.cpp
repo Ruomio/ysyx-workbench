@@ -260,7 +260,7 @@ void exec_npc(int n) {
       auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
       if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
         lightsss.do_fork(); // 创建子进程快照
-        if(getpid() != lightsss.get_p_pid()) {
+        if(getpid() != lightsss.get_p_pid() || true) {
           FORK_PRINTF("after shwait to npc pid: %d\n", getpid());
         }
         last_snapshot_time = current_time;
