@@ -43,6 +43,7 @@ void ForkShareMemory::shwait() {
     FORK_PRINTF("shwait pid: %d\n", getpid());
     if (info->flag) {
       if (info->notgood) {
+        FORK_PRINTF("shwait notgood && flag pid: %d\n", getpid());
         // exit(0);
         break;
       }
@@ -50,11 +51,11 @@ void ForkShareMemory::shwait() {
         exit(0);
     } else {
       if(info->is_p_dead) {
-        // FORK_PRINTF("parent dead, I'm dead, too: pid: %d\n", getpid());
+        FORK_PRINTF("parent dead, I'm dead, too: pid: %d\n", getpid());
         exit(0);
       }
       else {
-        // FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
+        FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
         sleep(WAIT_INTERVAL);
       }
     }
