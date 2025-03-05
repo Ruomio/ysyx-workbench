@@ -12,7 +12,6 @@
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
-#include <unistd.h>
 
 #ifdef CONFIG_LIGHTSSS
 #include <lightsss/lightsss.h>
@@ -273,7 +272,6 @@ void exec_npc(int n) {
       exec_once_npc(g_pc);
     }
   }
-
 
 
   uint64_t timer_end = get_time();
