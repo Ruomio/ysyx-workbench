@@ -94,13 +94,13 @@ void LightSSS::signal_handler_abort(int signum) {
   forkshm.info->flag = true;
   int status = -1;
   FORK_PRINTF("info 1\n");
+  waitpid(pidSlot.back(), &status, 0);
+  FORK_PRINTF("info 2\n");
+
   sleep(3);
   forkshm.info->notgood = false;
   forkshm.info->flag = false;
   forkshm.info->is_p_dead = true;
-  waitpid(pidSlot.back(), &status, 0);
-  FORK_PRINTF("info 2\n");
-
   // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
   // waitpid(pidSlot.back(), &status, 0);
   exit(EXIT_FAILURE); // 退出当前进程
