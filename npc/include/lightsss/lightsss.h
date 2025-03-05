@@ -90,6 +90,9 @@ public:
   bool get_notgood() {
     return forkshm.info->notgood;
   }
+  bool get_ppid_state() {
+    return forkshm.info->is_p_dead;
+  }
   pid_t get_p_pid() {
     return p_pid;
   }

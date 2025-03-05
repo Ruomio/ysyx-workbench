@@ -12,6 +12,7 @@
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
+#include <unistd.h>
 
 #ifdef CONFIG_LIGHTSSS
 #include <lightsss/lightsss.h>
@@ -262,12 +263,16 @@ void exec_npc(int n) {
         lightsss.do_fork(); // 创建子进程快照
         last_snapshot_time = current_time;
       }
+      if(getpid() != lightsss.get_p_pid() && lightsss.get_ppid_state()) {
+        exit(-1);
+      }
 #endif
 
       if (u_npc_state.state != NPC_RUNNING) break;
       exec_once_npc(g_pc);
     }
   }
+
 
 
   uint64_t timer_end = get_time();
