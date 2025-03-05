@@ -91,8 +91,9 @@ void LightSSS::signal_handler_abort(int signum) {
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
-  // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
+  FORK_PRINTF("info 1\n");
   waitpid(pidSlot.back(), &status, 0);
+  FORK_PRINTF("info 1\n");
 
   // sleep(3);
   forkshm.info->notgood = false;
