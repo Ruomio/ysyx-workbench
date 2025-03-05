@@ -40,6 +40,7 @@ ForkShareMemory::~ForkShareMemory() {
 
 void ForkShareMemory::shwait() {
   while (true) {
+    FORK_PRINTF("shwait pid: %d\n", getpid());
     if (info->flag) {
       if (info->notgood) {
         // exit(0);
