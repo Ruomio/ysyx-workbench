@@ -142,6 +142,9 @@ int LightSSS::do_fork() {
     FORK_PRINTF("Error, non-oldest process should not live. Parent Process should kill the process manually.\n")
     return FORK_ERROR;
   }
+  if(getpid() != p_pid) {
+    FORK_PRINTF("after shwait pid: %d\n", getpid());
+  }
   return FORK_CHILD;
 }
 
