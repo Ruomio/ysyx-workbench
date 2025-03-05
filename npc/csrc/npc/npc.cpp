@@ -264,6 +264,7 @@ void exec_npc(int n) {
         last_snapshot_time = current_time;
       }
       if(getpid() != lightsss.get_p_pid() && lightsss.get_ppid_state()) {
+        printf("child process , will exit\n");
         exit(-1);
       }
 #endif
