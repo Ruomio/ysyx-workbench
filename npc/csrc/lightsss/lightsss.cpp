@@ -1,5 +1,4 @@
 #include "lightsss/lightsss.h"
-#include <cstdlib>
 #include <unistd.h>
 
 pid_t LightSSS::p_pid = -1;
