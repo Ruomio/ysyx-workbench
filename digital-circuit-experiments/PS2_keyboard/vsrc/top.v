@@ -27,7 +27,7 @@ module top(
 
     // ps2_model u_ps2_model(code, ps2_clk, ps2_data);
 
-    ps2_keyboard u_ps2_keyboard(clk, clrn, ps2_clk, ps2_data, nextdata_n, data, ready, overflow);
+    ps2_keyboard u_ps2_keyboard(.clk(clk), .clrn(clrn), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .nextdata_n(nextdata_n), .data(data), .ready(ready), .overflow(overflow));
 
     key_to_ascii u_key_to_ascii(data, ascii_code);
 
