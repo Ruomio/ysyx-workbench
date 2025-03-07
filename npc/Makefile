@@ -90,11 +90,7 @@ $(OBJ_DIR)/%.o: %.cpp
 	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 
-ifdef CONFIG_NVBOARD
-all: nvboard
-else
 all: $(BIN)
-endif
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -102,7 +98,7 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifdef CONFIG_NVBOARD
-nvboard: $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(NXDC_FILES)
+$(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(NVBOARD_ARCHIVE) \
