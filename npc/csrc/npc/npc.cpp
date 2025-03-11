@@ -206,23 +206,23 @@ void exec_once_npc(uint32_t pc) {
   trace_and_difftest(g_pc);
 }
 
-void exec_all_npc() {
-  while(u_npc_state.state == NPC_RUNNING) {
-#ifdef CONFIG_LIGHTSSS
-    int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
-      
-    auto current_time = std::chrono::steady_clock::now();
-    auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
-    // printf("%ld, %ld, %ld\n", last_snapshot_time, current_time, elapsed_seconds);
-    if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
-      lightsss.do_fork(); // 创建子进程快照
-      last_snapshot_time = current_time;
-    }
-#endif
-
-    exec_once_npc(g_pc);
-  }
-}
+// void exec_all_npc() {
+//   while(u_npc_state.state == NPC_RUNNING) {
+// #ifdef CONFIG_LIGHTSSS
+//     int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
+//       
+//     auto current_time = std::chrono::steady_clock::now();
+//     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
+//     // printf("%ld, %ld, %ld\n", last_snapshot_time, current_time, elapsed_seconds);
+//     if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
+//       lightsss.do_fork(); // 创建子进程快照
+//       last_snapshot_time = current_time;
+//     }
+// #endif
+// 
+//     exec_once_npc(g_pc);
+//   }
+// }
 
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
@@ -236,7 +236,7 @@ static void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
-void exec_npc(int n) {
+void exec_npc(uint64_t n) {
   g_print_step = n < 10;
   switch (u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
@@ -248,25 +248,21 @@ void exec_npc(int n) {
   uint64_t timer_start = get_time();
 
 
-  if(n < 0) {
-    exec_all_npc();
-  }
-  else {
-    for(; n>0; n--) {
+
+  for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
-      int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
-      
-      auto current_time = std::chrono::steady_clock::now();
-      auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
-      if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
-        lightsss.do_fork(); // 创建子进程快照
-        last_snapshot_time = current_time;
-      }
+    int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
+    
+    auto current_time = std::chrono::steady_clock::now();
+    auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
+    if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
+      lightsss.do_fork(); // 创建子进程快照
+      last_snapshot_time = current_time;
+    }
 #endif
 
-      if (u_npc_state.state != NPC_RUNNING) break;
-      exec_once_npc(g_pc);
-    }
+    if (u_npc_state.state != NPC_RUNNING) break;
+    exec_once_npc(g_pc);
   }
 
 

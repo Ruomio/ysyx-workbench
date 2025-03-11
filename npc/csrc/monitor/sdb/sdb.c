@@ -30,7 +30,7 @@ void init_wp_pool();
 
 extern void init_npc();
 extern void free_npc();
-extern void exec_npc(int n);
+extern void exec_npc(uint64_t n);
 
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
