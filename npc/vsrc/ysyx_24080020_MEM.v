@@ -407,9 +407,9 @@ module ysyx_24080020_MEM(
 
             mwen_mem <= 1'b0;
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
-                || araddr >= 32'h10011000 && araddr < 32'h10011008
-                || araddr >= 32'h21000000 && araddr < 32'h21200000 
-                || araddr >= 32'h02000000 && araddr < 32'h02000008
+                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
+                || awaddr >= 32'h21000000 && awaddr < 32'h21200000 
+                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
                 ) begin
                 // skip uart keyboard etc.
                 npc_difftest_skip_ref();
