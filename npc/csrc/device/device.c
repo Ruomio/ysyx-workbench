@@ -1,4 +1,4 @@
-#include <device.h>
+#include <device/device.h>
 
 void init_device() {
 #ifdef CONFIG_HAS_VGA
