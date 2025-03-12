@@ -138,14 +138,4 @@ config RTC_MMIO
     default 0xa0000048
 endif
 
-menuconfig HAS_VGA
-    bool "Enable VGA"
-    default y
-
-if HAS_VGA
-config VGA_MMIO
-    hex "Memory address of VGA controller"
-    default 0x21000000
-endif
-
 endif # endif DEVICES
