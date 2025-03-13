@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 pid_t LightSSS::p_pid = -1;
+int LightSSS::waitProcess = 0;
 std::deque<pid_t> LightSSS::pidSlot = {};
 ForkShareMemory LightSSS::forkshm;
 
@@ -27,7 +28,6 @@ ForkShareMemory::ForkShareMemory() {
 
   info->flag = false;
   info->notgood = false;
-  info->is_p_dead = false;
   info->endCycles = 0;
   info->oldest = 0;
 }
@@ -49,21 +49,13 @@ void ForkShareMemory::shwait() {
       else
         exit(0);
     } else {
-      if(info->is_p_dead) {
-        // FORK_PRINTF("parent dead, I'm dead, too: pid: %d\n", getpid());
-        exit(0);
-      }
-      else {
-        // FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
-        sleep(WAIT_INTERVAL);
-      }
+      // FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
+      sleep(WAIT_INTERVAL);
     }
   }
 }
 
 void LightSSS::signal_handler(int signum) {
-  if(p_pid != getpid()) exit(EXIT_FAILURE);
-  // forkshm.info->is_p_dead = true;
   FORK_PRINTF("clear processes...\n")
   while (!pidSlot.empty()) {
     pid_t temp = pidSlot.back();
@@ -74,7 +66,7 @@ void LightSSS::signal_handler(int signum) {
   exit(EXIT_FAILURE); // 退出当前进程
 }
 void LightSSS::signal_handler_abort(int signum) {
-  if(p_pid != getpid()) exit(EXIT_FAILURE);
+  if(is_child()) exit(EXIT_FAILURE);
   if(pidSlot.empty()) return;
   FORK_PRINTF("handler abort signum: %d, pidSlot size: %ld\n", signum, pidSlot.size());
   forkshm.info->endCycles = -1;
@@ -103,17 +95,11 @@ void LightSSS::signal_handler_abort(int signum) {
   // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
 
-  // sleep(3);
-  // forkshm.info->notgood = false;
-  // forkshm.info->flag = false;
-  // forkshm.info->is_p_dead = true;
-  // FORK_PRINTF("delete pid: %d\n", pidSlot.back());
-  // waitpid(pidSlot.back(), &status, 0);
   exit(EXIT_FAILURE); // 退出当前进程
 }
 
 int LightSSS::do_fork() {
-  if(getpid() != p_pid) return 0;
+  if(is_child()) return 0;
 
   //kill the oldest blocked checkpoint process
   if (slotCnt == SLOT_SIZE) {
@@ -149,7 +135,7 @@ int LightSSS::do_fork() {
 
 int LightSSS::wakeup_child(uint64_t cycles) {
   if(pidSlot.empty()) return 0;
-  if(getpid() != p_pid) return 0;
+  if(is_child()) return 0;
   forkshm.info->endCycles = cycles;
   forkshm.info->oldest = pidSlot.back();
 

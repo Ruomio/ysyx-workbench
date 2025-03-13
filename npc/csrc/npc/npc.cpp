@@ -237,7 +237,7 @@ void exec_npc(uint64_t n) {
     
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
-    if (elapsed_seconds >= snapshot_interval_seconds && getpid() == lightsss.get_p_pid()) {
+    if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
     }
@@ -259,9 +259,8 @@ void exec_npc(uint64_t n) {
 #ifdef CONFIG_LIGHTSSS
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
-        if(lightsss.get_p_pid() == getpid()) {
+        if(!lightsss.is_child()) {
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
-          lightsss.do_clear();
         }
       }
 #endif
@@ -273,7 +272,7 @@ void exec_npc(uint64_t n) {
 #endif
 
 #ifdef CONFIG_LIGHTSSS
-      if(lightsss.get_p_pid() == getpid()) {
+      if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
