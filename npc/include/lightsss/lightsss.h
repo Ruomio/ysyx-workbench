@@ -35,7 +35,6 @@
 typedef struct shinfo {
   bool flag;
   bool notgood;
-  bool is_p_dead;
   uint64_t endCycles;
   pid_t oldest;
 } shinfo;
@@ -60,16 +59,14 @@ const int FORK_CHILD = 2;
 
 class LightSSS {
   pid_t pid = -1;
-  static pid_t p_pid;
   int slotCnt = 0;
-  int waitProcess = 0;
+  static int waitProcess;
   // front() is the newest. back() is the oldest.
   static std::deque<pid_t> pidSlot;
   static ForkShareMemory forkshm;
 
 public:
   LightSSS() { 
-      p_pid = getpid();
       signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
       signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
@@ -77,7 +74,7 @@ public:
   ~LightSSS() {}
   int do_fork();
   int wakeup_child(uint64_t cycles);
-  bool is_child();
+  static bool is_child();
   int do_clear();
   static void signal_handler(int signum);
   static void signal_handler_abort(int signum);
@@ -89,9 +86,6 @@ public:
   }
   bool get_notgood() {
     return forkshm.info->notgood;
-  }
-  pid_t get_p_pid() {
-    return p_pid;
   }
 };
 
