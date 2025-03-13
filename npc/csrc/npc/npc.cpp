@@ -21,6 +21,7 @@
 #include <nvboard.h>
 
 void nvboard_bind_all_pins(TOP_NAME *top);
+void nvboard_init();
 void nvboard_update();
 void nvboard_quit();
 #endif
@@ -104,7 +105,6 @@ void init_npc(int argc, char **argv) {
   tfp->open("build/wave.vcd");
 #endif
 #ifdef CONFIG_NVBOARD
-  void nvboard_init();
   nvboard_bind_all_pins(top);
   nvboard_init();
 #endif
