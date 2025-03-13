@@ -59,7 +59,6 @@ const int FORK_CHILD = 2;
 
 class LightSSS {
   pid_t pid = -1;
-  static pid_t p_pid;
   int slotCnt = 0;
   static int waitProcess;
   // front() is the newest. back() is the oldest.
@@ -68,7 +67,6 @@ class LightSSS {
 
 public:
   LightSSS() { 
-      p_pid = getpid();
       signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
       signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
@@ -88,9 +86,6 @@ public:
   }
   bool get_notgood() {
     return forkshm.info->notgood;
-  }
-  pid_t get_p_pid() {
-    return p_pid;
   }
 };
 
