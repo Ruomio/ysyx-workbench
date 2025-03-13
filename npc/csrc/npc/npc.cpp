@@ -118,7 +118,7 @@ void init_npc(int argc, char **argv) {
       break;
     }
 #ifdef CONFIG_NVBOARD
-    nvboard_update();
+    if(top->clock == 1) nvboard_update();
 #endif
   }
   g_get_pc();
@@ -153,7 +153,7 @@ void exec_once_npc(uint32_t pc) {
     }
 #endif
 #ifdef CONFIG_NVBOARD
-    nvboard_update();
+    if(top->clock == 1) nvboard_update();
 #endif
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
