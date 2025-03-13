@@ -64,13 +64,6 @@ void ForkShareMemory::shwait() {
 void LightSSS::signal_handler(int signum) {
   if(p_pid != getpid()) exit(EXIT_FAILURE);
   forkshm.info->is_p_dead = true;
-  FORK_PRINTF("clear processes...\n")
-  while (!pidSlot.empty()) {
-    pid_t temp = pidSlot.back();
-    pidSlot.pop_back();
-    kill(temp, SIGKILL);
-    waitpid(temp, NULL, 0);
-  }
   exit(EXIT_FAILURE); // 退出当前进程
 }
 void LightSSS::signal_handler_abort(int signum) {
