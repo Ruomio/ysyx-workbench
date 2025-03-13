@@ -62,8 +62,9 @@ void ForkShareMemory::shwait() {
 }
 
 void LightSSS::signal_handler(int signum) {
-    forkshm.info->is_p_dead = true;
-    exit(EXIT_FAILURE); // 退出当前进程
+  if(p_pid != getpid()) exit(EXIT_FAILURE);
+  forkshm.info->is_p_dead = true;
+  exit(EXIT_FAILURE); // 退出当前进程
 }
 void LightSSS::signal_handler_abort(int signum) {
   if(p_pid != getpid()) exit(EXIT_FAILURE);
