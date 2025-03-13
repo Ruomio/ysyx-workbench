@@ -226,7 +226,7 @@ static void statistic() {
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
   if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
-  Log("total_cycles = " NUMBERIC_FMT "  IPC = 0." NUMBERIC_FMT, total_cycles, (g_nr_guest_inst * 1000000 / total_cycles)/10000 );
+  Log("total_cycles = " NUMBERIC_FMT "  IPC = 0." NUMBERIC_FMT, total_cycles, (g_nr_guest_inst * 100 / total_cycles));
 }
 
 void exec_npc(uint64_t n) {
