@@ -1,4 +1,5 @@
 #include "lightsss/lightsss.h"
+#include <cstdlib>
 #include <unistd.h>
 
 pid_t LightSSS::p_pid = -1;
@@ -65,7 +66,7 @@ void LightSSS::signal_handler(int signum) {
     exit(EXIT_FAILURE); // 退出当前进程
 }
 void LightSSS::signal_handler_abort(int signum) {
-  if(p_pid != getpid()) return;
+  if(p_pid != getpid()) exit(EXIT_FAILURE);
   if(pidSlot.empty()) return;
   FORK_PRINTF("handler abort signum: %d, pidSlot size: %ld\n", signum, pidSlot.size());
   forkshm.info->endCycles = -1;
