@@ -306,6 +306,7 @@ module ysyx_24080020_MEM(
                 || araddr >= 32'h10011000 && araddr < 32'h10011008
                 || araddr >= 32'h21000000 && araddr < 32'h21200000
                 || araddr >= 32'h02000000 && araddr < 32'h02000008
+                || araddr >= 32'hc0000000 && araddr < 32'hffffffff
                 ) begin
                 // skip uart keyboard etc.
                 npc_difftest_skip_ref();
@@ -410,6 +411,7 @@ module ysyx_24080020_MEM(
                 || awaddr >= 32'h10011000 && awaddr < 32'h10011008
                 || awaddr >= 32'h21000000 && awaddr < 32'h21200000 
                 || awaddr >= 32'h02000000 && awaddr < 32'h02000008
+                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
                 ) begin
                 // skip uart keyboard etc.
                 npc_difftest_skip_ref();
