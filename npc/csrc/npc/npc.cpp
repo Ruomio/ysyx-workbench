@@ -21,6 +21,8 @@
 #include <nvboard.h>
 
 void nvboard_bind_all_pins(TOP_NAME *top);
+void nvboard_update();
+void nvboard_quit();
 #endif
 
 
@@ -122,7 +124,6 @@ void init_npc(int argc, char **argv) {
     if(top->clock == 1) {
       total_cycles++;
 #ifdef CONFIG_NVBOARD
-      void nvboard_update();
       nvboard_update();
 #endif
     }
@@ -161,7 +162,6 @@ void exec_once_npc(uint32_t pc) {
     if(top->clock == 1) {
       total_cycles++;
 #ifdef CONFIG_NVBOARD
-      void nvboard_update();
       nvboard_update();
 #endif
     }
@@ -278,7 +278,6 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 #ifdef CONFIG_NVBOARD
-    void nvboard_quit();
     nvboard_quit();
 #endif
 
