@@ -52,6 +52,7 @@ static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
+static uint64_t total_cycles = 0;
 
 #ifdef CONFIG_LIGHTSSS
 // LightSSS
@@ -101,6 +102,7 @@ void init_npc(int argc, char **argv) {
   tfp->open("build/wave.vcd");
 #endif
 #ifdef CONFIG_NVBOARD
+  void nvboard_init();
   nvboard_bind_all_pins(top);
   nvboard_init();
 #endif
@@ -117,9 +119,13 @@ void init_npc(int argc, char **argv) {
       top->reset = 0;
       break;
     }
+    if(top->clock == 1) {
+      total_cycles++;
 #ifdef CONFIG_NVBOARD
-    if(top->clock == 1) nvboard_update();
+      void nvboard_update();
+      nvboard_update();
 #endif
+    }
   }
   g_get_pc();
 }
@@ -152,9 +158,13 @@ void exec_once_npc(uint32_t pc) {
       // total_wave_step++;
     }
 #endif
+    if(top->clock == 1) {
+      total_cycles++;
 #ifdef CONFIG_NVBOARD
-    if(top->clock == 1) nvboard_update();
+      void nvboard_update();
+      nvboard_update();
 #endif
+    }
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
@@ -268,6 +278,7 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 #ifdef CONFIG_NVBOARD
+    void nvboard_quit();
     nvboard_quit();
 #endif
 
