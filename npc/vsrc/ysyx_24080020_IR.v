@@ -43,6 +43,9 @@ module ysyx_24080020_IR(
         end
         else if(arready && arvalid) begin
             arvalid <= 1'b0;
+            `ifdef CONFIG_DPIC
+            statistics_ifu_get_inst();
+            `endif
         end
         else begin
             arvalid <= arvalid;
@@ -61,9 +64,6 @@ module ysyx_24080020_IR(
             inst_fin <= 1'b1;
 
             // rresp != 2'b0 : error
-            `ifdef CONFIG_DPIC
-            statistics_ifu_get_inst();
-            `endif
         end
         else begin
             rready <= 1'b0;
