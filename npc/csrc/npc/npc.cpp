@@ -21,6 +21,9 @@
 #include <nvboard.h>
 
 void nvboard_bind_all_pins(TOP_NAME *top);
+void nvboard_init(int);
+void nvboard_update();
+void nvboard_quit();
 #endif
 
 
@@ -52,6 +55,7 @@ static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
+static uint64_t total_cycles = 0;
 
 #ifdef CONFIG_LIGHTSSS
 // LightSSS
@@ -102,7 +106,7 @@ void init_npc(int argc, char **argv) {
 #endif
 #ifdef CONFIG_NVBOARD
   nvboard_bind_all_pins(top);
-  nvboard_init();
+  nvboard_init(1);
 #endif
   int i = 0;
   top->reset = 1;
@@ -117,9 +121,12 @@ void init_npc(int argc, char **argv) {
       top->reset = 0;
       break;
     }
+    if(top->clock == 1) {
+      total_cycles++;
 #ifdef CONFIG_NVBOARD
-    if(top->clock == 1) nvboard_update();
+      nvboard_update();
 #endif
+    }
   }
   g_get_pc();
 }
@@ -152,9 +159,12 @@ void exec_once_npc(uint32_t pc) {
       // total_wave_step++;
     }
 #endif
+    if(top->clock == 1) {
+      total_cycles++;
 #ifdef CONFIG_NVBOARD
-    if(top->clock == 1) nvboard_update();
+      nvboard_update();
 #endif
+    }
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
@@ -216,6 +226,7 @@ static void statistic() {
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
   if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+  Log("total_cycles = " NUMBERIC_FMT "  IPC = %lf", total_cycles, ((double)g_nr_guest_inst / total_cycles));
 }
 
 void exec_npc(uint64_t n) {
