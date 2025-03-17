@@ -1,3 +1,6 @@
+`define CONFIG_DPIC
+
+
 // `define ysyx_24080020_MBASE 32'h7ffffffc
 `define ysyx_24080020_MBASE 32'h30000000
 `define ysyx_24080020_WIDTH 32

@@ -69,6 +69,7 @@ module ysyx_24080020_EXU
     output reg exu_idu_ready,
     output reg exu_mem_valid
 );
+    import "DPI-C" function void statistics_exu_complete_calcu();
 
     wire [`ysyx_24080020_WIDTH-1:0] alu_src1;
     wire [`ysyx_24080020_WIDTH-1:0] alu_src2;
@@ -176,6 +177,7 @@ module ysyx_24080020_EXU
         end
         else if(mem_exu_ready && state) begin
             exu_mem_valid <= 1'b0;
+            statistics_exu_complete_calcu();
         end
         else begin
             // exu_mem_valid <= 1'b1;

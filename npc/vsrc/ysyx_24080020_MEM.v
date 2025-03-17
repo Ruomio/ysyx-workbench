@@ -87,6 +87,7 @@ module ysyx_24080020_MEM(
 
 );
     import "DPI-C" function void npc_difftest_skip_ref();
+    import "DPI-C" function void statistics_lsu_get_data();
 
     reg mren_mem;
     reg mwen_mem;
@@ -369,6 +370,7 @@ module ysyx_24080020_MEM(
                 end
                 arlen_cnt <= 1'b0;
                 mem_wb_valid <= 1'b1;
+                statistics_lsu_get_data();
             end
         end
         else if(rvalid && !rlast) begin
