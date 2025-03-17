@@ -262,6 +262,7 @@ module ysyx_24080020_IDU (
                 endcase
                 `ifdef CONFIG_DPIC
                 statistics_idu_load_store_type();
+                $error(" ");
                 `endif
             end
 
