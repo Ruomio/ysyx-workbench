@@ -25,7 +25,9 @@ module ysyx_24080020_IR(
     output reg rready
 
 );
+    `ifdef CONFIG_DPIC
     import "DPI-C" function void statistics_ifu_get_inst();
+    `endif
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -59,7 +61,9 @@ module ysyx_24080020_IR(
             inst_fin <= 1'b1;
 
             // rresp != 2'b0 : error
+            `ifdef CONFIG_DPIC
             statistics_ifu_get_inst();
+            `endif
         end
         else begin
             rready <= 1'b0;

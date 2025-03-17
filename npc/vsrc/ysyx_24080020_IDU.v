@@ -57,6 +57,7 @@ module ysyx_24080020_IDU (
     output reg idu_exu_valid
 
 );
+`ifdef CONFIG_DPIC
     import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
@@ -66,6 +67,7 @@ module ysyx_24080020_IDU (
     import "DPI-C" function void statistics_idu_load_store_type();
     import "DPI-C" function void statistics_idu_csr_type();
     import "DPI-C" function void statistics_idu_jump_type();
+`endif
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
@@ -252,7 +254,9 @@ module ysyx_24080020_IDU (
                     default: begin
                         mren_idu = 1'b0;
                         wen_idu = 1'b0;
+                        `ifdef CONFIG_DPIC
                         invalid_inst();
+                        `endif
                     end
 
                 endcase
@@ -329,7 +333,9 @@ module ysyx_24080020_IDU (
                     end
 
                     default: begin
+                        `ifdef CONFIG_DPIC
                         invalid_inst();
+                        `endif
                     end
 
                 endcase
@@ -405,7 +411,9 @@ module ysyx_24080020_IDU (
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
                         if(imm_idu == 32'b1) begin
+                            `ifdef CONFIG_DPIC
                             ebreak();
+                            `endif
                         end
                         else if(imm_idu == 32'b0) begin
                             // ecall
@@ -424,8 +432,9 @@ module ysyx_24080020_IDU (
                             dnpc_idu = rcsrdata;
 
                             is_dnpc_idu = 1'b1;
-
+                            `ifdef CONFIG_DPIC
                             npc_difftest_skip_ref();
+                            `endif
                         end
                         else if(imm_idu == 32'b1100000010) begin
                             // mret
@@ -433,12 +442,15 @@ module ysyx_24080020_IDU (
                             dnpc_idu = rcsrdata;
                             is_dnpc_idu = 1'b1;
 
-
+                            `ifdef CONFIG_DPIC
                             npc_difftest_skip_ref();
+                            `endif
                         end
                         else begin
                             is_csrtype_idu = 1'b0;
+                            `ifdef CONFIG_DPIC
                             invalid_inst();
+                            `endif
                         end
                     end
 
@@ -452,8 +464,9 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
-
+                        `ifdef CONFIG_DPIC
                         npc_difftest_skip_ref();
+                        `endif
                     end
                     `ysyx_24080020_CSRRS: begin
                         rcsraddr = imm_idu[11:0];
@@ -467,13 +480,16 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
-
+                        `ifdef CONFIG_DPIC
                         npc_difftest_skip_ref();
+                        `endif
                     end
 
                     default: begin
                         is_csrtype_idu = 1'b0;
+                        `ifdef CONFIG_DPIC
                         invalid_inst();
+                        `endif
                     end
 
                 endcase
@@ -499,9 +515,13 @@ module ysyx_24080020_IDU (
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
 
+                `ifdef CONFIG_DPIC
                 update_ftrace_dpi();
+                `endif
                 if(imm_idu == 32'b0) begin
+                    `ifdef CONFIG_DPIC
                     halt();
+                    `endif
                 end
                 `ifdef CONFIG_DPIC
                 statistics_idu_jump_type();
@@ -578,7 +598,9 @@ module ysyx_24080020_IDU (
 
             default: begin
                 imm_idu = 32'b0;
+                `ifdef CONFIG_DPIC
                 invalid_inst();
+                `endif
             end
         endcase
     end
