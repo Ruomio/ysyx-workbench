@@ -147,7 +147,7 @@ module ysyx_24080020_IDU (
 
 
 
-    always @(inst_idu or val_raddr1 or val_raddr2 or rcsrdata) begin
+    always @(inst_idu or rs1 or rs2 or rcsrdata) begin
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
@@ -262,7 +262,7 @@ module ysyx_24080020_IDU (
                 endcase
                 `ifdef CONFIG_DPIC
                 statistics_idu_load_store_type();
-                $error(" ");
+                // $error(" ");
                 `endif
             end
 
