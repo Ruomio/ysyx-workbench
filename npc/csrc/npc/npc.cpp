@@ -252,9 +252,9 @@ static void statistic() {
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
   Log("idu_calcu_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_calculate_type_cnt, idu_calculate_type_cnt * 100.0 / ifu_get_inst_cnt, idu_calculate_cycles / idu_calculate_type_cnt);
-  Log("idu_load_store_type_cnt = " NUMBERIC_FMT "Percentage: %.2f%%  Average: %ld", idu_load_store_type_cnt, idu_load_store_type_cnt * 100.0 / ifu_get_inst_cnt, idu_load_store_cycles / idu_load_store_type_cnt);
-  Log("idu_csr_type_cnt = " NUMBERIC_FMT "Percentage: %.2f%%,  Average: %ld", idu_csr_type_cnt, idu_csr_type_cnt * 100.0 / ifu_get_inst_cnt, idu_csr_cycles / idu_csr_type_cnt);
-  Log("idu_jump_type_cnt = " NUMBERIC_FMT "Percentage: %.2f%%,  Average: %ld", idu_jump_type_cnt, idu_jump_type_cnt * 100.0 / ifu_get_inst_cnt, idu_jump_cycles / idu_jump_type_cnt);
+  Log("idu_load_store_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_load_store_type_cnt, idu_load_store_type_cnt * 100.0 / ifu_get_inst_cnt, idu_load_store_cycles / idu_load_store_type_cnt);
+  Log("idu_csr_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%,  Average: %ld", idu_csr_type_cnt, idu_csr_type_cnt * 100.0 / ifu_get_inst_cnt, idu_csr_cycles / idu_csr_type_cnt);
+  Log("idu_jump_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%,  Average: %ld", idu_jump_type_cnt, idu_jump_type_cnt * 100.0 / ifu_get_inst_cnt, idu_jump_cycles / idu_jump_type_cnt);
 }
 
 void exec_npc(uint64_t n) {
