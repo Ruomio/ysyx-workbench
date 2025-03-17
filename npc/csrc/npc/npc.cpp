@@ -59,7 +59,7 @@ static uint64_t total_cycles = 0;
 static uint64_t ifu_get_inst_cnt = 0;
 static uint64_t lsu_get_data_cnt = 0;
 static uint64_t exu_complete_calcu_cnt = 0;
-static uint64_t idu_caculate_type_cnt = 0;
+static uint64_t idu_calculate_type_cnt = 0;
 static uint64_t idu_load_store_type_cnt = 0;
 static uint64_t idu_csr_type_cnt = 0;
 static uint64_t idu_jump_type_cnt = 0;
@@ -237,7 +237,7 @@ static void statistic() {
   Log("ifu_get_inst_cnt = " NUMBERIC_FMT, ifu_get_inst_cnt);
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
-  Log("idu_calcu_type_cnt = " NUMBERIC_FMT, idu_caculate_type_cnt);
+  Log("idu_calcu_type_cnt = " NUMBERIC_FMT, idu_calculate_type_cnt);
   Log("idu_load_store_type_cnt = " NUMBERIC_FMT, idu_load_store_type_cnt);
   Log("idu_csr_type_cnt = " NUMBERIC_FMT, idu_csr_type_cnt);
   Log("idu_jump_type_cnt = " NUMBERIC_FMT, idu_jump_type_cnt);
@@ -450,7 +450,7 @@ extern "C" void statistics_exu_complete_calcu() {
 
 extern "C" void statistics_idu_calculate_type() {
   printf("idu_calculate_type_cnt: %ld  pc: 0x%x \n", idu_calculate_type_cnt, g_pc);
-  idu_caculate_type_cnt ++;
+  idu_calculate_type_cnt ++;
 }
 
 extern "C" void statistics_idu_load_store_type() {
