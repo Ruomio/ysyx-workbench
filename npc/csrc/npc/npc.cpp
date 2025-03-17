@@ -449,11 +449,12 @@ extern "C" void statistics_exu_complete_calcu() {
 }
 
 extern "C" void statistics_idu_calculate_type() {
+  printf("idu_calculate_type_cnt: %ld  pc: 0x%x \n", idu_calculate_type_cnt, g_pc);
   idu_caculate_type_cnt ++;
 }
 
 extern "C" void statistics_idu_load_store_type() {
-  printf("idu_load_store_cnt: %ld  pc: 0x%x \n", idu_load_store_type_cnt, g_pc);
+  // printf("idu_load_store_cnt: %ld  pc: 0x%x \n", idu_load_store_type_cnt, g_pc);
   idu_load_store_type_cnt ++;
 }
 
