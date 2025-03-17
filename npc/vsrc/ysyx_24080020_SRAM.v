@@ -26,9 +26,11 @@ module ysyx_24080020_SRAM(
     output reg bvalid,
     input bready
 );
+`ifdef CONFIG_DPIC
     import "DPI-C" function void printf_info();
     import "DPI-C" function int read_memory(input int addr, input int len);
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
+`endif
 
     reg [`ysyx_24080020_WIDTH-1:0] paddr;
     reg [`ysyx_24080020_WIDTH-1:0] write_data;
@@ -82,8 +84,10 @@ module ysyx_24080020_SRAM(
                 r_cnt <= r_cnt + 6'b1;
             end
             else begin
+                `ifdef CONFIG_DPIC
                 // printf_info();
                 rdata <= read_memory(paddr, 32'd4);
+                `endif
                 if(wvalid) begin
                     read_before_write <= 1'b1;
                     rvalid <= 1'b0;
@@ -152,7 +156,9 @@ module ysyx_24080020_SRAM(
                     write_en <= 1'b1;
                 end
                 else if(!wready) begin
+                    `ifdef CONFIG_DPIC
                     write_memory(paddr, 32'd4, write_data);
+                    `endif
                     b_en <= 1'b1;
 
                     wready <= 1'b1;

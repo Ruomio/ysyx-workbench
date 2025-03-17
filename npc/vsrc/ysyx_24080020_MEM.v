@@ -86,7 +86,10 @@ module ysyx_24080020_MEM(
     output reg mem_wb_valid
 
 );
+`ifdef CONFIG_DPIC
     import "DPI-C" function void npc_difftest_skip_ref();
+    import "DPI-C" function void statistics_lsu_get_data();
+`endif
 
     reg mren_mem;
     reg mwen_mem;
@@ -309,7 +312,9 @@ module ysyx_24080020_MEM(
                 || araddr >= 32'hc0000000 && araddr < 32'hffffffff
                 ) begin
                 // skip uart keyboard etc.
+                `ifdef CONFIG_DPIC
                 npc_difftest_skip_ref();
+                `endif
             end
             else begin
                 tmp <= 1'b0;
@@ -369,6 +374,9 @@ module ysyx_24080020_MEM(
                 end
                 arlen_cnt <= 1'b0;
                 mem_wb_valid <= 1'b1;
+                `ifdef CONFIG_DPIC
+                statistics_lsu_get_data();
+                `endif
             end
         end
         else if(rvalid && !rlast) begin
@@ -414,7 +422,9 @@ module ysyx_24080020_MEM(
                 || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
                 ) begin
                 // skip uart keyboard etc.
+                `ifdef CONFIG_DPIC
                 npc_difftest_skip_ref();
+                `endif
             end
             else begin
                 tmp <= 1'b0;

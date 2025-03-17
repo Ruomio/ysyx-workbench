@@ -57,11 +57,17 @@ module ysyx_24080020_IDU (
     output reg idu_exu_valid
 
 );
+`ifdef CONFIG_DPIC
     import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
     import "DPI-C" function void npc_difftest_skip_ref();
+    import "DPI-C" function void statistics_idu_calculate_type();
+    import "DPI-C" function void statistics_idu_load_store_type();
+    import "DPI-C" function void statistics_idu_csr_type();
+    import "DPI-C" function void statistics_idu_jump_type();
+`endif
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
@@ -141,7 +147,7 @@ module ysyx_24080020_IDU (
 
 
 
-    always @(inst_idu or val_raddr1 or val_raddr2 or rcsrdata) begin
+    always @(inst_idu or rs1 or rs2 or rcsrdata) begin
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
@@ -200,6 +206,9 @@ module ysyx_24080020_IDU (
                         wen_idu = 1'b0;
                     end
                 endcase
+                `ifdef CONFIG_DPIC
+                statistics_idu_calculate_type();
+                `endif
             end
 
             `ysyx_24080020_I_TYPEI: begin
@@ -245,10 +254,16 @@ module ysyx_24080020_IDU (
                     default: begin
                         mren_idu = 1'b0;
                         wen_idu = 1'b0;
+                        `ifdef CONFIG_DPIC
                         invalid_inst();
+                        `endif
                     end
 
                 endcase
+                `ifdef CONFIG_DPIC
+                statistics_idu_load_store_type();
+                // $error(" ");
+                `endif
             end
 
             `ysyx_24080020_S_TYPE: begin
@@ -278,6 +293,9 @@ module ysyx_24080020_IDU (
                     end
 
                 endcase
+                `ifdef CONFIG_DPIC
+                statistics_idu_load_store_type();
+                `endif
             end
 
             `ysyx_24080020_B_TYPE: begin
@@ -316,11 +334,16 @@ module ysyx_24080020_IDU (
                     end
 
                     default: begin
+                        `ifdef CONFIG_DPIC
                         invalid_inst();
+                        `endif
                     end
 
                 endcase
 
+                `ifdef CONFIG_DPIC
+                statistics_idu_jump_type();
+                `endif
 
             end
 
@@ -367,6 +390,9 @@ module ysyx_24080020_IDU (
 
                 endcase
 
+                `ifdef CONFIG_DPIC
+                statistics_idu_calculate_type();
+                `endif
 
             end
 
@@ -386,7 +412,9 @@ module ysyx_24080020_IDU (
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
                         if(imm_idu == 32'b1) begin
+                            `ifdef CONFIG_DPIC
                             ebreak();
+                            `endif
                         end
                         else if(imm_idu == 32'b0) begin
                             // ecall
@@ -405,8 +433,9 @@ module ysyx_24080020_IDU (
                             dnpc_idu = rcsrdata;
 
                             is_dnpc_idu = 1'b1;
-
+                            `ifdef CONFIG_DPIC
                             npc_difftest_skip_ref();
+                            `endif
                         end
                         else if(imm_idu == 32'b1100000010) begin
                             // mret
@@ -414,12 +443,15 @@ module ysyx_24080020_IDU (
                             dnpc_idu = rcsrdata;
                             is_dnpc_idu = 1'b1;
 
-
+                            `ifdef CONFIG_DPIC
                             npc_difftest_skip_ref();
+                            `endif
                         end
                         else begin
                             is_csrtype_idu = 1'b0;
+                            `ifdef CONFIG_DPIC
                             invalid_inst();
+                            `endif
                         end
                     end
 
@@ -433,8 +465,9 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
-
+                        `ifdef CONFIG_DPIC
                         npc_difftest_skip_ref();
+                        `endif
                     end
                     `ysyx_24080020_CSRRS: begin
                         rcsraddr = imm_idu[11:0];
@@ -448,16 +481,23 @@ module ysyx_24080020_IDU (
                         waddr_idu = rd;
                         wdata_idu = rcsrdata;
                         wen_idu = 1'b1;
-
+                        `ifdef CONFIG_DPIC
                         npc_difftest_skip_ref();
+                        `endif
                     end
 
                     default: begin
                         is_csrtype_idu = 1'b0;
+                        `ifdef CONFIG_DPIC
                         invalid_inst();
+                        `endif
                     end
 
                 endcase
+
+                `ifdef CONFIG_DPIC
+                statistics_idu_csr_type();
+                `endif
 
             end
 
@@ -476,10 +516,17 @@ module ysyx_24080020_IDU (
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
 
+                `ifdef CONFIG_DPIC
                 update_ftrace_dpi();
+                `endif
                 if(imm_idu == 32'b0) begin
+                    `ifdef CONFIG_DPIC
                     halt();
+                    `endif
                 end
+                `ifdef CONFIG_DPIC
+                statistics_idu_jump_type();
+                `endif
             end
 
             `ysyx_24080020_JALR: begin
@@ -500,6 +547,9 @@ module ysyx_24080020_IDU (
 
                 is_jalr_idu = 1'b1;
                 // update_ftrace_dpi();
+                `ifdef CONFIG_DPIC
+                statistics_idu_jump_type();
+                `endif
             end
 
             `ysyx_24080020_AUIPC: begin
@@ -516,6 +566,9 @@ module ysyx_24080020_IDU (
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
 
+                `ifdef CONFIG_DPIC
+                statistics_idu_calculate_type();
+                `endif
             end
             `ysyx_24080020_LUI: begin
                 imm_idu = {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
@@ -530,6 +583,9 @@ module ysyx_24080020_IDU (
                 src1_idu = 32'b0;
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
+                `ifdef CONFIG_DPIC
+                statistics_idu_calculate_type();
+                `endif
             end
 
             // rst
@@ -543,7 +599,9 @@ module ysyx_24080020_IDU (
 
             default: begin
                 imm_idu = 32'b0;
+                `ifdef CONFIG_DPIC
                 invalid_inst();
+                `endif
             end
         endcase
     end

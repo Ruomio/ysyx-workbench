@@ -25,6 +25,9 @@ module ysyx_24080020_IR(
     output reg rready
 
 );
+    `ifdef CONFIG_DPIC
+    import "DPI-C" function void statistics_ifu_get_inst();
+    `endif
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -40,6 +43,9 @@ module ysyx_24080020_IR(
         end
         else if(arready && arvalid) begin
             arvalid <= 1'b0;
+            `ifdef CONFIG_DPIC
+            statistics_ifu_get_inst();
+            `endif
         end
         else begin
             arvalid <= arvalid;
