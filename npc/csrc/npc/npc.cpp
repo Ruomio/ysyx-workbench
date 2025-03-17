@@ -1,7 +1,6 @@
 #include <cstdint>
 #include <readline/chardefs.h>
 #include <stdbool.h>
-#include <stdint.h>
 #include "VysyxSoCFull.h"
 #include "VysyxSoCFull___024root.h"
 #include "define.h"
@@ -63,6 +62,13 @@ static uint64_t idu_calculate_type_cnt = 0;
 static uint64_t idu_load_store_type_cnt = 0;
 static uint64_t idu_csr_type_cnt = 0;
 static uint64_t idu_jump_type_cnt = 0;
+
+enum idu_type{None=0, Calculate=1, LoadStore=2, CSR=3, Jump=4};
+static int idu_type = None;
+static uint64_t idu_calculate_cycles = 0;
+static uint64_t idu_load_store_cycles = 0;
+static uint64_t idu_csr_cycles = 0;
+static uint64_t idu_jump_cycles = 0;
 
 #ifdef CONFIG_LIGHTSSS
 // LightSSS
@@ -171,6 +177,14 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_NVBOARD
       nvboard_update();
 #endif
+      switch(idu_type) {
+        case None: break;
+        case Calculate: idu_calculate_cycles++; break;
+        case LoadStore: idu_load_store_cycles++; break;
+        case CSR: idu_csr_cycles++; break;
+        case Jump: idu_jump_cycles++; break;
+        default: break;
+      }
     }
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
@@ -237,10 +251,10 @@ static void statistic() {
   Log("ifu_get_inst_cnt = " NUMBERIC_FMT, ifu_get_inst_cnt);
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
-  Log("idu_calcu_type_cnt = " NUMBERIC_FMT, idu_calculate_type_cnt);
-  Log("idu_load_store_type_cnt = " NUMBERIC_FMT, idu_load_store_type_cnt);
-  Log("idu_csr_type_cnt = " NUMBERIC_FMT, idu_csr_type_cnt);
-  Log("idu_jump_type_cnt = " NUMBERIC_FMT, idu_jump_type_cnt);
+  Log("idu_calcu_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld \n", idu_calculate_type_cnt, idu_calculate_type_cnt * 100.0 / ifu_get_inst_cnt, idu_calculate_cycles / idu_calculate_type_cnt);
+  Log("idu_load_store_type_cnt = " NUMBERIC_FMT "Percentage: %.2f%%  Average: %ld \n", idu_load_store_type_cnt, idu_load_store_type_cnt * 100.0 / ifu_get_inst_cnt, idu_load_store_cycles / idu_load_store_type_cnt);
+  Log("idu_csr_type_cnt = " NUMBERIC_FMT "Percentage: %.2f%%,  Average: %ld \n", idu_csr_type_cnt, idu_csr_type_cnt * 100.0 / ifu_get_inst_cnt, idu_csr_cycles / idu_csr_type_cnt);
+  Log("idu_jump_type_cnt = " NUMBERIC_FMT "Percentage: %.2f%%,  Average: %ld \n", idu_jump_type_cnt, idu_jump_type_cnt * 100.0 / ifu_get_inst_cnt, idu_jump_cycles / idu_jump_type_cnt);
 }
 
 void exec_npc(uint64_t n) {
@@ -437,7 +451,7 @@ extern "C" void npc_difftest_skip_ref() {
 }
 
 extern "C" void statistics_ifu_get_inst() {
-  printf("ifu_get_inst_cnt: %ld pc: 0x%x , total_guest_inst: 0x%ld\n", ifu_get_inst_cnt, g_pc, g_nr_guest_inst);
+  // printf("ifu_get_inst_cnt: %ld pc: 0x%x , total_guest_inst: 0x%ld\n", ifu_get_inst_cnt, g_pc, g_nr_guest_inst);
   ifu_get_inst_cnt ++;
 }
 
@@ -451,19 +465,23 @@ extern "C" void statistics_exu_complete_calcu() {
 
 extern "C" void statistics_idu_calculate_type() {
   // printf("idu_calculate_type_cnt: %ld  pc: 0x%x \n", idu_calculate_type_cnt, g_pc);
+  idu_type = Calculate;
   idu_calculate_type_cnt ++;
 }
 
 extern "C" void statistics_idu_load_store_type() {
   // printf("idu_load_store_cnt: %ld  pc: 0x%x \n", idu_load_store_type_cnt, g_pc);
+  idu_type = LoadStore;
   idu_load_store_type_cnt ++;
 }
 
 extern "C" void statistics_idu_csr_type() {
   // printf("idu_calculate_type_cnt: %ld  pc: 0x%x \n", idu_calculate_type_cnt, g_pc);
+  idu_type = CSR;
   idu_csr_type_cnt ++;
 }
 
 extern "C" void statistics_idu_jump_type() {
+  idu_type = Jump;
   idu_jump_type_cnt ++;
 }
