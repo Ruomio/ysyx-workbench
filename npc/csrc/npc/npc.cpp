@@ -437,7 +437,7 @@ extern "C" void npc_difftest_skip_ref() {
 }
 
 extern "C" void statistics_ifu_get_inst() {
-  printf("ifu_get_inst_cnt: %ld pc: 0x%x \n", ifu_get_inst_cnt, g_pc);
+  printf("ifu_get_inst_cnt: %ld pc: 0x%x , total_guest_inst: 0x%ld\n", ifu_get_inst_cnt, g_pc, total_cycles);
   ifu_get_inst_cnt ++;
 }
 
