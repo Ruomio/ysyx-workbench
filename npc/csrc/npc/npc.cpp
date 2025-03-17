@@ -137,7 +137,7 @@ void init_npc(int argc, char **argv) {
     if(top->clock == 1) {
       total_cycles++;
 #ifdef CONFIG_NVBOARD
-      nvboard_update();
+      // nvboard_update();
 #endif
     }
   }
