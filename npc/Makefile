@@ -73,7 +73,7 @@ override IMG +=
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
-CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
+CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA) -D CONFIG_DPIC
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH))
 
