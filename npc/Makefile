@@ -135,7 +135,7 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY: all clean gtkwave sim nvboard run
+.PHONY: all clean gtkwave sim nvboard run perf
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
