@@ -117,6 +117,7 @@ perf:
 	$(call git_commit, "perf NPC")
 	@if make -s -f $(AM_HOME)/../yosys-sta/Makefile sta PROJ_PATH=$(AM_HOME)/../yosys-sta ;then \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -A 8 "Endpoint" ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\ysyx_24080020'" ; \
 	fi
 
 gtkwave: $(VCD_FILE)
