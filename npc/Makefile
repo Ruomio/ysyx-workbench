@@ -115,7 +115,7 @@ endif
 
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
-	@make -s -f $(AM_HOME)../yosys-sta/makefile sta
+	@make -s -f $(AM_HOME)../yosys-sta/Makefile sta
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
