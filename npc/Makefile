@@ -113,6 +113,10 @@ $(BIN): $(VSRC) $(CSRC) $(HSRC)
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 endif
 
+perf: $(BIN)
+	$(call git_commit, "perf NPC")
+	@make -s -f $(AM_HOME)../makefile sta
+
 gtkwave: $(VCD_FILE)
 	gtkwave $^
 
