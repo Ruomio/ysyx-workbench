@@ -75,7 +75,7 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
-VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH))
+VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC 
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
@@ -100,14 +100,14 @@ sim:
 ifdef CONFIG_NVBOARD
 $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@$(VERILATOR) $(VERILATOR_CFLAGS) -DCONFIG_DPIC \
+	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(NVBOARD_ARCHIVE) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
 $(BIN): $(VSRC) $(CSRC) $(HSRC)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-	@$(VERILATOR) $(VERILATOR_CFLAGS) -DCONFIG_DPIC  \
+	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
