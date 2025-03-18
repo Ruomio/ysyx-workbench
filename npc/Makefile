@@ -75,7 +75,7 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
-VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC
+VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH))
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
@@ -98,6 +98,7 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifdef CONFIG_NVBOARD
+# VERILATOR_CFLAGS  += -DCONFIG_DPIC
 $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
