@@ -101,6 +101,7 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             wb_ifu_shake_hands <= 1'b0;
             is_dnpc <= 1'b0;
+            dnpc <= 32'b0;
         end
         else if(wb_ifu_shake_hands) begin
             // update
