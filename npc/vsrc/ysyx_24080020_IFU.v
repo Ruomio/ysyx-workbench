@@ -102,24 +102,24 @@ module ysyx_24080020_IFU (
         end
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            wb_ifu_shake_hands <= 1'b0;
-        end
-        else if(wb_ifu_shake_hands) begin
-            // update
-            dnpc <= dnpc_wb;
-            is_dnpc <= is_dnpc_wb;
-            is_update_pc <= 1'b1;
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         wb_ifu_shake_hands <= 1'b0;
+    //     end
+    //     else if(wb_ifu_shake_hands) begin
+    //         // update
+    //         dnpc <= dnpc_wb;
+    //         is_dnpc <= is_dnpc_wb;
+    //         is_update_pc <= 1'b1;
 
-            wb_ifu_shake_hands <= 1'b0;
-        end
-        else begin
-            wb_ifu_shake_hands <= 1'b0;
-            is_update_pc <= 1'b0;
-        end
+    //         wb_ifu_shake_hands <= 1'b0;
+    //     end
+    //     else begin
+    //         wb_ifu_shake_hands <= 1'b0;
+    //         is_update_pc <= 1'b0;
+    //     end
 
-    end
+    // end
 
 
     ysyx_24080020_PC u_pc(
