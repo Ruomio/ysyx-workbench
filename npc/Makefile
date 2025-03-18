@@ -116,7 +116,7 @@ endif
 perf:
 	$(call git_commit, "perf NPC")
 	@if make -f $(AM_HOME)/../yosys-sta/Makefile sta PROJ_PATH=$(AM_HOME)/../yosys-sta ;then \
-		cat $(AM_HOME)/../yosys-sta/result/ysyxSoCFull-500MHz/ysyxSoCFull.rpt | grep -A 8 "Endpoint" ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyxSoCFull-500MHz/sta.log | grep -A 8 "Endpoint" ; \
 	fi
 
 gtkwave: $(VCD_FILE)
