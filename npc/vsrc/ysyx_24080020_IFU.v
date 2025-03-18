@@ -79,21 +79,26 @@ module ysyx_24080020_IFU (
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
                 ifu_wb_ready <= 1'b0;
+                is_update_pc <= 1'b0;
             end
             else begin
                 // shake hands
                 ifu_wb_ready <= 1'b1;
 
-                wb_ifu_shake_hands <= 1'b1;
+                // wb_ifu_shake_hands <= 1'b1;
+                is_dnpc <= is_dnpc_wb;
+                is_update_pc <= 1'b1;
 
             end
         end
         else if(idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
+            is_update_pc <= 1'b0;
         end
         else begin
             // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
+            is_update_pc <= 1'b0;
         end
     end
 
