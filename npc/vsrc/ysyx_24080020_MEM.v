@@ -115,7 +115,10 @@ module ysyx_24080020_MEM(
     wire [3:0] wstrb_1, wstrb_2;
     wire [31:0] wdata_1, wdata_2;
 
-    assign arsize = $clog2(mrlen_mem)[2:0];
+    assign arsize = mrlen_mem == 'b0001 ? 3'b000 :
+                    mrlen_mem == 'b0010 ? 3'b001 :
+                    mrlen_mem == 'b0100 ? 3'b010 :
+                    3'b000;
     assign araddr = mraddr_mem;
     assign arburst = 2'b1;
     assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
@@ -140,7 +143,10 @@ module ysyx_24080020_MEM(
 
 
     assign awburst = 2'b1;
-    assign awsize = $clog2(mwmask_mem)[2:0];
+    assign awsize = mwmask_mem == 'b0001 ? 3'b000 :
+                    mwaddr_mem == 'b0010 ? 3'b001 :
+                    mwaddr_mem == 'b0100 ? 3'b010 :
+                    3'b000;
     assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem) > 4'b100 ? 1'b1 : 1'b0;
     assign awaddr = mwaddr_mem;
     assign wdata_1 =  wstrb_1 == 4'b1111 ? mwdata_mem :
@@ -340,7 +346,9 @@ module ysyx_24080020_MEM(
 
             if(rresp != 2'b0) begin
                 // rresp fault;
+                `ifdef CONFIG_DPIC
                 $display("rresp not be 0b00, ERROR");
+                `endif
             end
             else begin
                 if(arlen_cnt == 1'b0) begin
@@ -390,8 +398,10 @@ module ysyx_24080020_MEM(
             else begin
                 // read error
                 mrdata_mem <= 32'hffffffff;
-                $display("rresp not be 0b00, ERROR");
                 mem_wb_valid <= 1'b1;
+                `ifdef CONFIG_DPIC
+                $display("rresp not be 0b00, ERROR");
+                `endif
             end
         end
         else begin
@@ -500,7 +510,9 @@ module ysyx_24080020_MEM(
             // b_fin <= 1'b1;
             mem_wb_valid <= 1'b1;
             if(bresp != 2'b0) begin
+                `ifdef CONFIG_DPIC
                 $display("the bresp are not 2'b0");
+                `endif
             end
             else begin
                 tmp <= 1'b0;

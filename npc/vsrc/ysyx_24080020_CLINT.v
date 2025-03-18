@@ -99,7 +99,9 @@ module ysyx_24080020_CLINT(
         end
         else if(awvalid) begin
             awready <= 1'b1;
+            `ifdef CONFIG_DPIC
             $display("clint should not be writen, NOW!");
+            `endif
         end
         else begin
             awready <= 1'b0;

@@ -35,7 +35,9 @@ module ysyx_24080020_UART(
         end
         else begin
             if(arvalid) begin
+                `ifdef CONFIG_DPIC
                 $display("UART should not be read, NOW!");
+                `endif
                 arready <= 1'b1;
                 ren <= 1'b1;
             end
