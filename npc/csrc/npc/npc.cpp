@@ -1,6 +1,4 @@
-#include <cstdint>
 #include <readline/chardefs.h>
-#include <stdbool.h>
 #include "VysyxSoCFull.h"
 #include "VysyxSoCFull___024root.h"
 #include "define.h"
