@@ -42,7 +42,6 @@ module ysyx_24080020_PC (
     always @(posedge clk) begin
         if(!rst) begin
             addr <= `ysyx_24080020_MBASE;
-            cnt <= 1'b0;
             first_if <= 1'b0;
         end
         else if(is_update_pc) begin
