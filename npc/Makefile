@@ -113,7 +113,7 @@ $(BIN): $(VSRC) $(CSRC) $(HSRC)
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 endif
 
-perf: $(BIN)
+perf:
 	$(call git_commit, "perf NPC")
 	@make -f $(AM_HOME)/../yosys-sta/Makefile sta PROJ_PATH=$(AM_HOME)/../yosys-sta
 
