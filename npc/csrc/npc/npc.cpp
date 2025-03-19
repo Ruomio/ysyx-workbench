@@ -181,7 +181,7 @@ void exec_once_npc(uint32_t pc) {
         case None: break;
         case Calculate: idu_calculate_cycles++; break;
         case Load: idu_load_cycles++; break;
-        case Store: idu_load_cycles++; break;
+        case Store: idu_store_cycles++; break;
         case CSR: idu_csr_cycles++; break;
         case Jump: idu_jump_cycles++; break;
         default: break;
