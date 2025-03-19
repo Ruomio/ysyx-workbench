@@ -75,7 +75,7 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
-VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH))
+VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC 
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
@@ -113,6 +113,17 @@ $(BIN): $(VSRC) $(CSRC) $(HSRC)
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 endif
 
+perf: $(BIN)
+	$(call git_commit, "perf NPC")
+	@if make -s -C $(AM_HOME)/../yosys-sta sta  > /dev/null ;then \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" ; \
+		echo "" ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" ; \
+	fi
+	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
+		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
+		| grep "\\[.* statistic\\]"
+
 gtkwave: $(VCD_FILE)
 	gtkwave $^
 
@@ -131,7 +142,7 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY: all clean gtkwave sim nvboard run
+.PHONY: all clean gtkwave sim nvboard run perf
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
