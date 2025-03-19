@@ -64,7 +64,8 @@ module ysyx_24080020_IDU (
     import "DPI-C" function void update_ftrace_dpi();
     import "DPI-C" function void npc_difftest_skip_ref();
     import "DPI-C" function void statistics_idu_calculate_type();
-    import "DPI-C" function void statistics_idu_load_store_type();
+    import "DPI-C" function void statistics_idu_load_type();
+    import "DPI-C" function void statistics_idu_store_type();
     import "DPI-C" function void statistics_idu_csr_type();
     import "DPI-C" function void statistics_idu_jump_type();
 `endif
@@ -261,7 +262,7 @@ module ysyx_24080020_IDU (
 
                 endcase
                 `ifdef CONFIG_DPIC
-                statistics_idu_load_store_type();
+                statistics_idu_load_type();
                 // $error(" ");
                 `endif
             end
@@ -294,7 +295,7 @@ module ysyx_24080020_IDU (
 
                 endcase
                 `ifdef CONFIG_DPIC
-                statistics_idu_load_store_type();
+                statistics_idu_store_type();
                 `endif
             end
 
