@@ -115,7 +115,7 @@ endif
 
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
-	@if make -s -f $(AM_HOME)/../yosys-sta/Makefile sta PROJ_PATH=$(AM_HOME)/../yosys-sta > /dev/null ;then \
+	@if make -s -C $(AM_HOME)/../yosys-sta/Makefile sta PROJ_PATH=$(AM_HOME)/../yosys-sta > /dev/null ;then \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" ; \
 		echo "" ; \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" ; \
