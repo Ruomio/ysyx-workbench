@@ -1,4 +1,4 @@
-`define CONFIG_DPIC
+// `define CONFIG_DPIC // define in makefile
 
 
 // `define ysyx_24080020_MBASE 32'h7ffffffc
