@@ -120,9 +120,7 @@ perf: $(BIN)
 		echo "" ; \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" ; \
 	fi
-	@make -s -f $(AM_HOME)/../am-kernels/benchmarks/microbench/Makefile \
-		SRCS= $(shell find $(AM_HOME)/../am-kernels/benchmarks/microbench/src/ -name "*.c" -o -name "*.cc") \
-		WORK_DIR=/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench \
+	@make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ -f Makefile \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
 		| grep "\\[.* statistic\\]"
 
