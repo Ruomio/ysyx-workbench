@@ -382,10 +382,10 @@ module ysyx_24080020_MEM(
                 end
                 arlen_cnt <= 1'b0;
                 mem_wb_valid <= 1'b1;
-                `ifdef CONFIG_DPIC
-                statistics_lsu_get_data();
-                `endif
             end
+            `ifdef CONFIG_DPIC
+            statistics_lsu_get_data();
+            `endif
         end
         else if(rvalid && !rlast) begin
             // muti read, and the first read 
