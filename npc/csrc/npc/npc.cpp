@@ -116,6 +116,9 @@ void init_npc(int argc, char **argv) {
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
+#ifdef CONFIG_LIGHTSSS
+  lightsss.do_fork();
+#endif
 #endif
 #ifdef CONFIG_NVBOARD
   nvboard_bind_all_pins(top);
