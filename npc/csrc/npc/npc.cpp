@@ -459,9 +459,9 @@ extern "C" void statistics_ifu_get_inst() {
 }
 
 extern "C" void statistics_lsu_get_data() {
-  static int cnt = 0;
-  if(cnt++ > 1000) assert(0);
-  printf("lsu_get_data_cnt: %ld  pc: 0x%x \n", lsu_get_data_cnt, g_pc);
+  // static int cnt = 0;
+  // if(cnt++ > 1000) assert(0);
+  // printf("lsu_get_data_cnt: %ld  pc: 0x%x \n", lsu_get_data_cnt, g_pc);
   lsu_get_data_cnt ++;
 }
 
