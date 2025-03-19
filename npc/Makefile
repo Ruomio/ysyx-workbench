@@ -122,7 +122,7 @@ perf: $(BIN)
 	fi
 	@make -s -f $(AM_HOME)/../am-kernels/benchmarks/microbench/Makefile \
 		SRCS= $(shell find $(AM_HOME)/../am-kernels/benchmarks/microbench/src/ -name "*.c" -o -name "*.cc") \
-		WORK_DIR=$(AM_HOME)/../am-kernels/benchmarks/microbench \
+		WORK_DIR=/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
 		| grep "\\[.* statistic\\]"
 
