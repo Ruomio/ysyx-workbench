@@ -109,8 +109,6 @@ module ysyx_24080020_MEM(
 
     reg state; // 0: idle;   1: wait_ready
 
-    reg delay;
-
     wire [31:0] rdata_shift_1, rdata_shift_2, rdata_shift;
     wire get_arlen;
     wire get_awlen;
@@ -341,12 +339,10 @@ module ysyx_24080020_MEM(
             rready <= 1'b0;
             mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
-            delay <= 1'b0;
         end
-        else if(rvalid && rlast && !delay) begin
+        else if(rvalid && rlast) begin
             // finish all read
             rready <= 1'b1;
-            delay <= 1'b1;
 
             if(rresp != 2'b0) begin
                 // rresp fault;
@@ -410,7 +406,6 @@ module ysyx_24080020_MEM(
         end
         else begin
             rready <= 1'b0;
-            delay <= 1'b0;
         end
     end
 
