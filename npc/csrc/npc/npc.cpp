@@ -88,6 +88,7 @@ uint32_t g_get_dnpc();
 uint32_t g_get_rs1();
 uint32_t g_get_rd();
 void update_npc_cpu();
+void free_npc();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -310,6 +311,7 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 #ifdef CONFIG_NVBOARD
+    free_npc();
     nvboard_quit();
 #endif
 
