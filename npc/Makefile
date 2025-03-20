@@ -115,14 +115,15 @@ endif
 
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
+	@date | tee -a build/perf.log ; 
 	@if make -s -C $(AM_HOME)/../yosys-sta sta  > /dev/null ;then \
-		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" ; \
-		echo "" ; \
-		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" | tee -a build/perf.log ; \
+		echo "" | tee -a build/perf.log ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" | tee -a build/perf.log ; \
 	fi
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
-		| grep "\\[.* statistic\\]"
+		| grep "\\[.* statistic\\] | tee -a build/perf.log"
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
