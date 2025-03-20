@@ -154,7 +154,7 @@ void exec_once_npc(uint32_t pc) {
     top->clock ^= 1;
     top->eval();
 #ifdef CONFIG_WAVEFILE
-    if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
+    if(total_wave_step >= CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
       total_wave_step++;
       tfp->dump(contextp->time());
       contextp->timeInc(1);
