@@ -1,14 +1,21 @@
 #include <readline/chardefs.h>
-#include "VysyxSoCFull.h"
-#include "VysyxSoCFull___024root.h"
 #include "define.h"
 #include "isa.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
-#include "VysyxSoCFull__Dpi.h"
 #include "common.h"
 #include "ringbuffer.h"
 #include <cpu/difftest.h>
+
+#if defined(ysyxSoCFull)
+#include "VysyxSoCFull.h"
+#include "VysyxSoCFull___024root.h"
+#include "VysyxSoCFull__Dpi.h"
+#elif defined(ysyx_24080020_NPC)
+#include "Vysyx_24080020_NPC.h"
+#include "Vysyx_24080020_NPC___024root.h"
+#include "Vysyx_24080020_NPC__Dpi.h"
+#endif
 
 #ifdef CONFIG_LIGHTSSS
 #include <lightsss/lightsss.h>
@@ -38,7 +45,11 @@ extern void difftest_skip_ref();
 extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
+#if defined(ysyxSoCFull)
 VysyxSoCFull *top = NULL;
+#elif defined(ysyx_24080020_NPC)
+Vysyx_24080020_NPC *top = NULL;
+#endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
 VerilatedVcdC *tfp = NULL;
 #endif
@@ -110,7 +121,11 @@ void init_npc(int argc, char **argv) {
 
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
+#if defined(ysyxSoCFull)
   top = new VysyxSoCFull(contextp);
+#elif defined(ysyx_24080020_NPC)
+  top = new Vysyx_24080020_NPC(contextp);
+#endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
   tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);

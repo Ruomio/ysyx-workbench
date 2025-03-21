@@ -90,8 +90,10 @@ LDFLAGS += -lreadline -ldl -pie $(LIBS)
 VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 VERILATOR_CFLAGS += -DysyxSoCFull
+CXXFLAGS += -DysyxSoCFull
 else ifeq ($(ARCH), riscv32e-npc)
 VERILATOR_CFLAGS += -Dysyx_24080020_NPC
+CXXFLAGS += -Dysyx_24080020_NPC
 endif
 
 CSRC_NODIR := $(notdir $(CSRC))
