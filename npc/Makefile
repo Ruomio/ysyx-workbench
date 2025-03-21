@@ -15,6 +15,12 @@ $(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
 endif
 NXDC_FILES = constr/top.nxdc
 
+ifdef CONFIG_NVBOARD
+NVBOARD_ENABLE := 1
+else
+NVBOARD_ENABLE := 0
+endif
+
 remove_quote = $(patsubst "%",%,$(1))
 
 CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
@@ -116,7 +122,7 @@ sim:
 	# @echo "Write this Makefile by your self.!"
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
-ifdef CONFIG_NVBOARD
+ifeq ($(NVBOARD_ENABLE), 1)
 $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
