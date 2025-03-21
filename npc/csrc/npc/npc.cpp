@@ -135,7 +135,7 @@ void init_npc(int argc, char **argv) {
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
 #endif
-#ifdef CONFIG_NVBOARD
+#if defined (CONFIG_NVBOARD)
   nvboard_bind_all_pins(top);
   nvboard_init(1);
 #endif
