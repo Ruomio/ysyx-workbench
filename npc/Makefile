@@ -4,7 +4,13 @@ VERILATOR_CFLAGS += -MMD --build -cc \
 					-O3 --x-assign fast --x-initial fast --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
 
-TOPNAME=ysyxSoCFull
+ifeq ($(ARCH), riscv32e-ysyxsoc)
+	TOPNAME=ysyxSoCFull
+else ifeq ($(ARCH), riscv32e-npc)
+	TOPNAME=npc
+else
+	$(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
+endif
 NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
@@ -99,6 +105,7 @@ sim:
 
 ifdef CONFIG_NVBOARD
 $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+	@echo $(TOPNAME)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(NVBOARD_ARCHIVE) \
