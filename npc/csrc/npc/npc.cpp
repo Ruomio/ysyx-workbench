@@ -24,7 +24,7 @@
 #include <lightsss/lightsss.h>
 #endif
 
-#ifdef CONFIG_NVBOARD
+#if defined (CONFIG_NVBOARD) && defined (ysyxSoCFull)
 #include <nvboard.h>
 
 #define NVBOARD_ENABLE 1
