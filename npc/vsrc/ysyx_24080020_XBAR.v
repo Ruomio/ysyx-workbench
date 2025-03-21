@@ -38,75 +38,6 @@ module ysyx_24080020_XBAR(
     output reg [3:0] bid_xbar,
     output reg [1:0] bresp_xbar,
 
-    // // XBar -> slave1 -> SRAM
-    // output reg arvalid_xbar_sram,
-    // output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
-    // output reg [3:0] arid_xbar_sram,
-    // output reg [7:0] arlen_xbar_sram,
-    // output reg [2:0] arsize_xbar_sram,
-    // output reg [1:0] arburst_xbar_sram,
-    // input arready_sram,
-
-    // input [`ysyx_24080020_WIDTH-1:0] rdata_sram,
-    // input [1:0] rresp_sram,
-    // input rvalid_sram,
-    // input [3:0] rid_sram,
-    // input rlast_sram,
-    // output reg rready_xbar_sram,
-
-    // output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram,
-    // output reg awvalid_xbar_sram,
-    // output reg [3:0] awid_xbar_sram,
-    // output reg [7:0] awlen_xbar_sram,
-    // output reg [2:0] awsize_xbar_sram,
-    // output reg [1:0] awburst_xbar_sram,
-    // input awready_sram,
-
-    // output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_sram,
-    // output reg [3:0] wstrb_xbar_sram,
-    // output reg wvalid_xbar_sram,
-    // output reg wlast_xbar_sram,
-    // input wready_sram,
-
-    // input bvalid_sram,
-    // input [1:0] bresp_sram,
-    // input [3:0] bid_sram,
-    // output reg bready_xbar_sram,
-
-    // // Xbar -> slave2 -> UART
-    // output reg arvalid_xbar_uart,
-    // output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_uart,
-    // output reg [3:0] arid_xbar_uart,
-    // output reg [7:0] arlen_xbar_uart,
-    // output reg [2:0] arsize_xbar_uart,
-    // output reg [1:0] arburst_xbar_uart,
-    // input arready_uart,
-
-    // input [`ysyx_24080020_WIDTH-1:0] rdata_uart,
-    // input [1:0] rresp_uart,
-    // input rvalid_uart,
-    // input [3:0] rid_uart,
-    // input rlast_uart,
-    // output reg rready_xbar_uart,
-
-    // output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_uart,
-    // output reg awvalid_xbar_uart,
-    // output reg [3:0] awid_xbar_uart,
-    // output reg [7:0] awlen_xbar_uart,
-    // output reg [2:0] awsize_xbar_uart,
-    // output reg [1:0] awburst_xbar_uart,
-    // input awready_uart,
-
-    // output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_uart,
-    // output reg [3:0] wstrb_xbar_uart,
-    // output reg wvalid_xbar_uart,
-    // output reg wlast_xbar_uart,
-    // input wready_uart,
-
-    // input bvalid_uart,
-    // input [1:0] bresp_uart,
-    // input [3:0] bid_uart,
-    // output reg bready_xbar_uart,
 
     // Xbar -> slave3 -> CLINT
     output reg arvalid_xbar_clint,
@@ -143,6 +74,82 @@ module ysyx_24080020_XBAR(
     input [3:0] bid_clint,
     output reg bready_xbar_clint,
 
+`ifdef ysyx_24080020_NPC
+    // // XBar -> slave1 -> SRAM
+    // output reg arvalid_xbar_sram,
+    // output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
+    // output reg [3:0] arid_xbar_sram,
+    // output reg [7:0] arlen_xbar_sram,
+    // output reg [2:0] arsize_xbar_sram,
+    // output reg [1:0] arburst_xbar_sram,
+    // input arready_sram,
+
+    // input [`ysyx_24080020_WIDTH-1:0] rdata_sram,
+    // input [1:0] rresp_sram,
+    // input rvalid_sram,
+    // input [3:0] rid_sram,
+    // input rlast_sram,
+    // output reg rready_xbar_sram,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram,
+    // output reg awvalid_xbar_sram,
+    // output reg [3:0] awid_xbar_sram,
+    // output reg [7:0] awlen_xbar_sram,
+    // output reg [2:0] awsize_xbar_sram,
+    // output reg [1:0] awburst_xbar_sram,
+    // input awready_sram,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_sram,
+    // output reg [3:0] wstrb_xbar_sram,
+    // output reg wvalid_xbar_sram,
+    // output reg wlast_xbar_sram,
+    // input wready_sram,
+
+    // input bvalid_sram,
+    // input [1:0] bresp_sram,
+    // input [3:0] bid_sram,
+    // output reg bready_xbar_sram,
+
+
+
+    // // Xbar -> slave2 -> UART
+    // output reg arvalid_xbar_uart,
+    // output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_uart,
+    // output reg [3:0] arid_xbar_uart,
+    // output reg [7:0] arlen_xbar_uart,
+    // output reg [2:0] arsize_xbar_uart,
+    // output reg [1:0] arburst_xbar_uart,
+    // input arready_uart,
+
+    // input [`ysyx_24080020_WIDTH-1:0] rdata_uart,
+    // input [1:0] rresp_uart,
+    // input rvalid_uart,
+    // input [3:0] rid_uart,
+    // input rlast_uart,
+    // output reg rready_xbar_uart,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_uart,
+    // output reg awvalid_xbar_uart,
+    // output reg [3:0] awid_xbar_uart,
+    // output reg [7:0] awlen_xbar_uart,
+    // output reg [2:0] awsize_xbar_uart,
+    // output reg [1:0] awburst_xbar_uart,
+    // input awready_uart,
+
+    // output reg [`ysyx_24080020_WIDTH-1:0] wdata_xbar_uart,
+    // output reg [3:0] wstrb_xbar_uart,
+    // output reg wvalid_xbar_uart,
+    // output reg wlast_xbar_uart,
+    // input wready_uart,
+
+    // input bvalid_uart,
+    // input [1:0] bresp_uart,
+    // input [3:0] bid_uart,
+    // output reg bready_xbar_uart
+`endif
+
+
+`ifdef ysyxSoCFull
     // XBar -> slave4 -> SOC
     output reg arvalid_xbar_soc,
     output reg [`ysyx_24080020_WIDTH-1:0] araddr_xbar_soc,
@@ -177,6 +184,7 @@ module ysyx_24080020_XBAR(
     input [1:0] bresp_soc,
     input [3:0] bid_soc,
     output reg bready_xbar_soc
+`endif
 );
     /* Xbar target device
      * 3'd0: error
