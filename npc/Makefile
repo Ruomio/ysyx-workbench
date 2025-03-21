@@ -7,7 +7,7 @@ VERILATOR_CFLAGS += -MMD --build -cc \
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 	TOPNAME=ysyxSoCFull
 else ifeq ($(ARCH), riscv32e-npc)
-	TOPNAME=npc
+	TOPNAME=ysyx_24080020_NPC
 else
 	$(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
 endif
