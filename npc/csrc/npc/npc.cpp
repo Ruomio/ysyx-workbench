@@ -27,10 +27,14 @@
 #ifdef CONFIG_NVBOARD
 #include <nvboard.h>
 
+#define NVBOARD_ENABLE 1
+
 void nvboard_bind_all_pins(TOP_NAME *top);
 void nvboard_init(int);
 void nvboard_update();
 void nvboard_quit();
+#else
+#define NVBOARDNABLE 0
 #endif
 
 
@@ -135,7 +139,7 @@ void init_npc(int argc, char **argv) {
   top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
 #endif
-#if defined (CONFIG_NVBOARD) && defined(ysyxSoCFull)
+#if NVBOARD_ENABLE
   nvboard_bind_all_pins(top);
   nvboard_init(1);
 #endif
@@ -154,7 +158,7 @@ void init_npc(int argc, char **argv) {
     }
     if(top->clock == 1) {
       total_cycles++;
-#ifdef CONFIG_NVBOARD
+#if NVBOARD_ENABLE
       nvboard_update();
 #endif
     }
@@ -192,7 +196,7 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(top->clock == 1) {
       total_cycles++;
-#ifdef CONFIG_NVBOARD
+#if NVBOARD_ENABLE
       nvboard_update();
 #endif
       switch(idu_type) {
@@ -328,7 +332,7 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-#ifdef CONFIG_NVBOARD
+#if NVBOARD_ENABLE
     nvboard_quit();
 #endif
 
