@@ -6,11 +6,14 @@ VERILATOR_CFLAGS += -MMD --build -cc \
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 	TOPNAME=ysyxSoCFull
+	CXXFLAGS += -DysyxSoCFull
 else ifeq ($(ARCH), riscv32e-npc)
 	TOPNAME=ysyx_24080020_NPC
+	CXXFLAGS += -Dysyx_24080020_NPC
 else
 	$(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
 endif
+$(shell print $(TOPNAME))
 NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
@@ -20,8 +23,10 @@ HSRC=$(shell find $(abspath ./include) -name "*.h")
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+ifeq ($(ARCH), riscv32e-ysyxsoc)
+	VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+	VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+endif
 VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
 
 VSRC += $(shell find $(abspath vsrc) -name "*.v") 
@@ -105,7 +110,6 @@ sim:
 
 ifdef CONFIG_NVBOARD
 $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
-	@echo $(TOPNAME)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(NVBOARD_ARCHIVE) \
