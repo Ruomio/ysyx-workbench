@@ -13,7 +13,7 @@ CXXFLAGS += -Dysyx_24080020_NPC
 else
 $(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
 endif
-TMP := $(shell print $(TOPNAME))
+TMP := $(shell echo $(TOPNAME))
 NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
