@@ -9,7 +9,7 @@ TOPNAME=ysyxSoCFull
 CXXFLAGS += -DysyxSoCFull
 else ifeq ($(ARCH), riscv32e-npc)
 TOPNAME=ysyx_24080020_NPC
-CXXFLAGS += -Dysyx_24080020_NPC
+CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
 else
 $(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
 endif
@@ -93,7 +93,7 @@ VERILATOR_CFLAGS += -DysyxSoCFull
 CXXFLAGS += -DysyxSoCFull
 else ifeq ($(ARCH), riscv32e-npc)
 VERILATOR_CFLAGS += -Dysyx_24080020_NPC
-CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
+CXXFLAGS += -Dysyx_24080020_NPC
 endif
 
 CSRC_NODIR := $(notdir $(CSRC))
