@@ -65,7 +65,7 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 
 
 
-ifdef CONFIG_NVBOARD
+ifeq ($(NVBOARD_ENABLE), 1)
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 $(SRC_AUTO_BIND): $(NXDC_FILES)
