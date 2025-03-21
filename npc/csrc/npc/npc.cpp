@@ -15,6 +15,9 @@
 #include "Vysyx_24080020_NPC.h"
 #include "Vysyx_24080020_NPC___024root.h"
 #include "Vysyx_24080020_NPC__Dpi.h"
+
+#define clock clk
+#define reset rst
 #endif
 
 #ifdef CONFIG_LIGHTSSS
