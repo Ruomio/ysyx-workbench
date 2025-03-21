@@ -93,7 +93,7 @@ VERILATOR_CFLAGS += -DysyxSoCFull
 CXXFLAGS += -DysyxSoCFull
 else ifeq ($(ARCH), riscv32e-npc)
 VERILATOR_CFLAGS += -Dysyx_24080020_NPC
-CXXFLAGS += -Dysyx_24080020_NPC
+CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
 endif
 
 CSRC_NODIR := $(notdir $(CSRC))
