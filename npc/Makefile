@@ -5,15 +5,15 @@ VERILATOR_CFLAGS += -MMD --build -cc \
 					--timescale "1ns/1ns" --no-timing
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
-	TOPNAME=ysyxSoCFull
-	CXXFLAGS += -DysyxSoCFull
+TOPNAME=ysyxSoCFull
+CXXFLAGS += -DysyxSoCFull
 else ifeq ($(ARCH), riscv32e-npc)
-	TOPNAME=ysyx_24080020_NPC
-	CXXFLAGS += -Dysyx_24080020_NPC
+TOPNAME=ysyx_24080020_NPC
+CXXFLAGS += -Dysyx_24080020_NPC
 else
-	$(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
+$(error "ARCH must be riscv32e-ysyxsoc or riscv32e-npc")
 endif
-$(shell print $(TOPNAME))
+TMP := $(shell print $(TOPNAME))
 NXDC_FILES = constr/top.nxdc
 
 remove_quote = $(patsubst "%",%,$(1))
@@ -24,14 +24,16 @@ HSRC=$(shell find $(abspath ./include) -name "*.h")
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
-	VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
-	VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
 
 VSRC += $(shell find $(abspath vsrc) -name "*.v") 
+ifeq ($(ARCH), riscv32e-ysyxsoc)
 VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
 VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
+endif
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=$(shell pwd)/build
@@ -87,6 +89,11 @@ CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
 VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC 
+ifeq ($(ARCH), riscv32e-ysyxsoc)
+VERILATOR_CFLAGS += -DysyxSoCFull
+else ifeq ($(ARCH), riscv32e-npc)
+VERILATOR_CFLAGS += -Dysyx_24080020_NPC
+endif
 
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
