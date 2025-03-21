@@ -394,22 +394,31 @@ void check_trap(npc_state u_npc_state) {
 }
 
 uint32_t g_get_pc() {
-  // g_pc =  top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr;
+#if defined (ysyxSoCFull)
   g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
-  if(g_pc >= CONFIG_MBASE + CONFIG_MSIZE) {
-    Assert(0, "pc is out of range pc = %x, last pc = %x",g_pc, last_pc);
-  }
+#elif defined (ysyx_24080020_NPC)
+  g_pc =  top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr;
+#endif
   return g_pc;
 }
 
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+#if defined (ysyxSoCFull)
   top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+#elif defined (ysyx_24080020_NPC)
+  top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr = pc;
+#endif
 }
 
 uint32_t g_get_reg(int i) {
-  // return (top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
+#if defined (ysyxSoCFull)
   return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
+#elif defined (ysyx_24080020_NPC)
+  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i];
+#else
+  return 0;
+#endif
 }
 
 uint32_t g_get_snpc() {
@@ -417,17 +426,32 @@ uint32_t g_get_snpc() {
 }
 
 uint32_t g_get_dnpc() {
-  // return top->rootp->top__DOT__u_npc__DOT__dnpc_wb;
+#if defined (ysyxSoCFull)
   return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+#elif defined (ysyx_24080020_NPC)
+  return top->rootp->ysyx_24080020_NPC__DOT__is_dnpc_wb;
+#else
+  return 0;
+#endif
 }
 
 uint32_t g_get_rs1() {
-  // return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 19, 15);
+#if defined (ysyxSoCFull)
   return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 15);
+#elif defined (ysyx_24080020_NPC)
+  return BITS(top->rootp->syx_24080020_NPC__DOT__inst_ifu, 19, 15);
+#else
+  return 0;
+#endif
 }
 uint32_t g_get_rd() {
-  // return BITS(top->rootp->top__DOT__u_npc__DOT__inst_ifu, 11, 7);
+#if defined (ysyxSoCFull)
   return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 7);
+#elif defined (ysyx_24080020_NPC)
+  return BITS(top->rootp->syx_24080020_NPC__DOT__inst_ifu, 19, 15);
+#else
+
+#endif
 }
 
 const char *regs_name[] = {
@@ -457,7 +481,11 @@ void update_npc_cpu() {
 void update_dut() {
   for(int i=0; i<32; i++) {
     // top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+#if defined (ysyxSoCFull)
     top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+#elif defined (ysyx_24080020_NPC)
+    top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+#endif
   }
   // top->pc = npc_cpu.pc;
   g_set_pc(npc_cpu.pc);
