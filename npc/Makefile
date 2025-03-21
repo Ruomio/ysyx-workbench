@@ -124,6 +124,7 @@ sim:
 
 ifeq ($(NVBOARD_ENABLE), 1)
 $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+	@echo $(NVBOARD_ENABLE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(NVBOARD_ARCHIVE) \
@@ -131,6 +132,7 @@ $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
 $(BIN): $(VSRC) $(CSRC) $(HSRC)
+	@echo $(NVBOARD_ENABLE)
 	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) \
