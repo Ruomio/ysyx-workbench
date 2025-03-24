@@ -215,5 +215,7 @@ extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int ws
   }
 
   assert(col_addr < 512);
+#if defined(CONFIG_PSRAM) || defined(CONFIG_SDRAM)
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
+#endif
 }
