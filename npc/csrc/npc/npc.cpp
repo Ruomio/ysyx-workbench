@@ -11,13 +11,20 @@
 #include "VysyxSoCFull.h"
 #include "VysyxSoCFull___024root.h"
 #include "VysyxSoCFull__Dpi.h"
+#define set_reset top->reset = 1
+#define set_unreset top->reset = 0
+#define toggle_clock top->clock ^= 1
+#define is_clk_high (top->clock == 1)
+
 #elif defined(ysyx_24080020_NPC)
 #include "Vysyx_24080020_NPC.h"
 #include "Vysyx_24080020_NPC___024root.h"
 #include "Vysyx_24080020_NPC__Dpi.h"
 
-#define clock clk
-#define reset rst
+#define set_reset top->rst = 0
+#define set_unreset top->rst = 1
+#define toggle_clock top->clk ^= 1
+#define is_clk_high (top->clk == 1)
 #endif
 
 #ifdef CONFIG_LIGHTSSS
@@ -144,19 +151,19 @@ void init_npc(int argc, char **argv) {
   nvboard_init(1);
 #endif
   int i = 0;
-  top->reset = 1;
+  set_reset;
   while(!contextp->gotFinish()) {
-    top->clock ^= 1;
+    toggle_clock;
     top->eval();
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
     tfp->dump(contextp->time());
     contextp->timeInc(1);
 #endif
     if(i++ > 20) {
-      top->reset = 0;
+      set_unreset;
       break;
     }
-    if(top->clock == 1) {
+    if(is_clk_high) {
       total_cycles++;
 #if NVBOARD_ENABLE
       nvboard_update();
@@ -173,7 +180,8 @@ void exec_once_npc(uint32_t pc) {
       u_npc_state.pc = pc;
       return;
     }
-    top->clock ^= 1;
+    // top->clock ^= 1;
+    toggle_clock;
     top->eval();
 #ifdef CONFIG_WAVEFILE
     if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
@@ -194,7 +202,7 @@ void exec_once_npc(uint32_t pc) {
       // total_wave_step++;
     }
 #endif
-    if(top->clock == 1) {
+    if(is_clk_high) {
       total_cycles++;
 #if NVBOARD_ENABLE
       nvboard_update();
