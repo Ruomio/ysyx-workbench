@@ -109,6 +109,7 @@ module ysyx_24080020_SRAM(
                     rvalid <= 1'b1;
                     rresp <= 2'b0;
                     read_en <= 1'b0;
+                    rlast <= 1'b1;
                 end
                 r_cnt <= 6'b0;
             end
