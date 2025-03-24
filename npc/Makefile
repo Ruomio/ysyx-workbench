@@ -34,10 +34,14 @@ endif
 
 remove_quote = $(patsubst "%",%,$(1))
 
-CSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
+CALLSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c" -or -name "*.cc") 
+CSRC=$(shell find csrc -name "*.c") 
+CPPSRC=$(shell find csrc -name "*.cpp") 
+CCSRC=$(shell find csrc -name "*.cc") 
 HSRC=$(shell find $(abspath ./include) -name "*.h") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
-INC_PATH += $(shell find $(abspath ./) -type d -name "include")
+INC_PATH += $(shell find $(abspath ./) -type d -name "include" -or -name "build")
+INC_PATH += $(shell find $(abspath /usr/share) -type d -name "vltstd" -or -name "include")
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
@@ -110,17 +114,30 @@ CXXFLAGS += -Dysyx_24080020_NPC
 endif
 
 CSRC_NODIR := $(notdir $(CSRC))
-OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
+# OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
+OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CCSRC:%.cc=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
+# OBJS1 := $(CSRC:%.c=$(OBJ_DIR)/%.o)
+# OBJS2 := $(CCSRC:%.cc=$(OBJ_DIR)/%.o)
+# OBJS3 := $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
 
 $(OBJ_DIR)/%.o: %.c
+	@echo + CC $<
+	@mkdir -p $(dir $@)
 	gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
-	$(call call_fixdep, $(@:.o=.d), $@)
+# $(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cc
-	g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
-	$(call call_fixdep, $(@:.o=.d), $@)
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+# $(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cpp
-	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
-	$(call call_fixdep, $(@:.o=.d), $@)
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+# $(call call_fixdep, $(@:.o=.d), $@)
+
+# Depencies
+-include $(OBJS:.o=.d)
 
 all: $(BIN)
 
@@ -138,13 +155,20 @@ $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
-$(BIN): $(VSRC) $(CSRC) $(HSRC)
+# $(BIN): $(VSRC) $(OBJS) $(HSRC)
+# 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+# 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+# 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+# 		--top-module $(TOPNAME) $(VSRC) $(CSRC) \
+# 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+# 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+$(BIN): generated_cpp $(OBJS)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
-	$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $(VSRC) $(CSRC) \
-		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+	@g++ $(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) $(OBJS) -o $(abspath $(BIN))
+
+generated_cpp: $(VSRC)
+	@$(VERILATOR) $(VERILATOR_CFLAGS) -cc $^ --top-module $(TOPNAME) --Mdir $(BUILD_DIR)
 endif
 
 perf: $(BIN)

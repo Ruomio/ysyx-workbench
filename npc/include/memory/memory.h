@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include "define.h"
-#include "svdpi.h"
+// #include "svdpi.h"
 #include "paddr.h"
 #include "vaddr.h"
 
