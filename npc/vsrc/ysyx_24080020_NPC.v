@@ -214,7 +214,7 @@ module ysyx_24080020_NPC(
         arvalid_xbar_clint, arready_clint;
   wire [1:0] arburst_xbar_clint, arburst_xbar_soc;
   wire [2:0] arsize_xbar_clint, arsize_xbar_soc;
-  wire [3:0] arid_xbar_clint, arid_xbar_soc;
+  wire [3:0] arid_xbar_clint, arid_xbar_soc, arid_xbar_sram, arid_xbar_uart;
   wire [7:0] arlen_xbar_clint, arlen_xbar_soc;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
                                   araddr_xbar_uart,
@@ -684,47 +684,71 @@ module ysyx_24080020_NPC(
         // xbar -> sram
         .arvalid_xbar_sram(arvalid_xbar_sram),
         .araddr_xbar_sram(araddr_xbar_sram),
+        .arid_xbar_xram(arid_xbar_sram),
+        .arlen_xbar_sram(arlen_xbar_sram),
+        .arsize_xbar_sram(arsize_xbar_sram),
+        .arburst_xbar_sram(arburst_xbar_sram),
         .arready_sram(arready_sram),
 
         .rdata_sram(rdata_sram),
         .rresp_sram(rresp_sram),
         .rvalid_sram(rvalid_sram),
+        .rid_sram(rid_sram),
+        .rlast_sram(rlast_sram),
         .rready_xbar_sram(rready_xbar_sram),
 
         .awaddr_xbar_sram(awaddr_xbar_sram),
         .awvalid_xbar_sram(awvalid_xbar_sram),
+        .awid_xbar_sram(awid_xbar_sram),
+        .awlen_xbar_sram(awlen_xbar_sram),
+        .awsize_xbar_sram(awsize_xbar_sram),
+        .awburst_xbar_sram(awburst_xbar_sram),
         .awready_sram(awready_sram),
 
         .wdata_xbar_sram(wdata_xbar_sram),
         .wstrb_xbar_sram(wstrb_xbar_sram),
         .wvalid_xbar_sram(wvalid_xbar_sram),
+        .wlast_xbar_sram(wlast_xbar_sram),
         .wready_sram(wready_sram),
 
         .bvalid_sram(bvalid_sram),
         .bresp_sram(bresp_sram),
+        .bid_sram(bid_sram),
         .bready_xbar_sram(bready_xbar_sram),
 
         // xbar -> uart
         .arvalid_xbar_uart(arvalid_xbar_uart),
         .araddr_xbar_uart(araddr_xbar_uart),
+        .arid_xbar_uart(arid_xbar_uart),
+        .arlen_xbar_uart(arlen_xbar_uart),
+        .arsize_xbar_uart(arsize_xbar_uart),
+        .arburst_xbar_uart(arburst_xbar_uart),
         .arready_uart(arready_uart),
 
         .rdata_uart(rdata_uart),
         .rresp_uart(rresp_uart),
         .rvalid_uart(rvalid_uart),
+        .rid_uart(rid_uart),
+        .rlast_uart(rlast_uart),
         .rready_xbar_uart(rready_xbar_uart),
 
         .awaddr_xbar_uart(awaddr_xbar_uart),
         .awvalid_xbar_uart(awvalid_xbar_uart),
+        .awid_xbar_uart(awid_xbar_uart),
+        .awlen_xbar_uart(awlen_xbar_uart),
+        .awsize_xbar_uart(awsize_xbar_uart),
+        .awburst_xbar_uart(awburst_xbar_uart),
         .awready_uart(awready_uart),
 
         .wdata_xbar_uart(wdata_xbar_uart),
         .wstrb_xbar_uart(wstrb_xbar_uart),
         .wvalid_xbar_uart(wvalid_xbar_uart),
+        .wlast_xbar_uart(wlast_xbar_uart),
         .wready_uart(wready_uart),
 
         .bvalid_uart(bvalid_uart),
         .bresp_uart(bresp_uart),
+        .bid_uart(bid_uart),
         .bready_xbar_uart(bready_xbar_uart)
         `endif
 
