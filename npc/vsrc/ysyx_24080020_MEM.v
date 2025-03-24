@@ -102,6 +102,7 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg exu_mem_shake_hands;
     reg tmp;
+    reg finish_read;
 
     reg arlen_cnt;
     reg awlen_cnt;
@@ -339,10 +340,13 @@ module ysyx_24080020_MEM(
             rready <= 1'b0;
             mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
+            finish_read <= 1'b0;
         end
         else if(rvalid && rlast) begin
             // finish all read
             rready <= 1'b1;
+
+            finish_read <= 1'b1;
 
             if(rresp != 2'b0) begin
                 // rresp fault;
@@ -361,27 +365,7 @@ module ysyx_24080020_MEM(
                     rdata2 <= rdata;
                 end
 
-                // finish all read
-                if(mrtype_mem) begin
-                    // zero extension
-                    case(mrlen_mem)
-                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
-                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
-                        4'd4:   mrdata_mem <= rdata_shift;
-                        default: mrdata_mem <= 32'hffffffff;
-                    endcase
-                end
-                else begin
-                    // signed extension
-                    case(mrlen_mem)
-                        4'd1:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
-                        4'd2:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
-                        4'd4:   mrdata_mem <= rdata_shift;
-                        default: mrdata_mem <= 32'hffffffff;
-                    endcase
-                end
                 arlen_cnt <= 1'b0;
-                mem_wb_valid <= 1'b1;
             end
             `ifdef CONFIG_DPIC
             statistics_lsu_get_data();
@@ -407,6 +391,37 @@ module ysyx_24080020_MEM(
         else begin
             rready <= 1'b0;
         end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            finish_read <= 1'b0;
+        end
+        else if(finish_read) begin
+            // finish all read
+            if(mrtype_mem) begin
+                // zero extension
+                case(mrlen_mem)
+                    4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
+                    4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
+                    4'd4:   mrdata_mem <= rdata_shift;
+                    default: mrdata_mem <= 32'hffffffff;
+                endcase
+            end
+            else begin
+                // signed extension
+                case(mrlen_mem)
+                    4'd1:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
+                    4'd2:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
+                    4'd4:   mrdata_mem <= rdata_shift;
+                    default: mrdata_mem <= 32'hffffffff;
+                endcase
+            end
+
+            mem_wb_valid <= 1'b1;
+            finish_read <= 1'b0;
+        end
+
     end
 
     always @(posedge clk) begin
