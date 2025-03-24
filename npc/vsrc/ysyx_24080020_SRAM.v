@@ -35,7 +35,7 @@ module ysyx_24080020_SRAM(
 
     output reg [1:0] bresp,
     output reg bvalid,
-    output reg bid,
+    output reg [3:0] bid,
     input bready
 );
 `ifdef CONFIG_DPIC
