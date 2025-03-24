@@ -684,7 +684,7 @@ module ysyx_24080020_NPC(
         // xbar -> sram
         .arvalid_xbar_sram(arvalid_xbar_sram),
         .araddr_xbar_sram(araddr_xbar_sram),
-        .arid_xbar_xram(arid_xbar_sram),
+        .arid_xbar_sram(arid_xbar_sram),
         .arlen_xbar_sram(arlen_xbar_sram),
         .arsize_xbar_sram(arsize_xbar_sram),
         .arburst_xbar_sram(arburst_xbar_sram),
@@ -797,24 +797,36 @@ module ysyx_24080020_NPC(
 
         .araddr(araddr_xbar_uart),
         .arvalid(arvalid_xbar_uart),
+        .arid(arid_xbar_uart),
+        .arlen(arlen_xbar_uart),
+        .arsize(arsize_xbar_uart),
+        .arburst(arburst_xbar_uart),
         .arready(arready_uart),
 
         .rdata(rdata_uart),
         .rresp(rresp_uart),
         .rvalid(rvalid_uart),
+        .rid(rid_uart),
+        .rlast(rlast_uart),
         .rready(rready_xbar_uart),
 
         .awaddr(awaddr_xbar_uart),
         .awvalid(awvalid_xbar_uart),
+        .awid(awid_xbar_uart),
+        .awlen(awlen_xbar_uart),
+        .awsize(awsize_xbar_uart),
+        .awburst(awburst_xbar_uart),
         .awready(awready_uart),
 
         .wdata(wdata_xbar_uart),
         .wstrb(wstrb_xbar_uart),
         .wvalid(wvalid_xbar_uart),
+        .wlast(wlast_xbar_uart),
         .wready(wready_uart),
 
         .bready(bready_xbar_uart),
         .bresp(bresp_uart),
+        .bid(bid_uart),
         .bvalid(bvalid_uart)
     );
 
@@ -824,24 +836,36 @@ module ysyx_24080020_NPC(
 
         .arvalid(arvalid_xbar_sram),
         .araddr(araddr_xbar_sram),
+        .arid(arid_xbar_sram),
+        .arlen(arlen_xbar_sram),
+        .arsize(arsize_xbar_sram),
+        .arburst(arburst_xbar_sram),
         .arready(arready_sram),
 
         .rdata(rdata_sram),
         .rresp(rresp_sram),
         .rvalid(rvalid_sram),
+        .rid(rid_sram),
+        .rlast(rlast_sram),
         .rready(rready_xbar_sram),
 
         .awaddr(awaddr_xbar_sram),
         .awvalid(awvalid_xbar_sram),
+        .awid(awid_xbar_sram),
+        .awlen(awlen_xbar_sram),
+        .awsize(awsize_xbar_sram),
+        .awburst(awburst_xbar_sram),
         .awready(awready_sram),
 
         .wdata(wdata_xbar_sram),
         .wstrb(wstrb_xbar_sram),
         .wvalid(wvalid_xbar_sram),
+        .wlast(wlast_xbar_sram),
         .wready(wready_sram),
 
         .bresp(bresp_sram),
         .bvalid(bvalid_sram),
+        .bid(bid_sram),
         .bready(bready_xbar_sram)
     );
 `endif

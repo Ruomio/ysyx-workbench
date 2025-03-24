@@ -6,24 +6,36 @@ module ysyx_24080020_SRAM(
     // AXI-lite
     input arvalid,
     input [`ysyx_24080020_WIDTH-1:0] araddr,
+    input [3:0] arid,
+    input [7:0] arlen,
+    input [2:0] arsize,
+    input [1:0] arburst,
     output reg arready,
 
     input rready,
     output reg [`ysyx_24080020_WIDTH-1:0] rdata,
     output reg [1:0] rresp,
+    output reg [3:0] rid,
+    output reg rlast,
     output reg rvalid,
 
     input [`ysyx_24080020_WIDTH-1:0] awaddr,
     input awvalid,
+    input [3:0] awid,
+    input [7:0] awlen,
+    input [2:0] awsize,
+    input [1:0] awburst,
     output reg awready,
 
     input [`ysyx_24080020_WIDTH-1:0] wdata,
     input [3:0] wstrb,
     input wvalid,
+    input wlast,
     output reg wready,
 
     output reg [1:0] bresp,
     output reg bvalid,
+    output reg bid,
     input bready
 );
 `ifdef CONFIG_DPIC
