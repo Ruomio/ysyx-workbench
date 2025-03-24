@@ -1,4 +1,5 @@
 // `define CONFIG_DPIC // define in makefile
+// ysyxSoCFull and ysyx_24080020_NPC are defined in makefile
 
 
 `ifdef ysyxSoCFull
@@ -9,6 +10,8 @@
 
 `ifdef ysyx_24080020_NPC
 `define ysyx_24080020_MBASE 32'h80000000
+`define ysyx_24080020_DEVICE_BASE 32'ha0000000
+`define ysyx_24080020_SERIAL_PORT 32'ha00003f8
 `endif
 
 `define ysyx_24080020_WIDTH 32
