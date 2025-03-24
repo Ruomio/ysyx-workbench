@@ -23,7 +23,11 @@ endif
 NXDC_FILES = constr/top.nxdc
 
 ifdef CONFIG_NVBOARD
+ifeq ($(ARCH), riscv32e-ysyxsoc)
 NVBOARD_ENABLE := 1
+else
+NVBOARD_ENABLE := 0
+endif
 else
 NVBOARD_ENABLE := 0
 endif
