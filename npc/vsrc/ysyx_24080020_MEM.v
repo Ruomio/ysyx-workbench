@@ -327,7 +327,7 @@ module ysyx_24080020_MEM(
             `endif
             `ifdef ysyx_24080020_NPC
             if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400 
-                araddr >= 32'ha0000048 && araddr < 32'ha0000050
+                || araddr >= 32'ha0000048 && araddr < 32'ha0000050
                 ) begin
                 // skip uart keyboard etc.
                 `ifdef CONFIG_DPIC
@@ -461,7 +461,7 @@ module ysyx_24080020_MEM(
             `endif
             `ifdef ysyx_24080020_NPC
             if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
-                awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
+                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
                 ) begin
                 // skip uart keyboard etc.
                 `ifdef CONFIG_DPIC
