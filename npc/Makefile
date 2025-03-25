@@ -41,7 +41,7 @@ CCSRC=$(shell find csrc -name "*.cc")
 HSRC=$(shell find $(abspath ./include) -name "*.h") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include" -or -name "build")
-INC_PATH += $(shell find $(abspath /usr/share) -type d -name "vltstd" -or -name "include")
+INC_PATH += $(shell find $(abspath /usr/share/verilator) -type d -name "vltstd" -or -name "include")
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
@@ -123,7 +123,7 @@ OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CCSRC:%.cc=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
-	gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
+	@gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
 # $(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cc
 	@echo + CXX $<
