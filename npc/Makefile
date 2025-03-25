@@ -114,11 +114,7 @@ CXXFLAGS += -Dysyx_24080020_NPC
 endif
 
 CSRC_NODIR := $(notdir $(CSRC))
-# OBJS := $(CSRC_NODIR:%.c=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cc=$(OBJ_DIR)/%.o) $(CSRC_NODIR:%.cpp=$(OBJ_DIR)/%.o)
 OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CCSRC:%.cc=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
-# OBJS1 := $(CSRC:%.c=$(OBJ_DIR)/%.o)
-# OBJS2 := $(CCSRC:%.cc=$(OBJ_DIR)/%.o)
-# OBJS3 := $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
 
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
@@ -147,15 +143,15 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifeq ($(NVBOARD_ENABLE), 1)
-$(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+$(BIN): $(VSRC) $(CALLSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(NVBOARD_ARCHIVE) \
+		--top-module $(TOPNAME) $(VSRC) $(CALLSRC) $(NVBOARD_ARCHIVE) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
-$(BIN): $(VSRC) $(CSRC)
+$(BIN): $(VSRC) $(CALLSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
