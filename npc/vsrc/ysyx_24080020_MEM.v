@@ -312,6 +312,7 @@ module ysyx_24080020_MEM(
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= {{7{1'b0}},get_arlen};
+            `ifdef ysyxSoCFull
             if(araddr >= 32'h10000000 && araddr < 32'h10001000 
                 || araddr >= 32'h10011000 && araddr < 32'h10011008
                 || araddr >= 32'h21000000 && araddr < 32'h21200000
@@ -323,9 +324,16 @@ module ysyx_24080020_MEM(
                 npc_difftest_skip_ref();
                 `endif
             end
-            else begin
-                tmp <= 1'b0;
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400 
+                ) begin
+                // skip uart keyboard etc.
+                `ifdef CONFIG_DPIC
+                npc_difftest_skip_ref();
+                `endif
             end
+            `endif
 
             mren_mem <= 1'b0;
         end
@@ -437,6 +445,7 @@ module ysyx_24080020_MEM(
             awlen <= {{7{1'b0}}, get_awlen};
 
             mwen_mem <= 1'b0;
+            `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
                 || awaddr >= 32'h10011000 && awaddr < 32'h10011008
                 || awaddr >= 32'h21000000 && awaddr < 32'h21200000 
@@ -448,9 +457,18 @@ module ysyx_24080020_MEM(
                 npc_difftest_skip_ref();
                 `endif
             end
-            else begin
-                tmp <= 1'b0;
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
+                ) begin
+                // skip uart keyboard etc.
+                `ifdef CONFIG_DPIC
+                npc_difftest_skip_ref();
+                `endif
             end
+
+
+            `endif
 
         end
         else begin
