@@ -119,6 +119,7 @@ module ysyx_24080020_MEM(
     assign arsize = araddr[1:0] == 2'b0 ? mrlen_mem == 'b0001 ? 3'b000 :
                                         mrlen_mem == 'b0010 ? 3'b001 :
                                         mrlen_mem == 'b0100 ? 3'b010 :
+                                        3'b000 :
                     araddr[1:0] == 2'b1 ? mrlen_mem == 'b0001 ? 3'b001 :
                                         3'b100 :
                     araddr[1:0] == 2'b10 ? 3'b100 :
