@@ -23,13 +23,13 @@ endif
 NXDC_FILES = constr/top.nxdc
 
 ifdef CONFIG_NVBOARD
-ifeq ($(ARCH), riscv32e-ysyxsoc)
-NVBOARD_ENABLE := 1
-else
+ifeq ($(ARCH), riscv32e-npc)
 NVBOARD_ENABLE := 0
+else
+NVBOARD_ENABLE := 1
 endif
 else
-NVBOARD_ENABLE := 1
+NVBOARD_ENABLE := 0
 endif
 
 remove_quote = $(patsubst "%",%,$(1))
