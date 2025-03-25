@@ -2,6 +2,10 @@
 #include <cstdio>
 #include <climits>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int init_monitor(int argc, char *argv[]);
 extern void sdb_mainloop();
 extern void init_sdb();
@@ -24,3 +28,7 @@ int main(int argc, char **argv) {
   free_memory();
   return is_exit_status_bad();
 }
+
+#ifdef __cplusplus
+}
+#endif
