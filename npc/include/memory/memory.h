@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include "define.h"
 #include "svdpi.h"
-#include "VysyxSoCFull__Dpi.h"
 #include "paddr.h"
 #include "vaddr.h"
 
