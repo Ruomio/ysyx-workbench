@@ -1,9 +1,5 @@
 #include <cstdio>
 #include <climits>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include "memory/memory.h"
 
 extern int init_monitor(int argc, char *argv[]);
@@ -12,9 +8,6 @@ extern void init_sdb();
 extern int is_exit_status_bad();
 // extern void init_npc(int argc, char **argv);
 extern void free_npc();
-#ifdef __cplusplus
-}
-#endif
 
 
 
@@ -31,4 +24,3 @@ int main(int argc, char **argv) {
   free_memory();
   return is_exit_status_bad();
 }
-
