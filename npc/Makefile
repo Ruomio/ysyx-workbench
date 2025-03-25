@@ -34,7 +34,6 @@ endif
 
 remove_quote = $(patsubst "%",%,$(1))
 
-CALLSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 CSRC=$(shell find csrc -name "*.c") 
 CPPSRC=$(shell find csrc -name "*.cpp") 
 CCSRC=$(shell find csrc -name "*.cc") 
@@ -143,7 +142,7 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifeq ($(NVBOARD_ENABLE), 1)
-$(BIN): $(VSRC) $(CALLSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
@@ -151,7 +150,7 @@ $(BIN): $(VSRC) $(CALLSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
-$(BIN): $(VSRC) $(CALLSRC)
+$(BIN): $(VSRC) $(CSRC) $(CPPSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
