@@ -1,15 +1,15 @@
+#include <readline/chardefs.h>
+#include "define.h"
+#include "memory/paddr.h"
 #include "verilated_vcd_c.h"
+#include "common.h"
+#include "ringbuffer.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 #include "isa.h"
-#include "define.h"
 #include <cpu/difftest.h>
-#include "memory/paddr.h"
-#include <readline/chardefs.h>
-#include "common.h"
-#include "ringbuffer.h"
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
