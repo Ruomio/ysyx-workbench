@@ -139,7 +139,7 @@ perf: $(BIN)
 		echo "" | tee -a build/perf.log ; \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" | tee -a build/perf.log ; \
 	else \
-		$(echo "yosys-sta failed")\
+		$(shell echo "yosys-sta failed"); \
 	fi
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
