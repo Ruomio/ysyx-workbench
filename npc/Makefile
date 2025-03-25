@@ -51,7 +51,7 @@ ifdef CONFIG_NVBOARD
 VERILATOR_CFLAGS += -DysyxSoCFull
 endif
 ifeq ($(ARCH), riscv32e-npc)
-VERILATOR_CFLAGS += -Dysyx_24080020_NPC
+VERILATOR_CFLAGS += -Dysyx_24080020_NPC -UysyxSoCFull
 endif
 
 include ../Makefile
