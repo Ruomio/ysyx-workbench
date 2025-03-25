@@ -38,8 +38,7 @@ CSRC=$(shell find csrc -name "*.c")
 CPPSRC=$(shell find csrc -name "*.cpp") 
 HSRC=$(shell find $(abspath ./include) -name "*.h") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
-INC_PATH += $(shell find $(abspath ./) -type d -name "include" -or -name "build")
-INC_PATH += $(shell find $(abspath /usr/share/verilator) -type d -name "vltstd" -or -name "include")
+INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
@@ -77,7 +76,7 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 ifeq ($(NVBOARD_ENABLE), 1)
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
-$(SRC_AUTO_BIND): $(NXDC_FILES)
+$(SRC_AUTO_BIND): $(NXDC_FILES) $(BIN)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 
 CSRC += $(SRC_AUTO_BIND)
@@ -141,7 +140,7 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifeq ($(NVBOARD_ENABLE), 1)
-$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
