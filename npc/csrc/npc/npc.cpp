@@ -118,6 +118,11 @@ uint32_t g_get_rs1();
 uint32_t g_get_rd();
 void update_npc_cpu();
 
+
+#ifdef __cplusplus
+}
+#endif
+
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", inst_buf); }
@@ -557,8 +562,3 @@ extern "C" void statistics_idu_jump_type() {
   idu_type = Jump;
   idu_jump_type_cnt ++;
 }
-
-
-#ifdef __cplusplus
-}
-#endif
