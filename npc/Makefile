@@ -36,7 +36,6 @@ remove_quote = $(patsubst "%",%,$(1))
 
 CSRC=$(shell find csrc -name "*.c") 
 CPPSRC=$(shell find csrc -name "*.cpp") 
-CCSRC=$(shell find csrc -name "*.cc") 
 HSRC=$(shell find $(abspath ./include) -name "*.h") 
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include" -or -name "build")
@@ -113,7 +112,7 @@ CXXFLAGS += -Dysyx_24080020_NPC
 endif
 
 CSRC_NODIR := $(notdir $(CSRC))
-OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CCSRC:%.cc=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
+OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
 
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
@@ -146,25 +145,17 @@ $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $(VSRC) $(CALLSRC) $(NVBOARD_ARCHIVE) \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
-$(BIN): $(VSRC) $(CSRC) $(CPPSRC)
+$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
-# $(BIN): generated_cpp $(OBJS)
-# 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
-# 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-# 	@g++ $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $(abspath $(BIN))
-# 
-generated_cpp: $(VSRC)
-	@$(VERILATOR) $(VERILATOR_CFLAGS) $^ --top-module $(TOPNAME) --Mdir $(BUILD_DIR) \
-		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))
 endif
 
 perf: $(BIN)

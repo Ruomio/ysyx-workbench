@@ -15,7 +15,7 @@
 
 ifneq ($(CONFIG_ITRACE)$(CONFIG_IQUEUE),)
 CSRC += $(shell find $(abspath ./csrc/utils) -name "disasm.cc")
-CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE
-# CXXFLAGS += -I/usr/include -std=c++17  -fno-exceptions -funwind-tables -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -fPIE
-LIBS += $(shell llvm-config --libs) -lLLVM
+# CXXFLAGS += $(shell llvm-config --cxxflags) -fPIE
+CXXFLAGS += -I/usr/include -std=c++17  -fno-exceptions -funwind-tables -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -fPIE
+LIBS += $(shell llvm-config --libs)
 endif
