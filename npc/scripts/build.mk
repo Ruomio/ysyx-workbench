@@ -39,6 +39,28 @@ ifdef CONFIG_ITRACE
 include $(NPC_HOME)/csrc/utils/filelist.mk
 endif
 
+# Extract variabls from environment, decide to select NPC OR SOC 
+ifeq ($(ARCH), riscv32e-ysyxsoc)
+TOPNAME=ysyxSoCFull
+CXXFLAGS += -DysyxSoCFull
+else ifeq ($(ARCH), riscv32e-npc)
+TOPNAME=ysyx_24080020_NPC
+CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
+else
+TOPNAME=ysyxSoCFull
+CXXFLAGS += -DysyxSoCFull
+$(echo "default ARCH is riscv32e-ysyxsoc")
+endif
+
+ifdef CONFIG_NVBOARD
+ifeq ($(ARCH), riscv32e-npc)
+NVBOARD_ENABLE := 0
+else
+NVBOARD_ENABLE := 1
+endif
+else
+NVBOARD_ENABLE := 0
+endif
 
 ifeq ($(NVBOARD_ENABLE), 1)
 # constraint file
