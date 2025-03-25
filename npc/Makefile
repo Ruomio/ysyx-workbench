@@ -165,7 +165,7 @@ else
 $(BIN): generated_cpp $(OBJS)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-	@g++ $(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) $(OBJS) -o $(abspath $(BIN))
+	@g++ $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $(abspath $(BIN))
 
 generated_cpp: $(VSRC)
 	@$(VERILATOR) $(VERILATOR_CFLAGS) -cc $^ --top-module $(TOPNAME) --Mdir $(BUILD_DIR)
