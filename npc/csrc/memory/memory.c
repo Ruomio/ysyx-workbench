@@ -153,20 +153,20 @@ void write_memory(int addr, int len, int data) {
   paddr_write(addr, len, data);
 }
 
-void flash_read(int32_t addr, int32_t *data) { 
+extern "C" void flash_read(int32_t addr, int32_t *data) { 
   // read inst
   *data = paddr_read(addr | 0x30000000, 4);
 }
 
-void mrom_read(int32_t addr, int32_t *data) {
+extern "C" void mrom_read(int32_t addr, int32_t *data) {
   assert(addr != 0);
   *data = paddr_read(addr, 4);
 }
 
-int psram_read(int raddr) {
+extern "C" int psram_read(int raddr) {
   return paddr_read(raddr|0x80000000, 4);
 }
-void psram_write(int waddr, int wdata, int wstrb) {
+extern "C" void psram_write(int waddr, int wdata, int wstrb) {
   // printf("psram_write addr:0x%x, data: 0x%x\n", waddr|0x80000000, wdata);
   switch(wstrb) {
     case 0xf: paddr_write(waddr|0x80000000, 4, wdata); break;
@@ -176,7 +176,7 @@ void psram_write(int waddr, int wdata, int wstrb) {
   }
 }
 
-void sdram_read(char id, char ba, int row_addr, int col_addr, int wstrb, int *rdata) {
+extern "C" void sdram_read(char id, char ba, int row_addr, int col_addr, int wstrb, int *rdata) {
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
 
@@ -187,7 +187,7 @@ void sdram_read(char id, char ba, int row_addr, int col_addr, int wstrb, int *rd
   // printf("sdram read, id:%d, addr: 0x%x,  rdata: 0x%x, wstrb:0x%x\n", id, addr, *rdata & wstrb, wstrb);
 }
 
-void sdram_write(char id, char ba, int row_addr, int col_addr, int wstrb, int wdata) {
+extern "C" void sdram_write(char id, char ba, int row_addr, int col_addr, int wstrb, int wdata) {
   char len = 0;
   uint32_t addr = (ba << 10) | (row_addr << 12) | (col_addr << 1);
   addr |= 0xa0000000;
@@ -215,7 +215,7 @@ void sdram_write(char id, char ba, int row_addr, int col_addr, int wstrb, int wd
   }
 
   assert(col_addr < 512);
-#if defined(CONFIG_PSRAM) || defined(CONFIG_SDRAM)
+#if defined(CONFIG_SDRAM)
   Assert((addr >= CONFIG_SDRAM_BASE && addr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE), "OUT OF SDARM ADDR");
 #endif
 }
