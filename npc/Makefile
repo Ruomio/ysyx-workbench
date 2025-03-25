@@ -34,7 +34,7 @@ endif
 
 remove_quote = $(patsubst "%",%,$(1))
 
-CALLSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c" -or -name "*.cc") 
+CALLSRC=$(shell find $(abspath ./csrc) -name "*.cpp" -or -name "*.c") 
 CSRC=$(shell find csrc -name "*.c") 
 CPPSRC=$(shell find csrc -name "*.cpp") 
 CCSRC=$(shell find csrc -name "*.cc") 
