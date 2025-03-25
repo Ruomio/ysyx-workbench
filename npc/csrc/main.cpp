@@ -12,6 +12,9 @@ extern void init_sdb();
 extern int is_exit_status_bad();
 // extern void init_npc(int argc, char **argv);
 extern void free_npc();
+#ifdef __cplusplus
+}
+#endif
 
 
 
@@ -29,6 +32,3 @@ int main(int argc, char **argv) {
   return is_exit_status_bad();
 }
 
-#ifdef __cplusplus
-}
-#endif
