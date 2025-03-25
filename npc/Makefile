@@ -133,7 +133,7 @@ $(OBJ_DIR)/%.o: %.cc
 $(OBJ_DIR)/%.o: %.cpp
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
-	@g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+	g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 # $(call call_fixdep, $(@:.o=.d), $@)
 
 # Depencies
