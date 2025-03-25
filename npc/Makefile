@@ -120,17 +120,17 @@ OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CCSRC:%.cc=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$
 # OBJS2 := $(CCSRC:%.cc=$(OBJ_DIR)/%.o)
 # OBJS3 := $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
 
-$(OBJ_DIR)/%.o: %.c
+$(OBJ_DIR)/%.o: %.c generated_cpp
 	@echo + CC $<
 	@mkdir -p $(dir $@)
 	@gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
 # $(call call_fixdep, $(@:.o=.d), $@)
-$(OBJ_DIR)/%.o: %.cc
+$(OBJ_DIR)/%.o: %.cc generated_cpp
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
 	@g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 # $(call call_fixdep, $(@:.o=.d), $@)
-$(OBJ_DIR)/%.o: %.cpp
+$(OBJ_DIR)/%.o: %.cpp generated_cpp
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
 	@g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
@@ -155,18 +155,18 @@ $(BIN): $(VSRC) $(CSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
-# $(BIN): $(VSRC) $(OBJS) $(HSRC)
-# 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
-# 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-# 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-# 		--top-module $(TOPNAME) $(VSRC) $(CSRC) \
-# 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-# 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
-$(BIN): generated_cpp $(OBJS)
+$(BIN): $(VSRC) $(OBJS)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-	@g++ $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $(abspath $(BIN))
-
+	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $(TOPNAME) $^ \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+# $(BIN): generated_cpp $(OBJS)
+# 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+# 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+# 	@g++ $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $(abspath $(BIN))
+# 
 generated_cpp: $(VSRC)
 	@$(VERILATOR) $(VERILATOR_CFLAGS) $^ --top-module $(TOPNAME) --Mdir $(BUILD_DIR) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))
