@@ -1,11 +1,15 @@
-#include <readline/chardefs.h>
-#include "define.h"
-#include "isa.h"
-#include "memory/paddr.h"
 #include "verilated_vcd_c.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "isa.h"
+#include "define.h"
+#include <cpu/difftest.h>
+#include "memory/paddr.h"
+#include <readline/chardefs.h>
 #include "common.h"
 #include "ringbuffer.h"
-#include <cpu/difftest.h>
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
@@ -553,3 +557,8 @@ extern "C" void statistics_idu_jump_type() {
   idu_type = Jump;
   idu_jump_type_cnt ++;
 }
+
+
+#ifdef __cplusplus
+}
+#endif
