@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <climits>
-#include "memory/memory.h"
 
 extern int init_monitor(int argc, char *argv[]);
 extern void sdb_mainloop();
