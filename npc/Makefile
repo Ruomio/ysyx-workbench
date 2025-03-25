@@ -40,14 +40,14 @@ HSRC=$(shell find $(abspath ./include) -name "*.h")
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
-ifeq ($(ARCH), riscv32e-ysyxsoc)
+ifdef CONFIG_NVBOARD
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
 
 VSRC += $(shell find $(abspath vsrc) -name "*.v") 
-ifeq ($(ARCH), riscv32e-ysyxsoc)
+ifdef CONFIG_NVBOARD
 VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
 VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
 endif
