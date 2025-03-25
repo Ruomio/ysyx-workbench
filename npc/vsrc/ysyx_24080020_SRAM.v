@@ -61,12 +61,6 @@ module ysyx_24080020_SRAM(
     assign wstrb_full = {{8{wstrb[3]}}, {8{wstrb[2]}}, {8{wstrb[1]}}, {8{wstrb[0]}}};
     assign lfsr = 6'd5;
 
-    assign rdata_shift = awaddr[1:0] == 2'b00 ? rdata :
-                         awaddr[1:0] == 2'b01 ? rdata >> 8 :
-                         awaddr[1:0] == 2'b10 ? rdata >> 16 :
-                         awaddr[1:0] == 2'b11 ? rdata >> 24 :
-                         32'b0;
-
     // AR
     always @(posedge clk) begin
         if(!rst) begin
@@ -173,7 +167,7 @@ module ysyx_24080020_SRAM(
                 else if(!write_en) begin
                     read_en <= 1'b0;
 
-                    write_data <= wdata & wstrb_full | (rdata_shift & ~wstrb_full);
+                    write_data <= wdata & wstrb_full | (rdata & ~wstrb_full);
                     write_en <= 1'b1;
                 end
                 else if(!wready) begin
