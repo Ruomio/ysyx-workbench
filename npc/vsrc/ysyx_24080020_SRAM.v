@@ -71,7 +71,7 @@ module ysyx_24080020_SRAM(
                 ar_cnt <= ar_cnt + 6'b1;
             end
             else begin
-                paddr <= araddr;
+                paddr <= {araddr[31:2],2'b0};
                 read_en <= 1'b1;
                 arready <= 1'b1;
 
