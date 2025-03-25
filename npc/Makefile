@@ -76,7 +76,7 @@ DIFFTEST_REF_SO = $(call remove_quote,$(DIFFTEST_REF_PATH))
 ifeq ($(NVBOARD_ENABLE), 1)
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
-$(SRC_AUTO_BIND): $(NXDC_FILES) $(BIN)
+$(SRC_AUTO_BIND): $(NXDC_FILES)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 
 CSRC += $(SRC_AUTO_BIND)
@@ -113,24 +113,24 @@ endif
 CSRC_NODIR := $(notdir $(CSRC))
 OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
 
-$(OBJ_DIR)/%.o: %.c
-	@echo + CC $<
-	@mkdir -p $(dir $@)
-	@gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
-# $(call call_fixdep, $(@:.o=.d), $@)
-$(OBJ_DIR)/%.o: %.cc
-	@echo + CXX $<
-	@mkdir -p $(dir $@)
-	@g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
-# $(call call_fixdep, $(@:.o=.d), $@)
-$(OBJ_DIR)/%.o: %.cpp
-	@echo + CXX $<
-	@mkdir -p $(dir $@)
-	@g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
-# $(call call_fixdep, $(@:.o=.d), $@)
-
-# Depencies
--include $(OBJS:.o=.d)
+# $(OBJ_DIR)/%.o: %.c
+# 	@echo + CC $<
+# 	@mkdir -p $(dir $@)
+# 	@gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
+# # $(call call_fixdep, $(@:.o=.d), $@)
+# $(OBJ_DIR)/%.o: %.cc
+# 	@echo + CXX $<
+# 	@mkdir -p $(dir $@)
+# 	@g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+# # $(call call_fixdep, $(@:.o=.d), $@)
+# $(OBJ_DIR)/%.o: %.cpp
+# 	@echo + CXX $<
+# 	@mkdir -p $(dir $@)
+# 	@g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+# # $(call call_fixdep, $(@:.o=.d), $@)
+# 
+# # Depencies
+# -include $(OBJS:.o=.d)
 
 all: $(BIN)
 
@@ -140,7 +140,7 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifeq ($(NVBOARD_ENABLE), 1)
-$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE)
+$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
