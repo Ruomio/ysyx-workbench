@@ -365,7 +365,7 @@ void free_npc() {
     delete top;
     top = NULL;
   }
-#ifdef CONFIG_WAVEFILE
+#if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
   if(tfp) {
     tfp->close();
   }

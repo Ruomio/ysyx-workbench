@@ -168,7 +168,8 @@ $(BIN): generated_cpp $(OBJS)
 	@g++ $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $(abspath $(BIN))
 
 generated_cpp: $(VSRC)
-	@$(VERILATOR) $(VERILATOR_CFLAGS) -cc $^ --top-module $(TOPNAME) --Mdir $(BUILD_DIR)
+	@$(VERILATOR) $(VERILATOR_CFLAGS) $^ --top-module $(TOPNAME) --Mdir $(BUILD_DIR) \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))
 endif
 
 perf: $(BIN)
