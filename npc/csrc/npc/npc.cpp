@@ -5,9 +5,6 @@
 #include "common.h"
 #include "ringbuffer.h"
 
-#ifdef __cpluspluss
-extern "C" {
-#endif
 #include "isa.h"
 #include <cpu/difftest.h>
 
@@ -557,8 +554,3 @@ extern "C" void statistics_idu_jump_type() {
   idu_type = Jump;
   idu_jump_type_cnt ++;
 }
-
-
-#ifdef __cpluspluss
-}
-#endif
