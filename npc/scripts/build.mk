@@ -1,0 +1,145 @@
+.DEFAULT_GOAL = all
+
+VERILATOR=verilator
+VERILATOR_CFLAGS += -MMD --build -cc \
+					-j 16 --threads 1  \
+					-O3 --x-assign fast --x-initial fast --noassert --trace \
+					--timescale "1ns/1ns" --no-timing
+
+
+NXDC_FILES = constr/top.nxdc
+
+CSRC=$(shell find csrc -name "*.c") 
+CPPSRC=$(shell find csrc -name "*.cpp") 
+HSRC=$(shell find $(abspath ./include) -name "*.h") 
+# CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
+INC_PATH += $(shell find $(abspath ./) -type d -name "include")
+
+ifdef CONFIG_NVBOARD
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+endif
+VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
+
+VSRC += $(shell find $(abspath vsrc) -name "*.v") 
+ifdef CONFIG_NVBOARD
+VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
+VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
+endif
+VCD_FILE=build/wave.vcd
+ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
+BUILD_DIR=$(shell pwd)/build
+OBJ_DIR=$(BUILD_DIR)/obj_dir
+BIN=$(BUILD_DIR)/$(TOPNAME)
+
+$(shell mkdir -p $(BUILD_DIR))
+
+
+ifdef CONFIG_ITRACE
+include $(NPC_HOME)/csrc/utils/filelist.mk
+endif
+
+
+ifeq ($(NVBOARD_ENABLE), 1)
+# constraint file
+SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
+$(SRC_AUTO_BIND): $(NXDC_FILES)
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+
+CSRC += $(SRC_AUTO_BIND)
+# rules for NVBoard
+include $(NVBOARD_HOME)/scripts/nvboard.mk
+endif
+
+# project source
+# VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+# CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+# CSRCS += $(SRC_AUTO_BIND)
+# 
+# # parameters 
+override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
+override ARGS += --diff=$(DIFFTEST_REF_SO) $(NPCFLAGS)
+override IMG +=
+
+
+# CSRC_NODIR := $(notdir $(CSRC))
+# OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
+
+# $(OBJ_DIR)/%.o: %.c
+# 	@echo + CC $<
+# 	@mkdir -p $(dir $@)
+# 	@gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
+# # $(call call_fixdep, $(@:.o=.d), $@)
+# $(OBJ_DIR)/%.o: %.cc
+# 	@echo + CXX $<
+# 	@mkdir -p $(dir $@)
+# 	@g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+# # $(call call_fixdep, $(@:.o=.d), $@)
+# $(OBJ_DIR)/%.o: %.cpp
+# 	@echo + CXX $<
+# 	@mkdir -p $(dir $@)
+# 	@g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+# # $(call call_fixdep, $(@:.o=.d), $@)
+# 
+# # Depencies
+# -include $(OBJS:.o=.d)
+
+all: $(BIN)
+
+sim:
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	# @echo "Write this Makefile by your self.!"
+	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
+
+ifeq ($(NVBOARD_ENABLE), 1)
+$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+else
+$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
+	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+endif
+
+perf: $(BIN)
+	$(call git_commit, "perf NPC")
+	@date | tee -a build/perf.log ; 
+	@if make -s -C $(AM_HOME)/../yosys-sta sta  > /dev/null ;then \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" | tee -a build/perf.log ; \
+		echo "" | tee -a build/perf.log ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" | tee -a build/perf.log ; \
+	fi
+	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
+		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
+		| grep "\\[.* statistic\\]" | tee -a build/perf.log 
+
+gtkwave: $(VCD_FILE)
+	gtkwave $^
+
+$(VCD_FILE):
+	@$(ELF_FILE_NAME)
+
+run: $(BIN)
+	@$^ $(ARGS) $(IMG)
+	$(call git_commit, "run NPC")
+
+gdb: $(BIN)
+	$(call git_commit, "gdb NPC")
+	gdb -s $(BIN) --args $(BIN) $(ARGS) $(IMG)
+
+lldb: $(BIN)
+	$(call git_commit, "lldb NPC")
+	lldb -- $(BIN) $(ARGS) $(IMG)
+
+.PHONY: all clean gtkwave sim nvboard run perf
+
+clean:
+	@rm -rf $(BUILD_DIR) *.vcd
