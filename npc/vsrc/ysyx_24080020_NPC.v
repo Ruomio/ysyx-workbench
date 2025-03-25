@@ -215,7 +215,6 @@ module ysyx_24080020_NPC(
   wire [1:0] arburst_xbar_clint, arburst_xbar_soc;
   wire [2:0] arsize_xbar_clint, arsize_xbar_soc;
   wire [3:0] arid_xbar_clint, arid_xbar_soc;
-
   wire [7:0] arlen_xbar_clint, arlen_xbar_soc;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
                                   araddr_xbar_uart,
