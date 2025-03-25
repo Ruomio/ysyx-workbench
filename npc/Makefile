@@ -29,7 +29,7 @@ else
 NVBOARD_ENABLE := 0
 endif
 else
-NVBOARD_ENABLE := 0
+NVBOARD_ENABLE := 1
 endif
 
 remove_quote = $(patsubst "%",%,$(1))
