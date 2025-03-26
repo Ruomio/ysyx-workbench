@@ -148,7 +148,7 @@ module ysyx_24080020_IR(
                     arvalid <= 'b0;
                     fin_ar <= 'b1;
                 end
-                else begin
+                else if(!fin_ar) begin
                     arvalid <= 1'b1;
                     araddr <= addr;
                     arid <= 4'b0;
