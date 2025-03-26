@@ -163,6 +163,11 @@ void init_npc(int argc, char **argv) {
 #endif
     if(i++ > 20) {
       set_unreset;
+#ifdef CONFIG_LIGHTSSS
+    if (!lightsss.is_child()) {
+      lightsss.do_fork(); // 创建子进程快照
+    }
+#endif
       break;
     }
     if(is_clk_high) {
