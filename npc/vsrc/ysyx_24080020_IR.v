@@ -147,6 +147,9 @@ module ysyx_24080020_IR(
                 if(arready && arvalid) begin
                     arvalid <= 'b0;
                     fin_ar <= 'b1;
+                    `ifdef CONFIG_DPIC
+                    statistics_ifu_get_inst();
+                    `endif
                 end
                 else if(!fin_ar) begin
                     arvalid <= 1'b1;
