@@ -29,7 +29,6 @@ module ysyx_24080020_IR(
     import "DPI-C" function void statistics_ifu_get_inst();
     `endif
 
-    reg cnt;
     reg inst_fin_axi;
     reg inst_fin_cache;
 
@@ -84,30 +83,23 @@ module ysyx_24080020_IR(
     always @(posedge clk) begin
         if(!rst) begin
             arvalid <= 1'b0;
-            cnt <= 1'b0;
         end
         else if(if_en) begin
-            if(cnt == 1'b1) begin
-                // cache hit
-                if(cache_hit) begin
-                    inst <= cache_data[cache_index_tmp];
-                    inst_fin_cache <= 1'b1;
-                end
-                else begin
-                    // cache miss, need to read from memory
-                    arvalid <= 1'b1;
-                    araddr <= addr;
-                    arid <= 4'b0;
-                    arlen <= 8'b0;
-                    arsize <= 3'b10;
-                    arburst <<= 2'b0;
-                end
-
-                cnt <= 1'b0;
+            // cache hit
+            if(cache_hit) begin
+                inst <= cache_data[cache_index_tmp];
+                inst_fin_cache <= 1'b1;
             end
             else begin
-                cnt <= 1'b1;
+                // cache miss, need to read from memory
+                arvalid <= 1'b1;
+                araddr <= addr;
+                arid <= 4'b0;
+                arlen <= 8'b0;
+                arsize <= 3'b10;
+                arburst <<= 2'b0;
             end
+
         end
         else if(arready && arvalid) begin
             arvalid <= 1'b0;
