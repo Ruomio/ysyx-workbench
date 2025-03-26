@@ -80,6 +80,7 @@ static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
 static uint64_t total_cycles = 0;
 static uint64_t ifu_get_inst_cnt = 0;
+static uint64_t ifu_icache_hit_cnt = 0;
 static uint64_t lsu_get_data_cnt = 0;
 static uint64_t exu_complete_calcu_cnt = 0;
 static uint64_t idu_calculate_type_cnt = 0;
@@ -562,4 +563,8 @@ extern "C" void statistics_idu_csr_type() {
 extern "C" void statistics_idu_jump_type() {
   idu_type = Jump;
   idu_jump_type_cnt ++;
+}
+
+extern "C" void statics_icache_hit() {
+  ifu_icache_hit_cnt ++;
 }

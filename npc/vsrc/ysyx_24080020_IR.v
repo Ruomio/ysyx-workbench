@@ -27,6 +27,7 @@ module ysyx_24080020_IR(
 );
     `ifdef CONFIG_DPIC
     import "DPI-C" function void statistics_ifu_get_inst();
+    import "DPI-C" function void statistics_icache_hit();
     `endif
 
     reg fin_r, fin_ar;
@@ -139,6 +140,10 @@ module ysyx_24080020_IR(
             CHIT: begin
                 inst <= cache_data[cache_index_tmp];
                 inst_fin <= 'b1;
+
+                `ifdef CONFIG_DPIC
+                statistics_icache_hit();
+                `endif
             end
             CMISS: begin
                 // do nothing
