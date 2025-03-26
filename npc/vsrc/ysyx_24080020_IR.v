@@ -149,6 +149,7 @@ module ysyx_24080020_IR(
                 arburst <= 2'b00; // FIXED
             end
             AXIR: begin
+                arvalid <= 1'b0; // stop sending arvalid
                 if(rvalid && rlast) begin
                     rready <= 1'b1;
                     if(rresp == 2'b00) begin // OKAY
