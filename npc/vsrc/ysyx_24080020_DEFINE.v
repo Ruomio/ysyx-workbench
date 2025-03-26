@@ -1,8 +1,30 @@
 // `define CONFIG_DPIC // define in makefile
+// ysyxSoCFull and ysyx_24080020_NPC are defined in makefile
 
+`ifndef ysyxSoCFull
+`ifndef ysyx_24080020_NPC
+`define ysyxSoCFull
+`endif
+`endif
 
-// `define ysyx_24080020_MBASE 32'h7ffffffc
+`ifdef ysyxSoCFull
 `define ysyx_24080020_MBASE 32'h30000000
+// IOE
+`define ysyx_24080020_CLINT_ADDR  32'h02000000
+`endif
+
+`ifdef ysyx_24080020_NPC
+`define ysyx_24080020_MBASE 32'h80000000
+// IOE
+`define ysyx_24080020_CLINT_ADDR 32'ha0000048
+`define ysyx_24080020_DEVICE_BASE 32'ha0000000
+`define ysyx_24080020_SERIAL_PORT 32'ha00003f8
+`endif
+
+// cache
+`define ysyx_24080020_CACHE_SIZE 4     // 4Byte
+`define ysyx_24080020_CACHE_NUM 16      // 16 * 4
+
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
 `define ysyx_24080020_MEM 10
@@ -14,8 +36,6 @@
 `define ysyx_24080020_MVENDORID_ADDR 12'hf11
 `define ysyx_24080020_MARCHID_ADDR 12'hf12
 
-// IOE
-`define ysyx_24080020_CLINT_ADDR  32'h02000000
 
 // ALU OP code
 `define ysyx_24080020_ALU_OP_WIDTH 5

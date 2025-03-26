@@ -6,24 +6,36 @@ module ysyx_24080020_SRAM(
     // AXI-lite
     input arvalid,
     input [`ysyx_24080020_WIDTH-1:0] araddr,
+    input [3:0] arid,
+    input [7:0] arlen,
+    input [2:0] arsize,
+    input [1:0] arburst,
     output reg arready,
 
     input rready,
     output reg [`ysyx_24080020_WIDTH-1:0] rdata,
     output reg [1:0] rresp,
+    output reg [3:0] rid,
+    output reg rlast,
     output reg rvalid,
 
     input [`ysyx_24080020_WIDTH-1:0] awaddr,
     input awvalid,
+    input [3:0] awid,
+    input [7:0] awlen,
+    input [2:0] awsize,
+    input [1:0] awburst,
     output reg awready,
 
     input [`ysyx_24080020_WIDTH-1:0] wdata,
     input [3:0] wstrb,
     input wvalid,
+    input wlast,
     output reg wready,
 
     output reg [1:0] bresp,
     output reg bvalid,
+    output reg [3:0] bid,
     input bready
 );
 `ifdef CONFIG_DPIC
@@ -39,6 +51,8 @@ module ysyx_24080020_SRAM(
 
     reg [5:0] ar_cnt, aw_cnt, w_cnt;
     reg [5:0] r_cnt, b_cnt;
+
+    wire [31:0] rdata_shift;
 
 
     wire [`ysyx_24080020_WIDTH-1:0] wstrb_full;
@@ -59,7 +73,7 @@ module ysyx_24080020_SRAM(
                 ar_cnt <= ar_cnt + 6'b1;
             end
             else begin
-                paddr <= araddr;
+                paddr <= {araddr[31:2],2'b0};
                 read_en <= 1'b1;
                 arready <= 1'b1;
 
@@ -97,6 +111,7 @@ module ysyx_24080020_SRAM(
                     rvalid <= 1'b1;
                     rresp <= 2'b0;
                     read_en <= 1'b0;
+                    rlast <= 1'b1;
                 end
                 r_cnt <= 6'b0;
             end
@@ -122,7 +137,7 @@ module ysyx_24080020_SRAM(
                 aw_cnt <= aw_cnt + 6'b1;
             end
             else begin
-                paddr <= awaddr;
+                paddr <= {awaddr[31:2], 2'b0};
                 awready <= 1'b1;
 
                 aw_cnt <= 6'b0;
