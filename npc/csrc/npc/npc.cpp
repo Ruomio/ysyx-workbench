@@ -88,13 +88,14 @@ static uint64_t idu_store_type_cnt = 0;
 static uint64_t idu_csr_type_cnt = 0;
 static uint64_t idu_jump_type_cnt = 0;
 
-enum idu_type{None=0, Calculate, Load, Store, CSR, Jump};
+enum idu_type{None=0, Calculate, Load, Store, CSR, Jump, Fetch};
 static int idu_type = None;
 static uint64_t idu_calculate_cycles = 0;
 static uint64_t idu_load_cycles = 0;
 static uint64_t idu_store_cycles = 0;
 static uint64_t idu_csr_cycles = 0;
 static uint64_t idu_jump_cycles = 0;
+static uint64_t ifu_get_inst_cycles = 0;
 
 #ifdef CONFIG_LIGHTSSS
 // LightSSS
@@ -215,6 +216,7 @@ void exec_once_npc(uint32_t pc) {
         case Store: idu_store_cycles++; break;
         case CSR: idu_csr_cycles++; break;
         case Jump: idu_jump_cycles++; break;
+        case Fetch: ifu_get_inst_cycles++; break;
         default: break;
       }
     }
@@ -281,10 +283,11 @@ static void statistic() {
   if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
   Log("total_cycles = " NUMBERIC_FMT "  IPC = %lf", total_cycles, ((double)g_nr_guest_inst / total_cycles));
-  Log("ifu_get_inst_cnt = " NUMBERIC_FMT, ifu_get_inst_cnt);
+
+  if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
+  Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average :%ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt / 2);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
-  if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
   Log("idu_calcu_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_calculate_type_cnt, idu_calculate_type_cnt * 100.0 / ifu_get_inst_cnt, idu_calculate_cycles / idu_calculate_type_cnt);
   Log("idu_load_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_load_type_cnt, idu_load_type_cnt * 100.0 / ifu_get_inst_cnt, idu_load_cycles / idu_load_type_cnt);
   Log("idu_store_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_store_type_cnt, idu_store_type_cnt * 100.0 / ifu_get_inst_cnt, idu_store_cycles / idu_store_type_cnt);
@@ -515,6 +518,7 @@ extern "C" void npc_difftest_skip_ref() {
 
 extern "C" void statistics_ifu_get_inst() {
   // printf("ifu_get_inst_cnt: %ld pc: 0x%x , total_guest_inst: 0x%ld\n", ifu_get_inst_cnt, g_pc, g_nr_guest_inst);
+  idu_type = Fetch;
   ifu_get_inst_cnt ++;
 }
 
