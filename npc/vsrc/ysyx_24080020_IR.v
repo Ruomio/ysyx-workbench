@@ -136,13 +136,17 @@ module ysyx_24080020_IR(
             end
             JUDGE: begin
                 // do nothing
+                `ifdef CONFIG_DPIC
+                statistics_ifu_get_inst();
+                `endif
             end
             CHIT: begin
                 inst <= cache_data[cache_index_tmp];
                 inst_fin <= 'b1;
 
                 `ifdef CONFIG_DPIC
-                statistics_icache_hit();
+                // hit cache and not by axi
+                if(!fin_r) statistics_icache_hit();
                 `endif
             end
             CMISS: begin
@@ -152,9 +156,6 @@ module ysyx_24080020_IR(
                 if(arready && arvalid) begin
                     arvalid <= 'b0;
                     fin_ar <= 'b1;
-                    `ifdef CONFIG_DPIC
-                    statistics_ifu_get_inst();
-                    `endif
                 end
                 else if(!fin_ar) begin
                     arvalid <= 1'b1;
