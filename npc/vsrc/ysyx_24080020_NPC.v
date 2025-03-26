@@ -219,12 +219,6 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
                                   araddr_xbar_uart,
                                   araddr_xbar_clint;
-  `ifdef ysyx_24080020_NPC
-  wire [3:0] arid_xbar_sram, arid_xbar_uart;
-  wire [7:0] arlen_xbar_sram, arlen_xbar_uart;
-  wire [2:0] arsize_xbar_sram, arsize_xbar_uart;
-  wire [1:0] arburst_xbar_sram, arburst_xbar_uart;
-  `endif
 
   wire rvalid_sram, rready_xbar_sram,
         rvalid_uart, rready_xbar_uart,
@@ -233,10 +227,6 @@ module ysyx_24080020_NPC(
   wire [3:0] rid_clint, rid_soc;
   wire [1:0] rresp_sram, rresp_uart, rresp_clint;
   wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart, rdata_clint;
-  `ifdef ysyx_24080020_NPC
-  wire [3:0] rid_sram, rid_uart;
-  wire rlast_sram, rlast_uart;
-  `endif
 
   wire awvalid_xbar_sram, awready_sram,
         awvalid_xbar_uart, awready_uart,
@@ -246,12 +236,6 @@ module ysyx_24080020_NPC(
   wire [3:0] awid_xbar_clint, awid_xbar_soc;
   wire [7:0] awlen_xbar_clint, awlen_xbar_soc;
   wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart, awaddr_xbar_clint;
-  `ifdef ysyx_24080020_NPC
-  wire [3:0] awid_xbar_sram, awid_xbar_uart;
-  wire [7:0] awlen_xbar_sram, awlen_xbar_uart;
-  wire [2:0] awsize_xbar_sram, awsize_xbar_uart;
-  wire [1:0] awburst_xbar_sram, awburst_xbar_uart;
-  `endif
 
   wire wvalid_xbar_sram, wready_sram,
        wvalid_xbar_uart, wready_uart,
@@ -259,18 +243,13 @@ module ysyx_24080020_NPC(
   wire wlast_xbar_clint, wlast_xbar_soc;
   wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart, wstrb_xbar_clint;
   wire [31:0] wdata_xbar_sram, wdata_xbar_uart, wdata_xbar_clint;
-  `ifdef ysyx_24080020_NPC
-  wire wlast_xbar_sram, wlast_xbar_uart;
-  `endif
 
   wire bvalid_sram, bready_xbar_sram,
        bvalid_uart,  bready_xbar_uart,
        bvalid_clint, bready_xbar_clint;
   wire [3:0] bid_clint, bid_soc;
   wire [1:0] bresp_sram, bresp_uart, bresp_clint;
-  `ifdef ysyx_24080020_NPC
-  wire [3:0] bid_sram, bid_uart;
-  `endif
+
 
 
 
@@ -666,6 +645,52 @@ module ysyx_24080020_NPC(
         .bid_xbar(bid_xbar),
         .bresp_xbar(bresp_xbar),
 
+        // // xbar -> sram
+        // .arvalid_xbar_sram(arvalid_xbar_sram),
+        // .araddr_xbar_sram(araddr_xbar_sram),
+        // .arready_sram(arready_sram),
+
+        // .rdata_sram(rdata_sram),
+        // .rresp_sram(rresp_sram),
+        // .rvalid_sram(rvalid_sram),
+        // .rready_xbar_sram(rready_xbar_sram),
+
+        // .awaddr_xbar_sram(awaddr_xbar_sram),
+        // .awvalid_xbar_sram(awvalid_xbar_sram),
+        // .awready_sram(awready_sram),
+
+        // .wdata_xbar_sram(wdata_xbar_sram),
+        // .wstrb_xbar_sram(wstrb_xbar_sram),
+        // .wvalid_xbar_sram(wvalid_xbar_sram),
+        // .wready_sram(wready_sram),
+
+        // .bvalid_sram(bvalid_sram),
+        // .bresp_sram(bresp_sram),
+        // .bready_xbar_sram(bready_xbar_sram),
+
+        // // xbar -> uart
+        // .arvalid_xbar_uart(arvalid_xbar_uart),
+        // .araddr_xbar_uart(araddr_xbar_uart),
+        // .arready_uart(arready_uart),
+
+        // .rdata_uart(rdata_uart),
+        // .rresp_uart(rresp_uart),
+        // .rvalid_uart(rvalid_uart),
+        // .rready_xbar_uart(rready_xbar_uart),
+
+        // .awaddr_xbar_uart(awaddr_xbar_uart),
+        // .awvalid_xbar_uart(awvalid_xbar_uart),
+        // .awready_uart(awready_uart),
+
+        // .wdata_xbar_uart(wdata_xbar_uart),
+        // .wstrb_xbar_uart(wstrb_xbar_uart),
+        // .wvalid_xbar_uart(wvalid_xbar_uart),
+        // .wready_uart(wready_uart),
+
+        // .bvalid_uart(bvalid_uart),
+        // .bresp_uart(bresp_uart),
+        // .bready_xbar_uart(bready_xbar_uart),
+
         // xbar -> clint
         .arvalid_xbar_clint(arvalid_xbar_clint),
         .araddr_xbar_clint(araddr_xbar_clint),
@@ -701,79 +726,6 @@ module ysyx_24080020_NPC(
         .bid_clint(bid_clint),
         .bready_xbar_clint(bready_xbar_clint),
 
-        `ifdef ysyx_24080020_NPC
-        // xbar -> sram
-        .arvalid_xbar_sram(arvalid_xbar_sram),
-        .araddr_xbar_sram(araddr_xbar_sram),
-        .arid_xbar_sram(arid_xbar_sram),
-        .arlen_xbar_sram(arlen_xbar_sram),
-        .arsize_xbar_sram(arsize_xbar_sram),
-        .arburst_xbar_sram(arburst_xbar_sram),
-        .arready_sram(arready_sram),
-
-        .rdata_sram(rdata_sram),
-        .rresp_sram(rresp_sram),
-        .rvalid_sram(rvalid_sram),
-        .rid_sram(rid_sram),
-        .rlast_sram(rlast_sram),
-        .rready_xbar_sram(rready_xbar_sram),
-
-        .awaddr_xbar_sram(awaddr_xbar_sram),
-        .awvalid_xbar_sram(awvalid_xbar_sram),
-        .awid_xbar_sram(awid_xbar_sram),
-        .awlen_xbar_sram(awlen_xbar_sram),
-        .awsize_xbar_sram(awsize_xbar_sram),
-        .awburst_xbar_sram(awburst_xbar_sram),
-        .awready_sram(awready_sram),
-
-        .wdata_xbar_sram(wdata_xbar_sram),
-        .wstrb_xbar_sram(wstrb_xbar_sram),
-        .wvalid_xbar_sram(wvalid_xbar_sram),
-        .wlast_xbar_sram(wlast_xbar_sram),
-        .wready_sram(wready_sram),
-
-        .bvalid_sram(bvalid_sram),
-        .bresp_sram(bresp_sram),
-        .bid_sram(bid_sram),
-        .bready_xbar_sram(bready_xbar_sram),
-
-        // xbar -> uart
-        .arvalid_xbar_uart(arvalid_xbar_uart),
-        .araddr_xbar_uart(araddr_xbar_uart),
-        .arid_xbar_uart(arid_xbar_uart),
-        .arlen_xbar_uart(arlen_xbar_uart),
-        .arsize_xbar_uart(arsize_xbar_uart),
-        .arburst_xbar_uart(arburst_xbar_uart),
-        .arready_uart(arready_uart),
-
-        .rdata_uart(rdata_uart),
-        .rresp_uart(rresp_uart),
-        .rvalid_uart(rvalid_uart),
-        .rid_uart(rid_uart),
-        .rlast_uart(rlast_uart),
-        .rready_xbar_uart(rready_xbar_uart),
-
-        .awaddr_xbar_uart(awaddr_xbar_uart),
-        .awvalid_xbar_uart(awvalid_xbar_uart),
-        .awid_xbar_uart(awid_xbar_uart),
-        .awlen_xbar_uart(awlen_xbar_uart),
-        .awsize_xbar_uart(awsize_xbar_uart),
-        .awburst_xbar_uart(awburst_xbar_uart),
-        .awready_uart(awready_uart),
-
-        .wdata_xbar_uart(wdata_xbar_uart),
-        .wstrb_xbar_uart(wstrb_xbar_uart),
-        .wvalid_xbar_uart(wvalid_xbar_uart),
-        .wlast_xbar_uart(wlast_xbar_uart),
-        .wready_uart(wready_uart),
-
-        .bvalid_uart(bvalid_uart),
-        .bresp_uart(bresp_uart),
-        .bid_uart(bid_uart),
-        .bready_xbar_uart(bready_xbar_uart)
-        `endif
-
-        `ifdef ysyxSoCFull
         // xbar -> soc
         .arvalid_xbar_soc(io_master_arvalid),
         .araddr_xbar_soc(io_master_araddr),
@@ -808,88 +760,61 @@ module ysyx_24080020_NPC(
         .bresp_soc(io_master_bresp),
         .bid_soc(io_master_bid),
         .bready_xbar_soc(io_master_bready)
-        `endif
     );
 
-`ifdef ysyx_24080020_NPC
-    ysyx_24080020_UART u_uart(
-        .clk(clk),
-        .rst(rst),
+    // ysyx_24080020_UART u_uart(
+    //     .clk(clk),
+    //     .rst(rst),
 
-        .araddr(araddr_xbar_uart),
-        .arvalid(arvalid_xbar_uart),
-        .arid(arid_xbar_uart),
-        .arlen(arlen_xbar_uart),
-        .arsize(arsize_xbar_uart),
-        .arburst(arburst_xbar_uart),
-        .arready(arready_uart),
+    //     .araddr(araddr_xbar_uart),
+    //     .arvalid(arvalid_xbar_uart),
+    //     .arready(arready_uart),
 
-        .rdata(rdata_uart),
-        .rresp(rresp_uart),
-        .rvalid(rvalid_uart),
-        .rid(rid_uart),
-        .rlast(rlast_uart),
-        .rready(rready_xbar_uart),
+    //     .rdata(rdata_uart),
+    //     .rresp(rresp_uart),
+    //     .rvalid(rvalid_uart),
+    //     .rready(rready_xbar_uart),
 
-        .awaddr(awaddr_xbar_uart),
-        .awvalid(awvalid_xbar_uart),
-        .awid(awid_xbar_uart),
-        .awlen(awlen_xbar_uart),
-        .awsize(awsize_xbar_uart),
-        .awburst(awburst_xbar_uart),
-        .awready(awready_uart),
+    //     .awaddr(awaddr_xbar_uart),
+    //     .awvalid(awvalid_xbar_uart),
+    //     .awready(awready_uart),
 
-        .wdata(wdata_xbar_uart),
-        .wstrb(wstrb_xbar_uart),
-        .wvalid(wvalid_xbar_uart),
-        .wlast(wlast_xbar_uart),
-        .wready(wready_uart),
+    //     .wdata(wdata_xbar_uart),
+    //     .wstrb(wstrb_xbar_uart),
+    //     .wvalid(wvalid_xbar_uart),
+    //     .wready(wready_uart),
 
-        .bready(bready_xbar_uart),
-        .bresp(bresp_uart),
-        .bid(bid_uart),
-        .bvalid(bvalid_uart)
-    );
+    //     .bready(bready_xbar_uart),
+    //     .bresp(bresp_uart),
+    //     .bvalid(bvalid_uart)
+    // );
 
-    ysyx_24080020_SRAM u_sram(
-        .clk(clk),
-        .rst(rst),
+    // ysyx_24080020_SRAM u_sram(
+    //     .clk(clk),
+    //     .rst(rst),
 
-        .arvalid(arvalid_xbar_sram),
-        .araddr(araddr_xbar_sram),
-        .arid(arid_xbar_sram),
-        .arlen(arlen_xbar_sram),
-        .arsize(arsize_xbar_sram),
-        .arburst(arburst_xbar_sram),
-        .arready(arready_sram),
+    //     .arvalid(arvalid_xbar_sram),
+    //     .araddr(araddr_xbar_sram),
+    //     .arready(arready_sram),
 
-        .rdata(rdata_sram),
-        .rresp(rresp_sram),
-        .rvalid(rvalid_sram),
-        .rid(rid_sram),
-        .rlast(rlast_sram),
-        .rready(rready_xbar_sram),
+    //     .rdata(rdata_sram),
+    //     .rresp(rresp_sram),
+    //     .rvalid(rvalid_sram),
+    //     .rready(rready_xbar_sram),
 
-        .awaddr(awaddr_xbar_sram),
-        .awvalid(awvalid_xbar_sram),
-        .awid(awid_xbar_sram),
-        .awlen(awlen_xbar_sram),
-        .awsize(awsize_xbar_sram),
-        .awburst(awburst_xbar_sram),
-        .awready(awready_sram),
+    //     .awaddr(awaddr_xbar_sram),
+    //     .awvalid(awvalid_xbar_sram),
+    //     .awready(awready_sram),
 
-        .wdata(wdata_xbar_sram),
-        .wstrb(wstrb_xbar_sram),
-        .wvalid(wvalid_xbar_sram),
-        .wlast(wlast_xbar_sram),
-        .wready(wready_sram),
+    //     .wdata(wdata_xbar_sram),
+    //     .wstrb(wstrb_xbar_sram),
+    //     .wvalid(wvalid_xbar_sram),
+    //     .wready(wready_sram),
 
-        .bresp(bresp_sram),
-        .bvalid(bvalid_sram),
-        .bid(bid_sram),
-        .bready(bready_xbar_sram)
-    );
-`endif
+    //     .bresp(bresp_sram),
+    //     .bvalid(bvalid_sram),
+    //     .bready(bready_xbar_sram)
+    // );
 
     ysyx_24080020_CLINT u_clint(
         .clk(clk),

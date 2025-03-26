@@ -102,7 +102,6 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg exu_mem_shake_hands;
     reg tmp;
-    reg finish_read;
 
     reg arlen_cnt;
     reg awlen_cnt;
@@ -312,7 +311,6 @@ module ysyx_24080020_MEM(
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= {{7{1'b0}},get_arlen};
-            `ifdef ysyxSoCFull
             if(araddr >= 32'h10000000 && araddr < 32'h10001000 
                 || araddr >= 32'h10011000 && araddr < 32'h10011008
                 || araddr >= 32'h21000000 && araddr < 32'h21200000
@@ -324,17 +322,9 @@ module ysyx_24080020_MEM(
                 npc_difftest_skip_ref();
                 `endif
             end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400 
-                || araddr >= 32'ha0000048 && araddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                `ifdef CONFIG_DPIC
-                npc_difftest_skip_ref();
-                `endif
+            else begin
+                tmp <= 1'b0;
             end
-            `endif
 
             mren_mem <= 1'b0;
         end
@@ -353,7 +343,7 @@ module ysyx_24080020_MEM(
         else if(rvalid && rlast) begin
             // finish all read
             rready <= 1'b1;
-            finish_read <= 1'b1;
+
             if(rresp != 2'b0) begin
                 // rresp fault;
                 `ifdef CONFIG_DPIC
@@ -371,7 +361,27 @@ module ysyx_24080020_MEM(
                     rdata2 <= rdata;
                 end
 
+                // finish all read
+                if(mrtype_mem) begin
+                    // zero extension
+                    case(mrlen_mem)
+                        4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
+                        4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
+                        4'd4:   mrdata_mem <= rdata_shift;
+                        default: mrdata_mem <= 32'hffffffff;
+                    endcase
+                end
+                else begin
+                    // signed extension
+                    case(mrlen_mem)
+                        4'd1:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
+                        4'd2:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
+                        4'd4:   mrdata_mem <= rdata_shift;
+                        default: mrdata_mem <= 32'hffffffff;
+                    endcase
+                end
                 arlen_cnt <= 1'b0;
+                mem_wb_valid <= 1'b1;
             end
             `ifdef CONFIG_DPIC
             statistics_lsu_get_data();
@@ -401,37 +411,6 @@ module ysyx_24080020_MEM(
 
     always @(posedge clk) begin
         if(!rst) begin
-            finish_read <= 1'b0;
-        end
-        else if(finish_read) begin
-            // finish all read
-            if(mrtype_mem) begin
-                // zero extension
-                case(mrlen_mem)
-                    4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
-                    4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
-                    4'd4:   mrdata_mem <= rdata_shift;
-                    default: mrdata_mem <= 32'hffffffff;
-                endcase
-            end
-            else begin
-                // signed extension
-                case(mrlen_mem)
-                    4'd1:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
-                    4'd2:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
-                    4'd4:   mrdata_mem <= rdata_shift;
-                    default: mrdata_mem <= 32'hffffffff;
-                endcase
-            end
-
-            mem_wb_valid <= 1'b1;
-            finish_read <= 1'b0;
-        end
-
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
             awvalid <= 1'b0;
         end
         else if(awvalid && awready) begin
@@ -446,7 +425,6 @@ module ysyx_24080020_MEM(
             awlen <= {{7{1'b0}}, get_awlen};
 
             mwen_mem <= 1'b0;
-            `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
                 || awaddr >= 32'h10011000 && awaddr < 32'h10011008
                 || awaddr >= 32'h21000000 && awaddr < 32'h21200000 
@@ -458,19 +436,9 @@ module ysyx_24080020_MEM(
                 npc_difftest_skip_ref();
                 `endif
             end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
-                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                `ifdef CONFIG_DPIC
-                npc_difftest_skip_ref();
-                `endif
+            else begin
+                tmp <= 1'b0;
             end
-
-
-            `endif
 
         end
         else begin
