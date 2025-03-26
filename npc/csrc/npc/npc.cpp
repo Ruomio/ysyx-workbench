@@ -566,6 +566,6 @@ extern "C" void statistics_idu_jump_type() {
   idu_jump_type_cnt ++;
 }
 
-extern "C" void statics_icache_hit() {
+extern "C" void statistics_icache_hit() {
   ifu_icache_hit_cnt ++;
 }
