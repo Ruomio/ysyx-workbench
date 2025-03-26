@@ -144,7 +144,7 @@ module ysyx_24080020_IR(
                 // do nothing
             end
             AXIAR: begin
-                if(arready) begin
+                if(!arready && arvalid) begin
                     arvalid <= 'b0;
                     fin_ar <= 'b1;
                 end
