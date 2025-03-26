@@ -62,7 +62,7 @@ module ysyx_24080020_IR(
     assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
     assign cache_hit = (cache_tag[cache_index_tmp] == cache_tag_tmp && cache_valid[cache_index_tmp] == 1'b1) ? 'b1 : 'b0;
 
-    assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h30000000          // flash
+    assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
                                 || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
                                 ) ? 1'b1 : 1'b0;
     
