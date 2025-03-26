@@ -38,6 +38,9 @@ module ysyx_24080020_IR(
     localparam CMISS = CHIT + 1;
     localparam AXIAR = CMISS + 1;
     localparam AXIR = AXIAR + 1;
+    localparam AXIDone = AXIR + 1;  // not use cache, such as sram
+
+    wire use_icache;
 
     // CACHE
     localparam cache_size_bits = $clog2(`ysyx_24080020_CACHE_SIZE);
@@ -58,6 +61,10 @@ module ysyx_24080020_IR(
     assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
     assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
     assign cache_hit = (cache_tag[cache_index_tmp] == cache_tag_tmp && cache_valid[cache_index_tmp] == 1'b1) ? 'b1 : 'b0;
+
+    assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
+                                || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
+                                ) ? 1'b1 : 1'b0;
     
     
     always @(posedge clk) begin
@@ -114,10 +121,23 @@ module ysyx_24080020_IR(
             end
             AXIR: begin
                 if(fin_r) begin
-                    next_state = CHIT;
+                    if(use_icache) begin
+                        next_state = CHIT;
+                    end
+                    else begin
+                        next_state = AXIDone;
+                    end
                 end
                 else begin
                     next_state = AXIR;
+                end
+            end
+            AXIDone: begin
+                if(inst_fin) begin
+                    next_state = IDLE;
+                end
+                else begin
+                    next_state = AXIDone;
                 end
             end
             default: begin
@@ -170,10 +190,12 @@ module ysyx_24080020_IR(
                 if(rvalid && rlast) begin
                     rready <= 1'b1;
                     if(rresp == 2'b00) begin // OKAY
-                        // update cache
-                        cache_tag[cache_index_tmp] <= cache_tag_tmp;
-                        cache_data[cache_index_tmp] <= rdata;
-                        cache_valid[cache_index_tmp] <= 1'b1;
+                        if(use_icache) begin
+                            // update cache
+                            cache_tag[cache_index_tmp] <= cache_tag_tmp;
+                            cache_data[cache_index_tmp] <= rdata;
+                            cache_valid[cache_index_tmp] <= 1'b1;
+                        end
 
                         fin_r <= 1'b1;
                     end
@@ -185,69 +207,15 @@ module ysyx_24080020_IR(
                     end
                 end
             end
+            AXIDone: begin
+                inst <= rdata;
+                inst_fin <= 1'b1;
+            end
             default: begin
                 // do nothing
             end
         endcase
     end
-
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         arvalid <= 1'b0;
-    //         state <= 'b0;
-    //     end
-    //     else if(if_en) begin
-    //         // cache hit
-    //         if(cache_hit) begin
-    //             inst <= cache_data[cache_index_tmp];
-    //             inst_fin_cache <= 1'b1;
-    //         end
-    //         else begin
-    //             // cache miss, need to read from memory
-    //             arvalid <= 1'b1;
-    //             araddr <= addr;
-    //             arid <= 4'b0;
-    //             arlen <= 8'b0;
-    //             arsize <= 3'b10;
-    //             arburst <<= 2'b0;
-    //         end
-
-    //     end
-    //     else if(arready && arvalid) begin
-    //         arvalid <= 1'b0;
-    //         `ifdef CONFIG_DPIC
-    //         statistics_ifu_get_inst();
-    //         `endif
-    //     end
-    //     else begin
-    //         arvalid <= arvalid;
-    //     end
-
-    // end
-
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         rready <= 1'b0;
-    //         inst_fin_axi <= 'b0;
-    //     end
-    //     else if(rvalid) begin
-    //         rready <= 1'b1;
-
-    //         // inst <= rdata;
-    //         // inst_fin_axi <= 1'b1;
-
-    //         // rresp != 2'b0 : error
-
-    //         // update cache
-    //         cache_tag[cache_index_tmp] <= cache_tag_tmp;
-    //         cache_data[cache_index_tmp] <= rdata;
-    //         cache_valid[cache_index_tmp] <= 1'b1;
-    //     end
-    //     else begin
-    //         rready <= 1'b0;
-    //         inst_fin_axi <= 1'b0;
-    //     end
-    // end
 
 
 endmodule
