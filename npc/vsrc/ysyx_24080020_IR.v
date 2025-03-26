@@ -61,7 +61,7 @@ module ysyx_24080020_IR(
             cache_hit <= 'b0;
             inst_fin_cache <= 'b0;
 
-            for (reg [cache_num_bits:0] i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+            for (integer  i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
                 cache_data[i] <= 'b0;
                 cache_tag[i] <= 'b0;
                 cache_valid[i] <= 'b0;
