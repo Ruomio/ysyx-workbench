@@ -128,6 +128,7 @@ module ysyx_24080020_IR(
     always @(posedge clk) begin
         case(current_state)
             IDLE: begin
+                inst_fin <= 'b0;
                 // do nothing
             end
             JUDGE: begin
