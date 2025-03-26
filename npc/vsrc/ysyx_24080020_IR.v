@@ -81,15 +81,15 @@ module ysyx_24080020_IR(
                     next_state = JUDGE;
                 end
                 else begin
-                    next_state <= IDLE;
+                    next_state = IDLE;
                 end
             end
             JUDGE: begin
                 if(cache_hit) begin
-                    next_state <= CHIT;
+                    next_state = CHIT;
                 end
                 else begin
-                    next_state <= CMISS;
+                    next_state = CMISS;
                 end
             end
             CHIT: begin
@@ -120,7 +120,7 @@ module ysyx_24080020_IR(
                 end
             end
             default: begin
-                next_state <= IDLE;
+                next_state = IDLE;
             end
         endcase
     end
