@@ -29,7 +29,7 @@ module ysyx_24080020_IR(
     import "DPI-C" function void statistics_ifu_get_inst();
     `endif
 
-    reg fin_r;
+    reg fin_r, fin_ar;
     reg [2:0] current_state, next_state;
     localparam IDLE = 0;
     localparam JUDGE = IDLE + 1;
@@ -104,7 +104,7 @@ module ysyx_24080020_IR(
                 next_state = AXIAR;
             end
             AXIAR: begin
-                if(arready) begin
+                if(fin_ar) begin
                     next_state = AXIR;
                 end
                 else begin
@@ -129,6 +129,7 @@ module ysyx_24080020_IR(
         case(current_state)
             IDLE: begin
                 inst_fin <= 'b0;
+                fin_ar <= 'b0;
                 fin_r <= 'b0;
                 // do nothing
             end
@@ -143,12 +144,18 @@ module ysyx_24080020_IR(
                 // do nothing
             end
             AXIAR: begin
-                arvalid <= 1'b1;
-                araddr <= addr;
-                arid <= 4'b0;
-                arlen <= 8'b0;
-                arsize <= 3'b10; // 4Byte
-                arburst <= 2'b00; // FIXED
+                if(arready && arvalid) begin
+                    arvalid <= 'b0;
+                    fin_ar <= 'b1;
+                end
+                else begin
+                    arvalid <= 1'b1;
+                    araddr <= addr;
+                    arid <= 4'b0;
+                    arlen <= 8'b0;
+                    arsize <= 3'b10; // 4Byte
+                    arburst <= 2'b00; // FIXED
+                end
             end
             AXIR: begin
                 arvalid <= 1'b0; // stop sending arvalid
