@@ -29,6 +29,7 @@ module ysyx_24080020_IR(
     import "DPI-C" function void statistics_ifu_get_inst();
     `endif
 
+    reg fin_r;
     reg [2:0] current_state, next_state;
     localparam IDLE = 0;
     localparam JUDGE = IDLE + 1;
@@ -60,6 +61,7 @@ module ysyx_24080020_IR(
     
     always @(posedge clk) begin
         if(!rst) begin
+            fin_r <= 'b0;
             for (integer  i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
                 cache_data[i]   <= 'b0;
                 cache_tag[i]    <= 'b0;
