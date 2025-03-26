@@ -44,7 +44,7 @@ module ysyx_24080020_IR(
     wire [cache_size_bits-1:0]              cache_offset_tmp;
 
     reg                                     cache_hit;
-    reg [cache_data_width : 0]              cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
+    reg [cache_data_width-1 : 0]              cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
     reg [cache_tag_size-1 : 0]              cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
     reg                                     cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
 
