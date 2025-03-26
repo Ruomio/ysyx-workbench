@@ -21,6 +21,10 @@
 `define ysyx_24080020_SERIAL_PORT 32'ha00003f8
 `endif
 
+// cache
+`define ysyx_24080020_CACHE_SIZE 4     // 4Byte
+`define ysyx_24080020_CACHE_NUM 16      // 16 * 4
+
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
 `define ysyx_24080020_MEM 10

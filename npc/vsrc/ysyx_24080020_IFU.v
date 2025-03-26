@@ -112,7 +112,7 @@ module ysyx_24080020_IFU (
             wb_ifu_shake_hands <= 1'b0;
         end
         else begin
-            wb_ifu_shake_hands <= 1'b0;
+            // wb_ifu_shake_hands <= 1'b0;
             is_update_pc <= 1'b0;
         end
 
