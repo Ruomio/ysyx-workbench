@@ -129,6 +129,7 @@ module ysyx_24080020_IR(
         case(current_state)
             IDLE: begin
                 inst_fin <= 'b0;
+                fin_r <= 'b0;
                 // do nothing
             end
             JUDGE: begin
