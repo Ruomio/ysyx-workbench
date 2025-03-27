@@ -21,7 +21,7 @@ VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
 
-VSRC += $(shell find $(abspath vsrc) -name "*.v") 
+VSRC += $(shell find $(abspath vsrc) -maxdepth 1 -name "*.v") 
 ifdef CONFIG_NVBOARD
 VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
 VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
