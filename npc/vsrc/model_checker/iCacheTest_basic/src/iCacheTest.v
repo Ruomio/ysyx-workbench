@@ -1,39 +1,66 @@
 `include "ysyx_24080020_IR.v"
 `include "ysyx_24080020_DEFINE.v"
-module iCacheTest(
-    input clk,
-    input rst,
-    input if_en,
-    input [`ysyx_24080020_WIDTH-1:0] addr,
 
-    output reg [`ysyx_24080020_WIDTH-1:0] inst,
-    output reg inst_fin,
+`timescale 1ps/1ps
+module iCacheTest;
+
+    reg clk;
+    reg rst;
+    reg if_en;
+    reg [`ysyx_24080020_WIDTH-1:0] addr;
+    
+    reg [31:0] cnt;
+
+    reg [`ysyx_24080020_WIDTH-1:0] inst;
+    reg inst_fin;
 
     // axi-lite
-    output reg arvalid,
-    output reg [1:0] arburst,
-    output reg [2:0] arsize,
-    output reg [3:0] arid,
-    output reg [7:0] arlen,
-    output reg [`ysyx_24080020_WIDTH-1:0] araddr,
-    input arready,
+    reg arvalid;
+    reg [1:0] arburst;
+    reg [2:0] arsize;
+    reg [3:0] arid;
+    reg [7:0] arlen;
+    reg [`ysyx_24080020_WIDTH-1:0] araddr;
+    reg arready;
 
-    input rvalid,
-    input rlast,
-    input [1:0] rresp,
-    input [3:0] rid, 
-    input [`ysyx_24080020_WIDTH-1:0] rdata,
-    output reg rready
+    reg rvalid;
+    reg rlast;
+    reg [1:0] rresp;
+    reg [3:0] rid; 
+    reg [`ysyx_24080020_WIDTH-1:0] rdata;
+    reg rready;
 
-);
     wire [31:0] raddr_direct;
     reg [31:0] rdata_direct;
+
+    initial begin
+        clk = 1'b0;
+        rst = 1'b0;
+        addr = 'b0;
+        if_en = 'b0;
+
+        #100 rst = 1'b1;
+
+        #100 addr = 32'h0;
+        #100 arvalid = 1'b1;
+
+    end
+
+    always #5 clk = ~clk;
+
 
 
     assign raddr_direct = addr;
 
     always @(posedge clk) begin
         if(!rst) begin
+            cnt <= 'b0;
+        end
+        else if(cnt == 32'd100) begin
+            // rst <= 1'b0;
+        end
+        else begin
+            cnt <= cnt + 'b1;
         end
 
     end
@@ -41,14 +68,18 @@ module iCacheTest(
 
 
 
-    always @(*) begin
-        if(inst_fin) begin
+    `ifdef FORMAL
+    always @(posedge clk) begin
+        if(!rst) begin
+
+        end
+        else if(rvalid) begin
+            assume(rst);
 
             assert(rdata_direct == inst);
         end
-
     end
-
+    `endif
 
 
 
@@ -113,41 +144,36 @@ module Memory(
     input rst,
 
     input [31:0] raddr_direct,
-    output [31:0] rdata_direct,
+    output reg [31:0] rdata_direct,
     // axi-lite
-    input reg arvalid,
-    input reg [1:0] arburst,
-    input reg [2:0] arsize,
-    input reg [3:0] arid,
-    input reg [7:0] arlen,
-    input reg [`ysyx_24080020_WIDTH-1:0] araddr,
-    output arready,
+    input arvalid,
+    input [1:0] arburst,
+    input [2:0] arsize,
+    input [3:0] arid,
+    input [7:0] arlen,
+    input [`ysyx_24080020_WIDTH-1:0] araddr,
+    output reg arready,
 
-    output rvalid,
-    output rlast,
-    output [1:0] rresp,
-    output [3:0] rid, 
-    output [`ysyx_24080020_WIDTH-1:0] rdata,
-    input reg rready
+    output reg rvalid,
+    output reg rlast,
+    output reg [1:0] rresp,
+    output reg [3:0] rid, 
+    output reg [`ysyx_24080020_WIDTH-1:0] rdata,
+    input rready
 );
 
     localparam msize = 128;
 
-    reg [31:0] mem [0 : msize/4];
+    reg [31:0] mem [0 : (msize/4) -1];
 
     reg [31:0] paddr;
     reg r_en;
 
 
     always @(posedge clk) begin
-        if(!rst) begin
+        if(!rst || rst) begin
             for(integer i = 0; i < msize/4; i = i + 1) begin
-                if(i == 0) begin
-                    mem[i] <= 32'h00000000;
-                end
-                else begin
-                    mem[i] <= mem[i-1] + 32'h00000004;
-                end
+                mem[i] <= 32'h00000000 + (1 << i);
             end
 
         end

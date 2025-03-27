@@ -69,6 +69,7 @@ module ysyx_24080020_IR(
     
     always @(posedge clk) begin
         if(!rst) begin
+            fin_r <= 'b0;
             for (integer  i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
                 cache_data[i]   <= 'b0;
                 cache_tag[i]    <= 'b0;
