@@ -14,7 +14,7 @@
 `endif
 
 `ifdef ysyx_24080020_NPC
-`define ysyx_24080020_MBASE 32'h80000000
+`define ysyx_24080020_MBASE 32'h30000000
 // IOE
 `define ysyx_24080020_CLINT_ADDR 32'ha0000048
 `define ysyx_24080020_DEVICE_BASE 32'ha0000000
