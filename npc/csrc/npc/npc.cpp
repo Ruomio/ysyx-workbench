@@ -79,6 +79,7 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
 static uint64_t total_cycles = 0;
+static uint64_t wait_cycles = 0;
 static uint64_t ifu_get_inst_cnt = 0;
 static uint64_t ifu_icache_hit_cnt = 0;
 static uint64_t lsu_get_data_cnt = 0;
@@ -212,6 +213,13 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(is_clk_high) {
       total_cycles++;
+      if(wait_cycles++ > 15000) {
+        printf("wait too many cycles, maybe dead loop\n");
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
 #if NVBOARD_ENABLE
       nvboard_update();
 #endif
@@ -236,8 +244,10 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
-      else
+      else {
+        wait_cycles = 0;
         break;
+      }
     }
   }
 
@@ -292,7 +302,7 @@ static void statistic() {
 
   if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
   Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average: %ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
-  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%", ifu_icache_hit_cnt / 2, ifu_icache_hit_cnt * 100.0 / (2 * ifu_get_inst_cnt));
+  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf", ifu_icache_hit_cnt / 2, ifu_icache_hit_cnt * 100.0 / (2 * ifu_get_inst_cnt), 3*(ifu_icache_hit_cnt * 100.0 / (2 * ifu_get_inst_cnt)) + 4932*(1-(ifu_icache_hit_cnt * 1.0 / (2 * ifu_get_inst_cnt))) );
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt / 2);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
   Log("idu_calcu_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_calculate_type_cnt, idu_calculate_type_cnt * 100.0 / ifu_get_inst_cnt, idu_calculate_cycles / idu_calculate_type_cnt);
