@@ -104,7 +104,10 @@ static word_t soc_ioe_read(paddr_t addr, int len) {
   }
   else if(addr >= 0x10000000 && addr <= 0x10000fff) {
     // uart
-    return 0x55;
+    // lsr, 
+    if(addr == 0x10000005) {
+      return 0x21;
+    }
   }
   else printf("can not read from soc device\n");
 
@@ -118,8 +121,10 @@ static void soc_ioe_write(paddr_t addr, int len, word_t data) {
   }
   else if(addr >= 0x10000000 && addr <= 0x10000fff) {
     // uart
-    putchar(data);
-    fflush(stdout);
+    if(addr == 0x10000000) {
+      putchar(data);
+      fflush(stdout);
+    }
   }
   else printf("can not write from soc device\n");
 }
