@@ -13,10 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "utils.h"
 #include <memory/host.h>
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
+#include <stdio.h>
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
@@ -86,6 +88,43 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
 }
 
+#ifdef CONFIG_ADAPT_SOC
+static uint64_t u_time = 0;
+
+static word_t soc_ioe_read(paddr_t addr, int len) {
+  if(addr >= 0x02000000 && addr <= 0x0200ffff) {
+    // clint
+    if(addr == 0x02000000) {
+      return u_time;
+    }
+    else if(addr == 0x02000004) {
+      u_time = get_time();
+      return u_time >> 32;
+    }
+  }
+  else if(addr >= 0x10000000 && addr <= 0x10000fff) {
+    // uart
+    return 0x55;
+  }
+  else printf("can not read from soc device\n");
+
+  return 0;
+}
+
+static void soc_ioe_write(paddr_t addr, int len, word_t data) {
+  if(addr >= 0x02000000 && addr <= 0x0200ffff) {
+    // clint
+    printf("clint can not write!\n");
+  }
+  else if(addr >= 0x10000000 && addr <= 0x10000fff) {
+    // uart
+    putchar(data);
+    fflush(stdout);
+  }
+  else printf("can not write from soc device\n");
+}
+#endif
+
 static void out_of_bound(paddr_t addr) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_add_arrow(); MtraceBuf_save());
   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
@@ -110,6 +149,7 @@ void init_mem() {
 word_t paddr_read(paddr_t addr, int len) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
+  IFDEF(CONFIG_ADAPT_SOC, return soc_ioe_read(addr, len));
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
@@ -118,6 +158,7 @@ word_t paddr_read(paddr_t addr, int len) {
 void paddr_write(paddr_t addr, int len, word_t data) {
   IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, data));
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
+  IFDEF(CONFIG_ADAPT_SOC, soc_ioe_write(addr, len, data); return);
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }

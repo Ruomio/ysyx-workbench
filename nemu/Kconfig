@@ -29,6 +29,10 @@ config E_EXTENSION
   bool "enable e extension"
   default n
 
+config ADAPT_SOC
+  bool "enable adapt soc, only for cachesim"
+  default n
+
 config ISA64
   depends on ISA_riscv64
   bool
