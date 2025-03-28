@@ -79,6 +79,7 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static uint32_t total_wave_step = 0; 
 static uint64_t total_cycles = 0;
+static uint64_t wait_cycles = 0;
 static uint64_t ifu_get_inst_cnt = 0;
 static uint64_t ifu_icache_hit_cnt = 0;
 static uint64_t lsu_get_data_cnt = 0;
@@ -212,6 +213,13 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(is_clk_high) {
       total_cycles++;
+      if(wait_cycles++ > 15000) {
+        printf("wait too many cycles, maybe dead loop\n");
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
 #if NVBOARD_ENABLE
       nvboard_update();
 #endif
@@ -236,8 +244,10 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
-      else
+      else {
+        wait_cycles = 0;
         break;
+      }
     }
   }
 
