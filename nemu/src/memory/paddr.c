@@ -109,7 +109,7 @@ static word_t soc_ioe_read(paddr_t addr, int len) {
       return 0x21;
     }
   }
-  else printf("can not read from soc device\n");
+  else printf("can not read from soc device, addr: 0x%x\n", addr);
 
   return 0;
 }
@@ -126,7 +126,7 @@ static void soc_ioe_write(paddr_t addr, int len, word_t data) {
       fflush(stdout);
     }
   }
-  else printf("can not write from soc device\n");
+  else printf("can not write from soc device, addr: 0x%x\n", addr);
 }
 #endif
 
