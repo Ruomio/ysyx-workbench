@@ -2,8 +2,9 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
+#include <vector>
 
-#include "cachesim/cachesim.h"
+#include "cachesim.h"
 
 CacheSim::CacheSim(std::string path) {
     inst_file_path = path;
@@ -12,13 +13,30 @@ CacheSim::CacheSim(std::string path) {
     cache_miss = 0;
     inst_cnt = 0;
 
-    cache_valid = std::vector<bool>(CACHE_NUM, 0);
-    cache_tag = std::vector<uint32_t>(CACHE_NUM, 0);
-    cache_data = std::vector<uint32_t>(CACHE_NUM * CACHE_SIZE/4, 0);
+    cachesize = CACHE_SIZE;
+    cachenum = CACHE_NUM;
+
+    cache_tag.resize(cachenum, 0);
+    cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
+    cache_data = std::vector<std::vector<uint32_t>>(cachenum * cachesize/4, std::vector<uint32_t>(cachesize/4, 0));
 }
 
 CacheSim::~CacheSim() {
     print_results();
+}
+
+int CacheSim::setCachesize(uint32_t size) {
+    cachesize = size;
+    cache_data = std::vector<std::vector<uint32_t>>(cachenum * cachesize/4, std::vector<uint32_t>(cachesize/4, 0));
+    return 0;
+}
+
+int CacheSim::setCachenum(uint32_t num) {
+    cachenum = num;
+    cache_tag.resize(cachenum, 0);
+    cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
+    cache_data = std::vector<std::vector<uint32_t>>(cachenum * cachesize/4, std::vector<uint32_t>(cachesize/4, 0));
+    return 0;
 }
 
 void CacheSim::print_results() {
@@ -47,21 +65,22 @@ void CacheSim::run_simulation() {
         inst_cnt++;
 
         // Calculate cache index and tag
-        uint32_t index = (address / CACHE_SIZE) % CACHE_NUM; // Assuming each instruction is 4 bytes
-        uint32_t tag = address / CACHE_SIZE / CACHE_NUM;
+        uint32_t index = (address / cachesize) % cachenum; // Assuming each instruction is 4 bytes
+        uint32_t tag = address / cachesize;
+        uint32_t offset = (address % cachesize) / 4;
 
         // Check if the cache line is valid and matches the tag
-        if (cache_valid[index] && cache_tag[index] == tag) {
+        if (cache_valid[index][offset] && cache_tag[index] == tag) {
             // Cache hit
             cache_hit++;
         } else {
             // Cache miss
             cache_miss++;
             // Update cache line
-            cache_valid[index] = true;
+            cache_valid[index][offset] = true;
             cache_tag[index] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
-            cache_data[index] = address; 
+            cache_data[index][offset] = address; 
         }
     }
 
