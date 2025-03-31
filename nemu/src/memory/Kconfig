@@ -32,7 +32,7 @@ config MEM_RANDOM
     This may help to find undefined behaviors.
 
 config IS_SRAM
-  # depends on TARGET_SHARE
+  depends on TARGET_SHARE || ADAPT_SOC
   bool "enable mrom and sram to adapt ysyxsoc difftest"
   default y
 
@@ -47,7 +47,7 @@ config SRAM_SIZE
   default 0x2000
 
 config IS_PSRAM
-  # depends on TARGET_SHARE
+  depends on TARGET_SHARE || ADAPT_SOC
   bool "enable psram to adapt ysyxsoc difftest"
   default y
 
@@ -62,7 +62,7 @@ config PSRAM_SIZE
   default 0x400000
 
 config IS_SDRAM
-  # depends on TARGET_SHARE
+  depends on TARGET_SHARE || ADAPT_SOC
   bool "enable sdram to adapt ysyxsoc difftest"
   default y
 
