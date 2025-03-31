@@ -33,11 +33,11 @@ $(BIN): $(OBJS)
 
 
 run: $(BIN)
-	$(call git_commit, "run CacheSim")
+	@$(call git_commit, "run CacheSim")
 	@$(BIN) $(NEMU_HOME)/build/insts.txt $(SIZE) $(NUM)
 
 gdb:
-	$(call git_commit, "gdb CacheSim")
+	@$(call git_commit, "gdb CacheSim")
 	gdb --args $(BIN) $(NEMU_HOME)/build/insts.txt $(SIZE) $(NUM)
 
 clean:
