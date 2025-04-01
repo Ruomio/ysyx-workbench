@@ -63,8 +63,8 @@ module ysyx_24080020_IR(
     reg [cache_size_bits-1 : 0]            cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
 
 
-    // assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
-    assign cache_tag_tmp = addr >> (cache_num_bits+cache_size_bits);
+    assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
+    // assign cache_tag_tmp = addr >> (cache_num_bits+cache_size_bits);
     assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
     assign cache_offset_tmp = addr[cache_size_bits-1 : 0];
 
