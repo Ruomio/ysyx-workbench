@@ -374,7 +374,7 @@ void exec_npc(uint64_t n) {
       }
       else {
         printf("child clear: %d\n", getpid());
-        free_npc();
+        // free_npc();
         exit(-1);
       }
 #endif
