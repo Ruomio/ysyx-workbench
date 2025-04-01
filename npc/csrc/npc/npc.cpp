@@ -371,7 +371,7 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        free_npc();
+        // free_npc();
         // exit(-1);
         return;
       }
