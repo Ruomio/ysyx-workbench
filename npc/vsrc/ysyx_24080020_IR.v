@@ -164,7 +164,7 @@ module ysyx_24080020_IR(
                 `endif
             end
             CHIT: begin
-                inst <= (cache_data[cache_index_tmp] >> cache_offset_tmp)[31:0];
+                inst <= (cache_data[cache_index_tmp] >> cache_offset_tmp);
                 inst_fin <= 'b1;
 
                 `ifdef CONFIG_DPIC
