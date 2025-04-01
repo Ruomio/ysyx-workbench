@@ -197,7 +197,7 @@ module ysyx_24080020_IR(
                             // update cache
                             cache_tag[cache_index_tmp] <= cache_tag_tmp;
                             cache_data[cache_index_tmp] <= rdata;
-                            cache_valid[cache_index_tmp] <= cache_valid | (1 << cache_offset_tmp);
+                            cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << cache_offset_tmp);
                         end
 
                         fin_r <= 1'b1;
