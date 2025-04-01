@@ -334,6 +334,7 @@ void exec_npc(uint64_t n) {
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
+        if(lightsss.is_child()) FORK_PRINTF("child do_fork\n");
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
     }
