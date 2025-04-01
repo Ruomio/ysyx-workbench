@@ -326,7 +326,6 @@ void exec_npc(uint64_t n) {
   uint64_t timer_start = get_time();
 
 
-  if(lightsss.is_child()) FORK_PRINTF("child exec\n");
 
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
@@ -339,6 +338,7 @@ void exec_npc(uint64_t n) {
       last_snapshot_time = current_time;
     }
 #endif
+    if(lightsss.is_child()) FORK_PRINTF("child exec\n");
 
     if (u_npc_state.state != NPC_RUNNING) break;
     exec_once_npc(g_pc);
