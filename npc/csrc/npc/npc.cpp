@@ -360,6 +360,10 @@ void exec_npc(uint64_t n) {
         if(!lightsss.is_child()) {
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
+        else {
+          printf("364\n");
+          return;
+        }
       }
 #endif
 
