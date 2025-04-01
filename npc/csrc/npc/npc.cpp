@@ -362,7 +362,9 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 #if NVBOARD_ENABLE
+      printf("line 365\n");
     nvboard_quit();
+      printf("line 367\n");
 #endif
 
 #ifdef CONFIG_LIGHTSSS
