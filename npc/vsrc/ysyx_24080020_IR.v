@@ -55,12 +55,16 @@ module ysyx_24080020_IR(
 
     reg [cache_data_width-1 : 0]            cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
     reg [cache_tag_size-1 : 0]              cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
-    reg [cache_size_bits-1 : 0]             cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
+    reg [cache_data_width-1 : 0]            cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
 
 
     assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
     assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-    assign cache_hit = (cache_tag[cache_index_tmp] == cache_tag_tmp && cache_valid[cache_index_tmp] == 1'b1) ? 'b1 : 'b0;
+    assign cache_offset_tmp = addr[cache_size_bits-1 : 0];
+
+    assign cache_hit = ((cache_tag[cache_index_tmp] == cache_tag_tmp)
+                        && cache_valid[cache_index_tmp]
+                        && (cache_offset_tmp < `ysyx_24080020_CACHE_SIZE));
 
     assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
                                 || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
@@ -194,7 +198,7 @@ module ysyx_24080020_IR(
                             // update cache
                             cache_tag[cache_index_tmp] <= cache_tag_tmp;
                             cache_data[cache_index_tmp] <= rdata;
-                            cache_valid[cache_index_tmp] <= 1'b1;
+                            cache_valid[cache_index_tmp] <= cache_valid | (1 << cache_offset_tmp);
                         end
 
                         fin_r <= 1'b1;
