@@ -369,7 +369,9 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
+        printf("372\n");
         free_npc();
+        printf("374\n");
         exit(-1);
       }
 #endif
