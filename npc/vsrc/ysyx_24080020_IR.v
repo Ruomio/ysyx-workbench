@@ -59,7 +59,7 @@ module ysyx_24080020_IR(
 
     reg [cache_data_width-1 : 0]            cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
     reg [cache_tag_size-1 : 0]              cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
-    reg [cache_data_width-1 : 0]            cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
+    reg [cache_size_bits-1 : 0]            cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
 
 
     assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
@@ -70,7 +70,7 @@ module ysyx_24080020_IR(
     assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata} << cache_offset_tmp);
 
     assign cache_hit = ((cache_tag[cache_index_tmp] == cache_tag_tmp)
-                        && (cache_valid[cache_index_tmp] != 'b0));
+                        && (cache_valid[cache_index_tmp] >> cache_offset_tmp));
 
     assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
                                 || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
