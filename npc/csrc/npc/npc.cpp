@@ -373,6 +373,7 @@ void exec_npc(uint64_t n) {
         u_npc_state.state = NPC_QUIT;
         u_npc_state.ret = true;
         u_npc_state.pc = g_pc;
+        printf("line 376, pid: 0x%x\n", getpid());
         // exit(-1);
       }
 #endif
