@@ -18,7 +18,7 @@ CacheSim::CacheSim(std::string path) {
 
     cache_tag.resize(cachenum, 0);
     cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
-    cache_data = std::vector<std::vector<uint32_t>>(cachenum * cachesize/4, std::vector<uint32_t>(cachesize/4, 0));
+    cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
 }
 
 CacheSim::~CacheSim() {
@@ -27,7 +27,7 @@ CacheSim::~CacheSim() {
 
 int CacheSim::setCachesize(uint32_t size) {
     cachesize = size;
-    cache_data = std::vector<std::vector<uint32_t>>(cachenum * cachesize/4, std::vector<uint32_t>(cachesize/4, 0));
+    cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
     return 0;
 }
 
@@ -35,7 +35,7 @@ int CacheSim::setCachenum(uint32_t num) {
     cachenum = num;
     cache_tag.resize(cachenum, 0);
     cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
-    cache_data = std::vector<std::vector<uint32_t>>(cachenum * cachesize/4, std::vector<uint32_t>(cachesize/4, 0));
+    cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
     return 0;
 }
 
@@ -80,7 +80,7 @@ void CacheSim::run_simulation() {
             cache_valid[index][offset] = true;
             cache_tag[index] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
-            cache_data[index][offset] = address; 
+            cache_data[index][offset] = address;
         }
     }
 
