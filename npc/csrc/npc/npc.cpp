@@ -355,6 +355,7 @@ void exec_npc(uint64_t n) {
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
         if(!lightsss.is_child()) {
+            printf("line 358, pid: 0x%x\n", getpid());
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
         printf("line 359, pid: 0x%x\n", getpid());
