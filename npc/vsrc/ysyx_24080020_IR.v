@@ -55,7 +55,7 @@ module ysyx_24080020_IR(
 
     reg [cache_data_width-1 : 0]            cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
     reg [cache_tag_size-1 : 0]              cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
-    reg                                     cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
+    reg [cache_size_bits-1 : 0]             cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
 
 
     assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
