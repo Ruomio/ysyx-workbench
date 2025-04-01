@@ -7,7 +7,6 @@
 
 #include "isa.h"
 #include <cpu/difftest.h>
-#include <unistd.h>
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
@@ -78,7 +77,7 @@ static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
-static uint32_t total_wave_step = 0;
+static uint32_t total_wave_step = 0; 
 static uint64_t total_cycles = 0;
 static uint64_t wait_cycles = 0;
 static uint64_t ifu_get_inst_cnt = 0;
@@ -118,7 +117,6 @@ uint32_t g_get_dnpc();
 uint32_t g_get_rs1();
 uint32_t g_get_rd();
 void update_npc_cpu();
-void free_npc();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -200,7 +198,7 @@ void exec_once_npc(uint32_t pc) {
       tfp->dump(contextp->time());
       contextp->timeInc(1);
     }
-    else
+    else 
       total_wave_step++;
 #endif
 #ifdef CONFIG_LIGHTSSS
@@ -330,16 +328,14 @@ void exec_npc(uint64_t n) {
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
     int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
-
+    
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
-        if(lightsss.is_child()) FORK_PRINTF("child do_fork\n");
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
     }
 #endif
-    if(lightsss.is_child()) FORK_PRINTF("child exec: state: %d\n", u_npc_state.state);
 
     if (u_npc_state.state != NPC_RUNNING) break;
     exec_once_npc(g_pc);
@@ -360,14 +356,11 @@ void exec_npc(uint64_t n) {
         if(!lightsss.is_child()) {
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
-        else {
-            FORK_PRINTF("child 364\n");
-        }
       }
 #endif
 
-    case NPC_QUIT:
-      statistic();
+    case NPC_QUIT: 
+      statistic(); 
 #if NVBOARD_ENABLE
     nvboard_quit();
 #endif
@@ -375,11 +368,8 @@ void exec_npc(uint64_t n) {
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
-        printf("parent clear: %d\n", getpid());
       }
       else {
-        // printf("child clear: %d\n", getpid());
-        // free_npc();
         exit(-1);
       }
 #endif

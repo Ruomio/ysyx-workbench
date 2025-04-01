@@ -43,7 +43,6 @@ void ForkShareMemory::shwait() {
     if (info->flag) {
       if (info->notgood) {
         // exit(0);
-        FORK_PRINTF("break shwait\n");
         break;
       }
       else
@@ -155,9 +154,8 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
-  printf("before waipid\n");
+  // printf("old pid:%d\n", pidSlot.back());
   waitpid(pidSlot.back(), &status, 0);
-  printf("after waipid\n");
   return 0;
 }
 
