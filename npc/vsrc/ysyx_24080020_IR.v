@@ -164,7 +164,7 @@ module ysyx_24080020_IR(
                 `endif
             end
             CHIT: begin
-                inst <= cache_data[cache_index_tmp];
+                inst <= (cache_data[cache_index_tmp] >> cache_offset_tmp)[31:0];
                 inst_fin <= 'b1;
 
                 `ifdef CONFIG_DPIC
@@ -196,7 +196,7 @@ module ysyx_24080020_IR(
                         if(use_icache) begin
                             // update cache
                             cache_tag[cache_index_tmp] <= cache_tag_tmp;
-                            cache_data[cache_index_tmp] <= rdata;
+                            cache_data[cache_index_tmp] <= cache_data[cache_index_tmp] | (rdata << cache_offset_tmp);
                             cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << cache_offset_tmp);
                         end
 
