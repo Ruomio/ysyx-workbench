@@ -71,8 +71,12 @@ void CacheSim::run_simulation() {
 
         // Check if the cache line is valid and matches the tag
         if (cache_valid[index][offset] && cache_tag[index] == tag) {
+            if(address != cache_data[index][offset]) {
+                std::cerr << "Cache data mismatch at address: " << std::hex << address << std::endl;
+            }
             // Cache hit
             cache_hit++;
+
         } else {
             // Cache miss
             cache_miss++;
