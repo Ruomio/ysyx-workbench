@@ -20,7 +20,7 @@ module ysyx_24080020_IR(
     input rvalid,
     input rlast,
     input [1:0] rresp,
-    input [3:0] rid, 
+    input [3:0] rid,
     input [`ysyx_24080020_WIDTH-1:0] rdata,
     output reg rready
 
@@ -32,41 +32,42 @@ module ysyx_24080020_IR(
 
     reg fin_r, fin_ar;
     reg [2:0] current_state, next_state;
-    localparam IDLE = 0;
-    localparam JUDGE = IDLE + 1;
-    localparam CHIT = JUDGE + 1;
-    localparam CMISS = CHIT + 1;
-    localparam AXIAR = CMISS + 1;
-    localparam AXIR = AXIAR + 1;
-    localparam AXIDone = AXIR + 1;  // not use cache, such as sram
+    localparam integer IDLE = 0;
+    localparam integer JUDGE = IDLE + 1;
+    localparam integer CHIT = JUDGE + 1;
+    localparam integer CMISS = CHIT + 1;
+    localparam integer AXIAR = CMISS + 1;
+    localparam integer AXIR = AXIAR + 1;
+    localparam integer AXIDone = AXIR + 1;  // not use cache, such as sram
 
     wire use_icache;
 
     // CACHE
-    localparam cache_size_bits = $clog2(`ysyx_24080020_CACHE_SIZE);
-    localparam cache_num_bits = $clog2(`ysyx_24080020_CACHE_NUM);
-    localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
-    localparam cache_data_width = 8 * `ysyx_24080020_CACHE_SIZE;
+    localparam integer CacheSizeBits = $clog2(`ysyx_24080020_CACHE_SIZE);
+    localparam integer CacheNumBits = $clog2(`ysyx_24080020_CACHE_NUM);
+    localparam integer CacheTagSize = 32 - CacheSizeBits - CacheNumBits;
+    localparam integer CacheDataWidth = 8 * `ysyx_24080020_CACHE_SIZE;
 
     wire                                    cache_hit;
-    wire [cache_tag_size-1:0]               cache_tag_tmp;
-    wire [cache_num_bits-1:0]               cache_index_tmp;
-    wire [cache_size_bits-1:0]              cache_offset_tmp;
+    wire [CacheTagSize-1:0]               cache_tag_tmp;
+    wire [CacheNumBits-1:0]               cache_index_tmp;
+    wire [CacheSizeBits-1:0]              cache_offset_tmp;
 
-    reg [cache_data_width-1 : 0]            cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
-    reg [cache_tag_size-1 : 0]              cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
-    reg                                     cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
+    reg [CacheDataWidth-1 : 0]            cache_data  [`ysyx_24080020_CACHE_NUM];
+    reg [CacheTagSize-1 : 0]              cache_tag   [`ysyx_24080020_CACHE_NUM];
+    reg                                     cache_valid [`ysyx_24080020_CACHE_NUM];
 
 
-    assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
-    assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-    assign cache_hit = (cache_tag[cache_index_tmp] == cache_tag_tmp && cache_valid[cache_index_tmp] == 1'b1) ? 'b1 : 'b0;
+    assign cache_tag_tmp = addr[31 : CacheNumBits+CacheSizeBits];
+    assign cache_index_tmp = addr[CacheNumBits+CacheSizeBits-1 : CacheSizeBits];
+    assign cache_hit = (cache_tag[cache_index_tmp] == cache_tag_tmp
+                        && cache_valid[cache_index_tmp] == 1'b1) ? 'b1 : 'b0;
 
     assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
                                 || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
                                 ) ? 1'b1 : 1'b0;
-    
-    
+
+
     always @(posedge clk) begin
         if(!rst) begin
             fin_r <= 'b0;
@@ -82,7 +83,7 @@ module ysyx_24080020_IR(
     end
 
     // next_state
-    always @(*) begin
+    always_comb begin
         case(current_state)
             IDLE: begin
                 if(if_en) begin
