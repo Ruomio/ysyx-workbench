@@ -20,7 +20,6 @@
 #include "sdb.h"
 #include <memory/memory.h>
 #include <stdint.h>
-#include <unistd.h>
 #include "stdio.h"
 
 static int is_batch_mode = false;
@@ -254,7 +253,6 @@ void sdb_mainloop() {
 
   if (is_batch_mode) {
     cmd_c(NULL);
-    printf("line 256, pid: 0x%x\n", getpid());
     return;
   }
 

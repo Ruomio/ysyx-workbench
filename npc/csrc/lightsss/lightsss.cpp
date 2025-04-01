@@ -154,8 +154,9 @@ int LightSSS::wakeup_child(uint64_t cycles) {
   forkshm.info->notgood = true;
   forkshm.info->flag = true;
   int status = -1;
-  printf("old pid:%d\n", pidSlot.back());
+  printf("before waipid\n");
   waitpid(pidSlot.back(), &status, 0);
+  printf("after waipid\n");
   return 0;
 }
 
