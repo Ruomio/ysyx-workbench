@@ -7,7 +7,6 @@
 
 #include "isa.h"
 #include <cpu/difftest.h>
-#include <unistd.h>
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
@@ -349,7 +348,6 @@ void exec_npc(uint64_t n) {
   g_timer += timer_end - timer_start;
 
 
-  printf("line 349, pid: %d\n", getpid());
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
@@ -358,17 +356,13 @@ void exec_npc(uint64_t n) {
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
         if(!lightsss.is_child()) {
-            printf("line 358, pid: %d\n", getpid());
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
-        printf("line 359, pid: 0x%d\n", getpid());
       }
 #endif
 
     case NPC_QUIT:
-      printf("line 364, pid: 0x%x\n", getpid());
       statistic();
-      printf("line 366, pid: 0x%x\n", getpid());
 #if NVBOARD_ENABLE
     nvboard_quit();
 #endif
