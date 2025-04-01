@@ -368,9 +368,8 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        //exit(-1);
-      printf("line 372\n");
-        return;
+        printf("line 372\n");
+        exit(-1);
       }
 #endif
 #if NVBOARD_ENABLE
