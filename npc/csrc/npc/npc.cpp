@@ -71,8 +71,7 @@ Vysyx_24080020_NPC *top = NULL;
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
 VerilatedVcdC *tfp = NULL;
 #endif
-// VerilatedContext *contextp = NULL;
-std::shared_ptr<VerilatedContext> contextp;
+VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=CONFIG_MBASE, .ret = true};
 
@@ -142,10 +141,10 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void init_npc(int argc, char **argv) {
   Verilated::commandArgs(argc, argv);
 
-  contextp = std::make_shared<VerilatedContext>();
+  contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
 #if defined(ysyxSoCFull)
-  top = new VysyxSoCFull(*contextp);
+  top = new VysyxSoCFull(contextp);
 #elif defined(ysyx_24080020_NPC)
   top = new Vysyx_24080020_NPC(contextp);
 #endif
@@ -401,6 +400,13 @@ void free_npc() {
   }
 #endif
   printf("400\n");
+
+#if defined (CONFIG_LIGHTSSS)
+  if(lightsss.is_child()) {
+    return;
+  }
+#endif
+
   if(contextp) {
     delete contextp;
     contextp = NULL;
