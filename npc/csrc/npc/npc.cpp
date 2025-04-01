@@ -373,7 +373,7 @@ void exec_npc(uint64_t n) {
       else {
         // free_npc();
         // exit(-1);
-        // return;
+        return;
       }
 #endif
 #ifdef NVBOARD_ENABLE
