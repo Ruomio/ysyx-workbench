@@ -48,7 +48,8 @@ module ysyx_24080020_IR(
     localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
     localparam cache_data_width = 8 * `ysyx_24080020_CACHE_SIZE;
 
-    wire [cache_data_width-1 : 0] shift_data;
+    wire [cache_data_width-1 : 0] shift_rdata;
+    wire [cache_data_width-1 : 0] shift_wdata;
 
     wire                                    cache_hit;
     wire [cache_tag_size-1:0]               cache_tag_tmp;
@@ -64,7 +65,8 @@ module ysyx_24080020_IR(
     assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
     assign cache_offset_tmp = addr[cache_size_bits-1 : 0];
 
-    assign shift_data = cache_data[cache_index_tmp] >> cache_offset_tmp;
+    assign shift_rdata = cache_data[cache_index_tmp] >> cache_offset_tmp;
+    assign shift_wdata = rdata << cache_offset_tmp;
 
     assign cache_hit = ((cache_tag[cache_index_tmp] == cache_tag_tmp)
                         && (cache_valid[cache_index_tmp] != 'b0));
@@ -169,7 +171,7 @@ module ysyx_24080020_IR(
             end
             CHIT: begin
                 // inst <= (cache_data[cache_index_tmp] >> cache_offset_tmp);
-                inst <= shift_data[31:0];
+                inst <= shift_rdata[31:0];
                 inst_fin <= 'b1;
 
                 `ifdef CONFIG_DPIC
@@ -201,7 +203,7 @@ module ysyx_24080020_IR(
                         if(use_icache) begin
                             // update cache
                             cache_tag[cache_index_tmp] <= cache_tag_tmp;
-                            cache_data[cache_index_tmp] <= cache_data[cache_index_tmp] | (rdata << cache_offset_tmp);
+                            cache_data[cache_index_tmp] <= cache_data[cache_index_tmp] | shift_wdata;
                             cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << cache_offset_tmp);
                         end
 
