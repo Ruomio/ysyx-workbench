@@ -171,11 +171,11 @@ module ysyx_24080020_IR(
                 `endif
             end
             CHIT: begin
-                // inst <= (cache_data[cache_index_tmp] >> cache_offset_tmp);
                 inst <= shift_rdata[31:0];
                 inst_fin <= 'b1;
 
                 `ifdef CONFIG_DPIC
+                $display("rdata: 0x%x", shift_rdata[31:0]);
                 // hit cache and not by axi
                 if(!fin_r) statistics_icache_hit();
                 `endif
