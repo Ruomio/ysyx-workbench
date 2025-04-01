@@ -376,8 +376,14 @@ void exec_npc(uint64_t n) {
         return;
       }
 #endif
-#if NVBOARD_ENABLE
+#ifdef NVBOARD_ENABLE
+#if defined (CONFIG_LIGHTSSS)
+    if(!lightsss.is_child()) {
+      nvboard_quit();
+    }
+#else
     nvboard_quit();
+#endif
 #endif
       break;
     default: break;;
