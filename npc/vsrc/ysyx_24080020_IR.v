@@ -32,13 +32,13 @@ module ysyx_24080020_IR(
 
     reg fin_r, fin_ar;
     reg [2:0] current_state, next_state;
-    localparam integer IDLE = 0;
-    localparam integer JUDGE = IDLE + 1;
-    localparam integer CHIT = JUDGE + 1;
-    localparam integer CMISS = CHIT + 1;
-    localparam integer AXIAR = CMISS + 1;
-    localparam integer AXIR = AXIAR + 1;
-    localparam integer AXIDone = AXIR + 1;  // not use cache, such as sram
+    localparam wire[2:0] IDLE = 0;
+    localparam wire[2:0] JUDGE = IDLE + 1;
+    localparam wire[2:0] CHIT = JUDGE + 1;
+    localparam wire[2:0] CMISS = CHIT + 1;
+    localparam wire[2:0] AXIAR = CMISS + 1;
+    localparam wire[2:0] AXIR = AXIAR + 1;
+    localparam wire[2:0] AXIDone = AXIR + 1;  // not use cache, such as sram
 
     wire use_icache;
 
