@@ -371,10 +371,8 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        printf("372\n");
         free_npc();
-        printf("374\n");
-        exit(-1);
+        // exit(-1);
       }
 #endif
 #if NVBOARD_ENABLE
@@ -393,15 +391,14 @@ void free_npc() {
     delete top;
     top = NULL;
   }
-  printf("394\n");
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
   if(tfp) {
     tfp->close();
   }
 #endif
-  printf("400\n");
 
 #if defined (CONFIG_LIGHTSSS)
+  // contextp is the same addr, so not release muti time
   if(lightsss.is_child()) {
     return;
   }
@@ -411,7 +408,6 @@ void free_npc() {
     delete contextp;
     contextp = NULL;
   }
-  printf("405\n");
 }
 
 void update_ftrace_dpi() {
