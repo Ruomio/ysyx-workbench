@@ -356,6 +356,7 @@ void exec_npc(uint64_t n) {
         if(!lightsss.is_child()) {
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
+        printf("line 359, pid: 0x%x\n", getpid());
       }
 #endif
 
@@ -373,7 +374,6 @@ void exec_npc(uint64_t n) {
         u_npc_state.state = NPC_QUIT;
         u_npc_state.ret = true;
         u_npc_state.pc = g_pc;
-        printf("line 376, pid: 0x%x\n", getpid());
         // exit(-1);
       }
 #endif
