@@ -326,6 +326,7 @@ void exec_npc(uint64_t n) {
   uint64_t timer_start = get_time();
 
 
+  if(lightsss.is_child()) FORK_PRINTF("child exec\n");
 
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
