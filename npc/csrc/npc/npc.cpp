@@ -346,6 +346,7 @@ void exec_npc(uint64_t n) {
   g_timer += timer_end - timer_start;
 
 
+  printf("line 349, pid: 0x%x\n", getpid());
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
       check_trap(u_npc_state);
@@ -361,7 +362,9 @@ void exec_npc(uint64_t n) {
 #endif
 
     case NPC_QUIT:
+      printf("line 364, pid: 0x%x\n", getpid());
       statistic();
+      printf("line 366, pid: 0x%x\n", getpid());
 #if NVBOARD_ENABLE
     nvboard_quit();
 #endif
