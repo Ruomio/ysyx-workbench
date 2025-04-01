@@ -7,6 +7,7 @@
 
 #include "isa.h"
 #include <cpu/difftest.h>
+#include <unistd.h>
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
@@ -333,6 +334,7 @@ void exec_npc(uint64_t n) {
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
       lightsss.do_fork(); // 创建子进程快照
+      printf("success fork %d\n", getpid());
       last_snapshot_time = current_time;
     }
 #endif
