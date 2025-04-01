@@ -391,15 +391,18 @@ void free_npc() {
     delete top;
     top = NULL;
   }
+  printf("394\n");
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
   if(tfp) {
     tfp->close();
   }
 #endif
+  printf("400\n");
   if(contextp) {
     delete contextp;
     contextp = NULL;
   }
+  printf("405\n");
 }
 
 void update_ftrace_dpi() {
