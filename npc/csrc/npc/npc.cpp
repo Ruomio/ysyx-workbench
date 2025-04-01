@@ -118,6 +118,7 @@ uint32_t g_get_dnpc();
 uint32_t g_get_rs1();
 uint32_t g_get_rd();
 void update_npc_cpu();
+void free_npc();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -360,7 +361,7 @@ void exec_npc(uint64_t n) {
             printf("line 358, pid: %d\n", getpid());
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
-        printf("line 359, pid: 0x%x\n", getpid());
+        printf("line 359, pid: 0x%d\n", getpid());
       }
 #endif
 
@@ -377,10 +378,8 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        u_npc_state.state = NPC_QUIT;
-        u_npc_state.ret = true;
-        u_npc_state.pc = g_pc;
-        // exit(-1);
+        free_npc();
+        exit(-1);
       }
 #endif
       break;
