@@ -370,8 +370,10 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        free_npc();
-        exit(-1);
+        u_npc_state.state = NPC_QUIT;
+        u_npc_state.ret = true;
+        u_npc_state.pc = g_pc;
+        // exit(-1);
       }
 #endif
       break;
