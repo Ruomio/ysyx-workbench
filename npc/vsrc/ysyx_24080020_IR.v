@@ -66,8 +66,8 @@ module ysyx_24080020_IR(
     assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
     assign cache_offset_tmp = addr[cache_size_bits-1 : 0];
 
-    assign shift_rdata = cache_data[cache_index_tmp] >> (cache_offset_tmp * 4);
-    assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata} << (cache_offset_tmp * 4));
+    assign shift_rdata = cache_data[cache_index_tmp] >> (cache_offset_tmp * 32);
+    assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata} << (cache_offset_tmp * 32));
 
     assign cache_hit = ((cache_tag[cache_index_tmp] == cache_tag_tmp)
                         && (cache_valid[cache_index_tmp] >> cache_offset_tmp) == ({cache_size_bits{1'b0}} | 'b1));
