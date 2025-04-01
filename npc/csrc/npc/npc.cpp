@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <readline/chardefs.h>
 #include "define.h"
 #include "memory/paddr.h"
@@ -117,6 +118,7 @@ uint32_t g_get_dnpc();
 uint32_t g_get_rs1();
 uint32_t g_get_rd();
 void update_npc_cpu();
+void free_npc();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -362,13 +364,12 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 
-      printf("line 365\n");
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
-        printf("line 372\n");
+        free_npc();
         exit(-1);
       }
 #endif
