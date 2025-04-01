@@ -70,7 +70,7 @@ module ysyx_24080020_IR(
     assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata} << cache_offset_tmp);
 
     assign cache_hit = ((cache_tag[cache_index_tmp] == cache_tag_tmp)
-                        && (cache_valid[cache_index_tmp] >> cache_offset_tmp) == cache_size_bits'b1);
+                        && (cache_valid[cache_index_tmp] >> cache_offset_tmp) == ({cache_size_bits{1'b0}} | 1'b1));
 
     assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
                                 || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
