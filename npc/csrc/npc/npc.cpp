@@ -357,6 +357,7 @@ void exec_npc(uint64_t n) {
 #ifdef CONFIG_LIGHTSSS
       // 检测到结束或异常状态，通知最近的子进程生成波形
       if (u_npc_state.state == NPC_ABORT) {
+        FORK_PRINTF("abort\n")
         if(!lightsss.is_child()) {
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
