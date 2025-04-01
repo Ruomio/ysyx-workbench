@@ -362,19 +362,19 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 
+      printf("line 365\n");
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
         //exit(-1);
+      printf("line 372\n");
         return;
       }
 #endif
 #if NVBOARD_ENABLE
-      printf("line 365\n");
     nvboard_quit();
-      printf("line 367\n");
 #endif
       break;
     default: break;;
