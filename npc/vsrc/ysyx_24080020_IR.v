@@ -47,6 +47,7 @@ module ysyx_24080020_IR(
     localparam cache_num_bits = $clog2(`ysyx_24080020_CACHE_NUM);
     localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
     localparam cache_data_width = 8 * `ysyx_24080020_CACHE_SIZE;
+    localparam data_complete_bits = cache_data_width - 32;
 
     wire [cache_data_width-1 : 0] shift_rdata;
     wire [cache_data_width-1 : 0] shift_wdata;
@@ -66,7 +67,7 @@ module ysyx_24080020_IR(
     assign cache_offset_tmp = addr[cache_size_bits-1 : 0];
 
     assign shift_rdata = cache_data[cache_index_tmp] >> cache_offset_tmp;
-    assign shift_wdata = ({(cache_data_width-32)'b0, rdata} << cache_offset_tmp);
+    assign shift_wdata = ({data_complete_bits'b0, rdata} << cache_offset_tmp);
 
     assign cache_hit = ((cache_tag[cache_index_tmp] == cache_tag_tmp)
                         && (cache_valid[cache_index_tmp] != 'b0));
