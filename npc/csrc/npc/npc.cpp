@@ -220,6 +220,14 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
+
+      // test lightsss
+      if(total_cycles > 500000) {
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
 #if NVBOARD_ENABLE
       nvboard_update();
 #endif
