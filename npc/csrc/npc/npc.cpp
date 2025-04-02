@@ -386,12 +386,9 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        if(tfp) {
-          tfp->close();
-        }
-        exit(-1);
+        //exit(-1);
         // free_npc();
-        // return;
+        return;
       }
 #endif
 
@@ -401,14 +398,6 @@ void exec_npc(uint64_t n) {
 }
 
 void free_npc() {
-#if defined (CONFIG_LIGHTSSS)
-  // contextp is the same addr, so not release muti time
-  if(lightsss.is_child()) {
-    return;
-  }
-#endif
-
-
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
   if(top) {
@@ -421,9 +410,11 @@ void free_npc() {
     tfp->close();
   }
 #endif
+  FORK_PRINTF("413\n");
   if(contextp) {
     delete contextp;
     contextp = NULL;
+    FORK_PRINTF("417\n");
   }
 }
 
