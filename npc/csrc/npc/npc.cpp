@@ -378,13 +378,13 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        // free_npc();
+        free_npc();
         // exit(-1);
         return;
       }
 #endif
 #ifdef NVBOARD_ENABLE
-#if !defined (CONFIG_LIGHTSSS)
+#if defined (CONFIG_LIGHTSSS)
     if(!lightsss.is_child()) {
       nvboard_quit();
     }
