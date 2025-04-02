@@ -238,7 +238,7 @@ void exec_once_npc(uint32_t pc) {
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
-      if(g_pc == 0x300056dc) {
+      if(g_pc == 0x30003cd0) {
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
         u_npc_state.ret = true;
