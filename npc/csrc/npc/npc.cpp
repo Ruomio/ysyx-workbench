@@ -378,6 +378,7 @@ void exec_npc(uint64_t n) {
       }
       else {
         // return;
+        sleep(1);
         exit(-1);
       }
 #endif
