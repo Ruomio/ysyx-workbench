@@ -384,7 +384,7 @@ void exec_npc(uint64_t n) {
       }
 #endif
 #ifdef NVBOARD_ENABLE
-#if defined (CONFIG_LIGHTSSS)
+#if !defined (CONFIG_LIGHTSSS)
     if(!lightsss.is_child()) {
       nvboard_quit();
     }
