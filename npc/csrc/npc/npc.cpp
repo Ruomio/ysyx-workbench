@@ -222,7 +222,7 @@ void exec_once_npc(uint32_t pc) {
       }
 
       // test lightsss
-      if(total_cycles > 5000000) {
+      if(total_cycles > 1000000) {
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
         u_npc_state.ret = true;
