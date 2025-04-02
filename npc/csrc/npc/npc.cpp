@@ -372,6 +372,9 @@ void exec_npc(uint64_t n) {
       statistic(); 
 #if NVBOARD_ENABLE
     FORK_PRINTF("Line: %d\n", __LINE__);
+#ifdef CONFIG_LIGHTSSS
+      if(lightsss.is_child()) return;
+#endif
     nvboard_quit();
     FORK_PRINTF("Line: %d\n", __LINE__);
 #endif
