@@ -1,3 +1,4 @@
+#include <memory>
 #include <readline/chardefs.h>
 #include "define.h"
 #include "memory/paddr.h"
@@ -61,14 +62,17 @@ extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
 #if defined(ysyxSoCFull)
-VysyxSoCFull *top = NULL;
+// VysyxSoCFull *top = NULL;
+std::unique_ptr<VysyxSoCFull> top;
 #elif defined(ysyx_24080020_NPC)
-Vysyx_24080020_NPC *top = NULL;
+// Vysyx_24080020_NPC *top = NULL;
+std::unique_ptr<Vysyx_24080020_NPC> top;
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-VerilatedVcdC *tfp = NULL;
+// VerilatedVcdC *tfp = NULL;
+std::unique_ptr<VerilatedVcdC> tfp;
 #endif
-VerilatedContext *contextp = NULL;
+std::shared_ptr<VerilatedContext> contextp;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=CONFIG_MBASE, .ret = true};
 
@@ -137,21 +141,21 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void init_npc(int argc, char **argv) {
   Verilated::commandArgs(argc, argv);
 
-  contextp = new VerilatedContext;
+  contextp = std::make_unique<VerilatedContext>();
   contextp->commandArgs(argc, argv);
 #if defined(ysyxSoCFull)
-  top = new VysyxSoCFull(contextp);
+  top = std::make_unique<VysyxSoCFull>(contextp.get());
 #elif defined(ysyx_24080020_NPC)
   top = new Vysyx_24080020_NPC(contextp);
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-  tfp = new VerilatedVcdC;
+  tfp = std::make_unique<VerilatedVcdC>();
   contextp->traceEverOn(true);
-  top->trace(tfp, 0);
+  top->trace(tfp.get(), 0);
   tfp->open("build/wave.vcd");
 #endif
 #if NVBOARD_ENABLE
-  nvboard_bind_all_pins(top);
+  nvboard_bind_all_pins(top.get());
   nvboard_init(1);
 #endif
   int i = 0;
@@ -341,6 +345,8 @@ void exec_npc(uint64_t n) {
     exec_once_npc(g_pc);
   }
 
+  top->final();
+
 
   uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
@@ -381,20 +387,6 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
-  if(top) {
-    top->final();
-    delete top;
-    top = NULL;
-  }
-#if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
-  if(tfp) {
-    tfp->close();
-  }
-#endif
-  if(contextp) {
-    delete contextp;
-    contextp = NULL;
-  }
 }
 
 void update_ftrace_dpi() {
