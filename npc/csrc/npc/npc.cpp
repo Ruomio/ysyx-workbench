@@ -375,8 +375,9 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        FORK_PRINTF("__LINE__");
-        exit(-1);
+        FORK_PRINTF("__LINE__\n");
+        //exit(-1);
+        return;
       }
 #endif
 
@@ -392,7 +393,7 @@ void free_npc() {
   if(lightsss.is_child()) return;
 #endif
 #if NVBOARD_ENABLE
-    FORK_PRINTF("__LINE__");
+    FORK_PRINTF("__LINE__\n");
     nvboard_quit();
 #endif
   if(top) {
