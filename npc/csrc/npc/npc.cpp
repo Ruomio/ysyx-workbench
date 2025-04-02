@@ -411,7 +411,7 @@ void free_npc() {
   }
 #endif
 
-#if defined (CONFIG_LIGHTSSS)
+#if !defined (CONFIG_LIGHTSSS)
   // contextp is the same addr, so not release muti time
   if(lightsss.is_child()) {
     return;
