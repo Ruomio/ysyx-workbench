@@ -389,11 +389,6 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
-#ifdef NVBOARD_ENABLE
-    FORK_PRINTF("374\n");
-    nvboard_quit();
-    FORK_PRINTF("376\n");
-#endif
   if(top) {
     top->final();
     delete top;
@@ -404,10 +399,16 @@ void free_npc() {
     tfp->close();
   }
 #endif
+  FORK_PRINTF("474\n");
   if(contextp) {
     delete contextp;
     contextp = NULL;
   }
+#ifdef NVBOARD_ENABLE
+    FORK_PRINTF("374\n");
+    nvboard_quit();
+    FORK_PRINTF("376\n");
+#endif
 }
 
 void update_ftrace_dpi() {
