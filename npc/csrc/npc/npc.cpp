@@ -220,14 +220,6 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
-
-      // test lightsss
-      if(total_cycles > 1000000) {
-        u_npc_state.state = NPC_ABORT;
-        u_npc_state.pc = pc;
-        u_npc_state.ret = true;
-        return;
-      }
 #if NVBOARD_ENABLE
       nvboard_update();
 #endif
@@ -353,7 +345,6 @@ void exec_npc(uint64_t n) {
   uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
 
-        FORK_PRINTF("Line: %d\n", __LINE__);
 
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
@@ -371,25 +362,17 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 #if NVBOARD_ENABLE
-    FORK_PRINTF("Line: %d\n", __LINE__);
-#ifdef CONFIG_LIGHTSSS
-      if(lightsss.is_child()) return;
-#endif
     nvboard_quit();
-    FORK_PRINTF("Line: %d\n", __LINE__);
 #endif
+
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
-        FORK_PRINTF("Line: %d\n", __LINE__);
-        // exit(-1);
-        return;
+        exit(-1);
       }
 #endif
-
-
       break;
     default: break;;
   }
@@ -398,25 +381,19 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
-    FORK_PRINTF("Line: %d\n", __LINE__);
-  if(top != nullptr) {
+  if(top) {
     top->final();
     delete top;
-    top = nullptr;
+    top = NULL;
   }
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
   if(tfp) {
     tfp->close();
   }
 #endif
-    FORK_PRINTF("Line: %d\n", __LINE__);
-#ifdef CONFIG_LIGHTSSS
-  if(lightsss.is_child()) return;
-    FORK_PRINTF("Line: %d\n", __LINE__);
-#endif
-  if(contextp != nullptr) {
+  if(contextp) {
     delete contextp;
-    contextp = nullptr;
+    contextp = NULL;
   }
 }
 
