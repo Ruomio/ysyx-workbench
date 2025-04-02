@@ -84,7 +84,7 @@ module ysyx_24080020_IR(
     assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
 
     assign cache_hit = (( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
-                        && ((cache_valid[cache_index_tmp] >> (cache_offset_tmp >> 2)) == ({cache_size_bits{1'b0}} | 'b1)));
+                        && (((cache_valid[cache_index_tmp] >> (cache_offset_tmp >> 2)) & ({cache_size_bits{1'b0} | 1'b1})) != 'b0));
 
     assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
                                 || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
