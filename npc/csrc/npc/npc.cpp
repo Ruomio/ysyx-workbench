@@ -222,7 +222,7 @@ void exec_once_npc(uint32_t pc) {
       }
 
       // test lightsss
-      if(total_cycles > 0x100000000) {
+      if(total_cycles > 0x000100000) {
         printf("test lightsss\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
