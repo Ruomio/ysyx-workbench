@@ -189,9 +189,11 @@ module ysyx_24080020_IR(
                 inst_fin <= 'b1;
 
                 `ifdef CONFIG_DPIC
-                // $display("raddr: 0x%x  rdata: 0x%x",araddr, shift_rdata[31:0]);
                 // hit cache and not by axi
-                if(!fin_r) statistics_icache_hit();
+                if(!fin_r) begin
+                    statistics_icache_hit();
+                    $display("cache hit addr: 0x%x  rdata: 0x%x",araddr, shift_rdata[31:0]);
+                end
                 `endif
             end
             CMISS: begin
