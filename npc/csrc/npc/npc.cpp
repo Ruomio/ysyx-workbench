@@ -370,7 +370,7 @@ void exec_npc(uint64_t n) {
     case NPC_QUIT: 
       statistic(); 
 #if NVBOARD_ENABLE
-    FORK_PRINTF("__LINE__\n");
+    FORK_PRINTF("Line: %d\n", __LINE__);
     nvboard_quit();
 #endif
 #ifdef CONFIG_LIGHTSSS
@@ -378,7 +378,7 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        FORK_PRINTF("__LINE__\n");
+        FORK_PRINTF("Line: %d\n", __LINE__);
         exit(-1);
         // return;
       }
@@ -392,10 +392,6 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
-#ifdef CONFIG_LIGHTSSS
-  if(lightsss.is_child()) return;
-#endif
-
   if(top) {
     top->final();
     delete top;
