@@ -47,7 +47,7 @@ module ysyx_24080020_IR(
     localparam cache_num_bits = $clog2(`ysyx_24080020_CACHE_NUM);
     localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
     localparam cache_data_width = `ysyx_24080020_CACHE_SIZE << 3;
-    localparam cache_tag_width = cache_tag_size * (`ysyx_24080020_CACHE_NUM >> 2);
+    localparam cache_tag_width = cache_tag_size * (`ysyx_24080020_CACHE_SIZE >> 2);
     localparam data_complete_bits = cache_data_width - 32;
     localparam tag_complete_bits = cache_tag_width - cache_tag_size;
 
