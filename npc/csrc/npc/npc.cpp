@@ -1,4 +1,3 @@
-#include <memory>
 #include <readline/chardefs.h>
 #include "define.h"
 #include "memory/paddr.h"
@@ -62,17 +61,14 @@ extern void difftest_skip_dut(int nr_ref, int nr_dut);
 extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
 #if defined(ysyxSoCFull)
-// VysyxSoCFull *top = NULL;
-std::shared_ptr<VysyxSoCFull> top;
+VysyxSoCFull *top = NULL;
 #elif defined(ysyx_24080020_NPC)
-// Vysyx_24080020_NPC *top = NULL;
-std::shared_ptr<Vysyx_24080020_NPC> top;
+Vysyx_24080020_NPC *top = NULL;
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-// VerilatedVcdC *tfp = NULL;
-std::shared_ptr<VerilatedVcdC> tfp;
+VerilatedVcdC *tfp = NULL;
 #endif
-std::shared_ptr<VerilatedContext> contextp;
+VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=CONFIG_MBASE, .ret = true};
 
@@ -81,7 +77,7 @@ static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
-static uint32_t total_wave_step = 0; 
+static uint32_t total_wave_step = 0;
 static uint64_t total_cycles = 0;
 static uint64_t wait_cycles = 0;
 static uint64_t ifu_get_inst_cnt = 0;
@@ -141,21 +137,21 @@ static void trace_and_difftest(vaddr_t dnpc) {
 void init_npc(int argc, char **argv) {
   Verilated::commandArgs(argc, argv);
 
-  contextp = std::make_unique<VerilatedContext>();
+  contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
 #if defined(ysyxSoCFull)
-  top = std::make_unique<VysyxSoCFull>(contextp.get());
+  top = new VysyxSoCFull(contextp);
 #elif defined(ysyx_24080020_NPC)
   top = new Vysyx_24080020_NPC(contextp);
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-  tfp = std::make_unique<VerilatedVcdC>();
+  tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);
-  top->trace(tfp.get(), 0);
+  top->trace(tfp, 0);
   tfp->open("build/wave.vcd");
 #endif
 #if NVBOARD_ENABLE
-  nvboard_bind_all_pins(top.get());
+  nvboard_bind_all_pins(top);
   nvboard_init(1);
 #endif
   int i = 0;
@@ -202,7 +198,7 @@ void exec_once_npc(uint32_t pc) {
       tfp->dump(contextp->time());
       contextp->timeInc(1);
     }
-    else 
+    else
       total_wave_step++;
 #endif
 #ifdef CONFIG_LIGHTSSS
@@ -224,6 +220,16 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
+
+      // test lightsss
+      if(total_cycles > 0x100000000) {
+        printf("test lightsss\n");
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
+
 #if NVBOARD_ENABLE
       nvboard_update();
 #endif
@@ -332,7 +338,7 @@ void exec_npc(uint64_t n) {
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
     int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
-    
+
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
@@ -344,8 +350,6 @@ void exec_npc(uint64_t n) {
     if (u_npc_state.state != NPC_RUNNING) break;
     exec_once_npc(g_pc);
   }
-
-  top->final();
 
 
   uint64_t timer_end = get_time();
@@ -365,8 +369,8 @@ void exec_npc(uint64_t n) {
       }
 #endif
 
-    case NPC_QUIT: 
-      statistic(); 
+    case NPC_QUIT:
+      statistic();
 #if NVBOARD_ENABLE
     nvboard_quit();
 #endif
@@ -376,8 +380,7 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        return;
-        // exit(-1);
+        exit(-1);
       }
 #endif
       break;
@@ -388,6 +391,20 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
+  if(top) {
+    top->final();
+    delete top;
+    top = NULL;
+  }
+#if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
+  if(tfp) {
+    tfp->close();
+  }
+#endif
+  if(contextp) {
+    delete contextp;
+    contextp = NULL;
+  }
 }
 
 void update_ftrace_dpi() {
