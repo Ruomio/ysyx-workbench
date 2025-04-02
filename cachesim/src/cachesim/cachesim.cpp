@@ -66,6 +66,9 @@ void CacheSim::run_simulation() {
 
         // Check if the cache line is valid and matches the tag
         if (cache_valid[index][offset] && cache_tag[index][offset] == tag) {
+            if(address != cache_data[index][offset]) {
+                printf("error hit\n");
+            }
             // Cache hit
             cache_hit++;
         } else {
