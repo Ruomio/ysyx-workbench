@@ -46,12 +46,18 @@ module ysyx_24080020_IR(
     localparam cache_size_bits = $clog2(`ysyx_24080020_CACHE_SIZE);
     localparam cache_num_bits = $clog2(`ysyx_24080020_CACHE_NUM);
     localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
-    localparam cache_data_width = 8 * `ysyx_24080020_CACHE_SIZE;
+    localparam cache_data_width = `ysyx_24080020_CACHE_SIZE << 3;
+    localparam cache_tag_width = cache_tag_size * (`ysyx_24080020_CACHE_NUM >> 2);
     localparam data_complete_bits = cache_data_width - 32;
+    localparam tag_complete_bits = cache_tag_width - cache_tag_size;
 
     wire [cache_data_width-1 : 0] shift_rdata;
     wire [cache_data_width-1 : 0] shift_wdata;
-    wire [cache_data_width-1 : 0] clear_mask;
+    wire [cache_data_width-1 : 0] data_mask;
+
+    wire [cache_tag_width-1 : 0]  shift_rtag;
+    wire [cache_tag_width-1 : 0]  shift_wtag;
+    wire [cache_tag_width-1 : 0]  tag_mask;
 
     wire                                    cache_hit;
     wire [cache_tag_size-1:0]               cache_tag_tmp;
@@ -59,20 +65,25 @@ module ysyx_24080020_IR(
     wire [cache_size_bits-1:0]              cache_offset_tmp;
 
     reg [cache_data_width-1 : 0]            cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
-    reg [cache_tag_size-1 : 0]              cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
-    reg [cache_size_bits-1 : 0]            cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
+    reg [cache_tag_width-1 : 0]             cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
+    reg [cache_size_bits-1 : 0]             cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
 
 
     assign cache_tag_tmp = addr[31 : cache_num_bits+cache_size_bits];
     assign cache_index_tmp = addr[cache_num_bits+cache_size_bits-1 : cache_size_bits];
     assign cache_offset_tmp = addr[cache_size_bits-1 : 0];
 
-    assign clear_mask = {{data_complete_bits{1'b0}} ,~32'b0} << (cache_offset_tmp * 8);
 
-    assign shift_rdata = cache_data[cache_index_tmp] >> (cache_offset_tmp * 8);
-    assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata} << (cache_offset_tmp * 8));
+    assign shift_rdata = cache_data[cache_index_tmp] >> (cache_offset_tmp << 3);
+    assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata} << (cache_offset_tmp << 3));
+    assign data_mask = {{data_complete_bits{1'b0}} ,~32'b0} << (cache_offset_tmp << 3);
 
-    assign cache_hit = ((cache_tag[cache_index_tmp] == cache_tag_tmp)
+
+    assign shift_rtag = cache_tag[cache_index_tmp] >> ((cache_offset_tmp >> 2) * cache_tag_size);
+    assign shift_wtag = ({{tag_complete_bits{1'b0}}, cache_tag_tmp} << ((cache_offset_tmp >> 2) * cache_tag_size));
+    assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ((cache_offset_tmp >> 2) * cache_tag_size);
+
+    assign cache_hit = (( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
                         && ((cache_valid[cache_index_tmp] >> (cache_offset_tmp >> 2)) == ({cache_size_bits{1'b0}} | 'b1)));
 
     assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
@@ -206,8 +217,8 @@ module ysyx_24080020_IR(
                     if(rresp == 2'b00) begin // OKAY
                         if(use_icache) begin
                             // update cache
-                            cache_tag[cache_index_tmp] <= cache_tag_tmp;
-                            cache_data[cache_index_tmp] <= (cache_data[cache_index_tmp] & ~clear_mask) | shift_wdata;
+                            cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
+                            cache_data[cache_index_tmp] <= (cache_data[cache_index_tmp] & ~data_mask) | shift_wdata;
                             cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (cache_offset_tmp >> 2));
                         end
 
