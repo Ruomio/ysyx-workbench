@@ -369,9 +369,6 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-#if NVBOARD_ENABLE
-    nvboard_quit();
-#endif
 
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
@@ -380,6 +377,9 @@ void exec_npc(uint64_t n) {
       else {
         exit(-1);
       }
+#endif
+#if NVBOARD_ENABLE
+    nvboard_quit();
 #endif
       break;
     default: break;;
