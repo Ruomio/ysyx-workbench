@@ -386,8 +386,11 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        // free_npc();
+        if(tfp) {
+          tfp->close();
+        }
         exit(-1);
+        // free_npc();
         // return;
       }
 #endif
