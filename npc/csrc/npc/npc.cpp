@@ -347,7 +347,9 @@ void exec_npc(uint64_t n) {
     }
 #endif
 
-    if (u_npc_state.state != NPC_RUNNING) break;
+    if (u_npc_state.state != NPC_RUNNING){
+      break;
+    }
     exec_once_npc(g_pc);
   }
 
