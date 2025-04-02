@@ -63,14 +63,14 @@ extern void difftest_step(vaddr_t pc, vaddr_t npc);
 
 #if defined(ysyxSoCFull)
 // VysyxSoCFull *top = NULL;
-std::unique_ptr<VysyxSoCFull> top;
+std::shared_ptr<VysyxSoCFull> top;
 #elif defined(ysyx_24080020_NPC)
 // Vysyx_24080020_NPC *top = NULL;
-std::unique_ptr<Vysyx_24080020_NPC> top;
+std::shared_ptr<Vysyx_24080020_NPC> top;
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
 // VerilatedVcdC *tfp = NULL;
-std::unique_ptr<VerilatedVcdC> tfp;
+std::shared_ptr<VerilatedVcdC> tfp;
 #endif
 std::shared_ptr<VerilatedContext> contextp;
 
