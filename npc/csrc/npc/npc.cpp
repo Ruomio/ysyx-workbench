@@ -387,8 +387,8 @@ void exec_npc(uint64_t n) {
       }
       else {
         // free_npc();
-        // exit(-1);
-        return;
+        exit(-1);
+        // return;
       }
 #endif
 
