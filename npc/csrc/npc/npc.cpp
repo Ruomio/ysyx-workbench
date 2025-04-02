@@ -354,11 +354,7 @@ void exec_npc(uint64_t n) {
 
   uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
-#ifdef NVBOARD_ENABLE
-    FORK_PRINTF("374\n");
-    nvboard_quit();
-    FORK_PRINTF("376\n");
-#endif
+
 
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
@@ -375,7 +371,11 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-
+#ifdef NVBOARD_ENABLE
+    FORK_PRINTF("374\n");
+    nvboard_quit();
+    FORK_PRINTF("376\n");
+#endif
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
