@@ -117,7 +117,6 @@ uint32_t g_get_dnpc();
 uint32_t g_get_rs1();
 uint32_t g_get_rd();
 void update_npc_cpu();
-void free_npc();
 
 static void trace_and_difftest(vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -236,15 +235,16 @@ void exec_once_npc(uint32_t pc) {
       }
     }
     if(last_pc != g_get_pc()) {
-      // printf("exec pc: 0x%x\n", last_pc);
-      // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
-      if(g_pc == 0x30000194) {
+      // test lightsss
+      if(total_cycles == 15000) {
+        printf("Warning: total_cycles is 15000\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
         u_npc_state.ret = true;
         return;
       }
-
+      // printf("exec pc: 0x%x\n", last_pc);
+      // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
       idu_type = None;
       if(g_pc < CONFIG_MBASE) {
         u_npc_state.state = NPC_ABORT;
@@ -369,15 +369,12 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
         exit(-1);
-        // free_npc();
-        // return;
       }
 #endif
 #ifdef NVBOARD_ENABLE
@@ -401,11 +398,9 @@ void free_npc() {
     tfp->close();
   }
 #endif
-  FORK_PRINTF("413\n");
   if(contextp) {
     delete contextp;
     contextp = NULL;
-    FORK_PRINTF("417\n");
   }
 }
 
