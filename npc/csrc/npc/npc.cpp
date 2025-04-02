@@ -394,6 +394,7 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
+    FORK_PRINTF("Line: %d\n", __LINE__);
   if(top) {
     top->final();
     delete top;
@@ -404,8 +405,11 @@ void free_npc() {
     tfp->close();
   }
 #endif
+    FORK_PRINTF("Line: %d\n", __LINE__);
   if(contextp) {
+    FORK_PRINTF("Line: %d\n", __LINE__);
     delete contextp;
+    FORK_PRINTF("Line: %d\n", __LINE__);
     contextp = NULL;
   }
 }
