@@ -378,7 +378,7 @@ void exec_npc(uint64_t n) {
       else {
         FORK_PRINTF("Line: %d\n", __LINE__);
         // exit(-1);
-        return;
+        // return;
       }
 #endif
 #if NVBOARD_ENABLE
