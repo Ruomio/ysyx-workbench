@@ -372,17 +372,6 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-
-#ifdef CONFIG_LIGHTSSS
-      if(!lightsss.is_child()) {
-        lightsss.do_clear();
-      }
-      else {
-        // free_npc();
-        exit(-1);
-        // return;
-      }
-#endif
 #ifdef NVBOARD_ENABLE
 #if defined (CONFIG_LIGHTSSS)
     if(!lightsss.is_child()) {
@@ -392,6 +381,17 @@ void exec_npc(uint64_t n) {
     nvboard_quit();
 #endif
 #endif
+#ifdef CONFIG_LIGHTSSS
+      if(!lightsss.is_child()) {
+        lightsss.do_clear();
+      }
+      else {
+        // free_npc();
+        // exit(-1);
+        return;
+      }
+#endif
+
       break;
     default: break;;
   }
