@@ -222,7 +222,7 @@ void exec_once_npc(uint32_t pc) {
       } 
 
       // test lightsss
-      if(total_cycles > 25000) {
+      if(total_cycles > 100000) {
         printf("Warning: total_cycles is 15000\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
