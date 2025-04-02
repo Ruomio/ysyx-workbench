@@ -219,16 +219,6 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.pc = pc;
         u_npc_state.ret = true;
         return;
-      } 
-
-      // test lightsss
-      // if(total_cycles > 500000) {
-      if(g_pc == 0x30000194) {
-        printf("Warning: total_cycles is 15000\n");
-        u_npc_state.state = NPC_ABORT;
-        u_npc_state.pc = pc;
-        u_npc_state.ret = true;
-        return;
       }
 #if NVBOARD_ENABLE
       nvboard_update();
@@ -371,17 +361,15 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-#ifdef NVBOARD_ENABLE
-    FORK_PRINTF("374\n");
+#if NVBOARD_ENABLE
     nvboard_quit();
-    FORK_PRINTF("376\n");
 #endif
+
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
-        // return;
         exit(-1);
       }
 #endif
@@ -407,7 +395,6 @@ void free_npc() {
     delete contextp;
     contextp = NULL;
   }
-
 }
 
 void update_ftrace_dpi() {
