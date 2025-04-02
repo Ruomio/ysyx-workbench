@@ -369,11 +369,7 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-#if NVBOARD_ENABLE
-    FORK_PRINTF("Line: %d\n", __LINE__);
-    nvboard_quit();
-    FORK_PRINTF("Line: %d\n", __LINE__);
-#endif
+
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
@@ -383,6 +379,11 @@ void exec_npc(uint64_t n) {
         exit(-1);
         // return;
       }
+#endif
+#if NVBOARD_ENABLE
+    FORK_PRINTF("Line: %d\n", __LINE__);
+    nvboard_quit();
+    FORK_PRINTF("Line: %d\n", __LINE__);
 #endif
 
       break;
