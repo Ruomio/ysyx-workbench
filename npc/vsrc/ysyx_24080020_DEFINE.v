@@ -22,8 +22,8 @@
 `endif
 
 // cache
-`define ysyx_24080020_CACHE_SIZE 4
-`define ysyx_24080020_CACHE_NUM 16
+`define ysyx_24080020_CACHE_SIZE 16
+`define ysyx_24080020_CACHE_NUM 4
 
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
