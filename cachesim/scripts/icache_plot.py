@@ -3,6 +3,7 @@
 import sys
 import matplotlib.pyplot as plt
 import re
+from mpl_toolkits.mplot3d import Axes3D
 
 def main():
     sizes = []
@@ -20,23 +21,44 @@ def main():
         num_match = re.search(r'NUM=(\d+)', line)
         hit_match = re.search(r'Cache_Hit: \d+ Percentage:(\d+\.\d+)%', line)
 
-        if size_match and num_match and hit_match:
+        if size_match and num_match:
             sizes.append(size_match.group(1))
             nums.append(int(num_match.group(1)))
+        if hit_match:
             hit_rates.append(float(hit_match.group(1)))
 
-    # 绘制折线图
-    print(sizes + nums + hit_rates) 
-    plt.figure(figsize=(10, 5))
-    plt.plot(nums, hit_rates, marker='o')
-    plt.title('Cache Hit Rate vs NUM')
-    plt.xlabel('NUM')
-    plt.ylabel('Cache Hit Rate (%)')
-    plt.xticks(nums)
-    plt.grid()
-    plt.ylim(0, 100)
-    plt.axhline(y=100, color='r', linestyle='--')  # 100% line for reference
-    plt.show()
+
+    # 创建三维图形
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111, projection='3d')
+
+    # ax.plot(nums, hit_rates, sizes, marker='o')
+    unique_sizes = set(sizes)  # 获取唯一的 SIZE 值
+
+    # 为每个 SIZE 绘制折线
+    for size in unique_sizes:
+        indices = [i for i, s in enumerate(sizes) if s == size]
+        ax.plot([nums[i] for i in indices], 
+                [hit_rates[i] for i in indices], 
+                [sizes[i] for i in indices], 
+                marker='o', label=f'SIZE={size}')  # 使用不同的线
+
+    ax.set_title('Cache Hit Rate vs NUM and SIZE')
+    ax.set_xlabel('NUM')
+    ax.set_ylabel('Cache Hit Rate (%)')
+    ax.set_zlabel('SIZE')
+
+    # 调整坐标轴刻度方向
+    ax.tick_params(axis='x', direction='in')  # x 轴刻度向内
+    ax.tick_params(axis='y', direction='inout')  # y 轴刻度向内
+    ax.tick_params(axis='z', direction='in')  # z 轴刻度向内
+
+    # 调整坐标轴方向
+    ax.view_init(elev=60, azim=154, roll=-113)  # 调整视角
+
+    ax.grid()
+    plt.show() 
+
 
 if __name__ == "__main__":
     main()
