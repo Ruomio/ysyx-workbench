@@ -396,10 +396,10 @@ void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
     FORK_PRINTF("Line: %d\n", __LINE__);
-  if(top) {
+  if(top != nullptr) {
     top->final();
     delete top;
-    top = NULL;
+    top = nullptr;
   }
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
   if(tfp) {
@@ -411,9 +411,9 @@ void free_npc() {
   if(lightsss.is_child()) return;
     FORK_PRINTF("Line: %d\n", __LINE__);
 #endif
-  if(contextp) {
+  if(contextp != nullptr) {
     delete contextp;
-    contextp = NULL;
+    contextp = nullptr;
   }
 }
 
