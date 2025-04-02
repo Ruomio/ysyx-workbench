@@ -369,15 +369,18 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT: 
       statistic(); 
-
+#if NVBOARD_ENABLE
+    FORK_PRINTF("__LINE__\n");
+    nvboard_quit();
+#endif
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
         FORK_PRINTF("__LINE__\n");
-        //exit(-1);
-        return;
+        exit(-1);
+        // return;
       }
 #endif
 
@@ -392,10 +395,7 @@ void free_npc() {
 #ifdef CONFIG_LIGHTSSS
   if(lightsss.is_child()) return;
 #endif
-#if NVBOARD_ENABLE
-    FORK_PRINTF("__LINE__\n");
-    nvboard_quit();
-#endif
+
   if(top) {
     top->final();
     delete top;
