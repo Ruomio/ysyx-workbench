@@ -1,9 +1,6 @@
-#include <cstdlib>
-#include <memory>
 #include <readline/chardefs.h>
 #include "define.h"
 #include "memory/paddr.h"
-#include "verilated.h"
 #include "verilated_vcd_c.h"
 #include "common.h"
 #include "ringbuffer.h"
@@ -241,6 +238,13 @@ void exec_once_npc(uint32_t pc) {
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
+      if(g_pc == 0x300056dc) {
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
+
       idu_type = None;
       if(g_pc < CONFIG_MBASE) {
         u_npc_state.state = NPC_ABORT;
