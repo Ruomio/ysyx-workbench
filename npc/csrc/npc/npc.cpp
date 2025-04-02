@@ -365,6 +365,7 @@ void exec_npc(uint64_t n) {
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
         else {
+          exit(-1);
           // return;
         }
       }
