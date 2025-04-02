@@ -354,7 +354,11 @@ void exec_npc(uint64_t n) {
 
   uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
-
+#ifdef NVBOARD_ENABLE
+    FORK_PRINTF("374\n");
+    nvboard_quit();
+    FORK_PRINTF("376\n");
+#endif
 
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
@@ -399,16 +403,11 @@ void free_npc() {
     tfp->close();
   }
 #endif
-  FORK_PRINTF("474\n");
   if(contextp) {
     delete contextp;
     contextp = NULL;
   }
-#ifdef NVBOARD_ENABLE
-    FORK_PRINTF("374\n");
-    nvboard_quit();
-    FORK_PRINTF("376\n");
-#endif
+
 }
 
 void update_ftrace_dpi() {
