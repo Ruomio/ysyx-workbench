@@ -398,6 +398,14 @@ void exec_npc(uint64_t n) {
 }
 
 void free_npc() {
+#if defined (CONFIG_LIGHTSSS)
+  // contextp is the same addr, so not release muti time
+  if(lightsss.is_child()) {
+    return;
+  }
+#endif
+
+
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
   if(top) {
@@ -410,14 +418,6 @@ void free_npc() {
     tfp->close();
   }
 #endif
-
-#if !defined (CONFIG_LIGHTSSS)
-  // contextp is the same addr, so not release muti time
-  if(lightsss.is_child()) {
-    return;
-  }
-#endif
-
   if(contextp) {
     delete contextp;
     contextp = NULL;
