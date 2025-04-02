@@ -345,7 +345,7 @@ void exec_npc(uint64_t n) {
     exec_once_npc(g_pc);
   }
 
-  top->final();
+  // top->final();
 
 
   uint64_t timer_end = get_time();
