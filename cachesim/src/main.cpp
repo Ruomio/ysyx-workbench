@@ -11,8 +11,7 @@ int main(int argc, char **argv) {
     CacheSim cachesim(argv[1]);
 
     if(argv[2] && argv[3]) {
-        cachesim.setCachesize(atoi(argv[2]));
-        cachesim.setCachenum(atoi(argv[3]));
+        cachesim.setCache_size_num(atoi(argv[2]), atoi(argv[3]));
     }
     else {
         std::cout << "sim as default size:4 and num:16" << std::endl;

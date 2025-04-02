@@ -16,8 +16,7 @@ public:
     void run_simulation();
     void print_results();
 
-    int setCachesize(uint32_t size);
-    int setCachenum(uint32_t num);
+    int setCache_size_num(uint32_t size, uint32_t num);
 
 private:
     uint32_t cache_hit;
@@ -30,7 +29,7 @@ private:
     uint32_t cachenum;
     uint32_t cache_index;
     std::vector<std::vector<bool>> cache_valid;
-    std::vector<uint32_t> cache_tag;
+    std::vector<std::vector<uint32_t>> cache_tag;
     std::vector<std::vector<uint32_t>> cache_data;
 
 };
