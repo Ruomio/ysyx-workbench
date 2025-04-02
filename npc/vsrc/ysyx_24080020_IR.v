@@ -80,8 +80,8 @@ module ysyx_24080020_IR(
 
 
     assign shift_rtag = cache_tag[cache_index_tmp] >> (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
-    assign shift_wtag = ({{tag_complete_bits{1'b0}}, cache_tag_tmp} << ((cache_offset_tmp >> 2) * cache_tag_size));
-    assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ((cache_offset_tmp >> 2) * cache_tag_size);
+    assign shift_wtag = ({{tag_complete_bits{1'b0}}, cache_tag_tmp} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size));
+    assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
 
     assign cache_hit = (( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
                         && ((cache_valid[cache_index_tmp] >> (cache_offset_tmp >> 2)) == ({cache_size_bits{1'b0}} | 'b1)));
