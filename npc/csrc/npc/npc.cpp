@@ -378,9 +378,9 @@ void exec_npc(uint64_t n) {
         lightsss.do_clear();
       }
       else {
-        free_npc();
-        // exit(-1);
-        return;
+        // free_npc();
+        exit(-1);
+        // return;
       }
 #endif
 #ifdef NVBOARD_ENABLE
