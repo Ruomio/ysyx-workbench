@@ -378,9 +378,7 @@ void exec_npc(uint64_t n) {
         exit(-1);
       }
 #endif
-#if NVBOARD_ENABLE
-    nvboard_quit();
-#endif
+
       break;
     default: break;;
   }
@@ -389,6 +387,12 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
+#ifdef CONFIG_LIGHTSSS
+  if(lightsss.is_child()) return;
+#endif
+#if NVBOARD_ENABLE
+    nvboard_quit();
+#endif
   if(top) {
     top->final();
     delete top;
