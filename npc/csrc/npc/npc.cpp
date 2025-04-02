@@ -364,35 +364,25 @@ void exec_npc(uint64_t n) {
         if(!lightsss.is_child()) {
           lightsss.wakeup_child(timer_end); // 使用当前的时间作为cycles参数
         }
-        else {
-          exit(-1);
-          // return;
-        }
       }
 #endif
 
     case NPC_QUIT: 
       statistic(); 
-#ifdef NVBOARD_ENABLE
-#if defined (CONFIG_LIGHTSSS)
-    if(!lightsss.is_child()) {
-      nvboard_quit();
-    }
-#else
-    nvboard_quit();
-#endif
-#endif
+
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
-        //exit(-1);
+        exit(-1);
         // free_npc();
-        return;
+        // return;
       }
 #endif
-
+#ifdef NVBOARD_ENABLE
+    nvboard_quit();
+#endif
       break;
     default: break;;
   }
