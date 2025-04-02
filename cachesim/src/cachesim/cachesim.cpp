@@ -16,7 +16,7 @@ CacheSim::CacheSim(std::string path) {
     cachesize = CACHE_SIZE;
     cachenum = CACHE_NUM;
 
-    cache_tag.resize(cachenum, 0);
+    cache_tag = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
     cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
     cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
 }
@@ -25,15 +25,10 @@ CacheSim::~CacheSim() {
     print_results();
 }
 
-int CacheSim::setCachesize(uint32_t size) {
+int CacheSim::setCache_size_num(uint32_t size, uint32_t num) {
     cachesize = size;
-    cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
-    return 0;
-}
-
-int CacheSim::setCachenum(uint32_t num) {
     cachenum = num;
-    cache_tag.resize(cachenum, 0);
+    cache_tag = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
     cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
     cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
     return 0;
@@ -70,15 +65,19 @@ void CacheSim::run_simulation() {
         uint32_t offset = (address % cachesize) / 4;
 
         // Check if the cache line is valid and matches the tag
-        if (cache_valid[index][offset] && cache_tag[index] == tag) {
+        if (cache_valid[index][offset] && cache_tag[index][offset] == tag) {
+            if(address != cache_data[index][offset]) {
+                printf("error hit\n");
+            }
             // Cache hit
             cache_hit++;
+            printf("cache hit addr: 0x%x\n", address);
         } else {
             // Cache miss
             cache_miss++;
             // Update cache line
             cache_valid[index][offset] = true;
-            cache_tag[index] = tag;
+            cache_tag[index][offset] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
             cache_data[index][offset] = address;
         }

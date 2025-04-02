@@ -7,8 +7,8 @@ SCRIPT_DIR="${NEMU_HOME}/../cachesim"
 BIN=${SCRIPT_DIR}/build/cachesim
 INSTS=${NEMU_HOME}/build/insts.txt
 
-SIZES=(4 8 16 32 64)
-NUMS=(16 32 64 128)
+SIZES=(4 8 16 32)
+NUMS=(4 8 16 32 64)
 # SIZES=(4)
 # NUMS=(16)
 
