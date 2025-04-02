@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/env python
 
 import sys
 import matplotlib.pyplot as plt
@@ -14,7 +14,6 @@ def main():
     for line in sys.stdin:
         # 检查结束条件
         if "All instances completed." in line:
-            print('finish read')
             break
         # 匹配 SIZE 和 NUM
         size_match = re.search(r'SIZE=(\d+)', line)
@@ -28,36 +27,53 @@ def main():
             hit_rates.append(float(hit_match.group(1)))
 
 
-    # 创建三维图形
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-
-    # ax.plot(nums, hit_rates, sizes, marker='o')
     unique_sizes = set(sizes)  # 获取唯一的 SIZE 值
 
-    # 为每个 SIZE 绘制折线
+     # 创建二维图形
+    plt.figure(figsize=(10, 7))
+
+    # 为每个 SIZE 绘制数据点
     for size in unique_sizes:
         indices = [i for i, s in enumerate(sizes) if s == size]
-        ax.plot([nums[i] for i in indices], 
-                [hit_rates[i] for i in indices], 
-                [sizes[i] for i in indices], 
-                marker='o', label=f'SIZE={size}')  # 使用不同的线
+        plt.plot([nums[i] for i in indices], 
+                 [hit_rates[i] for i in indices], 
+                 marker='o', label=f'SIZE={size}')  # 使用折线图
 
-    ax.set_title('Cache Hit Rate vs NUM and SIZE')
-    ax.set_xlabel('NUM')
-    ax.set_ylabel('Cache Hit Rate (%)')
-    ax.set_zlabel('SIZE')
+    plt.title('Cache Hit Rate vs NUM by SIZE')
+    plt.xlabel('NUM')
+    plt.ylabel('Cache Hit Rate (%)')
+    plt.legend()  # 添加图例
+    plt.grid()
+    plt.show()
 
-    # 调整坐标轴刻度方向
-    ax.tick_params(axis='x', direction='in')  # x 轴刻度向内
-    ax.tick_params(axis='y', direction='inout')  # y 轴刻度向内
-    ax.tick_params(axis='z', direction='in')  # z 轴刻度向内
 
-    # 调整坐标轴方向
-    ax.view_init(elev=60, azim=154, roll=-113)  # 调整视角
+    # 创建三维图形
+    # fig = plt.figure(figsize=(10, 7))
+    # ax = fig.add_subplot(111, projection='3d')
 
-    ax.grid()
-    plt.show() 
+    # # 为每个 SIZE 绘制折线
+    # for size in unique_sizes:
+    #     indices = [i for i, s in enumerate(sizes) if s == size]
+    #     ax.plot([nums[i] for i in indices], 
+    #             [hit_rates[i] for i in indices], 
+    #             [sizes[i] for i in indices], 
+    #             marker='o', label=f'SIZE={size}')  # 使用不同的线
+
+    # ax.set_title('Cache Hit Rate vs NUM and SIZE')
+    # ax.set_xlabel('NUM')
+    # ax.set_ylabel('Cache Hit Rate (%)')
+    # ax.set_zlabel('SIZE')
+
+    # # 调整坐标轴刻度方向
+    # ax.tick_params(axis='x', direction='in')  # x 轴刻度向内
+    # ax.tick_params(axis='y', direction='inout')  # y 轴刻度向内
+    # ax.tick_params(axis='z', direction='in')  # z 轴刻度向内
+
+    # # 调整坐标轴方向
+    # ax.view_init(elev=60, azim=154, roll=-113)  # 调整视角
+
+    # ax.grid()
+    # plt.show() 
 
 
 if __name__ == "__main__":
