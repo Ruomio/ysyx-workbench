@@ -353,6 +353,7 @@ void exec_npc(uint64_t n) {
   uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
 
+        FORK_PRINTF("Line: %d\n", __LINE__);
 
   switch(u_npc_state.state) {
     case NPC_END: case NPC_ABORT:
