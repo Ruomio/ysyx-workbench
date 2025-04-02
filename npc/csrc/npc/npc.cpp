@@ -407,10 +407,12 @@ void free_npc() {
   }
 #endif
     FORK_PRINTF("Line: %d\n", __LINE__);
+#ifdef CONFIG_LIGHTSSS
+  if(lightsss.is_child()) return;
+    FORK_PRINTF("Line: %d\n", __LINE__);
+#endif
   if(contextp) {
-    FORK_PRINTF("Line: %d\n", __LINE__);
     delete contextp;
-    FORK_PRINTF("Line: %d\n", __LINE__);
     contextp = NULL;
   }
 }
