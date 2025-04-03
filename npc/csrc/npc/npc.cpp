@@ -379,9 +379,7 @@ void exec_npc(uint64_t n) {
 
     case NPC_QUIT:
       statistic();
-#if NVBOARD_ENABLE
-    nvboard_quit();
-#endif
+
 
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
@@ -413,6 +411,9 @@ void free_npc() {
     delete contextp;
     contextp = NULL;
   }
+#if NVBOARD_ENABLE
+    nvboard_quit();
+#endif
 }
 
 void update_ftrace_dpi() {
