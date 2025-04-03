@@ -223,7 +223,7 @@ void exec_once_npc(uint32_t pc) {
 
       // test lightsss
       // if(total_cycles > 0x000100000) {
-      if(g_pc == 0x300000e8) {
+      if(g_pc == 0x300000e4) {
         printf("test lightsss\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
