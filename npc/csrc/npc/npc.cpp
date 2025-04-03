@@ -77,7 +77,7 @@ static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
-static uint32_t total_wave_step = 0; 
+static uint32_t total_wave_step = 0;
 static uint64_t total_cycles = 0;
 static uint64_t wait_cycles = 0;
 static uint64_t ifu_get_inst_cnt = 0;
@@ -198,7 +198,7 @@ void exec_once_npc(uint32_t pc) {
       tfp->dump(contextp->time());
       contextp->timeInc(1);
     }
-    else 
+    else
       total_wave_step++;
 #endif
 #ifdef CONFIG_LIGHTSSS
@@ -220,8 +220,25 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
+
+      // test lightsss
+      // if(total_cycles > 0x000100000) {
+      // if(g_pc == 0x300000e4) {
+      //   printf("test lightsss\n");
+      //   u_npc_state.state = NPC_ABORT;
+      //   u_npc_state.pc = pc;
+      //   u_npc_state.ret = true;
+      //   return;
+      // }
+
 #if NVBOARD_ENABLE
+#ifdef CONFIG_LIGHTSSS
+      if(!lightsss.is_child()) {
+          nvboard_update();
+      }
+#else
       nvboard_update();
+#endif
 #endif
       switch(idu_type) {
         case None: break;
@@ -328,7 +345,7 @@ void exec_npc(uint64_t n) {
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
     int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
-    
+
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
@@ -358,19 +375,15 @@ void exec_npc(uint64_t n) {
         }
       }
 #endif
-
-    case NPC_QUIT: 
-      statistic(); 
-#if NVBOARD_ENABLE
-    nvboard_quit();
-#endif
-
+    case NPC_QUIT:
+      statistic();
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
-        exit(-1);
+          // not use exit(), because exit would release resources, which belongs parents' process.
+          _exit(-1);
       }
 #endif
       break;
@@ -395,6 +408,9 @@ void free_npc() {
     delete contextp;
     contextp = NULL;
   }
+#if NVBOARD_ENABLE
+    nvboard_quit();
+#endif
 }
 
 void update_ftrace_dpi() {
