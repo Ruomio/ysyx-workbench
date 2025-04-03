@@ -223,13 +223,13 @@ void exec_once_npc(uint32_t pc) {
 
       // test lightsss
       // if(total_cycles > 0x000100000) {
-      if(g_pc == 0x300000e4) {
-        printf("test lightsss\n");
-        u_npc_state.state = NPC_ABORT;
-        u_npc_state.pc = pc;
-        u_npc_state.ret = true;
-        return;
-      }
+      // if(g_pc == 0x300000e4) {
+      //   printf("test lightsss\n");
+      //   u_npc_state.state = NPC_ABORT;
+      //   u_npc_state.pc = pc;
+      //   u_npc_state.ret = true;
+      //   return;
+      // }
 
 #if NVBOARD_ENABLE
 #ifdef CONFIG_LIGHTSSS
@@ -354,9 +354,7 @@ void exec_npc(uint64_t n) {
     }
 #endif
 
-    if (u_npc_state.state != NPC_RUNNING){
-      break;
-    }
+    if (u_npc_state.state != NPC_RUNNING) break;
     exec_once_npc(g_pc);
   }
 
@@ -377,17 +375,15 @@ void exec_npc(uint64_t n) {
         }
       }
 #endif
-
     case NPC_QUIT:
       statistic();
-
-
 #ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
         lightsss.do_clear();
       }
       else {
-        _exit(-1);
+          // not use exit(), because exit would release resources, which belongs parents' process.
+          _exit(-1);
       }
 #endif
       break;
