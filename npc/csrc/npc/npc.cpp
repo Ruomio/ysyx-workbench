@@ -192,25 +192,7 @@ void exec_once_npc(uint32_t pc) {
     // top->clock ^= 1;
     toggle_clock;
     top->eval();
-#ifdef CONFIG_WAVEFILE
-    if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
-      total_wave_step++;
-      tfp->dump(contextp->time());
-      contextp->timeInc(1);
-    }
-    else
-      total_wave_step++;
-#endif
-#ifdef CONFIG_LIGHTSSS
-    if(lightsss.get_flag() && lightsss.get_notgood()) {
-      // total_wave_step++;
-      tfp->dump(contextp->time());
-      contextp->timeInc(1);
-    }
-    else {
-      // total_wave_step++;
-    }
-#endif
+
     if(is_clk_high) {
       total_cycles++;
       if(wait_cycles++ > 15000) {
@@ -220,6 +202,23 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
+
+      #ifdef CONFIG_WAVEFILE
+          if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
+            total_wave_step++;
+            tfp->dump(contextp->time());
+            contextp->timeInc(1);
+          }
+          else
+            total_wave_step++;
+      #endif
+      #ifdef CONFIG_LIGHTSSS
+          if(lightsss.get_flag() && lightsss.get_notgood()) {
+            // total_wave_step++;
+            tfp->dump(contextp->time());
+            contextp->timeInc(1);
+          }
+      #endif
 
       // test lightsss
       // if(total_cycles > 0x000100000) {
