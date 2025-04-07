@@ -231,7 +231,7 @@ void exec_once_npc(uint32_t pc) {
       // }
 
 #if NVBOARD_ENABLE
-#ifdef CONFIG_LIGHTSSS
+#ifndef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
           nvboard_update();
       }
