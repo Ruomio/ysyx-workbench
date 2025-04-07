@@ -231,7 +231,7 @@ void exec_once_npc(uint32_t pc) {
       // }
 
 #if NVBOARD_ENABLE
-#ifndef CONFIG_LIGHTSSS
+#ifdef CONFIG_LIGHTSSS
       if(!lightsss.is_child()) {
           nvboard_update();
       }
@@ -382,7 +382,7 @@ void exec_npc(uint64_t n) {
       }
       else {
           // not use exit(), because exit would release resources, which belongs parents' process.
-          _exit(-1);
+          exit(-1);
       }
 #endif
       break;
