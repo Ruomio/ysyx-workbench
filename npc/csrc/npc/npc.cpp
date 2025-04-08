@@ -135,7 +135,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
 }
 
 void init_npc(int argc, char **argv) {
-  Verilated::commandArgs(argc, argv);
+  // Verilated::commandArgs(argc, argv);
 
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
