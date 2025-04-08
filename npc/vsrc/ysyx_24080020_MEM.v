@@ -101,7 +101,6 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg exu_mem_shake_hands;
-    reg tmp;
     reg finish_read;
 
     reg arlen_cnt;
@@ -138,7 +137,7 @@ module ysyx_24080020_MEM(
                                 mrlen_mem == 4'b100 ? rdata2 << 24 :
                                 mrlen_mem == 4'b010 ? rdata2 << 8 :
                                 32'b0 :
-                            32'b0; 
+                            32'b0;
 
     assign rdata_shift = rdata_shift_1 | rdata_shift_2;
 
@@ -251,7 +250,6 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             exu_mem_shake_hands <= 1'b0;
-            tmp <= 1'b0;
         end
         else if(exu_mem_shake_hands) begin
 
@@ -291,11 +289,6 @@ module ysyx_24080020_MEM(
 
             exu_mem_shake_hands <= 1'b0;
         end
-        else begin
-            // exu_mem_shake_hands <= 1'b0;
-            // mem_exu_ready <= 1'b0;
-            tmp <= 1'b0;
-        end
     end
 
 
@@ -313,7 +306,7 @@ module ysyx_24080020_MEM(
             arid <= 4'b0;
             arlen <= {{7{1'b0}},get_arlen};
             `ifdef ysyxSoCFull
-            if(araddr >= 32'h10000000 && araddr < 32'h10001000 
+            if(araddr >= 32'h10000000 && araddr < 32'h10001000
                 || araddr >= 32'h10011000 && araddr < 32'h10011008
                 || araddr >= 32'h21000000 && araddr < 32'h21200000
                 || araddr >= 32'h02000000 && araddr < 32'h02000008
@@ -326,7 +319,7 @@ module ysyx_24080020_MEM(
             end
             `endif
             `ifdef ysyx_24080020_NPC
-            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400 
+            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
                 || araddr >= 32'ha0000048 && araddr < 32'ha0000050
                 ) begin
                 // skip uart keyboard etc.
@@ -337,10 +330,6 @@ module ysyx_24080020_MEM(
             `endif
 
             mren_mem <= 1'b0;
-        end
-        else begin
-            tmp <= 1'b0;
-            // arvalid <= arvalid;
         end
     end
 
@@ -378,7 +367,7 @@ module ysyx_24080020_MEM(
             `endif
         end
         else if(rvalid && !rlast) begin
-            // muti read, and the first read 
+            // muti read, and the first read
             rready <= 1'b1;
             if(rresp == 2'b0) begin
                 rdata1 <= rdata;
@@ -436,7 +425,6 @@ module ysyx_24080020_MEM(
         end
         else if(awvalid && awready) begin
             awvalid <= 1'b0;
-            wvalid <= 1'b1;
 
             mwen_mem <= 1'b0;
         end
@@ -445,11 +433,11 @@ module ysyx_24080020_MEM(
             awid <= 4'b0;
             awlen <= {{7{1'b0}}, get_awlen};
 
-            mwen_mem <= 1'b0;
+            // mwen_mem <= 1'b0;
             `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
                 || awaddr >= 32'h10011000 && awaddr < 32'h10011008
-                || awaddr >= 32'h21000000 && awaddr < 32'h21200000 
+                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
                 || awaddr >= 32'h02000000 && awaddr < 32'h02000008
                 || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
                 ) begin
@@ -483,22 +471,21 @@ module ysyx_24080020_MEM(
             awlen_cnt <= 1'b0;
             wlast <= 1'b0;
         end
-        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0 && awvalid && awready) begin
+        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0 && mwen_mem) begin
             // just once write
+            wvalid <= 1'b1;
             wlast <= 1'b1;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
         end
-        else if(!awlen_cnt && awlen[0] && awvalid && awready) begin
+        else if(!awlen_cnt && awlen[0] && mwen_mem) begin
             // muti write, the first write
+            wvalid <= 1'b1;
             awlen_cnt <= 1'b1;
             wdata <= wdata_1;
             wstrb <= wstrb_1;
             wlast <= 1'b0;
             // $display("first write");
-        end
-        else begin
-            tmp <= 1'b0;
         end
     end
 
@@ -518,16 +505,13 @@ module ysyx_24080020_MEM(
             awlen_cnt <= 1'b0;
         end
         else if(wvalid && wready && awlen_cnt && awlen[0]) begin
-            // next W 
+            // next W
             // muti write, the second write
             wlast <= 1'b1;
             wvalid <= 1'b1;
             wdata <= wdata_2;
             wstrb <= wstrb_2;
             // $display("second write");
-        end
-        else begin
-            tmp <= 1'b0;
         end
     end
 
@@ -545,9 +529,6 @@ module ysyx_24080020_MEM(
                 `ifdef CONFIG_DPIC
                 $display("the bresp are not 2'b0");
                 `endif
-            end
-            else begin
-                tmp <= 1'b0;
             end
         end
         else begin
