@@ -413,7 +413,10 @@ void free_npc() {
   //   contextp = NULL;
   // }
 #if NVBOARD_ENABLE
-    nvboard_quit();
+#ifdef CONFIG_LIGHTSSS
+  if(!lightsss.is_child()) nvboard_quit();
+#endif
+  nvboard_quit();
 #endif
 }
 
