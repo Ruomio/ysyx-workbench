@@ -88,6 +88,7 @@ module ysyx_24080020_IR(
 
     assign use_icache = (araddr >= 32'h30000000 && araddr < 32'h40000000          // flash
                                 || araddr >= 32'h20000000 && araddr < 32'h20001000       // mrom
+                                || araddr >= 32'ha0000000 && araddr < 32'hc0000000       // sdram
                                 ) ? 1'b1 : 1'b0;
 
 
