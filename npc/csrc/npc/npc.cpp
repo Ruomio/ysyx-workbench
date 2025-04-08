@@ -168,13 +168,6 @@ void init_npc(int argc, char **argv) {
 #ifdef CONFIG_LIGHTSSS
     if (!lightsss.is_child()) {
       lightsss.do_fork(); // 创建子进程快照
-
-      if(lightsss.is_child()) {
-        tfp = new VerilatedVcdC;
-        contextp->traceEverOn(true);
-        top->trace(tfp, 0);
-        tfp->open("build/wave.vcd");
-      }
     }
 #endif
       break;
@@ -357,6 +350,13 @@ void exec_npc(uint64_t n) {
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
+
+      if(lightsss.is_child()) {
+        tfp = new VerilatedVcdC;
+        contextp->traceEverOn(true);
+        top->trace(tfp, 0);
+        tfp->open("build/wave.vcd");
+      }
     }
 #endif
 
