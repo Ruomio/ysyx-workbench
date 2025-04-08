@@ -144,7 +144,7 @@ void init_npc(int argc, char **argv) {
 #elif defined(ysyx_24080020_NPC)
   top = new Vysyx_24080020_NPC(contextp);
 #endif
-#if defined(CONFIG_WAVEFILE)
+#if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
   tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
@@ -192,7 +192,25 @@ void exec_once_npc(uint32_t pc) {
     // top->clock ^= 1;
     toggle_clock;
     top->eval();
-
+#ifdef CONFIG_WAVEFILE
+    if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
+      total_wave_step++;
+      tfp->dump(contextp->time());
+      contextp->timeInc(1);
+    }
+    else
+      total_wave_step++;
+#endif
+#ifdef CONFIG_LIGHTSSS
+    if(lightsss.get_flag() && lightsss.get_notgood()) {
+      // total_wave_step++;
+      tfp->dump(contextp->time());
+      contextp->timeInc(1);
+    }
+    else {
+      // total_wave_step++;
+    }
+#endif
     if(is_clk_high) {
       total_cycles++;
       if(wait_cycles++ > 15000) {
@@ -202,23 +220,6 @@ void exec_once_npc(uint32_t pc) {
         u_npc_state.ret = true;
         return;
       }
-
-      #ifdef CONFIG_WAVEFILE
-          if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
-            total_wave_step++;
-            tfp->dump(contextp->time());
-            contextp->timeInc(1);
-          }
-          else
-            total_wave_step++;
-      #endif
-      #ifdef CONFIG_LIGHTSSS
-          if(lightsss.get_flag() && lightsss.get_notgood()) {
-            // total_wave_step++;
-            tfp->dump(contextp->time());
-            contextp->timeInc(1);
-          }
-      #endif
 
       // test lightsss
       // if(total_cycles > 0x000100000) {
@@ -350,13 +351,6 @@ void exec_npc(uint64_t n) {
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
-
-      if(lightsss.is_child()) {
-        tfp = new VerilatedVcdC;
-        contextp->traceEverOn(true);
-        top->trace(tfp, 0);
-        tfp->open("build/wave.vcd");
-      }
     }
 #endif
 
