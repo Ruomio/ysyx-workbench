@@ -393,25 +393,26 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
-  if(top != NULL) {
+  if(top) {
     top->final();
     delete top;
     top = NULL;
   }
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
-  if(tfp != NULL) {
+  if(tfp) {
     tfp->close();
     tfp = NULL;
   }
 #endif
-  // if(contextp != NULL) {
-  //   delete contextp;
-  //   contextp = NULL;
-  // }
-#if NVBOARD_ENABLE
+
 #ifdef CONFIG_LIGHTSSS
-  if(!lightsss.is_child()) nvboard_quit();
-#else
+  if(lightsss.is_child()) return;
+
+  if(contextp) {
+    delete contextp;
+    contextp = NULL;
+  }
+#ifdef NVBOARD_ENABLE
   nvboard_quit();
 #endif
 #endif
