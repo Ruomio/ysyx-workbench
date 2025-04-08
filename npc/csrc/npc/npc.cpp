@@ -382,8 +382,10 @@ void exec_npc(uint64_t n) {
       }
       else {
           // not use exit(), because exit would release resources, which belongs parents' process.
-          exit(-1);
-          // _exit(-1);
+          if(tfp) {
+            tfp->close();
+          }
+          _exit(-1);
       }
 #endif
       break;
