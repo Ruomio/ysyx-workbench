@@ -144,7 +144,7 @@ void init_npc(int argc, char **argv) {
 #elif defined(ysyx_24080020_NPC)
   top = new Vysyx_24080020_NPC(contextp);
 #endif
-#if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
+#if defined(CONFIG_WAVEFILE)
   tfp = new VerilatedVcdC;
   contextp->traceEverOn(true);
   top->trace(tfp, 0);
@@ -168,6 +168,13 @@ void init_npc(int argc, char **argv) {
 #ifdef CONFIG_LIGHTSSS
     if (!lightsss.is_child()) {
       lightsss.do_fork(); // 创建子进程快照
+
+      if(lightsss.is_child()) {
+        tfp = new VerilatedVcdC;
+        contextp->traceEverOn(true);
+        top->trace(tfp, 0);
+        tfp->open("build/wave.vcd");
+      }
     }
 #endif
       break;
@@ -222,13 +229,13 @@ void exec_once_npc(uint32_t pc) {
 
       // test lightsss
       // if(total_cycles > 0x000100000) {
-      // if(g_pc == 0x300000e4) {
-      //   printf("test lightsss\n");
-      //   u_npc_state.state = NPC_ABORT;
-      //   u_npc_state.pc = pc;
-      //   u_npc_state.ret = true;
-      //   return;
-      // }
+      if(g_pc == 0x300000e4) {
+        printf("test lightsss\n");
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
 
 #if NVBOARD_ENABLE
 #ifdef CONFIG_LIGHTSSS
@@ -382,7 +389,7 @@ void exec_npc(uint64_t n) {
       }
       else {
           // not use exit(), because exit would release resources, which belongs parents' process.
-          // _exit(-1);
+          _exit(-1);
       }
 #endif
       break;
