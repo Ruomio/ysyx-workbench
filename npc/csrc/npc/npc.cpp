@@ -222,7 +222,6 @@ void exec_once_npc(uint32_t pc) {
       }
 
       // test lightsss
-      // if(total_cycles > 0x000100000) {
       if(g_pc == 0x300000e4) {
         printf("test lightsss\n");
         u_npc_state.state = NPC_ABORT;
@@ -383,6 +382,7 @@ void exec_npc(uint64_t n) {
       }
       else {
           // not use exit(), because exit would release resources, which belongs parents' process.
+          exit(-1);
           // _exit(-1);
       }
 #endif
