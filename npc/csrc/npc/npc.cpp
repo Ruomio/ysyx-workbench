@@ -415,8 +415,9 @@ void free_npc() {
 #if NVBOARD_ENABLE
 #ifdef CONFIG_LIGHTSSS
   if(!lightsss.is_child()) nvboard_quit();
-#endif
+#else
   nvboard_quit();
+#endif
 #endif
 }
 
