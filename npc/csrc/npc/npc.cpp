@@ -135,7 +135,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
 }
 
 void init_npc(int argc, char **argv) {
-  // Verilated::commandArgs(argc, argv);
+  Verilated::commandArgs(argc, argv);
 
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
@@ -382,8 +382,7 @@ void exec_npc(uint64_t n) {
       }
       else {
           // not use exit(), because exit would release resources, which belongs parents' process.
-          if(tfp) tfp->flush();
-          _exit(-1);
+          // _exit(-1);
       }
 #endif
       break;
@@ -402,6 +401,7 @@ void free_npc() {
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
   if(tfp) {
     tfp->close();
+    delete tfp;
     tfp = NULL;
   }
 #endif
