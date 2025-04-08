@@ -386,7 +386,7 @@ void exec_npc(uint64_t n) {
             tfp->close();
             tfp = NULL;
           }
-          _exit(-1);
+          // _exit(-1);
       }
 #endif
       break;
