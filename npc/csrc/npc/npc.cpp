@@ -160,8 +160,8 @@ void init_npc(int argc, char **argv) {
     toggle_clock;
     top->eval();
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-    tfp->dump(contextp->time());
-    contextp->timeInc(1);
+    // tfp->dump(contextp->time());
+    // contextp->timeInc(1);
 #endif
     if(i++ > 20) {
       set_unreset;
