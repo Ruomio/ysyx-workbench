@@ -251,7 +251,7 @@ module ysyx_24080020_ICACHE(
                   $display("cache hit addr: 0x%x", araddr_icache_o);
               end
               else begin
-                $display("cache miss addr: 0x%x", araddr_icache_o);
+                // $display("cache miss addr: 0x%x", araddr_icache_o);
               end
               `endif
           end
