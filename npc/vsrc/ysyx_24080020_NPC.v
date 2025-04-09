@@ -293,7 +293,7 @@ module ysyx_24080020_NPC(
        bvalid_uart,  bready_xbar_uart,
        bvalid_clint, bready_xbar_clint,
        bvalid_icache_o, bvalid_soc_i,
-       bready_icache_o;
+       bready_icache_o, bready_xbar_i;
   wire [3:0] bid_clint,
               bid_icache_o, bid_soc_i;
   wire [1:0] bresp_sram, bresp_uart, bresp_clint,
