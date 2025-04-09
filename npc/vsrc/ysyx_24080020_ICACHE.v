@@ -180,7 +180,7 @@ module ysyx_24080020_ICACHE(
               end
           end
           CHIT: begin
-              if(inst_fin) begin
+              if(all_fin) begin
                   next_state = IDLE;
               end
               else begin

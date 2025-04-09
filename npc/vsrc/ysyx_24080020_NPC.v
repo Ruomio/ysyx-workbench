@@ -277,7 +277,8 @@ module ysyx_24080020_NPC(
   wire wvalid_xbar_sram, wready_sram,
        wvalid_xbar_uart, wready_uart,
        wvalid_xbar_clint, wready_clint,
-       wvalid_xbar_i, wvalid_icache_o;
+       wvalid_xbar_i, wvalid_icache_o,
+       wready_icache_o, wready_soc_i;
   wire wlast_xbar_clint, wlast_xbar_soc,
         wlast_xbar_i, wlast_icache_o;
   wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart, wstrb_xbar_clint,
@@ -291,7 +292,8 @@ module ysyx_24080020_NPC(
   wire bvalid_sram, bready_xbar_sram,
        bvalid_uart,  bready_xbar_uart,
        bvalid_clint, bready_xbar_clint,
-       bvalid_icache_o, bvalid_soc_i;
+       bvalid_icache_o, bvalid_soc_i,
+       bready_icache_o;
   wire [3:0] bid_clint,
               bid_icache_o, bid_soc_i;
   wire [1:0] bresp_sram, bresp_uart, bresp_clint,
@@ -832,10 +834,10 @@ module ysyx_24080020_NPC(
         .wlast_xbar_soc(wlast_xbar_i),
         .wready_soc(wready_icache_o),
 
-        .bvalid_soc(bvalid_icache_o),
-        .bresp_soc(bresp_icache_o),
-        .bid_soc(bid_icache_o),
-        .bready_xbar_soc(bready_xbar_i)
+        .bvalid_soc(bvalid_soc_i),
+        .bresp_soc(bresp_soc_i),
+        .bid_soc(bid_soc_i),
+        .bready_xbar_soc(bready_icache_o)
         `endif
     );
 
