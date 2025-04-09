@@ -129,7 +129,7 @@ module ysyx_24080020_ICACHE(
 
 
   assign shift_rdata = cache_data[cache_index_tmp] >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_tmp} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
   assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
 
@@ -280,12 +280,14 @@ module ysyx_24080020_ICACHE(
                           cache_data[cache_index_tmp] <= (cache_data[cache_index_tmp] & ~data_mask) | shift_wdata;
                           cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (cache_offset_tmp >> 2));
 
-                          // update araddr to adapt burst transmit
-                          araddr_icache_o <= araddr_icache_o + 'd4;
                       end
 
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
+                      end
+                      else begin
+                        // update araddr to adapt burst transmit
+                        araddr_icache_o <= araddr_icache_o + 'd4;
                       end
                   end
                   else begin
