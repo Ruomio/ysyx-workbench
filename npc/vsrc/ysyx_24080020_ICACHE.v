@@ -140,9 +140,9 @@ module ysyx_24080020_ICACHE(
   assign cache_hit = (( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
                       && (((cache_valid[cache_index_tmp] >> (cache_offset_tmp >> 2)) & ({cache_size_bits{1'b0}} | 'b1)) != 'b0));
 
-  assign in_flash = (araddr_xbar_i >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
-  assign in_mrom = (araddr_xbar_i >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
-  assign in_sdram = (araddr_xbar_i >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
+  assign in_flash = (araddr_icache_o >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
+  assign in_mrom = (araddr_icache_o >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
+  assign in_sdram = (araddr_icache_o >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
   assign use_icache = in_flash | in_mrom;
 
 
