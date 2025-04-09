@@ -248,10 +248,10 @@ module ysyx_24080020_ICACHE(
               // hit cache and not by axi
               if(!fin_r) begin
                   statistics_icache_hit();
-                  $display("cache hit addr: 0x%x", addr);
+                  $display("cache hit addr: 0x%x", araddr_icache_o);
               end
               else begin
-                $display("cache miss addr: 0x%x", addr);
+                $display("cache miss addr: 0x%x", araddr_icache_o);
               end
               `endif
           end
