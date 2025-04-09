@@ -68,6 +68,7 @@ module ysyx_24080020_IR(
     end
     else begin
       rready <= 'b0;
+      inst_fin <= 'b0;
     end
   end
 

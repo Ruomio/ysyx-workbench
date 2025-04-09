@@ -270,7 +270,7 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIR: begin
-              if(rvalid_soc_i) begin
+              if(rvalid_soc_i && rresp_icache_o) begin
                   rready_icache_o <= 1'b1;
                   if(rresp_soc_i == 2'b00) begin // OKAY
                       rdata_tmp <= rdata_soc_i;
@@ -294,6 +294,9 @@ module ysyx_24080020_ICACHE(
                       $error("fetch inst error");
                       `endif
                   end
+              end
+              else if(rvalid_soc_i) begin
+                rready_icache_o <= 'b1;
               end
           end
           AXIDone: begin
