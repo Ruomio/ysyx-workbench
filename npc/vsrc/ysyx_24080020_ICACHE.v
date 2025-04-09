@@ -368,7 +368,7 @@ module ysyx_24080020_ICACHE(
   end
   // AW
   assign awvalid_icache_o = awvalid_xbar_i;
-  assign awaddr_icache_o = {awaddr_xbar_i[31:2], 2'b0};
+  assign awaddr_icache_o = awaddr_xbar_i;
   assign awlen_icache_o = awlen_xbar_i;
   assign awburst_icache_o = awburst_xbar_i;
   assign awid_icache_o = awid_xbar_i;
