@@ -384,7 +384,7 @@ void exec_npc(uint64_t n) {
       }
       else {
           // not use exit(), because exit would release resources, which belongs parents' process.
-          // _exit(-1);
+          _exit(-1);
       }
 #endif
       break;
@@ -401,17 +401,17 @@ void free_npc() {
     top = NULL;
   }
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
-  // if(tfp) {
-  //   tfp->close();
-  //   tfp = NULL;
-  // }
+  if(tfp) {
+    tfp->close();
+    tfp = NULL;
+  }
 #endif
   if(contextp) {
     delete contextp;
     contextp = NULL;
   }
 #ifdef NVBOARD_ENABLE
-  // nvboard_quit();
+  nvboard_quit();
 #endif
 }
 
