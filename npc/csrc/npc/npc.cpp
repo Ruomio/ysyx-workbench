@@ -1,3 +1,4 @@
+#include <csignal>
 #include <readline/chardefs.h>
 #include "define.h"
 #include "memory/paddr.h"
@@ -7,6 +8,7 @@
 
 #include "isa.h"
 #include <cpu/difftest.h>
+#include <unistd.h>
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
@@ -222,13 +224,13 @@ void exec_once_npc(uint32_t pc) {
       }
 
       // test lightsss
-      // if(g_pc == 0x300000e4) {
-      //   printf("test lightsss\n");
-      //   u_npc_state.state = NPC_ABORT;
-      //   u_npc_state.pc = pc;
-      //   u_npc_state.ret = true;
-      //   return;
-      // }
+      if(g_pc == 0x300000e4) {
+        printf("test lightsss\n");
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
 
 #if NVBOARD_ENABLE
 #ifdef CONFIG_LIGHTSSS
@@ -383,6 +385,7 @@ void exec_npc(uint64_t n) {
       else {
           // not use exit(), because exit would release resources, which belongs parents' process.
           // _exit(-1);
+          kill(getpid(), SIGKILL);
       }
 #endif
       break;
