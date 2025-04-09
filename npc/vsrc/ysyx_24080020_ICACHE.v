@@ -129,7 +129,7 @@ module ysyx_24080020_ICACHE(
 
 
   assign shift_rdata = cache_data[cache_index_tmp] >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_tmp} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
   assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
 
