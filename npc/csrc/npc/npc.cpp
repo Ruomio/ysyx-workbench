@@ -222,13 +222,13 @@ void exec_once_npc(uint32_t pc) {
       }
 
       // test lightsss
-      // if(g_pc == 0x300000e4) {
-      //   printf("test lightsss\n");
-      //   u_npc_state.state = NPC_ABORT;
-      //   u_npc_state.pc = pc;
-      //   u_npc_state.ret = true;
-      //   return;
-      // }
+      if(g_pc == 0x300000e4) {
+        printf("test lightsss\n");
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
 
 #if NVBOARD_ENABLE
 #ifdef CONFIG_LIGHTSSS
