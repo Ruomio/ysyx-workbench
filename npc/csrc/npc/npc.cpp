@@ -395,16 +395,16 @@ void exec_npc(uint64_t n) {
 void free_npc() {
   IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
   IFDEF(CONFIG_FTRACE, close_ftrace());
-  // if(top) {
-  //   top->final();
-  //   delete top;
-  //   top = NULL;
-  // }
-#if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
-  if(tfp) {
-    tfp->close();
-    tfp = NULL;
+  if(top) {
+    top->final();
+    delete top;
+    top = NULL;
   }
+#if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
+  // if(tfp) {
+  //   tfp->close();
+  //   tfp = NULL;
+  // }
 #endif
   // if(contextp) {
   //   delete contextp;
