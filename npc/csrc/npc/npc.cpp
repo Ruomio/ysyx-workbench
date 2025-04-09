@@ -406,10 +406,10 @@ void free_npc() {
   //   tfp = NULL;
   // }
 #endif
-  // if(contextp) {
-  //   delete contextp;
-  //   contextp = NULL;
-  // }
+  if(contextp) {
+    delete contextp;
+    contextp = NULL;
+  }
 #ifdef NVBOARD_ENABLE
   // nvboard_quit();
 #endif
