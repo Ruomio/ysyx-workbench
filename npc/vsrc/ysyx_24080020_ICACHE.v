@@ -269,7 +269,7 @@ module ysyx_24080020_ICACHE(
                   // arid_icache_o <= 4'b0;
                   // arlen_icache_o <= 8'b0;
                   arsize_icache_o <= 3'b10; // 4Byte
-                  arburst_icache_o <= 2'b00; // FIXED
+                  // arburst_icache_o <= 2'b00; // FIXED
               end
           end
           AXIR: begin
