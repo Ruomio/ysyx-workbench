@@ -213,13 +213,13 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(is_clk_high) {
       total_cycles++;
-      // if(wait_cycles++ > 15000) {
-      //   printf("wait too many cycles, maybe dead loop\n");
-      //   u_npc_state.state = NPC_ABORT;
-      //   u_npc_state.pc = pc;
-      //   u_npc_state.ret = true;
-      //   return;
-      // }
+      if(wait_cycles++ > 15000) {
+        printf("wait too many cycles, maybe dead loop\n");
+        u_npc_state.state = NPC_ABORT;
+        u_npc_state.pc = pc;
+        u_npc_state.ret = true;
+        return;
+      }
 
       // test lightsss
       // if(g_pc == 0x300000e4) {
