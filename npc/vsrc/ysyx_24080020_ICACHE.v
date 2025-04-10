@@ -143,7 +143,7 @@ module ysyx_24080020_ICACHE(
   assign in_flash = (araddr_icache_o >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
   assign in_mrom = (araddr_icache_o >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
   assign in_sdram = (araddr_icache_o >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
-  assign use_icache = in_flash | in_mrom & 'b0;
+  assign use_icache = in_flash | in_mrom;
 
 
   always @(posedge clk) begin
@@ -232,7 +232,7 @@ module ysyx_24080020_ICACHE(
               fin_r <= 'b0;
               all_fin <= 'b0;
 
-              rready_icache_o <= 'b0;
+              // rready_icache_o <= 'b0;
           end
           JUDGE: begin
               // do nothing
@@ -270,11 +270,14 @@ module ysyx_24080020_ICACHE(
                   arlen_icache_o <= 8'b0;
                   arsize_icache_o <= 3'b10; // 4Byte
                   arburst_icache_o <= 2'b00; // FIXED
+
+                  rready_icache_o <= 'b0;
               end
           end
           AXIR: begin
+              rready_icache_o <= 1'b1;
               if(rvalid_soc_i && rready_icache_o) begin
-                  rready_icache_o <= 1'b1;
+                  // rready_icache_o <= 1'b1;
                   if(rresp_soc_i == 2'b00) begin // OKAY
                       rdata_tmp <= rdata_soc_i;
                       if(use_icache) begin
@@ -340,7 +343,7 @@ module ysyx_24080020_ICACHE(
       r_en <= 'b1;
     end
     else begin
-      arready_icache_o <= 1'b0;
+      arready_icache_o <= arready_soc_i;
       r_en <= 'b0;
     end
 
