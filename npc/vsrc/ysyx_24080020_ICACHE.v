@@ -340,7 +340,7 @@ module ysyx_24080020_ICACHE(
       r_en <= 'b1;
     end
     else begin
-      arready_icache_o <= 1'b0;
+      arready_icache_o <= arready_soc_i;
       r_en <= 'b0;
     end
 
