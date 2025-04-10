@@ -265,7 +265,7 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
-                  araddr_icache_o <= araddr_xbar_i;
+                  // araddr_icache_o <= araddr_xbar_i;
                   // arid_icache_o <= 4'b0;
                   // arlen_icache_o <= 8'b0;
                   // arsize_icache_o <= 3'b10; // 4Byte
