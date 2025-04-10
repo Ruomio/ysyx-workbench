@@ -21,17 +21,18 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\"" $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
-VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC 
+VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC
 
-ifdef CONFIG_NVBOARD
+ifeq ($(ARCH), riscv32e-ysyxsoc)
 VERILATOR_CFLAGS += -DysyxSoCFull
-endif
-ifeq ($(ARCH), riscv32e-npc)
+SOC_EN = 1
+else ifeq ($(ARCH), riscv32e-npc)
 VERILATOR_CFLAGS += -Dysyx_24080020_NPC -UysyxSoCFull
+else
+VERILATOR_CFLAGS += -DysyxSoCFull
+SOC_EN = 1
 endif
 
 include ../Makefile
 include scripts/config.mk
 include scripts/build.mk
-
-
