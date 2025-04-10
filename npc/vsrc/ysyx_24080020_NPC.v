@@ -211,22 +211,14 @@ module ysyx_24080020_NPC(
   // Xbar
   wire arvalid_xbar_sram, arready_sram,
         arvalid_xbar_uart, arready_uart,
-        arvalid_xbar_clint, arready_clint,
-        arvalid_xbar_i, arready_icache_o,
-        arvalid_icache_o, arready_soc_i;
-  wire [1:0] arburst_xbar_clint, arburst_xbar_soc,
-              arburst_xbar_i, arburst_icache_o;
-  wire [2:0] arsize_xbar_clint, arsize_xbar_soc,
-              arsize_xbar_i, arsize_icache_o;
-  wire [3:0] arid_xbar_clint, arid_xbar_soc,
-              arid_xbar_i, arid_icache_o;
-  wire [7:0] arlen_xbar_clint, arlen_xbar_soc,
-              arlen_xbar_i, arlen_icache_o;
+        arvalid_xbar_clint, arready_clint;
+  wire [1:0] arburst_xbar_clint, arburst_xbar_soc;
+  wire [2:0] arsize_xbar_clint, arsize_xbar_soc;
+  wire [3:0] arid_xbar_clint, arid_xbar_soc;
+  wire [7:0] arlen_xbar_clint, arlen_xbar_soc;
   wire [`ysyx_24080020_WIDTH-1:0] araddr_xbar_sram,
                                   araddr_xbar_uart,
-                                  araddr_xbar_clint,
-                                  araddr_xbar_i,
-                                  araddr_icache_o;
+                                  araddr_xbar_clint;
   `ifdef ysyx_24080020_NPC
   wire [3:0] arid_xbar_sram, arid_xbar_uart;
   wire [7:0] arlen_xbar_sram, arlen_xbar_uart;
@@ -236,17 +228,11 @@ module ysyx_24080020_NPC(
 
   wire rvalid_sram, rready_xbar_sram,
         rvalid_uart, rready_xbar_uart,
-        rvalid_clint, rready_xbar_clint,
-        rvalid_icache_o, rready_xbar_i,
-        rvalid_soc_i, rready_icache_o;
-  wire rlast_clint, rlast_soc,
-        rlast_icache_o, rlast_soc_i;
-  wire [3:0] rid_clint, rid_soc,
-              rid_icache_o, rid_soc_i;
-  wire [1:0] rresp_sram, rresp_uart, rresp_clint,
-              rresp_icache_o, rresp_soc_i;
-  wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart, rdata_clint,
-                                  rdata_icache_o, rdata_soc_i;
+        rvalid_clint, rready_xbar_clint;
+  wire rlast_clint, rlast_soc;
+  wire [3:0] rid_clint, rid_soc;
+  wire [1:0] rresp_sram, rresp_uart, rresp_clint;
+  wire [`ysyx_24080020_WIDTH-1:0] rdata_sram, rdata_uart, rdata_clint;
   `ifdef ysyx_24080020_NPC
   wire [3:0] rid_sram, rid_uart;
   wire rlast_sram, rlast_uart;
@@ -254,19 +240,12 @@ module ysyx_24080020_NPC(
 
   wire awvalid_xbar_sram, awready_sram,
         awvalid_xbar_uart, awready_uart,
-        awready_clint, awvalid_xbar_clint,
-        awvalid_xbar_i, awready_icache_o,
-        awvalid_icache_o, awready_soc_i;
-  wire [1:0] awburst_xbar_clint, awburst_xbar_soc,
-              awburst_xbar_i, awburst_icache_o;
-  wire [2:0] awsize_xbar_clint, awsize_xbar_soc,
-              awsize_xbar_i, awsize_icache_o;
-  wire [3:0] awid_xbar_clint, awid_xbar_soc,
-              awid_xbar_i, awid_icache_o;
-  wire [7:0] awlen_xbar_clint, awlen_xbar_soc,
-              awlen_xbar_i, awlen_icache_o;
-  wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart, awaddr_xbar_clint,
-                                  awaddr_xbar_i, awaddr_icache_o;
+        awready_clint, awvalid_xbar_clint;
+  wire [1:0] awburst_xbar_clint, awburst_xbar_soc;
+  wire [2:0] awsize_xbar_clint, awsize_xbar_soc;
+  wire [3:0] awid_xbar_clint, awid_xbar_soc;
+  wire [7:0] awlen_xbar_clint, awlen_xbar_soc;
+  wire [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_sram, awaddr_xbar_uart, awaddr_xbar_clint;
   `ifdef ysyx_24080020_NPC
   wire [3:0] awid_xbar_sram, awid_xbar_uart;
   wire [7:0] awlen_xbar_sram, awlen_xbar_uart;
@@ -276,28 +255,19 @@ module ysyx_24080020_NPC(
 
   wire wvalid_xbar_sram, wready_sram,
        wvalid_xbar_uart, wready_uart,
-       wvalid_xbar_clint, wready_clint,
-       wvalid_xbar_i, wvalid_icache_o,
-       wready_icache_o, wready_soc_i;
-  wire wlast_xbar_clint, wlast_xbar_soc,
-        wlast_xbar_i, wlast_icache_o;
-  wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart, wstrb_xbar_clint,
-              wstrb_xbar_i, wstrb_icache_o;
-  wire [31:0] wdata_xbar_sram, wdata_xbar_uart, wdata_xbar_clint,
-              wdata_xbar_i, wdata_icache_o;
+       wvalid_xbar_clint, wready_clint;
+  wire wlast_xbar_clint, wlast_xbar_soc;
+  wire [3:0] wstrb_xbar_sram, wstrb_xbar_uart, wstrb_xbar_clint;
+  wire [31:0] wdata_xbar_sram, wdata_xbar_uart, wdata_xbar_clint;
   `ifdef ysyx_24080020_NPC
   wire wlast_xbar_sram, wlast_xbar_uart;
   `endif
 
   wire bvalid_sram, bready_xbar_sram,
        bvalid_uart,  bready_xbar_uart,
-       bvalid_clint, bready_xbar_clint,
-       bvalid_icache_o, bvalid_soc_i,
-       bready_icache_o, bready_xbar_i;
-  wire [3:0] bid_clint,
-              bid_icache_o, bid_soc_i;
-  wire [1:0] bresp_sram, bresp_uart, bresp_clint,
-              bresp_icache_o, bresp_soc_i;
+       bvalid_clint, bready_xbar_clint;
+  wire [3:0] bid_clint, bid_soc;
+  wire [1:0] bresp_sram, bresp_uart, bresp_clint;
   `ifdef ysyx_24080020_NPC
   wire [3:0] bid_sram, bid_uart;
   `endif
@@ -804,40 +774,40 @@ module ysyx_24080020_NPC(
         `endif
 
         `ifdef ysyxSoCFull
-        // xbar -> icache -> soc
-        .arvalid_xbar_soc(arvalid_xbar_i),
-        .araddr_xbar_soc(araddr_xbar_i),
-        .arid_xbar_soc(arid_xbar_i),
-        .arlen_xbar_soc(arlen_xbar_i),
-        .arsize_xbar_soc(arsize_xbar_i),
-        .arburst_xbar_soc(arburst_xbar_i),
-        .arready_soc(arready_icache_o),
+        // xbar -> soc
+        .arvalid_xbar_soc(io_master_arvalid),
+        .araddr_xbar_soc(io_master_araddr),
+        .arid_xbar_soc(io_master_arid),
+        .arlen_xbar_soc(io_master_arlen),
+        .arsize_xbar_soc(io_master_arsize),
+        .arburst_xbar_soc(io_master_arburst),
+        .arready_soc(io_master_arready),
 
-        .rdata_soc(rdata_icache_o),
-        .rresp_soc(rresp_icache_o),
-        .rvalid_soc(rvalid_icache_o),
-        .rid_soc(rid_icache_o),
-        .rlast_soc(rlast_icache_o),
-        .rready_xbar_soc(rready_xbar_i),
+        .rdata_soc(io_master_rdata),
+        .rresp_soc(io_master_rresp),
+        .rvalid_soc(io_master_rvalid),
+        .rid_soc(io_master_rid),
+        .rlast_soc(io_master_rlast),
+        .rready_xbar_soc(io_master_rready),
 
-        .awaddr_xbar_soc(awaddr_xbar_i),
-        .awvalid_xbar_soc(awvalid_xbar_i),
-        .awid_xbar_soc(awid_xbar_i),
-        .awlen_xbar_soc(awlen_xbar_i),
-        .awsize_xbar_soc(awsize_xbar_i),
-        .awburst_xbar_soc(awburst_xbar_i),
-        .awready_soc(awready_icache_o),
+        .awaddr_xbar_soc(io_master_awaddr),
+        .awvalid_xbar_soc(io_master_awvalid),
+        .awid_xbar_soc(io_master_awid),
+        .awlen_xbar_soc(io_master_awlen),
+        .awsize_xbar_soc(io_master_awsize),
+        .awburst_xbar_soc(io_master_awburst),
+        .awready_soc(io_master_awready),
 
-        .wdata_xbar_soc(wdata_xbar_i),
-        .wstrb_xbar_soc(wstrb_xbar_i),
-        .wvalid_xbar_soc(wvalid_xbar_i),
-        .wlast_xbar_soc(wlast_xbar_i),
-        .wready_soc(wready_icache_o),
+        .wdata_xbar_soc(io_master_wdata),
+        .wstrb_xbar_soc(io_master_wstrb),
+        .wvalid_xbar_soc(io_master_wvalid),
+        .wlast_xbar_soc(io_master_wlast),
+        .wready_soc(io_master_wready),
 
-        .bvalid_soc(bvalid_icache_o),
-        .bresp_soc(bresp_icache_o),
-        .bid_soc(bid_icache_o),
-        .bready_xbar_soc(bready_xbar_i)
+        .bvalid_soc(io_master_bvalid),
+        .bresp_soc(io_master_bresp),
+        .bid_soc(io_master_bid),
+        .bready_xbar_soc(io_master_bready)
         `endif
     );
 
@@ -959,117 +929,5 @@ module ysyx_24080020_NPC(
         .bid(bid_clint),
         .bready(bready_xbar_clint)
     );
-
-`ifdef ysyxSoCFull
-    ysyx_24080020_ICACHE u_icache(
-      .clk(clk),
-      .rst(rst),
-
-      // axi from lsu
-      .arvalid_xbar_i(arvalid_xbar_i),
-      .araddr_xbar_i(araddr_xbar_i),
-      .arid_xbar_i(arid_xbar_i),
-      .arlen_xbar_i(arlen_xbar_i),
-      .arsize_xbar_i(arsize_xbar_i),
-      .arburst_xbar_i(arburst_xbar_i),
-      .arready_icache_o(arready_icache_o),
-
-      .rready_xbar_i(rready_xbar_i),
-      .rdata_icache_o(rdata_icache_o),
-      .rresp_icache_o(rresp_icache_o),
-      .rvalid_icache_o(rvalid_icache_o),
-      .rid_icache_o(rid_icache_o),
-      .rlast_icache_o(rlast_icache_o),
-
-      .awaddr_xbar_i(awaddr_xbar_i),
-      .awvalid_xbar_i(awvalid_xbar_i),
-      .awid_xbar_i(awid_xbar_i),
-      .awlen_xbar_i(awlen_xbar_i),
-      .awsize_xbar_i(awsize_xbar_i),
-      .awburst_xbar_i(awburst_xbar_i),
-      .awready_icache_o(awready_icache_o),
-
-      .wdata_xbar_i(wdata_xbar_i),
-      .wstrb_xbar_i(wstrb_xbar_i),
-      .wvalid_xbar_i(wvalid_xbar_i),
-      .wlast_xbar_i(wlast_xbar_i),
-      .wready_icache_o(wready_icache_o),
-
-      .bready_xbar_i(bready_xbar_i),
-      .bvalid_icache_o(bvalid_icache_o),
-      .bid_icache_o(bid_icache_o),
-      .bresp_icache_o(bresp_icache_o),
-
-      // axi to soc
-      .arvalid_icache_o(arvalid_icache_o),
-      .araddr_icache_o(araddr_icache_o),
-      .arid_icache_o(arid_icache_o),
-      .arlen_icache_o(arlen_icache_o),
-      .arsize_icache_o(arsize_icache_o),
-      .arburst_icache_o(arburst_icache_o),
-      .arready_soc_i(arready_soc_i),
-
-      .rready_icache_o(rready_icache_o),
-      .rdata_soc_i(rdata_soc_i),
-      .rresp_soc_i(rresp_soc_i),
-      .rvalid_soc_i(rvalid_soc_i),
-      .rid_soc_i(rid_soc_i),
-      .rlast_soc_i(rlast_soc_i),
-
-      .awaddr_icache_o(awaddr_icache_o),
-      .awvalid_icache_o(awvalid_icache_o),
-      .awid_icache_o(awid_icache_o),
-      .awlen_icache_o(awlen_icache_o),
-      .awsize_icache_o(awsize_icache_o),
-      .awburst_icache_o(awburst_icache_o),
-      .awready_soc_i(awready_soc_i),
-
-      .wdata_icache_o(wdata_icache_o),
-      .wstrb_icache_o(wstrb_icache_o),
-      .wvalid_icache_o(wvalid_icache_o),
-      .wlast_icache_o(wlast_icache_o),
-      .wready_soc_i(wready_soc_i),
-
-      .bready_icache_o(bready_icache_o),
-      .bvalid_soc_i(bvalid_soc_i),
-      .bid_soc_i(bid_soc_i),
-      .bresp_soc_i(bresp_soc_i)
-    );
-    // icache <--> soc
-    // AR
-    assign io_master_arvalid = arvalid_icache_o;
-    assign io_master_arid = arid_icache_o;
-    assign io_master_arlen = arlen_icache_o;
-    assign io_master_araddr = araddr_icache_o;
-    assign io_master_arsize = arsize_icache_o;
-    assign io_master_arburst = arburst_icache_o;
-    assign arready_soc_i =  io_master_arready;
-    // R
-    assign rvalid_soc_i = io_master_rvalid;
-    assign rid_soc_i =  io_master_rid;
-    assign rdata_soc_i = io_master_rdata;
-    assign rlast_soc_i = io_master_rlast;
-    assign rresp_soc_i = io_master_rresp;
-    assign io_master_rready = rready_icache_o;
-    // AW
-    assign io_master_awvalid = awvalid_icache_o;
-    assign io_master_awburst = awburst_icache_o;
-    assign io_master_awsize = awsize_icache_o;
-    assign io_master_awaddr = awaddr_icache_o;
-    assign io_master_awlen = awlen_icache_o;
-    assign io_master_awid = awid_icache_o;
-    assign awready_soc_i = io_master_awready;
-    // W
-    assign io_master_wvalid = wvalid_icache_o;
-    assign io_master_wstrb = wstrb_icache_o;
-    assign io_master_wlast = wlast_icache_o;
-    assign io_master_wdata = wdata_icache_o;
-    assign wready_soc_i = io_master_wready;
-    // B
-    assign bvalid_soc_i = io_master_bvalid;
-    assign bresp_soc_i = io_master_bresp;
-    assign bid_soc_i = io_master_bid;
-    assign io_master_bready = bready_icache_o;
-`endif
 
 endmodule
