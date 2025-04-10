@@ -232,7 +232,7 @@ module ysyx_24080020_ICACHE(
               fin_r <= 'b0;
               all_fin <= 'b0;
 
-              // rready_icache_o <= 'b0;
+              rready_icache_o <= 'b0;
           end
           JUDGE: begin
               // do nothing
