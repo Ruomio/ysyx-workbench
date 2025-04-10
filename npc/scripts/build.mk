@@ -15,17 +15,16 @@ HSRC=$(shell find $(abspath ./include) -name "*.h")
 # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c") 
 INC_PATH += $(shell find $(abspath ./) -type d -name "include")
 
-ifdef CONFIG_NVBOARD
+ifeq ($(SOC_EN), 1)
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
 VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+
+VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
+VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
 endif
 VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
 
 VSRC += $(shell find $(abspath vsrc) -maxdepth 1 -name "*.v") 
-ifdef CONFIG_NVBOARD
-VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
-VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
-endif
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=$(shell pwd)/build
