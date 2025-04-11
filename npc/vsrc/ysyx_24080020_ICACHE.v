@@ -271,7 +271,7 @@ module ysyx_24080020_ICACHE(
                     arsize_icache_o <= 'b10;
                     arid_icache_o <= 'b0;
                     arlen_icache_o <= 'd4;
-                    arburst_icache_o = 'b01;
+                    arburst_icache_o <= 'b01;
                   end
               end
           end
