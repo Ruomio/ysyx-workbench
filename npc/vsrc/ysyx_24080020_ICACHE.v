@@ -265,6 +265,14 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
+                  if(in_sdram) begin
+                    // burst trans in sdram
+                    araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
+                    arsize_icache_o <= 'b10;
+                    arid_icache_o <= 'b0;
+                    arlen_icache_o <= 'd4;
+                    arburst_icache_o = 'b01;
+                  end
               end
           end
           AXIR: begin
@@ -284,8 +292,8 @@ module ysyx_24080020_ICACHE(
                         fin_r <= 1'b1;
                       end
                       else begin
-                        // update araddr to adapt burst transmit
-                        araddr_icache_o <= araddr_icache_o + 'd4;
+                        // update araddr to adapt burst transmit, it's for icache parameter
+                        araddr_icache_o <= araddr_icache_o + 2 ** arsize_icache_o;
                       end
                   end
                   else begin
