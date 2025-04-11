@@ -281,7 +281,6 @@ module ysyx_24080020_ICACHE(
               if(rvalid_soc_i && rready_icache_o) begin
                   rready_icache_o <= 1'b1;
                   if(rresp_soc_i == 2'b00) begin // OKAY
-                      rdata_tmp <= rdata_soc_i;
                       if(use_icache) begin
                           // update cache
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
@@ -292,6 +291,7 @@ module ysyx_24080020_ICACHE(
 
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
+                        araddr_tmp <= araddr_xbar_i;
                       end
                       else begin
                         // update araddr to adapt burst transmit, it's for icache parameter
@@ -310,7 +310,7 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIDone: begin
-              // rdata_tmp <= rdata_soc_i;
+              rdata_tmp <= shift_rdata[31:0];
               all_fin <= 1'b1;
           end
           default: begin
