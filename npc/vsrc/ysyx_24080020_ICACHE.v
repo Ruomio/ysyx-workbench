@@ -281,6 +281,7 @@ module ysyx_24080020_ICACHE(
               if(rvalid_soc_i && rready_icache_o) begin
                   rready_icache_o <= 1'b1;
                   if(rresp_soc_i == 2'b00) begin // OKAY
+                      rdata_tmp <= rdata_soc_i;
                       if(use_icache) begin
                           // update cache
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
@@ -310,7 +311,6 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIDone: begin
-              rdata_tmp <= shift_rdata[31:0];
               all_fin <= 1'b1;
           end
           default: begin
@@ -342,7 +342,9 @@ module ysyx_24080020_ICACHE(
 
       arready_icache_o <= 1'b1;
 
-      araddr_tmp <= araddr_xbar_i;
+      if(use_icache) begin
+        araddr_tmp <= araddr_xbar_i;
+      end
 
       r_en <= 'b1;
     end
