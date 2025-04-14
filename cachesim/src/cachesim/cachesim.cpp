@@ -71,7 +71,7 @@ void CacheSim::run_simulation() {
             }
             // Cache hit
             cache_hit++;
-            printf("cache hit addr: 0x%x\n", address);
+            // printf("cache hit addr: 0x%x\n", address);
         } else {
             // Cache miss
             cache_miss++;
