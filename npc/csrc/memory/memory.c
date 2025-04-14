@@ -95,20 +95,20 @@ void free_memory() {
   }
 }
 
-uint8_t* guest_to_host(paddr_t paddr) { 
+uint8_t* guest_to_host(paddr_t paddr) {
 #if defined(CONFIG_PSRAM) || defined(CONFIG_SDRAM)
   if(paddr >= CONFIG_PSRAM_BASE && paddr < CONFIG_PSRAM_BASE + CONFIG_PSRAM_SIZE) {
     return psram + paddr - CONFIG_PSRAM_BASE;
   }
-  else if(paddr >= CONFIG_SDRAM_BASE && paddr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE) { 
+  else if(paddr >= CONFIG_SDRAM_BASE && paddr < CONFIG_SDRAM_BASE + CONFIG_SDRAM_SIZE) {
     return sdram + paddr - CONFIG_SDRAM_BASE;
   }
-  else if(paddr >= CONFIG_MBASE && paddr < CONFIG_MBASE + CONFIG_MSIZE) { 
-    return memory + paddr - CONFIG_MBASE; 
+  else if(paddr >= CONFIG_MBASE && paddr < CONFIG_MBASE + CONFIG_MSIZE) {
+    return memory + paddr - CONFIG_MBASE;
   }
   Assert(0,"paddr invalid!");
 #endif
-  return memory + paddr - CONFIG_MBASE; 
+  return memory + paddr - CONFIG_MBASE;
 }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - memory + CONFIG_MBASE; }
 
@@ -153,7 +153,7 @@ void write_memory(int addr, int len, int data) {
   paddr_write(addr, len, data);
 }
 
-extern "C" void flash_read(int32_t addr, int32_t *data) { 
+extern "C" void flash_read(int32_t addr, int32_t *data) {
   // read inst
   *data = paddr_read(addr | 0x30000000, 4);
 }
