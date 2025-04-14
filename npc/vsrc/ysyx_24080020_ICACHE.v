@@ -319,6 +319,22 @@ module ysyx_24080020_ICACHE(
       endcase
   end
 
+  // set icache invalid, when writing after reading.
+  always @(posedge clk) begin
+    if(!rst) begin
+
+    end
+    else if(bvalid_soc_i) begin
+      // set invalid
+      cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
+    end
+    else if(awvalid_xbar_i) begin
+      araddr_tmp <= awaddr_xbar_i;
+    end
+
+
+  end
+
   // AR
   always @(posedge clk) begin
     if(!rst)begin
