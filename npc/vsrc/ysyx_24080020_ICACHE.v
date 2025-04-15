@@ -89,7 +89,7 @@ module ysyx_24080020_ICACHE(
 
   reg fin_r, fin_ar, r_en, all_fin;
   reg [2:0] current_state, next_state;
-  reg [31:0] rdata_tmp, araddr_tmp;;
+  reg [31:0] rdata_tmp, araddr_tmp;
 
   wire use_icache;
   wire in_flash;
