@@ -527,7 +527,7 @@ module ysyx_24080020_MEM(
             mem_wb_valid <= 1'b1;
             if(bresp != 2'b0) begin
                 `ifdef CONFIG_DPIC
-                $display("the bresp are not 2'b0");
+                $error("the bresp are not 2'b0");
                 `endif
             end
         end
