@@ -89,7 +89,7 @@ module ysyx_24080020_ICACHE(
 
   reg fin_r, fin_ar, r_en, all_fin;
   reg [2:0] current_state, next_state;
-  reg [31:0] rdata_tmp;
+  reg [31:0] rdata_tmp, araddr_tmp;
 
   wire use_icache;
   wire in_flash;
@@ -123,9 +123,9 @@ module ysyx_24080020_ICACHE(
   reg [cache_size_bits-1 : 0]             cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
 
 
-  assign cache_tag_tmp = araddr_icache_o[31 : cache_num_bits+cache_size_bits];
-  assign cache_index_tmp = araddr_icache_o[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-  assign cache_offset_tmp = {araddr_icache_o[cache_size_bits-1 : 2], 2'b0};
+  assign cache_tag_tmp = araddr_tmp[31 : cache_num_bits+cache_size_bits];
+  assign cache_index_tmp = araddr_tmp[cache_num_bits+cache_size_bits-1 : cache_size_bits];
+  assign cache_offset_tmp = {araddr_tmp[cache_size_bits-1 : 2], 2'b0};
 
 
   assign shift_rdata = cache_data[cache_index_tmp] >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
@@ -143,7 +143,7 @@ module ysyx_24080020_ICACHE(
   assign in_flash = (araddr_icache_o >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
   assign in_mrom = (araddr_icache_o >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
   assign in_sdram = (araddr_icache_o >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
-  assign use_icache = in_flash | in_mrom;
+  assign use_icache = in_flash | in_mrom | in_sdram;
 
 
   always @(posedge clk) begin
@@ -265,10 +265,20 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
+                  if(in_sdram) begin
+                    // burst trans in sdram
+                    araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
+                    arsize_icache_o <= 'b10;
+                    arid_icache_o <= 'b0;
+                    arlen_icache_o <= 'd3;
+                    arburst_icache_o <= 'b01;
+
+                    araddr_tmp <= {araddr_tmp[31:2], 2'b0};
+                  end
               end
           end
           AXIR: begin
-              if(rvalid_soc_i && rready_icache_o) begin
+              if(rvalid_soc_i /* && rready_icache_o */) begin
                   rready_icache_o <= 1'b1;
                   if(rresp_soc_i == 2'b00) begin // OKAY
                       rdata_tmp <= rdata_soc_i;
@@ -282,10 +292,11 @@ module ysyx_24080020_ICACHE(
 
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
+                        araddr_tmp <= araddr_xbar_i;
                       end
                       else begin
-                        // update araddr to adapt burst transmit
-                        araddr_icache_o <= araddr_icache_o + 'd4;
+                        // update araddr to adapt burst transmit, it's for icache parameter
+                        araddr_tmp <= araddr_tmp + 2 ** arsize_icache_o;
                       end
                   end
                   else begin
@@ -300,13 +311,28 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIDone: begin
-              // rdata_tmp <= rdata_soc_i;
               all_fin <= 1'b1;
           end
           default: begin
               // do nothing
           end
       endcase
+  end
+
+  // set icache invalid, when writing after reading.
+  always @(posedge clk) begin
+    if(!rst) begin
+
+    end
+    else if(bvalid_soc_i && use_icache) begin
+      // set invalid
+      cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
+    end
+    else if(awvalid_xbar_i && use_icache) begin
+      araddr_tmp <= awaddr_xbar_i;
+    end
+
+
   end
 
   // AR
@@ -331,6 +357,10 @@ module ysyx_24080020_ICACHE(
       arsize_icache_o <= arsize_xbar_i;
 
       arready_icache_o <= 1'b1;
+
+      if(use_icache) begin
+        araddr_tmp <= araddr_xbar_i;
+      end
 
       r_en <= 'b1;
     end
