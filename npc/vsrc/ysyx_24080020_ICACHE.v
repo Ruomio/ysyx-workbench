@@ -1,3 +1,4 @@
+`define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -143,8 +144,13 @@ module ysyx_24080020_ICACHE(
   assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
   assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
   assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
-  assign use_icache = in_flash | in_mrom | in_sdram;
 
+  `ifdef USE_DCACHE
+  assign use_icache = in_flash | in_mrom | in_sdram;
+  `endif
+  `ifndef USE_DCACHE
+  assign use_icache = in_flash | in_mrom;
+  `endif
 
   always @(posedge clk) begin
       if(!rst) begin
