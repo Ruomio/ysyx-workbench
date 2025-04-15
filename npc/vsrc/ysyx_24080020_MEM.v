@@ -426,14 +426,14 @@ module ysyx_24080020_MEM(
         else if(awvalid && awready) begin
             awvalid <= 1'b0;
 
-            mwen_mem <= 1'b0;
+            // mwen_mem <= 1'b0;
         end
         else if(mwen_mem) begin
             awvalid <= 1'b1;
             awid <= 4'b0;
             awlen <= {{7{1'b0}}, get_awlen};
 
-            // mwen_mem <= 1'b0;
+            mwen_mem <= 1'b0;
             `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
                 || awaddr >= 32'h10011000 && awaddr < 32'h10011008
@@ -527,7 +527,7 @@ module ysyx_24080020_MEM(
             mem_wb_valid <= 1'b1;
             if(bresp != 2'b0) begin
                 `ifdef CONFIG_DPIC
-                $display("the bresp are not 2'b0");
+                $error("the bresp are not 2'b0");
                 `endif
             end
         end
