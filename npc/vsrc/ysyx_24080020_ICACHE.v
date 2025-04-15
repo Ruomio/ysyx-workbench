@@ -271,14 +271,13 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
-                  arburst_icache_o <= 'b01;
-                  if(in_sdram && use_icache && 'b0) begin
+                  if(in_sdram && use_icache) begin
                     // burst trans in sdram
-                    araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
-                    arsize_icache_o <= 'b10;
-                    arid_icache_o <= 'b0;
-                    arlen_icache_o <= 'd3;
-                    arburst_icache_o <= 'b01;
+                    // araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
+                    // arsize_icache_o <= 'b10;
+                    // arid_icache_o <= 'b0;
+                    // arlen_icache_o <= 'd3;
+                    // arburst_icache_o <= 'b01;
 
                     araddr_tmp <= {araddr_tmp[31:2], 2'b0};
                   end
