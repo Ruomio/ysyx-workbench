@@ -1,3 +1,4 @@
+// `define USE_ICACHE
 `define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
@@ -79,7 +80,7 @@ module ysyx_24080020_ICACHE(
   import "DPI-C" function void statistics_ifu_get_inst();
   import "DPI-C" function void statistics_icache_hit();
   `endif
-
+`ifdef USE_ICACHE
   localparam IDLE = 0;
   localparam JUDGE = IDLE + 1;
   localparam CHIT = JUDGE + 1;
@@ -397,6 +398,26 @@ module ysyx_24080020_ICACHE(
       rresp_icache_o <= 'b0;
     end
   end
+`endif
+`ifndef USE_ICACHE
+  // AR
+  assign arvalid_icache_o = arvalid_xbar_i;
+  assign araddr_icache_o = araddr_xbar_i;
+  assign arid_icache_o = arid_xbar_i;
+  assign arlen_icache_o = arlen_xbar_i;
+  assign arburst_icache_o = arburst_xbar_i;
+  assign arsize_icache_o = arsize_xbar_i;
+  assign arready_icache_o = arready_soc_i;
+
+  // R
+  assign rvalid_icache_o = rvalid_soc_i;
+  assign rdata_icache_o = rdata_soc_i;
+  assign rresp_icache_o = rresp_soc_i;
+  assign rid_icache_o = rid_soc_i;
+  assign rlast_icache_o = rlast_soc_i;
+  assign rready_icache_o = rready_xbar_i;
+
+`endif
   // AW
   assign awvalid_icache_o = awvalid_xbar_i;
   assign awaddr_icache_o = awaddr_xbar_i;
