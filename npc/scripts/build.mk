@@ -1,7 +1,7 @@
 .DEFAULT_GOAL = all
 
 VERILATOR=verilator
-VERILATOR_CFLAGS += -MMD --build -cc -quiet \
+VERILATOR_CFLAGS += -MMD --build -cc \
 					-j 16 --threads 1  \
 					-O3 --x-assign fast --x-initial fast --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
@@ -119,7 +119,7 @@ $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN)) --quiet
 else
 $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
