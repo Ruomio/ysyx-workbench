@@ -289,7 +289,6 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIR: begin
-              arvalid_icache_o <= 'b0;
               if(rvalid_soc_i && rready_icache_o) begin
                   rready_icache_o <= 1'b0;
                   if(rresp_soc_i == 2'b00) begin // OKAY
