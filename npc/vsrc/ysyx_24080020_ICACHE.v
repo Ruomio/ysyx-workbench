@@ -1,5 +1,5 @@
 `define USE_ICACHE
-// `define USE_DCACHE
+`define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -276,7 +276,7 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
-                  if(use_icache && 'b0) begin
+                  if(use_icache) begin
                     // burst trans in sdram
                     araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
                     arsize_icache_o <= 'b10;
