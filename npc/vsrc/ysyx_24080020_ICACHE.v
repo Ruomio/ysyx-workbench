@@ -1,5 +1,5 @@
 `define USE_ICACHE
-// `define USE_DCACHE
+`define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
