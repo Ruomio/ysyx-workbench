@@ -285,8 +285,8 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIR: begin
-              if(rvalid_soc_i /* && rready_icache_o */) begin
-                  rready_icache_o <= 1'b1;
+              if(rvalid_soc_i && rready_icache_o) begin
+                  rready_icache_o <= 1'b0;
                   if(rresp_soc_i == 2'b00) begin // OKAY
                       rdata_tmp <= rdata_soc_i;
                       if(use_icache) begin
