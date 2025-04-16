@@ -1,3 +1,5 @@
+`define USE_ICACHE
+`define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -78,7 +80,7 @@ module ysyx_24080020_ICACHE(
   import "DPI-C" function void statistics_ifu_get_inst();
   import "DPI-C" function void statistics_icache_hit();
   `endif
-
+`ifdef USE_ICACHE
   localparam IDLE = 0;
   localparam JUDGE = IDLE + 1;
   localparam CHIT = JUDGE + 1;
@@ -140,11 +142,16 @@ module ysyx_24080020_ICACHE(
   assign cache_hit = (( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
                       && (((cache_valid[cache_index_tmp] >> (cache_offset_tmp >> 2)) & ({cache_size_bits{1'b0}} | 'b1)) != 'b0));
 
-  assign in_flash = (araddr_icache_o >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
-  assign in_mrom = (araddr_icache_o >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
-  assign in_sdram = (araddr_icache_o >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
-  assign use_icache = in_flash | in_mrom | in_sdram;
+  assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
+  assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
+  assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
 
+  `ifdef USE_DCACHE
+  assign use_icache = in_flash | in_mrom | in_sdram;
+  `endif
+  `ifndef USE_DCACHE
+  assign use_icache = in_flash | in_mrom;
+  `endif
 
   always @(posedge clk) begin
       if(!rst) begin
@@ -265,7 +272,7 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
-                  if(in_sdram) begin
+                  if(in_sdram && use_icache) begin
                     // burst trans in sdram
                     araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
                     arsize_icache_o <= 'b10;
@@ -278,8 +285,8 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIR: begin
-              if(rvalid_soc_i /* && rready_icache_o */) begin
-                  rready_icache_o <= 1'b1;
+              if(rvalid_soc_i && rready_icache_o) begin
+                  rready_icache_o <= 1'b0;
                   if(rresp_soc_i == 2'b00) begin // OKAY
                       rdata_tmp <= rdata_soc_i;
                       if(use_icache) begin
@@ -324,7 +331,7 @@ module ysyx_24080020_ICACHE(
     if(!rst) begin
 
     end
-    else if(bvalid_soc_i && use_icache) begin
+    else if(bvalid_soc_i && use_icache && cache_hit) begin
       // set invalid
       cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
     end
@@ -358,7 +365,7 @@ module ysyx_24080020_ICACHE(
 
       arready_icache_o <= 1'b1;
 
-      if(use_icache) begin
+      if(use_icache || 'b1) begin
         araddr_tmp <= araddr_xbar_i;
       end
 
@@ -391,6 +398,26 @@ module ysyx_24080020_ICACHE(
       rresp_icache_o <= 'b0;
     end
   end
+`endif
+`ifndef USE_ICACHE
+  // AR
+  assign arvalid_icache_o = arvalid_xbar_i;
+  assign araddr_icache_o = araddr_xbar_i;
+  assign arid_icache_o = arid_xbar_i;
+  assign arlen_icache_o = arlen_xbar_i;
+  assign arburst_icache_o = arburst_xbar_i;
+  assign arsize_icache_o = arsize_xbar_i;
+  assign arready_icache_o = arready_soc_i;
+
+  // R
+  assign rvalid_icache_o = rvalid_soc_i;
+  assign rdata_icache_o = rdata_soc_i;
+  assign rresp_icache_o = rresp_soc_i;
+  assign rid_icache_o = rid_soc_i;
+  assign rlast_icache_o = rlast_soc_i;
+  assign rready_icache_o = rready_xbar_i;
+
+`endif
   // AW
   assign awvalid_icache_o = awvalid_xbar_i;
   assign awaddr_icache_o = awaddr_xbar_i;
