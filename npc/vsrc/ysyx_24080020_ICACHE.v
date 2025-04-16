@@ -1,5 +1,5 @@
 `define USE_ICACHE
-`define USE_DCACHE
+// `define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -79,6 +79,7 @@ module ysyx_24080020_ICACHE(
   `ifdef CONFIG_DPIC
   import "DPI-C" function void statistics_ifu_get_inst();
   import "DPI-C" function void statistics_icache_hit();
+  import "DPI-C" function void statistics_dcache_hit();
   `endif
 `ifdef USE_ICACHE
   localparam IDLE = 0;
@@ -254,7 +255,10 @@ module ysyx_24080020_ICACHE(
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
               if(!fin_r) begin
-                  statistics_icache_hit();
+                  if(in_flash)
+                    statistics_icache_hit();
+                  else if(in_sdram)
+                    statistics_dcache_hit();
                   // $display("cache hit addr: 0x%x", araddr_icache_o);
               end
               else begin
