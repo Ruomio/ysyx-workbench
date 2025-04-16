@@ -119,7 +119,7 @@ $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN)) -quiet
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN)) --no-print-command
 else
 $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
