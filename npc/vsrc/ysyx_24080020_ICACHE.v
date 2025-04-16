@@ -1,5 +1,5 @@
 `define USE_ICACHE
-// `define USE_DCACHE
+`define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -11,7 +11,7 @@ module ysyx_24080020_ICACHE(
   input [3:0] arid_xbar_i,
   input [7:0] arlen_xbar_i,
   input [2:0] arsize_xbar_i,
-  // input [1:0] arburst_xbar_i,
+  input [1:0] arburst_xbar_i,
   output reg arready_icache_o,
 
   input rready_xbar_i,
