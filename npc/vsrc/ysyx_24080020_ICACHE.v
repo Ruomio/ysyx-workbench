@@ -271,7 +271,7 @@ module ysyx_24080020_ICACHE(
           end
           AXIAR: begin
               if(arready_soc_i && arvalid_icache_o) begin
-                  // arvalid_icache_o <= 'b0;
+                  arvalid_icache_o <= 'b0;
                   fin_ar <= 'b1;
               end
               else if(!fin_ar) begin
