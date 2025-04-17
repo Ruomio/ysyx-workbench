@@ -54,17 +54,14 @@ bool CacheSim::is_cachehit(uint32_t address) {
 
   bool valid = cache_valid[index][tag%cacheway];
   bool is_tag_same = false;
-  for(uint32_t i=0; i<cacheway; i++) {
-    if(this->cache_tag[index][i] == tag) {
-      if(this->cache_data[index][i][offset] == address) {
-        is_tag_same = true;
-        break;
-      }
-      else {
-        printf("error hit, not just only cache miss! should be:0x%x, but get: 0x%x\n", address, this->cache_data[index][i][offset]);
-        assert(0);
-        break;
-      }
+
+  if(this->cache_tag[index][tag%cacheway] == tag) {
+    if(this->cache_data[index][tag%cacheway][offset] == address) {
+      is_tag_same = true;
+    }
+    else {
+      printf("error hit, not just only cache miss! should be:0x%x, but get: 0x%x\n", address, this->cache_data[index][tag%cacheway][offset]);
+      assert(0);
     }
   }
   return valid && is_tag_same;
