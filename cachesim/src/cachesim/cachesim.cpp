@@ -69,7 +69,7 @@ bool CacheSim::is_cachehit(uint32_t address) {
       }
     }
     else {
-      printf("cache miss! fifo_index:%d, valid: %d, tag: %d, data: 0x%x\n",i, cache_valid[index][i], tag, this->cache_data[index][i][offset]);
+      printf("cache miss! fifo_index:%d, valid: %d, tag: %d, data: 0x%x\n",i, (int)cache_valid[index][i], tag, this->cache_data[index][i][offset]);
     }
   }
   return valid && is_tag_same;
