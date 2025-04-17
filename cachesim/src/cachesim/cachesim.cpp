@@ -58,6 +58,7 @@ bool CacheSim::is_cachehit(uint32_t address) {
   for(uint32_t i=0; i<cacheway; i++) {
     if(this->cache_tag[index][i] == tag && this->cache_valid[index][i]) {
       if(this->cache_data[index][i][offset] == address) {
+        valid = true;
         is_tag_same = true;
         break;
       }
@@ -66,6 +67,9 @@ bool CacheSim::is_cachehit(uint32_t address) {
         assert(0);
         break;
       }
+    }
+    else {
+      printf("cache miss! fifo_index:%d, valid: %d, tag: %d, data: 0x%x\n",i, cache_valid[index][i], tag, this->cache_data[index][i][offset]);
     }
   }
   return valid && is_tag_same;
