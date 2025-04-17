@@ -57,25 +57,20 @@ bool CacheSim::is_cachehit(uint32_t address) {
   bool is_tag_same = false;
   for(uint32_t i=0; i<cacheway; i++) {
     if(this->cache_tag[index][i] == tag && this->cache_valid[index][i]) {
-      printf("cache hit addr: 0x%x\n", address);
-      valid = true;
-      is_tag_same = true;
-      break;
-
-      // if(this->cache_data[index][i][offset] == address) {
-      //   printf("cache hit addr: 0x%x\n", address);
-      //   valid = true;
-      //   is_tag_same = true;
-      //   break;
-      // }
-      // else {
-      //   printf("error hit, not just only cache miss! should be:0x%x, but get: 0x%x\n", address, this->cache_data[index][i][offset]);
-      //   assert(0);
-      //   break;
-      // }
+      if(this->cache_data[index][i][offset] == address) {
+        printf("cache hit addr: 0x%x\n", address);
+        valid = true;
+        is_tag_same = true;
+        break;
+      }
+      else {
+        printf("error hit, not just only cache miss! should be:0x%x, but get: 0x%x\n", address, this->cache_data[index][i][offset]);
+        assert(0);
+        break;
+      }
     }
     else {
-      printf("cache miss! address: 0x%x, fifo_index:%d, valid: %d, tag: %d\n",address, i, (int)cache_valid[index][i], tag);
+      printf("cache miss! address: 0x%x, fifo_index:%d, valid: %d, tag: %d, data: 0x%x\n",address, i, (int)cache_valid[index][i], tag, this->cache_data[index][i][offset]);
     }
   }
   return valid && is_tag_same;
@@ -118,7 +113,7 @@ void CacheSim::run_simulation() {
             // Simulate storing data in the cache (for simplicity, just store the address)
             for(uint32_t i=0; i<cachesize/4; i++) {
               printf("save cache data: 0x%x\n", address);
-              // cache_data[index][fifo_index][i] = address;
+              cache_data[index][fifo_index][i] = address;
               address += 0x4;
             }
             fifo_index = fifo_index+1 % cacheway;
