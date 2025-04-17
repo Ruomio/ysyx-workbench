@@ -108,6 +108,7 @@ void CacheSim::run_simulation() {
               cache_data[index][tag%cacheway][i] = address;
               address += 0x4;
             }
+            printf("access soc done\n");
         }
     }
 
