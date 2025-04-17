@@ -6,7 +6,7 @@
 #include <string>
 
 #define CACHE_SIZE 4
-#define CACHE_NUM 16
+#define CACHE_NUM 4
 #define CACHE_WAY 4
 #define MISS_CYCLES 2466
 #define HIT_CYCLES 3
