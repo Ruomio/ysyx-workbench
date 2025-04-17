@@ -105,11 +105,11 @@ void CacheSim::run_simulation() {
             cache_tag[index][tag%cacheway] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
             for(uint32_t i=0; i<cacheway; i++) {
-              printf("save cache data: 0x%x\n", address);
+              // printf("save cache data: 0x%x\n", address);
               cache_data[index][tag%cacheway][i] = address;
               address += 0x4;
             }
-            printf("access soc done\n");
+            // printf("access soc done\n");
         }
     }
 
