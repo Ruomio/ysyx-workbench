@@ -95,6 +95,7 @@ void CacheSim::run_simulation() {
             cache_hit++;
             // printf("cache hit addr: 0x%x\n", address);
         } else {
+            address = address & ~0xf;
             uint32_t index = (address / cachesize) % cachenum;
             uint32_t tag = address / cachesize;
             // Cache miss
