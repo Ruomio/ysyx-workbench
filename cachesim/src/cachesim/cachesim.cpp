@@ -61,7 +61,7 @@ bool CacheSim::is_cachehit(uint32_t address) {
         break;
       }
       else {
-        printf("error hit, not just only cache miss!\n");
+        printf("error hit, not just only cache miss! should be:0x%x, but get: 0x%x\n", address, this->cache_data[index][i][offset]);
         assert(0);
         break;
       }
