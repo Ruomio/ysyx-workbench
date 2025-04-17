@@ -49,7 +49,7 @@ void CacheSim::print_results() {
 bool CacheSim::is_cachehit(uint32_t address) {
   // Calculate cache index and tag
   uint32_t index = (address / cachesize) % cachenum;
-  uint32_t tag = address / cachesize;
+  uint32_t tag = address / cachesize / cachenum;
   uint32_t offset = (address % cachesize) / 4;
 
   bool valid = cache_valid[index][tag%cacheway];
@@ -95,9 +95,9 @@ void CacheSim::run_simulation() {
             cache_hit++;
             // printf("cache hit addr: 0x%x\n", address);
         } else {
-            address = address & ~0xf;
+            address = address & ~(cachesize-1);
             uint32_t index = (address / cachesize) % cachenum;
-            uint32_t tag = address / cachesize;
+            uint32_t tag = address / cachesize / cachenum;
             // Cache miss
             cache_miss++;
             // Update cache line
