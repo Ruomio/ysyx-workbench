@@ -15,30 +15,59 @@ CacheSim::CacheSim(std::string path) {
 
     cachesize = CACHE_SIZE;
     cachenum = CACHE_NUM;
+    cacheway = CACHE_WAY;
 
-    cache_tag = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
-    cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
-    cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
+    cache_tag = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cacheway, 0));
+    cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cacheway, false));
+    cache_data = std::vector<std::vector<std::vector<uint32_t>>>(cachenum, std::vector<std::vector<uint32_t>>(cacheway, std::vector<uint32_t>(cachesize/4, 0)));
 }
 
 CacheSim::~CacheSim() {
     print_results();
 }
 
-int CacheSim::setCache_size_num(uint32_t size, uint32_t num) {
+int CacheSim::setCache_size_num(uint32_t size, uint32_t num, uint32_t way) {
     cachesize = size;
     cachenum = num;
-    cache_tag = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
-    cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cachesize/4, false));
-    cache_data = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cachesize/4, 0));
+    cacheway = way;
+    cache_tag = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cacheway, 0));
+    cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cacheway, false));
+    cache_data = std::vector<std::vector<std::vector<uint32_t>>>(cachenum, std::vector<std::vector<uint32_t>>(cacheway, std::vector<uint32_t>(cachesize/4, 0)));
     return 0;
 }
 
 void CacheSim::print_results() {
+  double hit_rate = cache_hit*1.0/inst_cnt;
+  double miss_rate = cache_miss*1.0/inst_cnt;
     std::cout << "Total_insts: " << inst_cnt << std::endl;
     assert(inst_cnt > 0);
-    std::cout << "Cache_Hit: " << cache_hit << " Percentage:" << cache_hit*100.0/inst_cnt << "%" << std::endl;
-    std::cout << "Cacche_Miss: " << cache_miss << " Percentage:" << cache_miss*100.0/inst_cnt << "%" << std::endl;
+    std::cout << "ICache_Hit: " << cache_hit << " Percentage:" << hit_rate * 100 << "%" << std::endl;
+    std::cout << "ICacche_Miss: " << cache_miss << " Percentage:" << miss_rate * 100 << "%" << std::endl;
+    std::cout << "ICache: " << "AMAT: " << HIT_CYCLES * hit_rate + MISS_CYCLES * miss_rate << " TMT: " << MISS_CYCLES * cache_miss << std::endl;
+}
+
+bool CacheSim::is_cachehit(uint32_t address) {
+  // Calculate cache index and tag
+  uint32_t index = (address / cachesize) % cachenum;
+  uint32_t tag = address / cachesize;
+  uint32_t offset = (address % cachesize) / 4;
+
+  bool valid = cache_valid[index][tag%cacheway];
+  bool is_tag_same = false;
+  for(uint32_t i=0; i<cacheway; i++) {
+    if(this->cache_tag[index][i] == tag) {
+      if(this->cache_data[index][i][offset] == address) {
+        is_tag_same = true;
+        break;
+      }
+      else {
+        printf("error hit, not just only cache miss!\n");
+        assert(0);
+        break;
+      }
+    }
+  }
+  return valid && is_tag_same;
 }
 
 void CacheSim::run_simulation() {
@@ -59,27 +88,25 @@ void CacheSim::run_simulation() {
 
         inst_cnt++;
 
-        // Calculate cache index and tag
-        uint32_t index = (address / cachesize) % cachenum; // Assuming each instruction is 4 bytes
-        uint32_t tag = address / cachesize;
-        uint32_t offset = (address % cachesize) / 4;
 
         // Check if the cache line is valid and matches the tag
-        if (cache_valid[index][offset] && cache_tag[index][offset] == tag) {
-            if(address != cache_data[index][offset]) {
-                printf("error hit\n");
-            }
+        if (is_cachehit(address)) {
             // Cache hit
             cache_hit++;
             // printf("cache hit addr: 0x%x\n", address);
         } else {
+            uint32_t index = (address / cachesize) % cachenum;
+            uint32_t tag = address / cachesize;
             // Cache miss
             cache_miss++;
             // Update cache line
-            cache_valid[index][offset] = true;
-            cache_tag[index][offset] = tag;
+            cache_valid[index][tag%cacheway] = true;
+            cache_tag[index][tag%cacheway] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
-            cache_data[index][offset] = address;
+            for(uint32_t i=0; i<cacheway; i++) {
+              cache_data[index][tag%cacheway][i] = address;
+              address += 0x4;
+            }
         }
     }
 
