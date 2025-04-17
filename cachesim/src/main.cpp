@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
         cachesim.setCache_size_num(atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
     }
     else {
-        std::cout << "sim as default size: "<< CACHE_SIZE << " num:" << CACHE_NUM << "and way:" << CACHE_WAY << std::endl;
+        std::cout << "sim as default size: "<< CACHE_SIZE << " num:" << CACHE_NUM << " and way:" << CACHE_WAY << std::endl;
     }
 
     cachesim.run_simulation();
