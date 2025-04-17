@@ -9,14 +9,14 @@ INSTS=${NEMU_HOME}/build/insts.txt
 
 SIZES=(4 8 16 32)
 NUMS=(4 8 16 32)
-WAYS(4 8 12 16)
+WAYS=(4 8 12 16)
 # SIZES=(4)
 # NUMS=(16)
 
 # 批量运行
 for size in "${SIZES[@]}"; do
     for num in "${NUMS[@]}"; do
-        for way in "${WAYS[@}}"; do
+        for way in "${WAYS[@]}"; do
           echo "Running with SIZE=$size and NUM=$num and WAY=$way..."
 
           # 运行命令
