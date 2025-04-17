@@ -3,11 +3,13 @@
 import sys
 import matplotlib.pyplot as plt
 import re
+import signal
 from mpl_toolkits.mplot3d import Axes3D
 
 def main():
     sizes = []
     nums = []
+    ways = []
     hit_rates = []
 
     # 读取标准输入
@@ -15,66 +17,52 @@ def main():
         # 检查结束条件
         if "All instances completed." in line:
             break
-        # 匹配 SIZE 和 NUM
+        # 匹配 SIZE 和 NUM WAY
         size_match = re.search(r'SIZE=(\d+)', line)
         num_match = re.search(r'NUM=(\d+)', line)
+        way_match = re.search(r'WAY=(\d+)', line)
         hit_match = re.search(r'Cache_Hit: \d+ Percentage:(\d+\.\d+)%', line)
 
-        if size_match and num_match:
-            sizes.append(size_match.group(1))
+        if size_match and num_match and way_match:
+            sizes.append(int(size_match.group(1)))
             nums.append(int(num_match.group(1)))
+            ways.append(int(way_match.group(1)))
         if hit_match:
             hit_rates.append(float(hit_match.group(1)))
 
+    # 生成图表
+    plot_cache_performance(nums, ways, sizes, hit_rates)
 
-    unique_sizes = set(sizes)  # 获取唯一的 SIZE 值
 
-     # 创建二维图形
-    plt.figure(figsize=(10, 7))
+def plot_cache_performance(nums, ways, sizes, hit_rates):
+    unique_ways = set(ways)
+    unique_sizes = set(sizes)
 
-    # 为每个 SIZE 绘制数据点
-    for size in unique_sizes:
-        indices = [i for i, s in enumerate(sizes) if s == size]
-        plt.plot([nums[i] for i in indices], 
-                 [hit_rates[i] for i in indices], 
-                 marker='o', label=f'SIZE={size}')  # 使用折线图
+    # 创建子图
+    num_plots = len(unique_ways) * len(unique_sizes)
+    fig, axes = plt.subplots(len(unique_sizes), len(unique_ways), figsize=(15, 10))
 
-    plt.title('Cache Hit Rate vs NUM by SIZE')
-    plt.xlabel('NUM')
-    plt.ylabel('Cache Hit Rate (%)')
-    plt.legend()  # 添加图例
-    plt.grid()
+    for i, size in enumerate(unique_sizes):
+        for j, way in enumerate(unique_ways):
+            # 筛选出对应的命中率数据
+            filtered_nums = [num for k, num in enumerate(nums) if ways[k] == way and sizes[k] == size]
+            filtered_hits = [hit_rates[k] for k in range(len(hit_rates)) if ways[k] == way and sizes[k] == size]
+
+            # 绘制图表
+            ax = axes[i, j]
+            ax.plot(filtered_nums, filtered_hits, marker='o')
+            ax.set_title(f'WAY={way}, SIZE={size}')
+            ax.set_xlabel('Number of Cache Groups (NUM)')
+            ax.set_ylabel('Cache Hit Rate (%)')
+            ax.grid()
+
+    plt.tight_layout()
     plt.show()
 
-
-    # 创建三维图形
-    # fig = plt.figure(figsize=(10, 7))
-    # ax = fig.add_subplot(111, projection='3d')
-
-    # # 为每个 SIZE 绘制折线
-    # for size in unique_sizes:
-    #     indices = [i for i, s in enumerate(sizes) if s == size]
-    #     ax.plot([nums[i] for i in indices], 
-    #             [hit_rates[i] for i in indices], 
-    #             [sizes[i] for i in indices], 
-    #             marker='o', label=f'SIZE={size}')  # 使用不同的线
-
-    # ax.set_title('Cache Hit Rate vs NUM and SIZE')
-    # ax.set_xlabel('NUM')
-    # ax.set_ylabel('Cache Hit Rate (%)')
-    # ax.set_zlabel('SIZE')
-
-    # # 调整坐标轴刻度方向
-    # ax.tick_params(axis='x', direction='in')  # x 轴刻度向内
-    # ax.tick_params(axis='y', direction='inout')  # y 轴刻度向内
-    # ax.tick_params(axis='z', direction='in')  # z 轴刻度向内
-
-    # # 调整坐标轴方向
-    # ax.view_init(elev=60, azim=154, roll=-113)  # 调整视角
-
-    # ax.grid()
-    # plt.show() 
-
+def signal_handler(sig, frame):
+    print("\nExiting gracefully...")
+    sys.exit(0)
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handler)
     main()
