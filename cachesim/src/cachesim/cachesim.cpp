@@ -12,6 +12,7 @@ CacheSim::CacheSim(std::string path) {
     cache_hit = 0;
     cache_miss = 0;
     inst_cnt = 0;
+    fifo_index = 0;
 
     cachesize = CACHE_SIZE;
     cachenum = CACHE_NUM;
@@ -52,16 +53,19 @@ bool CacheSim::is_cachehit(uint32_t address) {
   uint32_t tag = address / cachesize / cachenum;
   uint32_t offset = (address % cachesize) / 4;
 
-  bool valid = cache_valid[index][tag%cacheway];
+  bool valid = false;
   bool is_tag_same = false;
-
-  if(this->cache_tag[index][tag%cacheway] == tag) {
-    if(this->cache_data[index][tag%cacheway][offset] == address) {
-      is_tag_same = true;
-    }
-    else {
-      printf("error hit, not just only cache miss! should be:0x%x, but get: 0x%x\n", address, this->cache_data[index][tag%cacheway][offset]);
-      assert(0);
+  for(uint32_t i=0; i<cacheway; i++) {
+    if(this->cache_tag[index][i] == tag && this->cache_valid[index][i]) {
+      if(this->cache_data[index][i][offset] == address) {
+        is_tag_same = true;
+        break;
+      }
+      else {
+        printf("error hit, not just only cache miss! should be:0x%x, but get: 0x%x\n", address, this->cache_data[index][i][offset]);
+        assert(0);
+        break;
+      }
     }
   }
   return valid && is_tag_same;
@@ -92,20 +96,22 @@ void CacheSim::run_simulation() {
             cache_hit++;
             // printf("cache hit addr: 0x%x\n", address);
         } else {
-            address = address & ~(cachesize-1);
-            uint32_t index = (address / cachesize) % cachenum;
-            uint32_t tag = address / cachesize / cachenum;
             // Cache miss
             cache_miss++;
             // Update cache line
-            cache_valid[index][tag%cacheway] = true;
-            cache_tag[index][tag%cacheway] = tag;
+            address = address & ~(cachesize-1);
+            uint32_t index = (address / cachesize) % cachenum;
+            uint32_t tag = address / cachesize / cachenum;
+
+            cache_valid[index][fifo_index] = true;
+            cache_tag[index][fifo_index] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
-            for(uint32_t i=0; i<cacheway; i++) {
+            for(uint32_t i=0; i<cachesize/4; i++) {
               printf("save cache data: 0x%x\n", address);
-              cache_data[index][tag%cacheway][i] = address;
+              cache_data[index][fifo_index][i] = address;
               address += 0x4;
             }
+            fifo_index = fifo_index+1 % cacheway;
             printf("access soc done\n");
         }
     }
