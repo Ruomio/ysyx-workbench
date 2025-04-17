@@ -29,12 +29,12 @@ $(BUILD_DIR)/%.o: %.cpp
 
 $(BIN): $(OBJS)
 	@mkdir -p $(BUILD_DIR)
-	@$(CC) $(INCLUDES) $(CFLAGS) -o $@ $^ 
+	@$(CC) $(INCLUDES) $(CFLAGS) -o $@ $^
 
 
 run: $(BIN)
 	@$(call git_commit, "run CacheSim")
-	@$(BIN) $(NEMU_HOME)/build/insts.txt $(SIZE) $(NUM)
+	@$(BIN) $(NEMU_HOME)/build/insts.txt $(SIZE) $(NUM) $(WAY)
 
 gdb:
 	@$(call git_commit, "gdb CacheSim")
