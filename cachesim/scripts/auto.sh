@@ -9,7 +9,7 @@ INSTS=${NEMU_HOME}/build/insts.txt
 
 SIZES=(4 8 16 32)
 NUMS=(4 8 16 32)
-WAYS=(4 8 12 16)
+WAYS=(4 6 8 10)
 # SIZES=(4)
 # NUMS=(16)
 
