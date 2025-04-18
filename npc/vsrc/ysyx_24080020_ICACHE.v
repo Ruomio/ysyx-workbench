@@ -276,7 +276,7 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
-                  if(in_flash && use_icache) begin
+                  if(use_icache) begin
                     // burst trans in sdram
                     araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
                     arsize_icache_o <= 'b10;
