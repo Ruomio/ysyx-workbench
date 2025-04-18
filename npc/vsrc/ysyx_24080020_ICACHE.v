@@ -290,17 +290,14 @@ module ysyx_24080020_ICACHE(
                 fin_judge <= 'b0;
               end
               // after cache, update fin_r
-              if(fin_r) begin
-                fin_r <= 0;
-              end
+              // if(fin_r) begin
+              //   fin_r <= 0;
+              // end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
               all_fin <= 'b1;
 
-              // if(fin_judge) begin
-              //   fin_judge <= 'b0;
-              // end
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
               if(!fin_r) begin
@@ -317,9 +314,6 @@ module ysyx_24080020_ICACHE(
           end
           CMISS: begin
               // do nothing
-              // if(fin_judge) begin
-              //   fin_judge <= 'b0;
-              // end
           end
           AXIAR: begin
               if(arready_soc_i && arvalid_icache_o) begin
@@ -337,7 +331,6 @@ module ysyx_24080020_ICACHE(
                     arlen_icache_o <= (cache_size >> 2) - 1;
                     arburst_icache_o <= 'b01;
 
-                    // araddr_tmp <= {araddr_tmp[31:2], 2'b0};
                     araddr_tmp <= araddr_tmp & ~(cache_size - 32'b1) ;
                   end
               end
@@ -355,15 +348,12 @@ module ysyx_24080020_ICACHE(
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
                         araddr_tmp <= araddr_xbar_i;
+
                         if(use_icache) begin
-                          // update_fifo_index <= 'b1;
                           fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
                         end
-                        // else begin
-                        //   fin_r <= 'b1;
-                        // end
                       end
                       else begin
                         // update araddr to adapt burst transmit, it's for icache parameter
@@ -380,12 +370,6 @@ module ysyx_24080020_ICACHE(
               else if(rvalid_soc_i) begin
                 rready_icache_o <= 'b1;
               end
-
-              // if(update_fifo_index) begin
-              //     fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
-              //     update_fifo_index <= 'b0;
-              //     fin_r <= 'b1;
-              // end
           end
           AXIDone: begin
               all_fin <= 1'b1;
