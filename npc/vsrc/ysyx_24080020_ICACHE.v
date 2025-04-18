@@ -353,11 +353,6 @@ module ysyx_24080020_ICACHE(
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
 
-                          if(update_fifo_index) begin
-                            fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
-                            update_fifo_index <= 'b0;
-                            fin_r <= 'b1;
-                          end
                         end
                         else begin
                           fin_r <= 'b1;
@@ -366,6 +361,12 @@ module ysyx_24080020_ICACHE(
                       else begin
                         // update araddr to adapt burst transmit, it's for icache parameter
                         araddr_tmp <= araddr_tmp + 2 ** arsize_icache_o;
+                      end
+
+                      if(update_fifo_index) begin
+                        fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+                        update_fifo_index <= 'b0;
+                        fin_r <= 'b1;
                       end
                   end
                   else begin
