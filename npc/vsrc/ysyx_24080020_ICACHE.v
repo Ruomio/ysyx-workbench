@@ -273,11 +273,14 @@ module ysyx_24080020_ICACHE(
               if(tag_index <= cache_way) begin
                 if(cache_hit) begin
                   is_hit <= 'b1;
+                  fin_judge <= 'b1;
                 end
-                tag_index <= tag_index + 'b1;
+                else begin
+                  tag_index <= tag_index + 'b1;
+                end
               end
               else begin
-                tag_index <= 'b0;
+                is_hit <= 'b0;
                 fin_judge <= 'b1;
               end
 
