@@ -233,7 +233,7 @@ module ysyx_24080020_ICACHE(
           AXIR: begin
               if(fin_r) begin
                   if(use_icache) begin
-                      next_state = CHIT;
+                      next_state = JUDGE;
                   end
                   else begin
                       next_state = AXIDone;
