@@ -22,7 +22,7 @@ module ysyx_24080020_IFU (
     input rvalid,
     input rlast,
     input [1:0] rresp,
-    input [3:0] rid, 
+    input [3:0] rid,
     input [`ysyx_24080020_WIDTH-1:0] rdata,
     output reg rready,
 
@@ -32,6 +32,10 @@ module ysyx_24080020_IFU (
     output reg ifu_wb_ready,
     output reg ifu_idu_valid
 );
+    `ifdef CONFIG_DPIC
+    import "DPI-C" function void statistics_ifu_get_inst();
+    `endif
+
     wire inst_fin;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
 
@@ -64,7 +68,12 @@ module ysyx_24080020_IFU (
         end
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
-            pc_ifu <= addr;
+            pc_ifu <= addr
+
+       `ifdef CONFIG_DPIC
+       if(in_flash) statistics_ifu_get_inst();
+       `endif
+
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
