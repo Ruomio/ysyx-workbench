@@ -286,10 +286,10 @@ module ysyx_24080020_ICACHE(
               end
 
               // after cache, update fifo_index
-              if(fin_r) begin
-                fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
-                fin_r <= 0;
-              end
+              // if(fin_r) begin
+              //   fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+              //   fin_r <= 0;
+              // end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
