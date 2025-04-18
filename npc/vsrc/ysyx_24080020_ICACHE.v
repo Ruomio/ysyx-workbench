@@ -147,8 +147,8 @@ module ysyx_24080020_ICACHE(
 
 
   assign shift_rdata = cache_data[cache_index_tmp] >> (tag_index << (5 + cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (fifo_index[cache_index_tmp] << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
-  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (fifo_index[cache_index_tmp] << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({cache_data_ingroup_width{1'b0}} | fifo_index[cache_index_tmp]) << 5 << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({cache_data_ingroup_width{1'b0}} | fifo_index[cache_index_tmp]) << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
 
   // assign shift_rtag = (cache_tag[cache_index_tmp] & tag_mask) >> (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
