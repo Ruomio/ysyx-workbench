@@ -68,12 +68,10 @@ module ysyx_24080020_IFU (
         end
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
-            pc_ifu <= addr
-
-       `ifdef CONFIG_DPIC
-       if(in_flash) statistics_ifu_get_inst();
-       `endif
-
+            pc_ifu <= addr;
+            `ifdef CONFIG_DPIC
+            statistics_ifu_get_inst();
+            `endif
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
