@@ -286,9 +286,9 @@ module ysyx_24080020_ICACHE(
                 fin_judge <= 'b1;
               end
 
-              // if(fin_judge) begin
-              //   fin_judge <= 'b0;
-              // end
+              if(fin_judge) begin
+                fin_judge <= 'b0;
+              end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
