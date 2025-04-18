@@ -353,15 +353,17 @@ module ysyx_24080020_ICACHE(
                       end
 
                       if(rlast_soc_i) begin
+                        fin_r <= 1'b1;
                         araddr_tmp <= araddr_xbar_i;
                         if(use_icache) begin
-                          update_fifo_index <= 'b1;
+                          // update_fifo_index <= 'b1;
+                          fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
                         end
-                        else begin
-                          fin_r <= 'b1;
-                        end
+                        // else begin
+                        //   fin_r <= 'b1;
+                        // end
                       end
                       else begin
                         // update araddr to adapt burst transmit, it's for icache parameter
@@ -379,11 +381,11 @@ module ysyx_24080020_ICACHE(
                 rready_icache_o <= 'b1;
               end
 
-              if(update_fifo_index) begin
-                  fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
-                  update_fifo_index <= 'b0;
-                  fin_r <= 'b1;
-              end
+              // if(update_fifo_index) begin
+              //     fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+              //     update_fifo_index <= 'b0;
+              //     fin_r <= 'b1;
+              // end
           end
           AXIDone: begin
               all_fin <= 1'b1;
