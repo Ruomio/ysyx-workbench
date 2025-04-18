@@ -133,11 +133,12 @@ module ysyx_24080020_ICACHE(
   wire [cache_num_bits-1:0]               cache_index_tmp;
   wire [cache_size_bits-1:0]              cache_offset_tmp;
 
-  reg [cache_data_ingroup_width - 1 : 0]  cache_data  [0 : `ysyx_24080020_CACHE_NUM - 1];
-  reg [cache_tag_ingroup_width - 1 : 0]   cache_tag   [0 : `ysyx_24080020_CACHE_NUM - 1];
-  reg [cache_way - 1 : 0]                 cache_valid [0 : `ysyx_24080020_CACHE_NUM - 1];
+  reg [cache_data_ingroup_width - 1 : 0]  cache_data  [0 : cache_num - 1];
+  reg [cache_tag_ingroup_width - 1 : 0]   cache_tag   [0 : cache_num - 1];
+  reg [cache_way - 1 : 0]                 cache_valid [0 : cache_num - 1];
 
-  reg [cache_way - 1 : 0]                 tag_index, fifo_index;
+  reg [cache_way - 1 : 0]                 fifo_index [0 : cache_num - 1];
+  reg [cache_way - 1 : 0]                 tag_index;
 
 
   assign cache_tag_tmp = araddr_tmp[31 : cache_num_bits+cache_size_bits];
@@ -146,16 +147,16 @@ module ysyx_24080020_ICACHE(
 
 
   assign shift_rdata = cache_data[cache_index_tmp] >> (tag_index << (5 + cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (fifo_index << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
-  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (fifo_index << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (fifo_index[cache_index_tmp] << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (fifo_index[cache_index_tmp] << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
 
   // assign shift_rtag = (cache_tag[cache_index_tmp] & tag_mask) >> (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
   // assign shift_wtag = ({{tag_complete_bits{1'b0}}, cache_tag_tmp} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size));
   // assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
   assign shift_rtag = (cache_tag[cache_index_tmp] >> (tag_index * cache_tag_width)) & ({ {tag_complete_bits{1'b0}}, {cache_tag_width{1'b1}} });
-  assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_tmp} << (fifo_index * cache_tag_width);
-  assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (fifo_index * cache_tag_width);
+  assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_tmp} << (fifo_index[cache_index_tmp] * cache_tag_width);
+  assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (fifo_index[cache_index_tmp] * cache_tag_width);
 
   assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
                      && ((cache_valid[cache_index_tmp] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
@@ -174,11 +175,11 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
       if(!rst) begin
           current_state <= 'b0;
-          fifo_index <= 'b0;
           for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
               cache_valid[i]  <= 'b0;
+              fifo_index[i]   <= 'b0;
           end
       end
       else begin
@@ -332,7 +333,7 @@ module ysyx_24080020_ICACHE(
                           // update cache
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_data[cache_index_tmp] <= (cache_data[cache_index_tmp] & ~data_mask) | shift_wdata;
-                          cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index));
+                          cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
 
                       end
 
@@ -340,7 +341,7 @@ module ysyx_24080020_ICACHE(
                         fin_r <= 1'b1;
                         araddr_tmp <= araddr_xbar_i;
                         if(use_icache) begin
-                          fifo_index <= (fifo_index + 'b1) % cache_way;
+                          fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
                         end
                       end
                       else begin
