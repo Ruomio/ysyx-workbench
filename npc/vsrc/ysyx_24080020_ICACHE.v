@@ -275,7 +275,7 @@ module ysyx_24080020_ICACHE(
                   is_hit <= 'b1;
                   fin_judge <= 'b1;
                 end
-                else begin
+                else if(!fin_judge)begin
                   tag_index <= tag_index + 'b1;
                 end
               end
