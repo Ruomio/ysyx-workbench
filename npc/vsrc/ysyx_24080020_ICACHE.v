@@ -331,9 +331,7 @@ module ysyx_24080020_ICACHE(
                       rdata_tmp <= rdata_soc_i;
                       if(use_icache) begin
                           // update cache
-                          cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_data[cache_index_tmp] <= (cache_data[cache_index_tmp] & ~data_mask) | shift_wdata;
-                          cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
 
                       end
 
@@ -342,6 +340,8 @@ module ysyx_24080020_ICACHE(
                         araddr_tmp <= araddr_xbar_i;
                         if(use_icache) begin
                           fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+                          cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
+                          cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
                         end
                       end
                       else begin
