@@ -270,7 +270,7 @@ module ysyx_24080020_ICACHE(
               rready_icache_o <= 'b0;
           end
           JUDGE: begin
-              if(tag_index <= cache_way) begin
+              if(tag_index < cache_way) begin
                 if(cache_hit) begin
                   is_hit <= 'b1;
                   fin_judge <= 'b1;
