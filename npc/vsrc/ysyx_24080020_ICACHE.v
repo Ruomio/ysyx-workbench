@@ -90,40 +90,57 @@ module ysyx_24080020_ICACHE(
   localparam AXIR = AXIAR + 1;
   localparam AXIDone = AXIR + 1;  // not use cache, such as sram
 
-  reg fin_r, fin_ar, r_en, all_fin;
+  reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
   reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
+
+  reg toggle;
 
   wire use_icache;
   wire in_flash;
   wire in_mrom;
   wire in_sdram;
 
+  integer  i;
+
   // CACHE
-  localparam cache_size_bits = $clog2(`ysyx_24080020_CACHE_SIZE);
-  localparam cache_num_bits = $clog2(`ysyx_24080020_CACHE_NUM);
+  // cacheway maybe not the 2^n
+  localparam cache_way = `ysyx_24080020_CACHE_WAY;
+  localparam cache_size = `ysyx_24080020_CACHE_SIZE;
+  localparam cache_num = `ysyx_24080020_CACHE_NUM;
+
+  localparam cache_size_bits = $clog2(cache_size);
+  localparam cache_size_shift = $clog2(cache_size_bits);
+  localparam cache_num_bits = $clog2(cache_num);
+
   localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
-  localparam cache_data_width = `ysyx_24080020_CACHE_SIZE << 3;
-  localparam cache_tag_width = cache_tag_size * (`ysyx_24080020_CACHE_SIZE >> 2);
-  localparam data_complete_bits = cache_data_width - 32;
-  localparam tag_complete_bits = cache_tag_width - cache_tag_size;
+  localparam cache_data_width = cache_size << 3;
+  localparam cache_data_ingroup_width = cache_data_width * cache_way;
+  // localparam cache_tag_width = cache_tag_size * (`ysyx_24080020_CACHE_SIZE >> 2);
+  localparam cache_tag_width = cache_tag_size;
+  localparam cache_tag_ingroup_width = cache_tag_width * cache_way;
+  localparam data_complete_bits = cache_data_ingroup_width - 32;
+  localparam tag_complete_bits = cache_tag_ingroup_width - cache_tag_size;
 
-  wire [cache_data_width-1 : 0] shift_rdata;
-  wire [cache_data_width-1 : 0] shift_wdata;
-  wire [cache_data_width-1 : 0] data_mask;
+  wire [cache_data_ingroup_width-1 : 0] shift_rdata;
+  wire [cache_data_ingroup_width-1 : 0] shift_wdata;
+  wire [cache_data_ingroup_width-1 : 0] data_mask;
 
-  wire [cache_tag_width-1 : 0]  shift_rtag;
-  wire [cache_tag_width-1 : 0]  shift_wtag;
-  wire [cache_tag_width-1 : 0]  tag_mask;
+  wire [cache_tag_ingroup_width-1 : 0]  shift_rtag;
+  wire [cache_tag_ingroup_width-1 : 0]  shift_wtag;
+  wire [cache_tag_ingroup_width-1 : 0]  tag_mask;
 
   wire                                    cache_hit;
   wire [cache_tag_size-1:0]               cache_tag_tmp;
   wire [cache_num_bits-1:0]               cache_index_tmp;
   wire [cache_size_bits-1:0]              cache_offset_tmp;
 
-  reg [cache_data_width-1 : 0]            cache_data  [0 : `ysyx_24080020_CACHE_NUM-1];
-  reg [cache_tag_width-1 : 0]             cache_tag   [0 : `ysyx_24080020_CACHE_NUM-1];
-  reg [cache_size_bits-1 : 0]             cache_valid [0 : `ysyx_24080020_CACHE_NUM-1];
+  reg [cache_data_ingroup_width - 1 : 0]  cache_data  [0 : cache_num - 1];
+  reg [cache_tag_ingroup_width - 1 : 0]   cache_tag   [0 : cache_num - 1];
+  reg [cache_way - 1 : 0]                 cache_valid [0 : cache_num - 1];
+
+  reg [cache_way - 1 : 0]                 fifo_index [0 : cache_num - 1];
+  reg [cache_way - 1 : 0]                 tag_index;
 
 
   assign cache_tag_tmp = araddr_tmp[31 : cache_num_bits+cache_size_bits];
@@ -131,21 +148,24 @@ module ysyx_24080020_ICACHE(
   assign cache_offset_tmp = {araddr_tmp[cache_size_bits-1 : 2], 2'b0};
 
 
-  assign shift_rdata = cache_data[cache_index_tmp] >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
-  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign shift_rdata = cache_data[cache_index_tmp] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (5 + cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << 5 << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
 
-  assign shift_rtag = (cache_tag[cache_index_tmp] & tag_mask) >> (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
-  assign shift_wtag = ({{tag_complete_bits{1'b0}}, cache_tag_tmp} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size));
-  assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
+  // assign shift_rtag = (cache_tag[cache_index_tmp] & tag_mask) >> (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
+  // assign shift_wtag = ({{tag_complete_bits{1'b0}}, cache_tag_tmp} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size));
+  // assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
+  assign shift_rtag = (cache_tag[cache_index_tmp] >> ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, tag_index} * cache_tag_width)) & ({ {tag_complete_bits{1'b0}}, {cache_tag_width{1'b1}} });
+  assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_tmp} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]} * cache_tag_width);
+  assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]} * cache_tag_width);
 
-  assign cache_hit = (( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
-                      && (((cache_valid[cache_index_tmp] >> (cache_offset_tmp >> 2)) & ({cache_size_bits{1'b0}} | 'b1)) != 'b0));
+  assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
+                     && ((cache_valid[cache_index_tmp] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
 
-  assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
-  assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
-  assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
+  assign in_flash = (araddr_xbar_i >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
+  assign in_mrom = (araddr_xbar_i >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
+  assign in_sdram = (araddr_xbar_i >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
 
   `ifdef USE_DCACHE
   assign use_icache = in_flash | in_mrom | in_sdram;
@@ -157,10 +177,13 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
       if(!rst) begin
           current_state <= 'b0;
-          for (integer  i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+          tag_index <= 'b0;
+          toggle <= 'b0;
+          for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
               cache_valid[i]  <= 'b0;
+              fifo_index[i]   <= 'b0;
           end
       end
       else begin
@@ -180,12 +203,16 @@ module ysyx_24080020_ICACHE(
               end
           end
           JUDGE: begin
-              if(cache_hit && use_icache) begin
-                  next_state = CHIT;
+              if(fin_judge) begin
+                  if(is_hit && use_icache) begin
+                      next_state = CHIT;
+                  end
+                  else begin
+                      next_state = CMISS;
+                  end
               end
-              else begin
-                  next_state = CMISS;
-              end
+              else
+                  next_state = JUDGE;
           end
           CHIT: begin
               if(all_fin) begin
@@ -209,7 +236,7 @@ module ysyx_24080020_ICACHE(
           AXIR: begin
               if(fin_r) begin
                   if(use_icache) begin
-                      next_state = CHIT;
+                      next_state = JUDGE;
                   end
                   else begin
                       next_state = AXIDone;
@@ -240,13 +267,31 @@ module ysyx_24080020_ICACHE(
               fin_r <= 'b0;
               all_fin <= 'b0;
 
+              fin_judge <= 'b0;
+              is_hit <= 'b0;
+              update_fifo_index <= 'b0;
+
               rready_icache_o <= 'b0;
           end
           JUDGE: begin
-              // do nothing
-              `ifdef CONFIG_DPIC
-              if(in_flash) statistics_ifu_get_inst();
-              `endif
+              if(tag_index < cache_way) begin
+                if(cache_hit) begin
+                  is_hit <= 'b1;
+                  fin_judge <= 'b1;
+                end
+                else if(!fin_judge)begin
+                  tag_index <= tag_index + 'b1;
+                end
+              end
+              else begin
+                tag_index <= 'b0;
+                is_hit <= 'b0;
+                fin_judge <= 'b1;
+              end
+
+              if(fin_judge) begin
+                fin_judge <= 'b0;
+              end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
@@ -255,11 +300,16 @@ module ysyx_24080020_ICACHE(
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
               if(!fin_r) begin
-                  if(in_flash)
-                    statistics_icache_hit();
-                  else if(in_sdram)
-                    statistics_dcache_hit();
-                  // $display("cache hit addr: 0x%x", araddr_icache_o);
+                  if(toggle) begin
+                    toggle <= 'b0;
+                    if(in_flash)
+                      statistics_icache_hit();
+                    else if(in_sdram)
+                      statistics_dcache_hit();
+                    // $display("cache hit addr: 0x%x", araddr_icache_o);
+                  end
+                  else
+                    toggle <= 'b1;
               end
               else begin
                 // $display("cache miss addr: 0x%x", araddr_icache_o);
@@ -276,15 +326,16 @@ module ysyx_24080020_ICACHE(
               end
               else if(!fin_ar) begin
                   arvalid_icache_o <= 1'b1;
-                  if(in_sdram && use_icache) begin
+                  if(use_icache) begin
                     // burst trans in sdram
-                    araddr_icache_o <= {araddr_icache_o[31:2], 2'b0};
+                    araddr_icache_o <= araddr_icache_o & ~(cache_size - 32'b1);
+
                     arsize_icache_o <= 'b10;
                     arid_icache_o <= 'b0;
-                    arlen_icache_o <= 'd3;
+                    arlen_icache_o <= (cache_size >> 2) - 1;
                     arburst_icache_o <= 'b01;
 
-                    araddr_tmp <= {araddr_tmp[31:2], 2'b0};
+                    araddr_tmp <= araddr_tmp & ~(cache_size - 32'b1) ;
                   end
               end
           end
@@ -295,15 +346,18 @@ module ysyx_24080020_ICACHE(
                       rdata_tmp <= rdata_soc_i;
                       if(use_icache) begin
                           // update cache
-                          cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_data[cache_index_tmp] <= (cache_data[cache_index_tmp] & ~data_mask) | shift_wdata;
-                          cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (cache_offset_tmp >> 2));
-
                       end
 
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
                         araddr_tmp <= araddr_xbar_i;
+
+                        if(use_icache) begin
+                          fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+                          cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
+                          cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
+                        end
                       end
                       else begin
                         // update araddr to adapt burst transmit, it's for icache parameter
@@ -369,7 +423,7 @@ module ysyx_24080020_ICACHE(
 
       arready_icache_o <= 1'b1;
 
-      if(use_icache || 'b1) begin
+      if(use_icache) begin
         araddr_tmp <= araddr_xbar_i;
       end
 
