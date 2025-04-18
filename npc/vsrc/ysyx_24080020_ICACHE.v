@@ -90,7 +90,7 @@ module ysyx_24080020_ICACHE(
   localparam AXIR = AXIAR + 1;
   localparam AXIDone = AXIR + 1;  // not use cache, such as sram
 
-  reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit;
+  reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
   reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
 
@@ -266,6 +266,7 @@ module ysyx_24080020_ICACHE(
 
               fin_judge <= 'b0;
               is_hit <= 'b0;
+              update_fifo_index <= 'b0;
 
               rready_icache_o <= 'b0;
           end
@@ -345,12 +346,21 @@ module ysyx_24080020_ICACHE(
                       end
 
                       if(rlast_soc_i) begin
-                        fin_r <= 1'b1;
                         araddr_tmp <= araddr_xbar_i;
                         if(use_icache) begin
+                          update_fifo_index <= 'b1;
 
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
+
+                          if(update_fifo_index) begin
+                            fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+                            update_fifo_index <= 'b0;
+                            fin_r <= 'b1;
+                          end
+                        end
+                        else begin
+                          fin_r <= 'b1;
                         end
                       end
                       else begin
