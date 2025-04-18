@@ -286,6 +286,9 @@ module ysyx_24080020_ICACHE(
                 fin_judge <= 'b1;
               end
 
+              if(fin_judge) begin
+                fin_judge <= 'b0;
+              end
               // after cache, update fin_r
               if(fin_r) begin
                 fin_r <= 0;
@@ -295,9 +298,9 @@ module ysyx_24080020_ICACHE(
               rdata_tmp <= shift_rdata[31:0];
               all_fin <= 'b1;
 
-              if(fin_judge) begin
-                fin_judge <= 'b0;
-              end
+              // if(fin_judge) begin
+              //   fin_judge <= 'b0;
+              // end
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
               if(!fin_r) begin
@@ -314,9 +317,9 @@ module ysyx_24080020_ICACHE(
           end
           CMISS: begin
               // do nothing
-              if(fin_judge) begin
-                fin_judge <= 'b0;
-              end
+              // if(fin_judge) begin
+              //   fin_judge <= 'b0;
+              // end
           end
           AXIAR: begin
               if(arready_soc_i && arvalid_icache_o) begin
