@@ -175,6 +175,7 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
       if(!rst) begin
           current_state <= 'b0;
+          tag_index <= 'b0;
           for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
@@ -265,7 +266,6 @@ module ysyx_24080020_ICACHE(
 
               fin_judge <= 'b0;
               is_hit <= 'b0;
-              tag_index <= 'b0;
 
               rready_icache_o <= 'b0;
           end
@@ -280,6 +280,7 @@ module ysyx_24080020_ICACHE(
                 end
               end
               else begin
+                tag_index <= 'b0;
                 is_hit <= 'b0;
                 fin_judge <= 'b1;
               end
