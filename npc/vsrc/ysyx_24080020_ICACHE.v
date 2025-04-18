@@ -285,6 +285,11 @@ module ysyx_24080020_ICACHE(
                 fin_judge <= 'b1;
               end
 
+              // after cache, update fifo_index
+              if(fin_r) begin
+                fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+                fin_r <= 0;
+              end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
@@ -343,7 +348,7 @@ module ysyx_24080020_ICACHE(
                         fin_r <= 1'b1;
                         araddr_tmp <= araddr_xbar_i;
                         if(use_icache) begin
-                          fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
+
                           cache_tag[cache_index_tmp] <= (cache_tag[cache_index_tmp] & ~tag_mask) | shift_wtag;
                           cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] | (1 << (fifo_index[cache_index_tmp]));
                         end
