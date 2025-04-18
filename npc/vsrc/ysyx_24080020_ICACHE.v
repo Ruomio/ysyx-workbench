@@ -94,6 +94,8 @@ module ysyx_24080020_ICACHE(
   reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
 
+  reg toggle;
+
   wire use_icache;
   wire in_flash;
   wire in_mrom;
@@ -176,6 +178,7 @@ module ysyx_24080020_ICACHE(
       if(!rst) begin
           current_state <= 'b0;
           tag_index <= 'b0;
+          toggle <= 'b0;
           for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
@@ -297,11 +300,16 @@ module ysyx_24080020_ICACHE(
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
               if(!fin_r) begin
-                  if(in_flash)
-                    statistics_icache_hit();
-                  else if(in_sdram)
-                    statistics_dcache_hit();
-                  // $display("cache hit addr: 0x%x", araddr_icache_o);
+                  if(toggle) begin
+                    toggle <= 'b0;
+                    if(in_flash)
+                      statistics_icache_hit();
+                    else if(in_sdram)
+                      statistics_dcache_hit();
+                    // $display("cache hit addr: 0x%x", araddr_icache_o);
+                  end
+                  else
+                    toggle <= 'b1;
               end
               else begin
                 // $display("cache miss addr: 0x%x", araddr_icache_o);
