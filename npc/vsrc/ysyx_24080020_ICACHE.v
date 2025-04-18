@@ -146,7 +146,7 @@ module ysyx_24080020_ICACHE(
   assign cache_offset_tmp = {araddr_tmp[cache_size_bits-1 : 2], 2'b0};
 
 
-  assign shift_rdata = cache_data[cache_index_tmp] >> (tag_index << (5 + cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
+  assign shift_rdata = cache_data[cache_index_tmp] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (5 + cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
   assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << 5 << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
   assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
@@ -154,9 +154,9 @@ module ysyx_24080020_ICACHE(
   // assign shift_rtag = (cache_tag[cache_index_tmp] & tag_mask) >> (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
   // assign shift_wtag = ({{tag_complete_bits{1'b0}}, cache_tag_tmp} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size));
   // assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
-  assign shift_rtag = (cache_tag[cache_index_tmp] >> (tag_index * cache_tag_width)) & ({ {tag_complete_bits{1'b0}}, {cache_tag_width{1'b1}} });
-  assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_tmp} << (fifo_index[cache_index_tmp] * cache_tag_width);
-  assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << (fifo_index[cache_index_tmp] * cache_tag_width);
+  assign shift_rtag = (cache_tag[cache_index_tmp] >> ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, tag_index} * cache_tag_width)) & ({ {tag_complete_bits{1'b0}}, {cache_tag_width{1'b1}} });
+  assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_tmp} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]} * cache_tag_width);
+  assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]} * cache_tag_width);
 
   assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
                      && ((cache_valid[cache_index_tmp] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
