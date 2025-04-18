@@ -286,12 +286,8 @@ module ysyx_24080020_ICACHE(
                 fin_judge <= 'b1;
               end
 
-              if(fin_judge) begin
-                fin_judge <= 'b0;
-              end
-              // after cache, update fin_r
-              // if(fin_r) begin
-              //   fin_r <= 0;
+              // if(fin_judge) begin
+              //   fin_judge <= 'b0;
               // end
           end
           CHIT: begin
