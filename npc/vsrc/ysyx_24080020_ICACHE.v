@@ -198,12 +198,16 @@ module ysyx_24080020_ICACHE(
               end
           end
           JUDGE: begin
-              if(fin_judge && is_hit && use_icache) begin
-                  next_state = CHIT;
+              if(fin_judge) begin
+                  if(is_hit && use_icache) begin
+                      next_state = CHIT;
+                  end
+                  else begin
+                      next_state = CMISS;
+                  end
               end
-              else begin
-                  next_state = CMISS;
-              end
+              else
+                  next_state = JUDGE;
           end
           CHIT: begin
               if(all_fin) begin
