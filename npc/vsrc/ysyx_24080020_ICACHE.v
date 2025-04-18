@@ -408,7 +408,7 @@ module ysyx_24080020_ICACHE(
 
       arready_icache_o <= 1'b1;
 
-      if(use_icache || 'b1) begin
+      if(use_icache) begin
         araddr_tmp <= araddr_xbar_i;
       end
 
