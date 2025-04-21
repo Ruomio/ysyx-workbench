@@ -323,7 +323,7 @@ static void statistic() {
 
   if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
   Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average: %ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
-  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, AVE TMT: %ld", ifu_icache_hit_cnt, ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt), 3*(ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt)) + 2466*(1-(ifu_icache_hit_cnt * 1.0 / (ifu_get_inst_cnt))), ifu_icache_miss_cycles / ifu_icache_miss_cnt );
+  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, AVE TMT: %ld", ifu_icache_hit_cnt, ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt), 3*(ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt)) + (ifu_icache_miss_cycles*1.0/ifu_icache_miss_cnt)*(1-(ifu_icache_hit_cnt * 1.0 / (ifu_get_inst_cnt))), ifu_icache_miss_cycles / ifu_icache_miss_cnt );
   Log("dcache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%% ", dcache_hit_cnt, dcache_hit_cnt * 100.0 / (ifu_get_inst_cnt) );
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
