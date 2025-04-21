@@ -12,12 +12,12 @@ CacheSim::CacheSim(std::string path) {
     cache_hit = 0;
     cache_miss = 0;
     inst_cnt = 0;
-    fifo_index = 0;
 
     cachesize = CACHE_SIZE;
     cachenum = CACHE_NUM;
     cacheway = CACHE_WAY;
 
+    fifo_index = std::vector<uint32_t>(cachenum, 0);
     cache_tag = std::vector<std::vector<uint32_t>>(cachenum, std::vector<uint32_t>(cacheway, 0));
     cache_valid = std::vector<std::vector<bool>>(cachenum, std::vector<bool>(cacheway, false));
     cache_data = new std::vector<std::vector<std::vector<uint32_t>>>(cachenum, std::vector<std::vector<uint32_t>>(cacheway, std::vector<uint32_t>(cachesize/4, 0)));
@@ -109,15 +109,15 @@ void CacheSim::run_simulation() {
             uint32_t index = (address / cachesize) % cachenum;
             uint32_t tag = address / cachesize / cachenum;
 
-            cache_valid[index][fifo_index] = true;
-            cache_tag[index][fifo_index] = tag;
+            cache_valid[index][fifo_index[index]] = true;
+            cache_tag[index][fifo_index[index]] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
             for(uint32_t i=0; i<cachesize/4; i++) {
               // printf("save cache data: 0x%x\n", address);
-              (*cache_data)[index][fifo_index][i] = address;
+              (*cache_data)[index][fifo_index[index]][i] = address;
               address += 0x4;
             }
-            fifo_index = (fifo_index+1) % cacheway;
+            fifo_index[index] = (fifo_index[index]+1) % cacheway;
             // printf("access soc done\n");
         }
     }
