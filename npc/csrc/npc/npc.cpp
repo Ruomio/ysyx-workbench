@@ -339,7 +339,7 @@ static void statistic() {
   float icache_miss_rate =  1.0 - icache_hit_rate;
 
   Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average: %ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
-  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, TMT: %.2f", ifu_icache_hit_cnt, icache_hit_rate, icache_hit_rate * access_time + icache_miss_rate * miss_time, miss_time );
+  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, TMT: %.2f", ifu_icache_hit_cnt, icache_hit_rate * 100.0, icache_hit_rate * access_time + icache_miss_rate * miss_time, miss_time );
   Log("dcache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%% ", dcache_hit_cnt, dcache_hit_cnt * 100.0 / (ifu_get_inst_cnt) );
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
