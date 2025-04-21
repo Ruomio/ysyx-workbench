@@ -609,7 +609,7 @@ extern "C" void statistics_dcache_hit() {
 }
 
 extern "C" void statistics_icache_miss() {
-  printf("ifu_icache_miss_cnt: %ld  pc: 0x%x \n", ifu_icache_miss_cnt, g_pc);
+  // printf("ifu_icache_miss_cnt: %ld  pc: 0x%x \n", ifu_icache_miss_cnt, g_pc);
   idu_type = Icache_Miss;
   ifu_icache_miss_cnt ++;
 }
