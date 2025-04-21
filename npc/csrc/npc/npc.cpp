@@ -596,7 +596,7 @@ extern "C" void statistics_idu_jump_type() {
 }
 
 extern "C" void statistics_icache_hit() {
-  printf("ifu_icache_hit_cnt: %ld  pc: 0x%x \n", ifu_icache_hit_cnt, g_pc);
+  // printf("ifu_icache_hit_cnt: %ld  pc: 0x%x \n", ifu_icache_hit_cnt, g_pc);
   ifu_icache_hit_cnt ++;
 }
 

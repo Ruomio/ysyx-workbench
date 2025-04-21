@@ -26,9 +26,9 @@ CacheSim::CacheSim(std::string path) {
 
 CacheSim::~CacheSim() {
     print_results();
-    delete cache_data;
-    delete cache_tag;
-    delete cache_valid;
+    if(cache_tag) delete cache_tag;
+    if(cache_valid) delete cache_valid;
+    if(cache_data) delete cache_data;
 }
 
 int CacheSim::setCache_size_num(uint32_t size, uint32_t num, uint32_t way) {
