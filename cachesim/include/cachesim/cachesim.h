@@ -34,8 +34,8 @@ private:
     uint32_t cachenum;
     uint32_t cacheway;
     uint32_t cache_index;
-    std::vector<std::vector<bool>> cache_valid;
-    std::vector<std::vector<uint32_t>> cache_tag;
+    std::vector<std::vector<bool>> *cache_valid = nullptr;
+    std::vector<std::vector<uint32_t>> *cache_tag = nullptr;
     std::vector<std::vector<std::vector<uint32_t>>> *cache_data = nullptr;
     std::vector<uint32_t> fifo_index;
 };
