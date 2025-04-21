@@ -115,14 +115,14 @@ void CacheSim::run_simulation() {
             uint32_t index = (address / cachesize) % cachenum;
             uint32_t tag = address / cachesize / cachenum;
 
-            (*cache_valid)[index][fifo_index[index]] = true;
-            (*cache_tag)[index][fifo_index[index]] = tag;
             // Simulate storing data in the cache (for simplicity, just store the address)
             for(uint32_t i=0; i<cachesize/4; i++) {
               // printf("save cache data: 0x%x\n", address);
               (*cache_data)[index][fifo_index[index]][i] = address;
               address += 0x4;
             }
+            (*cache_valid)[index][fifo_index[index]] = true;
+            (*cache_tag)[index][fifo_index[index]] = tag;
             fifo_index[index] = (fifo_index[index]+1) % cacheway;
             // printf("fifo_index[%d]: %d\n", index, fifo_index[index]);
             // printf("access soc done\n");
