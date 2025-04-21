@@ -243,6 +243,7 @@ void exec_once_npc(uint32_t pc) {
       nvboard_update();
 #endif
 #endif
+      printf("idu_type: %d, at pc: 0x%x\n", idu_type, g_pc);
       switch(idu_type) {
         case None: break;
         case Calculate: idu_calculate_cycles++; break;
