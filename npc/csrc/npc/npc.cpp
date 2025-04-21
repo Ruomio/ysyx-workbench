@@ -92,7 +92,7 @@ static uint64_t idu_store_type_cnt = 0;
 static uint64_t idu_csr_type_cnt = 0;
 static uint64_t idu_jump_type_cnt = 0;
 
-enum idu_type{None=0, Calculate, Load, Store, CSR, Jump, Fetch, Icache_Miss};
+enum idu_type{None=0, Calculate, Load, Store, CSR, Jump, Fetch, Icache_Hit, Icache_Miss};
 static int idu_type = None;
 static uint64_t idu_calculate_cycles = 0;
 static uint64_t idu_load_cycles = 0;
@@ -100,6 +100,7 @@ static uint64_t idu_store_cycles = 0;
 static uint64_t idu_csr_cycles = 0;
 static uint64_t idu_jump_cycles = 0;
 static uint64_t ifu_get_inst_cycles = 0;
+static uint64_t ifu_icache_hit_cycles = 0;
 static uint64_t ifu_icache_miss_cycles = 0;
 
 #ifdef CONFIG_LIGHTSSS
@@ -250,7 +251,16 @@ void exec_once_npc(uint32_t pc) {
         case CSR: idu_csr_cycles++; break;
         case Jump: idu_jump_cycles++; break;
 
-        case Icache_Miss: ifu_icache_miss_cycles++;
+        case Icache_Hit: {
+          ifu_icache_hit_cycles++;
+          ifu_get_inst_cycles++;
+          break;
+        }
+        case Icache_Miss: {
+          ifu_icache_miss_cycles++;
+          ifu_get_inst_cycles++;
+          break;
+        }
         case Fetch: ifu_get_inst_cycles++; break;
         default: break;
       }
@@ -322,8 +332,13 @@ static void statistic() {
   Log("total_cycles = " NUMBERIC_FMT "  IPC = %lf", total_cycles, ((double)g_nr_guest_inst / total_cycles));
 
   if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
+  float access_time = ifu_icache_hit_cycles*1.0 / ifu_icache_hit_cnt;
+  float icache_hit_rate = ifu_icache_hit_cnt*1.0 / ifu_get_inst_cnt;
+  float miss_time = ifu_icache_miss_cycles*1.0 / ifu_icache_miss_cnt;
+  float icache_miss_rate =  1.0 - icache_hit_rate;
+
   Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average: %ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
-  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, AVE TMT: %ld", ifu_icache_hit_cnt, ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt), 3*(ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt)) + (ifu_icache_miss_cycles*1.0/ifu_icache_miss_cnt)*(1-(ifu_icache_hit_cnt * 1.0 / (ifu_get_inst_cnt))), ifu_icache_miss_cycles / ifu_icache_miss_cnt );
+  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, AVE TMT: %f", ifu_icache_hit_cnt, icache_hit_rate, icache_hit_rate * access_time + icache_miss_rate * miss_time, miss_time );
   Log("dcache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%% ", dcache_hit_cnt, dcache_hit_cnt * 100.0 / (ifu_get_inst_cnt) );
   Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
@@ -601,6 +616,7 @@ extern "C" void statistics_idu_jump_type() {
 
 extern "C" void statistics_icache_hit() {
   // printf("ifu_icache_hit_cnt: %ld  pc: 0x%x \n", ifu_icache_hit_cnt, g_pc);
+  idu_type = Icache_Hit;
   ifu_icache_hit_cnt ++;
 }
 
