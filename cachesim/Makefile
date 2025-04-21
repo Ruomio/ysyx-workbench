@@ -38,7 +38,7 @@ run: $(BIN)
 
 gdb:
 	@$(call git_commit, "gdb CacheSim")
-	gdb --args $(BIN) $(NEMU_HOME)/build/insts.txt $(SIZE) $(NUM)
+	gdb --args $(BIN) $(NEMU_HOME)/build/insts.txt $(SIZE) $(NUM) $(WAY)
 
 clean:
 	rm -rf build
