@@ -77,7 +77,6 @@ module ysyx_24080020_ICACHE(
 );
 
   `ifdef CONFIG_DPIC
-  import "DPI-C" function void statistics_ifu_get_inst();
   import "DPI-C" function void statistics_icache_hit();
   import "DPI-C" function void statistics_dcache_hit();
   `endif

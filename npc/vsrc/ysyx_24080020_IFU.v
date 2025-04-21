@@ -45,7 +45,6 @@ module ysyx_24080020_IFU (
 
     reg wb_ifu_shake_hands;
 
-    reg toggle;
 
     reg state; // 0: idle  ;  1: wait_ready
 
@@ -66,18 +65,14 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             ifu_idu_valid <= 1'b0;
-            toggle <= 'b0;
         end
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
             pc_ifu <= addr;
             `ifdef CONFIG_DPIC
             if(ifu_idu_valid) begin
-              toggle <= 'b0;
               statistics_ifu_get_inst();
             end
-            else
-              toggle <= 'b1;
             `endif
         end
         else begin
