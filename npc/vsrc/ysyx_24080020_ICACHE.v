@@ -225,7 +225,8 @@ module ysyx_24080020_ICACHE(
           CMISS: begin
               next_state = AXIAR;
               `ifdef CONFIG_DPIC
-              statistics_icache_miss();
+              if(in_flash)
+                  statistics_icache_miss();
               `endif
           end
           AXIAR: begin
