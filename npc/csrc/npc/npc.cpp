@@ -214,7 +214,7 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(is_clk_high) {
       total_cycles++;
-      if(wait_cycles++ > 15000) {
+      if(wait_cycles++ > 20000) {
         printf("wait too many cycles, maybe dead loop\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
@@ -319,9 +319,9 @@ static void statistic() {
 
   if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
   Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average: %ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
-  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf", ifu_icache_hit_cnt / 2, ifu_icache_hit_cnt * 100.0 / (2 * ifu_get_inst_cnt), 3*(ifu_icache_hit_cnt * 100.0 / (2 * ifu_get_inst_cnt)) + 2466*(1-(ifu_icache_hit_cnt * 1.0 / (2 * ifu_get_inst_cnt))) );
-  Log("dcache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%% ", dcache_hit_cnt / 2, dcache_hit_cnt * 100.0 / (2 * ifu_get_inst_cnt) );
-  Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt / 2);
+  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf", ifu_icache_hit_cnt, ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt), 3*(ifu_icache_hit_cnt * 100.0 / (ifu_get_inst_cnt)) + 2466*(1-(ifu_icache_hit_cnt * 1.0 / (ifu_get_inst_cnt))) );
+  Log("dcache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%% ", dcache_hit_cnt, dcache_hit_cnt * 100.0 / (ifu_get_inst_cnt) );
+  Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
   Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
   Log("idu_calcu_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_calculate_type_cnt, idu_calculate_type_cnt * 100.0 / ifu_get_inst_cnt, idu_calculate_cycles / idu_calculate_type_cnt);
   Log("idu_load_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_load_type_cnt, idu_load_type_cnt * 100.0 / ifu_get_inst_cnt, idu_load_cycles / idu_load_type_cnt);
@@ -558,6 +558,7 @@ extern "C" void statistics_ifu_get_inst() {
 }
 
 extern "C" void statistics_lsu_get_data() {
+  // printf("lsu_get_data_cnt: %ld at pc: 0x%x\n", lsu_get_data_cnt, g_pc);
   lsu_get_data_cnt ++;
 }
 
