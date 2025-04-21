@@ -145,7 +145,7 @@ module ysyx_24080020_ICACHE(
 
   assign cache_tag_tmp = araddr_tmp[31 : cache_num_bits+cache_size_bits];
   assign cache_index_tmp = araddr_tmp[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-  assign cache_offset_tmp = cache_size >= 8 ? {araddr_tmp[cache_size_bits-1 : 2], 2'b0} : 'b0;
+  assign cache_offset_tmp = araddr_tmp[cache_size_bits-1 : 0];
 
 
   assign shift_rdata = cache_data[cache_index_tmp] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (5 + cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
