@@ -558,7 +558,7 @@ extern "C" void statistics_ifu_get_inst() {
 }
 
 extern "C" void statistics_lsu_get_data() {
-  // printf("lsu_get_data_cnt: %ld\n", lsu_get_data_cnt);
+  printf("lsu_get_data_cnt: %ld at pc: 0x%x\n", lsu_get_data_cnt, g_pc);
   lsu_get_data_cnt ++;
 }
 
