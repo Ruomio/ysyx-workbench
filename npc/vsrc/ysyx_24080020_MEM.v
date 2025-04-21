@@ -363,7 +363,8 @@ module ysyx_24080020_MEM(
                 arlen_cnt <= 1'b0;
             end
             `ifdef CONFIG_DPIC
-            statistics_lsu_get_data();
+            if(rready)
+              statistics_lsu_get_data();
             `endif
         end
         else if(rvalid && !rlast) begin
