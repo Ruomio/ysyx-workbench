@@ -552,13 +552,13 @@ extern "C" void npc_difftest_skip_ref() {
 }
 
 extern "C" void statistics_ifu_get_inst() {
-  // printf("ifu_get_inst_cnt: %ld pc: 0x%x , total_guest_inst: 0x%ld\n", ifu_get_inst_cnt, g_pc, g_nr_guest_inst);
+  printf("ifu_get_inst_cnt: %ld pc: 0x%x , total_guest_inst: 0x%ld\n", ifu_get_inst_cnt, g_pc, g_nr_guest_inst);
   idu_type = Fetch;
   ifu_get_inst_cnt ++;
 }
 
 extern "C" void statistics_lsu_get_data() {
-  printf("lsu_get_data_cnt: %ld at pc: 0x%x\n", lsu_get_data_cnt, g_pc);
+  // printf("lsu_get_data_cnt: %ld at pc: 0x%x\n", lsu_get_data_cnt, g_pc);
   lsu_get_data_cnt ++;
 }
 

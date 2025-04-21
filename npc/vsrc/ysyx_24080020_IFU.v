@@ -72,7 +72,7 @@ module ysyx_24080020_IFU (
             ifu_idu_valid <= 1'b1;
             pc_ifu <= addr;
             `ifdef CONFIG_DPIC
-            if(toggle) begin
+            if(ifu_idu_valid) begin
               toggle <= 'b0;
               statistics_ifu_get_inst();
             end
