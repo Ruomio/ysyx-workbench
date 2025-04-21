@@ -296,6 +296,9 @@ module ysyx_24080020_ICACHE(
               if(fin_judge) begin
                 fin_judge <= 'b0;
               end
+              if(is_hit) begin
+                araddr_tmp <= {araddr_xbar_i[31:2], 2'b0};
+              end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
