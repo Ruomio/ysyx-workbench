@@ -355,7 +355,7 @@ module ysyx_24080020_ICACHE(
 
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
-                        araddr_tmp <= {araddr_xbar_i[31, cache_size_bits], {cache_size_bits{1'b0}}};
+                        araddr_tmp <= {araddr_xbar_i[31 : cache_size_bits], {cache_size_bits{1'b0}}};
 
                         if(use_icache) begin
                           fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
