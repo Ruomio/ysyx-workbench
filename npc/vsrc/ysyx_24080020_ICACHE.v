@@ -1,5 +1,5 @@
 `define USE_ICACHE
-`define USE_DCACHE
+// `define USE_DCACHE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -78,6 +78,7 @@ module ysyx_24080020_ICACHE(
 
   `ifdef CONFIG_DPIC
   import "DPI-C" function void statistics_icache_hit();
+  import "DPI-C" function void statistics_icache_miss();
   import "DPI-C" function void statistics_dcache_hit();
   `endif
 `ifdef USE_ICACHE
@@ -223,6 +224,9 @@ module ysyx_24080020_ICACHE(
           end
           CMISS: begin
               next_state = AXIAR;
+              `ifdef CONFIG_DPIC
+              statistics_icache_miss();
+              `endif
           end
           AXIAR: begin
               if(fin_ar) begin
