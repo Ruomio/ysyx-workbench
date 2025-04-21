@@ -124,6 +124,7 @@ void CacheSim::run_simulation() {
               address += 0x4;
             }
             fifo_index[index] = (fifo_index[index]+1) % cacheway;
+            printf("fifo_index[index]: %d\n", fifo_index[index]);
             // printf("access soc done\n");
         }
     }
