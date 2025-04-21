@@ -593,7 +593,7 @@ extern "C" void statistics_idu_calculate_type() {
 }
 
 extern "C" void statistics_idu_load_type() {
-  printf("idu_load_store_cnt: %ld  pc: 0x%x \n", idu_load_type_cnt, g_pc);
+  // printf("idu_load_store_cnt: %ld  pc: 0x%x \n", idu_load_type_cnt, g_pc);
   idu_type = Load;
   idu_load_type_cnt ++;
 }
