@@ -401,7 +401,7 @@ module ysyx_24080020_ICACHE(
       cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
     end
     else if(awvalid_xbar_i && use_icache) begin
-      araddr_tmp <= awaddr_xbar_i;
+      araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
     end
 
 
