@@ -114,9 +114,7 @@ module ysyx_24080020_ICACHE(
   localparam cache_num_bits = $clog2(cache_num);
 
   localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
-  localparam cache_data_width = cache_size << 3;
-  localparam cache_data_ingroup_width = cache_data_width * cache_way;
-  // localparam cache_tag_width = cache_tag_size * (`ysyx_24080020_CACHE_SIZE >> 2);
+  localparam cache_data_ingroup_width = (cache_size << 3) * cache_way;
   localparam cache_tag_width = cache_tag_size;
   localparam cache_tag_ingroup_width = cache_tag_width * cache_way;
   localparam data_complete_bits = cache_data_ingroup_width - 32;
