@@ -110,7 +110,7 @@ module ysyx_24080020_ICACHE(
   localparam cache_num = `ysyx_24080020_CACHE_NUM;
 
   localparam cache_size_bits = $clog2(cache_size);
-  localparam cache_size_shift = $clog2(cache_size_bits);
+  localparam cache_size_shift = $clog2(cache_data_width);
   localparam cache_num_bits = $clog2(cache_num);
 
   localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
@@ -145,12 +145,12 @@ module ysyx_24080020_ICACHE(
 
   assign cache_tag_tmp = araddr_tmp[31 : cache_num_bits+cache_size_bits];
   assign cache_index_tmp = araddr_tmp[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-  assign cache_offset_tmp = {araddr_tmp[cache_size_bits-1 : 2], 2'b0};
+  assign cache_offset_tmp = araddr_tmp[cache_size_bits-1 : 0];
 
 
-  assign shift_rdata = cache_data[cache_index_tmp] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (5 + cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << 5 << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
-  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << (5 + cache_size_shift)) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign shift_rdata = cache_data[cache_index_tmp] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
 
   // assign shift_rtag = (cache_tag[cache_index_tmp] & tag_mask) >> (({{32-cache_size_bits{1'b0}}, cache_offset_tmp} >> 2) * cache_tag_size);
@@ -296,6 +296,9 @@ module ysyx_24080020_ICACHE(
               if(fin_judge) begin
                 fin_judge <= 'b0;
               end
+              if(is_hit) begin
+                araddr_tmp <= {araddr_xbar_i[31:2], 2'b0};
+              end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
@@ -355,7 +358,7 @@ module ysyx_24080020_ICACHE(
 
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
-                        araddr_tmp <= araddr_xbar_i;
+                        araddr_tmp <= {araddr_xbar_i[31 : 2], 2'b0};
 
                         if(use_icache) begin
                           fifo_index[cache_index_tmp] <= (fifo_index[cache_index_tmp] + 'b1) % cache_way;
@@ -398,7 +401,7 @@ module ysyx_24080020_ICACHE(
       cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
     end
     else if(awvalid_xbar_i && use_icache) begin
-      araddr_tmp <= awaddr_xbar_i;
+      araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
     end
 
 
