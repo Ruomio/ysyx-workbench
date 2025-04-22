@@ -273,6 +273,8 @@ module ysyx_24080020_ICACHE(
               is_hit <= 'b0;
               update_fifo_index <= 'b0;
 
+              tag_index <= 'b0;
+
               rready_icache_o <= 'b0;
           end
           JUDGE: begin
