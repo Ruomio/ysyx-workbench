@@ -110,7 +110,7 @@ module ysyx_24080020_ICACHE(
   localparam cache_num = `ysyx_24080020_CACHE_NUM;
 
   localparam cache_size_bits = $clog2(cache_size);
-  localparam cache_size_shift = $clog2(cache_data_width);
+  localparam cache_size_shift = $clog2(cache_size << 3);
   localparam cache_num_bits = $clog2(cache_num);
 
   localparam cache_tag_size = 32 - cache_size_bits - cache_num_bits;
