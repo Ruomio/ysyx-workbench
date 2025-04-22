@@ -22,7 +22,7 @@
 `endif
 
 // cache
-`define ysyx_24080020_CACHE_SIZE 32
+`define ysyx_24080020_CACHE_SIZE 12
 `define ysyx_24080020_CACHE_NUM 4
 `define ysyx_24080020_CACHE_WAY 4
 
