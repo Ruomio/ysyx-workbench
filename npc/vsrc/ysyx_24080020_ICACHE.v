@@ -93,7 +93,7 @@ module ysyx_24080020_ICACHE(
   localparam UPDATE_ICACHE = AXIB + 1;
 
   reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
-  reg update_icache, update_icache_done, need_update_icache;
+  reg update_icache, update_icache_done;
   reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
 
@@ -262,7 +262,7 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIB: begin
-              if(need_update_icache)
+              if(use_icache)
                   next_state = UPDATE_ICACHE;
               else
                   next_state = IDLE;
@@ -292,7 +292,6 @@ module ysyx_24080020_ICACHE(
 
               tag_index <= 'b0;
 
-              need_update_icache <= 'b0;
               update_icache <= 'b0;
               update_icache_done <= 'b0;
 
@@ -407,9 +406,7 @@ module ysyx_24080020_ICACHE(
               all_fin <= 1'b1;
           end
           AXIB: begin
-              if(use_icache) begin
-                need_update_icache <= 'b1;
-              end
+            // do nothing
           end
           UPDATE_ICACHE: begin
               if(update_icache) begin
