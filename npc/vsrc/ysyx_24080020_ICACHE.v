@@ -413,7 +413,7 @@ module ysyx_24080020_ICACHE(
           end
           UPDATE_ICACHE: begin
               if(update_icache) begin
-                  cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & (~{ {(cacheway-1){1'b0}} , 1'b1} << (fifo_index[cache_index_tmp]));
+                  cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & (~{ {(cache_way-1){1'b0}} , 1'b1} << (fifo_index[cache_index_tmp]));
                   update_icache_done <= 'b1;
               end
               else if(tag_index < cache_way) begin
