@@ -89,8 +89,11 @@ module ysyx_24080020_ICACHE(
   localparam AXIAR = CMISS + 1;
   localparam AXIR = AXIAR + 1;
   localparam AXIDone = AXIR + 1;  // not use cache, such as sram
+  localparam AXIB = AXIDone + 1;
+  localparam UPDATE_ICACHE = AXIB + 1;
 
   reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
+  reg update_icache, update_icache_done, need_update_icache;
   reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
 
@@ -196,6 +199,8 @@ module ysyx_24080020_ICACHE(
               if(r_en) begin
                   next_state = JUDGE;
               end
+              else if(bvalid_soc_i && bready_icache_o)
+                  next_state = AXIB;
               else begin
                   next_state = IDLE;
               end
@@ -256,6 +261,18 @@ module ysyx_24080020_ICACHE(
                   next_state = AXIDone;
               end
           end
+          AXIB: begin
+              if(need_update_icache)
+                  next_state = UPDATE_ICACHE;
+              else
+                  next_state = IDLE;
+          end
+          UPDATE_ICACHE: begin
+              if(update_icache_done)
+                  next_state = IDLE;
+              else
+                  next_state = UPDATE_ICACHE;
+          end
           default: begin
               next_state = IDLE;
           end
@@ -274,6 +291,10 @@ module ysyx_24080020_ICACHE(
               update_fifo_index <= 'b0;
 
               tag_index <= 'b0;
+
+              need_update_icache <= 'b0;
+              update_icache <= 'b0;
+              update_icache_done <= 'b0;
 
               rready_icache_o <= 'b0;
           end
@@ -385,6 +406,29 @@ module ysyx_24080020_ICACHE(
           AXIDone: begin
               all_fin <= 1'b1;
           end
+          AXIB: begin
+              if(use_icache) begin
+                need_update_icache <= 'b1;
+              end
+          end
+          UPDATE_ICACHE: begin
+              if(update_icache) begin
+                  cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & (~{ {(cacheway-1){1'b0}} , 1'b1} << (fifo_index[cache_index_tmp]));
+                  update_icache_done <= 'b1;
+              end
+              else if(tag_index < cache_way) begin
+                if(cache_hit) begin
+                  update_icache <= 'b1;
+                end
+                else begin
+                  tag_index <= tag_index + 'b1;
+                end
+              end
+              else begin
+                update_icache_done <= 'b1;
+              end
+
+          end
           default: begin
               // do nothing
           end
@@ -392,20 +436,20 @@ module ysyx_24080020_ICACHE(
   end
 
   // set icache invalid, when writing after reading.
-  always @(posedge clk) begin
-    if(!rst) begin
+  // always @(posedge clk) begin
+  //   if(!rst) begin
 
-    end
-    else if(bvalid_soc_i && use_icache && cache_hit) begin
-      // set invalid
-      cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
-    end
-    else if(awvalid_xbar_i && use_icache) begin
-      araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
-    end
+  //   end
+  //   else if(bvalid_soc_i && bready_icache_o && use_icache && cache_hit) begin
+  //     // set invalid
+  //     cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
+  //   end
+  //   else if(awvalid_xbar_i && use_icache) begin
+  //     araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
+  //   end
 
 
-  end
+  // end
 
   // AR
   always @(posedge clk) begin
@@ -461,6 +505,19 @@ module ysyx_24080020_ICACHE(
       rresp_icache_o <= 'b0;
     end
   end
+
+  // AW
+  always @(posedge clk) begin
+    if(!rst) begin
+
+    end
+    else if(awvalid_xbar_i && awready_icache_o) begin
+      araddr_tmp <= awaddr_xbar_i;
+    end
+
+  end
+
+
 `endif
 `ifndef USE_ICACHE
   // AR
