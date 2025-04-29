@@ -297,9 +297,9 @@ module ysyx_24080020_ICACHE(
                 fin_judge <= 'b1;
               end
 
-              // if(fin_judge) begin
-              //   fin_judge <= 'b0;
-              // end
+              if(fin_judge) begin
+                fin_judge <= 'b0;
+              end
               // if(is_hit) begin
               // end
           end
