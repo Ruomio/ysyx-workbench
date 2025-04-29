@@ -293,7 +293,7 @@ module ysyx_24080020_ICACHE(
               end
               else begin
                 tag_index <= 'b0;
-                is_hit <= 'b0;
+                // is_hit <= 'b0;
                 fin_judge <= 'b1;
               end
 
