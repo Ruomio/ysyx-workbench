@@ -278,26 +278,22 @@ module ysyx_24080020_ICACHE(
               rready_icache_o <= 'b0;
           end
           JUDGE: begin
-              if(tag_index < cache_way) begin
+              if(fin_judge) begin
+                araddr_tmp <= {araddr_xbar_i[31:2], 2'b0};
+                fin_judge <= 'b0;
+              end
+              else if(tag_index < cache_way) begin
                 if(cache_hit) begin
                   is_hit <= 'b1;
                   fin_judge <= 'b1;
                 end
-                else if(!fin_judge)begin
+                else begin
                   tag_index <= tag_index + 'b1;
                 end
               end
               else begin
                 tag_index <= 'b0;
-                is_hit <= 'b0;
                 fin_judge <= 'b1;
-              end
-
-              if(fin_judge) begin
-                fin_judge <= 'b0;
-              end
-              if(is_hit) begin
-                araddr_tmp <= {araddr_xbar_i[31:2], 2'b0};
               end
           end
           CHIT: begin
