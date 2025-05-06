@@ -293,15 +293,8 @@ module ysyx_24080020_ICACHE(
               end
               else begin
                 tag_index <= 'b0;
-                // is_hit <= 'b0;
                 fin_judge <= 'b1;
               end
-
-              // if(fin_judge) begin
-              //   fin_judge <= 'b0;
-              // end
-              // if(is_hit) begin
-              // end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
