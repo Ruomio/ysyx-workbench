@@ -470,7 +470,7 @@ module ysyx_24080020_ICACHE(
     if(!rst) begin
       flush_cache <= 'b0;
     end
-    else if(fencei_mem) begin
+    else if(fencei_mem && !flush_cache) begin
       flush_cache <= 'b1;
       num_index <= 'b0;
     end

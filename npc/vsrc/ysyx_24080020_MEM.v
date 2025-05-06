@@ -294,6 +294,9 @@ module ysyx_24080020_MEM(
 
             exu_mem_shake_hands <= 1'b0;
         end
+        else begin
+          fencei_mem <= 'b0;
+        end
     end
 
 
