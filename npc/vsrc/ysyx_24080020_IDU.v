@@ -24,6 +24,7 @@ module ysyx_24080020_IDU (
     // output reg [2:0] is_btype_idu,
     output reg is_csrtype_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
+    output reg fencei_idu,
 
     // csrs
     input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
@@ -163,6 +164,8 @@ module ysyx_24080020_IDU (
         wcsren_idu = 1'b0;
         wcsren2_idu = 1'b0;
 
+        fencei_idu = 'b0;
+
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
                 imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
@@ -265,6 +268,23 @@ module ysyx_24080020_IDU (
                 statistics_idu_load_type();
                 // $error(" ");
                 `endif
+            end
+
+            `ysyx_24080020_FENCEI_TYPE: begin
+              case(funct3)
+                `ysyx_24080020_FENCEI: begin
+                  fencei_idu = 'b1;
+                  `ifdef CONFIG_DPIC
+                  $display("fencei type.");
+                  `endif
+                end
+                default: begin
+                  `ifdef CONFIG_DPIC
+                  invalid_inst();
+                  `endif
+                end
+              endcase
+
             end
 
             `ysyx_24080020_S_TYPE: begin

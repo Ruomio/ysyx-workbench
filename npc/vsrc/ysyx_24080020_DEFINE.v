@@ -89,6 +89,8 @@
 `define ysyx_24080020_LBU 3'b100
 `define ysyx_24080020_LHU 3'b101
 
+`define ysyx_24080020_FENCEI_TYPE 7'b0001111
+`define ysyx_24080020_FENCHI 3'b001
 
 // R-TYPE
 `define ysyx_24080020_R_TYPE 7'b0110011

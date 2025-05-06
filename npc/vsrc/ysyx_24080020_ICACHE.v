@@ -4,6 +4,7 @@
 module ysyx_24080020_ICACHE(
   input clk,
   input rst,
+  input fencei_mem,
 
   // axi from lsu
   input arvalid_xbar_i,
@@ -93,6 +94,9 @@ module ysyx_24080020_ICACHE(
   reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
   reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
+
+  reg flush_cache;
+  reg [cache_num_bits-1:0] num_index;
 
   reg toggle;
 
@@ -201,7 +205,11 @@ module ysyx_24080020_ICACHE(
               end
           end
           JUDGE: begin
-              if(fin_judge) begin
+              if(flush_cache) begin
+                // wait flush cache
+                next_state = JUDGE;
+              end
+              else if(fin_judge) begin
                   if(is_hit && use_icache) begin
                       next_state = CHIT;
                   end
@@ -457,6 +465,30 @@ module ysyx_24080020_ICACHE(
       rresp_icache_o <= 'b0;
     end
   end
+
+  always @(posedge clk) begin
+    if(rst) begin
+      flush_cache <= 'b0;
+    end
+    else if(fencei_mem) begin
+      flush_cache <= 'b1;
+      num_index <= 'b0;
+    end
+  end
+
+  always @(posedge clk) begin
+    if(rst) begin
+      num_index <= 'b0;
+    end
+    else if(num_index >= cache_num) begin
+      flush_cache <= 'b0;
+    end
+    else if(flush_cache) begin
+      cache_valid[num_index] <= {cache_way{1'b0}};
+      num_index <= num_index + 'b1;
+    end
+  end
+
 `endif
 `ifndef USE_ICACHE
   // AR
