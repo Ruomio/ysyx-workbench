@@ -275,7 +275,7 @@ module ysyx_24080020_IDU (
                 `ysyx_24080020_FENCEI: begin
                   fencei_idu = 'b1;
                   `ifdef CONFIG_DPIC
-                  $display("fencei type.");
+                  // $display("fencei type.");
                   `endif
                 end
                 default: begin
