@@ -96,7 +96,7 @@ module ysyx_24080020_ICACHE(
   reg [31:0] rdata_tmp, araddr_tmp;
 
   reg flush_cache;
-  reg [cache_num_bits-1:0] num_index;
+  reg [cache_num_bits:0] num_index;
 
   reg toggle;
 
