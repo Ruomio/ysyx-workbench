@@ -169,6 +169,7 @@ extern "C" void flash_write(int32_t addr, int32_t strb, int32_t data) {
     len = 4;
   }
   paddr_write(addr | 0x30000000, len, data);
+  printf("flash_write addr: 0x%x, len: %d, data: 0x%x\n", addr | 0x30000000, len, data);
 }
 
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
