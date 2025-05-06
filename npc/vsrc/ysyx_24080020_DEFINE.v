@@ -8,7 +8,7 @@
 `endif
 
 `ifdef ysyxSoCFull
-`define ysyx_24080020_MBASE 32'h30000000
+`define ysyx_24080020_MBASE 32'ha0000000
 // IOE
 `define ysyx_24080020_CLINT_ADDR  32'h02000000
 `endif
