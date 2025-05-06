@@ -159,14 +159,14 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 }
 extern "C" void flash_write(int32_t addr, int32_t strb, int32_t data) {
   int len = 0;
-  if((strb & 0b1) == 0b1) {
-    len = 1;
+  if((strb & 0b1111) == 0b1111) {
+    len = 4;
   }
   else if((strb & 0b11) == 0b11) {
     len = 2;
   }
-  else if((strb & 0b1111) == 0b1111) {
-    len = 4;
+  else if((strb & 0b1) == 0b1) {
+    len = 1;
   }
   paddr_write(addr | 0x30000000, len, data);
   printf("flash_write addr: 0x%x, len: %d, data: 0x%x\n", addr | 0x30000000, len, data);
