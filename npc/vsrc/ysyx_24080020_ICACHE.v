@@ -284,6 +284,8 @@ module ysyx_24080020_ICACHE(
               tag_index <= 'b0;
 
               rready_icache_o <= 'b0;
+
+              num_index <= 'b0;
           end
           JUDGE: begin
               if(fin_judge) begin
