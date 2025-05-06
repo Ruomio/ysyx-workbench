@@ -467,7 +467,7 @@ module ysyx_24080020_ICACHE(
   end
 
   always @(posedge clk) begin
-    if(rst) begin
+    if(!rst) begin
       flush_cache <= 'b0;
     end
     else if(fencei_mem) begin
@@ -477,7 +477,7 @@ module ysyx_24080020_ICACHE(
   end
 
   always @(posedge clk) begin
-    if(rst) begin
+    if(!rst) begin
       num_index <= 'b0;
     end
     else if({{(32-cache_num_bits){1'b0}} ,num_index} >= cache_num) begin
