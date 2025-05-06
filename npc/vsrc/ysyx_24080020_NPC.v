@@ -94,6 +94,8 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] branch_src1_idu;
   // wire reg_dst_con_idu, reg_dst_con_exu;
 
+  // fence
+  wire fencei_idu, fencei_exu, fencei_mem;
 
   // reg
   wire wen_idu, wen_exu, wen_mem, wen_wb;
@@ -354,6 +356,7 @@ module ysyx_24080020_NPC(
         .is_jalr_idu(is_jalr_idu),
         .is_csrtype_idu(is_csrtype_idu),
         .dnpc_idu(dnpc_idu),
+        .fencei_idu(fencei_idu),
 
         .rcsrdata(rcsrdata),
         .rcsraddr(rcsraddr),
@@ -445,6 +448,9 @@ module ysyx_24080020_NPC(
         .wen_exu(wen_exu),
         .waddr_exu(waddr_exu),
 
+        .fencei_idu(fencei_idu),
+        .fencei_exu(fencei_exu),
+
         //memory
         .mwen_idu(mwen_idu),
         .mwmask_idu(mwmask_idu),
@@ -524,6 +530,9 @@ module ysyx_24080020_NPC(
         .dnpc_mem(dnpc_mem),
         .is_dnpc_exu(is_dnpc_exu),
         .is_dnpc_mem(is_dnpc_mem),
+
+        .fencei_exu(fencei_exu),
+        .fencei_mem(fencei_mem),
 
         // axi-lite
         .arvalid(arvalid_mem),
@@ -964,6 +973,7 @@ module ysyx_24080020_NPC(
     ysyx_24080020_ICACHE u_icache(
       .clk(clk),
       .rst(rst),
+      .fencei_mem(fencei_mem),
 
       // axi from lsu
       .arvalid_xbar_i(arvalid_xbar_i),

@@ -44,6 +44,9 @@ module ysyx_24080020_MEM(
     output reg is_dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
+    input fencei_exu,
+    output reg fencei_mem,
+
     // axi-full
     output reg arvalid,
     output reg [3:0] arid,
@@ -279,6 +282,8 @@ module ysyx_24080020_MEM(
             wcsraddr2_mem <= wcsraddr2_exu;
             wcsrdata2_mem <= wcsrdata2_exu;
 
+            fencei_mem <= fencei_exu;
+
             // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin
                 mem_wb_valid <= 1'b1;
@@ -288,6 +293,9 @@ module ysyx_24080020_MEM(
             end
 
             exu_mem_shake_hands <= 1'b0;
+        end
+        else begin
+          fencei_mem <= 'b0;
         end
     end
 

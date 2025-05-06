@@ -16,6 +16,8 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg is_dnpc_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    input fencei_idu,
+    output reg fencei_exu,
 
     // alu
     input alu_src2_con_idu,
@@ -173,6 +175,8 @@ module ysyx_24080020_EXU
                 is_csrtype_exu <= is_csrtype_idu;
 
                 cnt <= 1'b1;
+
+                fencei_exu <= fencei_idu;
 
                 // exu_mem_valid <= 1'b1;
             end
