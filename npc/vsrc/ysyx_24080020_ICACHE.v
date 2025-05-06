@@ -96,7 +96,7 @@ module ysyx_24080020_ICACHE(
   reg [31:0] rdata_tmp, araddr_tmp;
 
   reg flush_cache;
-  reg [cache_num_bits-1:0] num_index;
+  reg [cache_num-1:0] num_index;
 
   reg toggle;
 
@@ -480,12 +480,12 @@ module ysyx_24080020_ICACHE(
     if(!rst) begin
       num_index <= 'b0;
     end
-    else if({{(32-cache_num_bits){1'b0}} ,num_index} == cache_num - 'b1) begin
+    else if({{(32-cache_num){1'b0}}, num_index} == cache_num - 'b1) begin
       flush_cache <= 'b0;
     end
     else if(flush_cache) begin
       cache_valid[num_index] <= {cache_way{1'b0}};
-      num_index <= {{(32-cache_num_bits){1'b0}} ,num_index} != cache_num - 'b1 ? num_index + 'b1 : num_index;
+      num_index <= num_index + 'b1;
     end
   end
 
