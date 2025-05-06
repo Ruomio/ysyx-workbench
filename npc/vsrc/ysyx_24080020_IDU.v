@@ -284,7 +284,6 @@ module ysyx_24080020_IDU (
                   `endif
                 end
               endcase
-
             end
 
             `ysyx_24080020_S_TYPE: begin
