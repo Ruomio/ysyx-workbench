@@ -447,6 +447,8 @@ module ysyx_24080020_NPC(
         .wdata_idu(wdata_idu),
         .wen_exu(wen_exu),
         .waddr_exu(waddr_exu),
+
+        .fencei_idu(fencei_idu),
         .fencei_exu(fencei_exu),
 
         //memory
@@ -528,6 +530,8 @@ module ysyx_24080020_NPC(
         .dnpc_mem(dnpc_mem),
         .is_dnpc_exu(is_dnpc_exu),
         .is_dnpc_mem(is_dnpc_mem),
+
+        .fencei_exu(fencei_exu),
         .fencei_mem(fencei_mem),
 
         // axi-lite
