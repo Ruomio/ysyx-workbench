@@ -484,7 +484,7 @@ module ysyx_24080020_ICACHE(
       flush_cache <= 'b0;
     end
     else if(flush_cache) begin
-      cache_valid[num_index] <= {cache_way{1'b0}};
+      cache_valid[num_index[cache_num_bits-1:0]] <= {cache_way{1'b0}};
       num_index <= num_index + 'b1;
     end
   end
