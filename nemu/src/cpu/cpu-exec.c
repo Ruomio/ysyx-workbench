@@ -35,6 +35,8 @@ static bool g_print_step = false;
 void device_update();
 void dtrace_free();
 void etrace_close();
+void MtraceBuf_add_arrow();
+void MtraceBuf_save();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -99,6 +101,7 @@ static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
   IFDEF(CONFIG_DTRACE_COND, dtrace_free());
   IFDEF(CONFIG_ETRACE_COND, etrace_close());
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_add_arrow(); MtraceBuf_save());
   if(nemu_state.state == NEMU_ABORT) {IFDEF(CONFIG_ITRACE, RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file(););}
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
