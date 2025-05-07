@@ -20,16 +20,18 @@ int main(int argc, char **argv) {
 
     // decide icache or decache
     if(argv[5]) {
-      if( strcmp(argv[5], "ICACHE") == 0) {
-        cachesim.setMode(0);
+        if( strcmp(argv[5], "ICACHE") == 0) {
+            cachesim.setMode(0);
+            printf("ICache Sim.\n");
+        }
+        else {
+            printf("%s\n", argv[5]);
+            cachesim.setMode(1);
+            printf("DCache Sim.\n");
+        }
+    }
+    else {
         printf("ICache Sim.\n");
-      } else {
-          printf("%s\n", argv[5]);
-        cachesim.setMode(1);
-        printf("DCache Sim.\n");
-      }
-    } else {
-      printf("ICache Sim.\n");
     }
 
     cachesim.run_simulation();
