@@ -107,7 +107,7 @@ void CacheSim::run_simulation() {
 
     uint32_t address = 0;
     std::string line;
-    std::regex addr_pattern("[x0-9a-z]");
+    std::regex addr_pattern("[x0-9a-z]+");
     std::regex r_pattern("r");
     std::smatch matches;
 
