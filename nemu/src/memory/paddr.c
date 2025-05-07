@@ -44,6 +44,7 @@ static uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
     memset(MtraceBuf.m_buffer[idx], 0, 64);
     memset(MtraceBuf.m_buffer[idx], ' ', 3);
     sprintf((char *)MtraceBuf.m_buffer[idx]+3, "0x%08x    %d    0x%08x", addr, len, data);
+    printf("%s\n", MtraceBuf.m_buffer[idx]);
     MtraceBuf.idx = (idx+1)%64;
   }
 
@@ -102,7 +103,7 @@ static word_t soc_ioe_read(paddr_t addr, int len) {
   }
   else if(addr >= 0x10000000 && addr <= 0x10000fff) {
     // uart
-    // lsr, 
+    // lsr,
     if(addr == 0x10000005) {
       return 0x21;
     }
