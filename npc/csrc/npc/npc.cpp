@@ -324,6 +324,8 @@ static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
   IFDEF(CONFIG_DTRACE_COND, dtrace_free());
   IFDEF(CONFIG_ETRACE_COND, etrace_close());
+  IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
+  IFDEF(CONFIG_FTRACE, close_ftrace());
   if(u_npc_state.state == NPC_ABORT) {IFDEF(CONFIG_ITRACE, RingBuffer_add_arrow(); RingBuffer_print(); RingBuffer_save_file(););}
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
@@ -413,8 +415,6 @@ void exec_npc(uint64_t n) {
 }
 
 void free_npc() {
-  IFDEF(CONFIG_MTRACE, MtraceBuf_add_arrow(); MtraceBuf_save());
-  IFDEF(CONFIG_FTRACE, close_ftrace());
   if(top) {
     top->final();
     delete top;

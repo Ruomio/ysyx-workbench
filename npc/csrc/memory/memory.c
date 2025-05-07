@@ -42,6 +42,7 @@ uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
   }
 
   void MtraceBuf_save() {
+    printf("Mtrace save\n");
     FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/npc/build/mtrace-log.txt", "w");
     for(int i=0; i<MtraceBuf.idx; i++) {
       if(strlen((char *)MtraceBuf.m_buffer[i]) != 0) {
