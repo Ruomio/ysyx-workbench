@@ -118,7 +118,6 @@ void CacheSim::run_simulation() {
         // printf("line: %s\n", line.c_str());
         if(std::regex_search(line, matches, addr_pattern)) {
             address = static_cast<uint32_t>(std::stoul(matches[0], nullptr, 16));
-            printf("address: 0x%x\n", address);
         }
         if(std::regex_match(line, r_pattern)) {
             rw_ = 0;
@@ -126,6 +125,7 @@ void CacheSim::run_simulation() {
         else {
             rw_ = 1;
         }
+        printf("address: 0x%x   r/w: %d\n", address, rw_);
 
         inst_cnt++;
 
