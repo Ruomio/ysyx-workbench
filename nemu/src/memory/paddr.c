@@ -59,9 +59,9 @@ static uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
       Assert(0, "open mtrace file fail\n");
     }
     for(int i=0; i<MtraceBuf.idx; i++) {
+      printf("%s\n", MtraceBuf.m_buffer[i]);
       if(strlen((char *)MtraceBuf.m_buffer[i]) != 0) {
         fprintf(fp, "%s\n", MtraceBuf.m_buffer[i]);
-        printf("%s\n", MtraceBuf.m_buffer[i]);
       }
     }
     fclose(fp);
