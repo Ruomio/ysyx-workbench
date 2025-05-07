@@ -107,7 +107,7 @@ void CacheSim::run_simulation() {
 
     uint32_t address = 0;
     std::string line;
-    std::regex addr_pattern("[x0-9a-z]{8}");
+    std::regex addr_pattern("[x0-9a-z]{10}");
     std::regex r_pattern("r");
     std::smatch matches;
 
@@ -115,7 +115,7 @@ void CacheSim::run_simulation() {
 
     while (std::getline(inst_file, line)) {
         if(line.empty()) return;
-        printf("line: %s\n", line.c_str());
+        // printf("line: %s\n", line.c_str());
         if(std::regex_search(line, matches, addr_pattern)) {
             address = static_cast<uint32_t>(std::stoul(matches[0], nullptr, 16));
             printf("address: 0x%x\n", address);
