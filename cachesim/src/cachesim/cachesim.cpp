@@ -126,7 +126,7 @@ void CacheSim::run_simulation() {
 
         inst_cnt++;
 
-        if(rw_ == 1) {
+        if(rw_ == 1 && mode == 1) {
             // write, need invalid cache block
             address = address & ~(cachesize-1);
             uint32_t index = (address / cachesize) % cachenum;
