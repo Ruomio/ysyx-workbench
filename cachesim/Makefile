@@ -1,10 +1,10 @@
 insts_file = $(NEMU_HOME)/build/insts.txt
 load_store_file = $(NEMU_HOME)/build/mtrace-full-log.txt
 
-ifeq ($(MODE), "DCACHE")
-file = $(load_store_file)
+ifeq ($(MODE),DCACHE)
+file := $(load_store_file)
 else
-file = $(insts_file)
+file := $(insts_file)
 endif
 
 CC = g++
