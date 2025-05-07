@@ -10,6 +10,7 @@
 CacheSim::CacheSim(std::string path) {
     inst_file_path = path;
 
+    mode = 0;
     cache_hit = 0;
     cache_miss = 0;
     inst_cnt = 0;
