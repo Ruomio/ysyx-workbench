@@ -69,6 +69,7 @@ void CacheSim::print_results() {
 }
 
 bool CacheSim::is_cachehit(uint32_t address) {
+    address &= 0xfffffffc;
   // Calculate cache index and tag
   uint32_t index = (address / cachesize) % cachenum;
   uint32_t tag = address / cachesize / cachenum;
