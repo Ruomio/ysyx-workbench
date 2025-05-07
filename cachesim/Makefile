@@ -43,11 +43,11 @@ $(BIN): $(OBJS)
 
 run: $(BIN)
 	@$(call git_commit, "run CacheSim")
-	@$(BIN) $(file) $(SIZE) $(NUM) $(WAY)
+	@$(BIN) $(file) $(SIZE) $(NUM) $(WAY) $(MODE)
 
 gdb:
 	@$(call git_commit, "gdb CacheSim")
-	gdb --args $(BIN) $(file) $(SIZE) $(NUM) $(WAY)
+	gdb --args $(BIN) $(file) $(SIZE) $(NUM) $(WAY) $(MODE)
 
 clean:
 	rm -rf build
