@@ -54,11 +54,7 @@ static uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
 
   void MtraceBuf_save() {
     FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/mtrace-log.txt", "w");
-    if(!fp) {
-      assert(0);
-    }
     for(int i=0; i<MtraceBuf.idx; i++) {
-      printf("%s\n", MtraceBuf.m_buffer[i]);
       if(strlen((char *)MtraceBuf.m_buffer[i]) != 0) {
         fprintf(fp, "%s\n", MtraceBuf.m_buffer[i]);
       }
