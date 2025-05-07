@@ -17,7 +17,6 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-#include <memory/paddr.h>
 
 #include "../../src/monitor/sdb/sdb.h"
 #include "difftest-def.h"
@@ -36,6 +35,8 @@ static bool g_print_step = false;
 void device_update();
 void dtrace_free();
 void etrace_close();
+void MtraceBuf_add_arrow();
+void MtraceBuf_save();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND

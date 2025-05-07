@@ -39,12 +39,28 @@ static uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
     int idx;
   }MtraceBuf = {.m_buffer={}, .idx = 0};
 
-  void MtraceBuf_write(paddr_t addr, int len, word_t data) {
+  void MtraceBuf_write(paddr_t addr, int len, word_t data, bool flag) {
+    // do not record insts.
+  #if defined(CONFIG_IS_SRAM) || defined(CONFIG_IS_PSRAM) || defined(CONFIG_IS_SDRAM)
+    if(addr >= CONFIG_MBASE && addr <= CONFIG_MBASE + CONFIG_MSIZE) return;
+  #endif
+
     int idx = MtraceBuf.idx;
     memset(MtraceBuf.m_buffer[idx], 0, 64);
     memset(MtraceBuf.m_buffer[idx], ' ', 3);
-    sprintf((char *)MtraceBuf.m_buffer[idx]+3, "0x%08x    %d    0x%08x", addr, len, data);
+    if(flag) {
+      sprintf((char *)MtraceBuf.m_buffer[idx]+3, "0x%08x  w:%d    0x%08x", addr, len, data);
+    }
+    else {
+      sprintf((char *)MtraceBuf.m_buffer[idx]+3, "0x%08x  r:%d", addr, len);
+    }
+
     MtraceBuf.idx = (idx+1)%64;
+
+    FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/mtrace-full-log.txt", "a");
+    fseek(fp, 0, SEEK_END);
+    fprintf(fp, "%s\n", MtraceBuf.m_buffer[idx]);
+    fclose(fp);
   }
 
   void MtraceBuf_add_arrow() {
@@ -53,7 +69,7 @@ static uint8_t sdram[CONFIG_SDRAM_SIZE] = {};
   }
 
   void MtraceBuf_save() {
-    FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/mtrace-log.txt", "w");
+    FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/mtrace-log.txt", "w+");
     for(int i=0; i<MtraceBuf.idx; i++) {
       if(strlen((char *)MtraceBuf.m_buffer[i]) != 0) {
         fprintf(fp, "%s\n", MtraceBuf.m_buffer[i]);
@@ -147,10 +163,17 @@ void init_mem() {
   }
 #endif
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
+
+
+#ifdef CONFIG_MTRACE_COND
+  // clear file
+  FILE *fp = fopen("/home/papillon/Documents/All_codes/ysyx-workbench/nemu/build/mtrace-full-log.txt", "w");
+  fclose(fp);
+#endif
 }
 
 word_t paddr_read(paddr_t addr, int len) {
-  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0));
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, 0, 0));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_ADAPT_SOC, return soc_ioe_read(addr, len));
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
@@ -159,7 +182,7 @@ word_t paddr_read(paddr_t addr, int len) {
 }
 
 void paddr_write(paddr_t addr, int len, word_t data) {
-  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, data));
+  IFDEF(CONFIG_MTRACE_COND, MtraceBuf_write(addr, len, data, 1));
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_ADAPT_SOC, soc_ioe_write(addr, len, data); return);
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);

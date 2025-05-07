@@ -3,6 +3,7 @@
 #include <cassert>
 #include <fstream>
 #include <vector>
+#include <regex>
 
 #include "cachesim.h"
 
@@ -31,6 +32,11 @@ CacheSim::~CacheSim() {
     if(cache_data) delete cache_data;
 }
 
+int CacheSim::setMode(bool mode) {
+  this->mode = mode;
+  return 0;
+}
+
 int CacheSim::setCache_size_num(uint32_t size, uint32_t num, uint32_t way) {
     cachesize = size;
     cachenum = num;
@@ -49,9 +55,16 @@ void CacheSim::print_results() {
   double miss_rate = cache_miss*1.0/inst_cnt;
     std::cout << "Total_insts: " << inst_cnt << std::endl;
     assert(inst_cnt > 0);
-    std::cout << "ICache_Hit: " << cache_hit << " Percentage:" << hit_rate * 100 << "%" << std::endl;
-    std::cout << "ICacche_Miss: " << cache_miss << " Percentage:" << miss_rate * 100 << "%" << std::endl;
-    std::cout << "ICache: " << "AMAT: " << HIT_CYCLES * hit_rate + MISS_CYCLES * miss_rate << " TMT: " << MISS_CYCLES * cache_miss << std::endl;
+    if(!mode) {
+      std::cout << "ICache_Hit: " << cache_hit << " Percentage:" << hit_rate * 100 << "%" << std::endl;
+      std::cout << "ICache_Miss: " << cache_miss << " Percentage:" << miss_rate * 100 << "%" << std::endl;
+      std::cout << "ICache: " << "AMAT: " << HIT_CYCLES * hit_rate + MISS_CYCLES * miss_rate << " TMT: " << MISS_CYCLES * cache_miss << std::endl;
+    }
+    else {
+      std::cout << "DCache_Hit: " << cache_hit << " Percentage:" << hit_rate * 100 << "%" << std::endl;
+      std::cout << "DCache_Miss: " << cache_miss << " Percentage:" << miss_rate * 100 << "%" << std::endl;
+      std::cout << "DCache: " << "AMAT: " << HIT_CYCLES * hit_rate + MISS_CYCLES * miss_rate << " TMT: " << MISS_CYCLES * cache_miss << std::endl;
+    }
 }
 
 bool CacheSim::is_cachehit(uint32_t address) {
@@ -84,22 +97,48 @@ bool CacheSim::is_cachehit(uint32_t address) {
 }
 
 void CacheSim::run_simulation() {
+
     std::ifstream inst_file(inst_file_path);
     if (!inst_file.is_open()) {
         std::cerr << "Error opening instruction file: " << inst_file_path << std::endl;
         return;
     }
 
-    uint32_t address;
+    uint32_t address = 0;
     std::string line;
+    std::regex addr_pattern("^[x0-9a-z]{8}");
+    std::regex r_pattern("r");
+    std::smatch matches;
+
+    bool rw_ = 0;
+
     while (std::getline(inst_file, line)) {
         if(line.empty()) return;
-        if(line.back() == ':') {
-            line.pop_back();
+        if(std::regex_search(line, matches, addr_pattern)) {
+            address = static_cast<uint32_t>(std::stoul(matches[0], nullptr, 16));
         }
-        address = static_cast<uint32_t>(std::stoul(line, nullptr, 16));
+        if(std::regex_match(line, r_pattern)) {
+            rw_ = 0;
+        }
+        else {
+            rw_ = 1;
+        }
 
         inst_cnt++;
+
+        if(rw_ == 1) {
+            // write, need invalid cache block
+            address = address & ~(cachesize-1);
+            uint32_t index = (address / cachesize) % cachenum;
+            uint32_t tag = address / cachesize / cachenum;
+
+            for(int i=0; i<CACHE_WAY; i++) {
+                if((*cache_tag)[index][i] == tag) {
+                    (*cache_valid)[index][i] = false;
+                    printf("set invalid addr: 0x%x\n", address);
+                }
+            }
+        }
 
 
         // Check if the cache line is valid and matches the tag
@@ -117,9 +156,9 @@ void CacheSim::run_simulation() {
 
             // Simulate storing data in the cache (for simplicity, just store the address)
             for(uint32_t i=0; i<cachesize/4; i++) {
-              // printf("save cache data: 0x%x\n", address);
-              (*cache_data)[index][fifo_index[index]][i] = address;
-              address += 0x4;
+                // printf("save cache data: 0x%x\n", address);
+                (*cache_data)[index][fifo_index[index]][i] = address;
+                address += 0x4;
             }
             (*cache_valid)[index][fifo_index[index]] = true;
             (*cache_tag)[index][fifo_index[index]] = tag;

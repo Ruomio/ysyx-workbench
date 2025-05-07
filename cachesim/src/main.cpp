@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string.h>
 
 #include "cachesim.h"
 
@@ -15,6 +16,19 @@ int main(int argc, char **argv) {
     }
     else {
         std::cout << "sim as default size: "<< CACHE_SIZE << " num:" << CACHE_NUM << " and way:" << CACHE_WAY << std::endl;
+    }
+
+    // decide icache or decache
+    if(argv[5]) {
+      if( strcmp(argv[5], "ICACHE") == 0) {
+        cachesim.setMode(0);
+        printf("ICache Sim.\n");
+      } else {
+        cachesim.setMode(1);
+        printf("DCache Sim.\n");
+      }
+    } else {
+      printf("ICache Sim.\n");
     }
 
     cachesim.run_simulation();
