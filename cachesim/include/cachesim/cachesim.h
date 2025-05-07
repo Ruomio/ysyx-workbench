@@ -22,8 +22,10 @@ public:
     bool is_cachehit(uint32_t address);
 
     int setCache_size_num(uint32_t size, uint32_t num, uint32_t way);
+    int setMode(bool mode);
 
 private:
+    bool mode;
     uint32_t cache_hit;
     uint32_t cache_miss;
     uint32_t inst_cnt;
