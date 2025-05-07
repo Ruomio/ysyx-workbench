@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
         cachesim.setMode(0);
         printf("ICache Sim.\n");
       } else {
+          printf("%s\n", argv[5]);
         cachesim.setMode(1);
         printf("DCache Sim.\n");
       }

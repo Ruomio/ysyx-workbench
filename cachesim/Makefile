@@ -43,7 +43,6 @@ $(BIN): $(OBJS)
 
 run: $(BIN)
 	@$(call git_commit, "run CacheSim")
-	@echo $(file)
 	@$(BIN) $(file) $(SIZE) $(NUM) $(WAY) $(MODE)
 
 gdb:
