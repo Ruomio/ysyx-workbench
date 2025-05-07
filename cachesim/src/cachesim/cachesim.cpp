@@ -161,7 +161,7 @@ void CacheSim::run_simulation() {
       for (int i = 0; i < CACHE_WAY; i++) {
         if ((*cache_tag)[index][i] == tag) {
           (*cache_valid)[index][i] = false;
-          printf("set invalid addr: 0x%x\n", address);
+          // printf("set invalid addr: 0x%x\n", address);
         }
       }
     }
