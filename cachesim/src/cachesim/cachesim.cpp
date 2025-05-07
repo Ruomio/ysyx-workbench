@@ -121,11 +121,11 @@ void CacheSim::run_simulation() {
         }
         if(std::regex_match(line, r_pattern)) {
             rw_ = 0;
-            printf("address: 0x%x   r/w: %d\n", address, rw_);
         }
         else {
             rw_ = 1;
         }
+        printf("address: 0x%x   r/w: %d\n", address, rw_);
 
         inst_cnt++;
 
