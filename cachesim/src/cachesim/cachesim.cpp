@@ -125,7 +125,7 @@ void CacheSim::run_simulation() {
         else {
             rw_ = 1;
         }
-        printf("address: 0x%x   r/w: %d\n", address, rw_);
+        // printf("address: 0x%x   r/w: %d\n", address, rw_);
 
         inst_cnt++;
 
