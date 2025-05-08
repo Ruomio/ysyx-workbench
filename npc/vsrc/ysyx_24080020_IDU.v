@@ -127,7 +127,7 @@ module ysyx_24080020_IDU (
                 cnt <= 1'b1;
             end
         end
-        else if(exu_idu_ready && state) begin
+        else if(idu_exu_valid && exu_idu_ready) begin
             idu_exu_valid <= 1'b0;
         end
         else begin
