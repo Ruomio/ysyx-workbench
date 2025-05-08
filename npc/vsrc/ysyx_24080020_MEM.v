@@ -41,8 +41,10 @@ module ysyx_24080020_MEM(
 
     input is_dnpc_exu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     output reg is_dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_mem,
 
     input fencei_exu,
     output reg fencei_mem,
@@ -288,6 +290,8 @@ module ysyx_24080020_MEM(
             wcsrdata2_mem <= wcsrdata2_exu;
 
             fencei_mem <= fencei_exu;
+
+            pc_mem <= pc_exu;
 
             // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin

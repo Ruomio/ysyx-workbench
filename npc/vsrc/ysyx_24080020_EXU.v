@@ -7,6 +7,7 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_WIDTH-1:0] imm_idu,
     input is_load_idu,
     output reg is_load_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_exu,
 
     // branch
     input is_jalr_idu,
@@ -91,7 +92,6 @@ module ysyx_24080020_EXU
     reg is_csrtype_exu;
     reg alu_src2_con_exu;
     reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] pc_exu;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
     reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;

@@ -4,6 +4,9 @@ module ysyx_24080020_REG
     input clk,
     input rst,
 
+    input [`ysyx_24080020_WIDTH-1:0] pc_lsu;
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu;
+
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr1,
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr2,
 
@@ -39,6 +42,10 @@ module ysyx_24080020_REG
     output reg wb_ifu_valid,
     output reg wb_mem_ready
 );
+
+`ifdef CONFIG_DPIC
+    import "DPI-C" function void wbu_inst_finish();
+`endif
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec
@@ -102,6 +109,8 @@ module ysyx_24080020_REG
         else if(wb_ifu_valid && ifu_wb_ready && state) begin
             // shake hands successfully
             wb_ifu_valid <= 1'b0;
+
+            pc_wbu <= pc_lsu;
         end
         else if(mem_wb_valid) begin
             if(wb_ifu_valid) wb_mem_ready <= 1'b0;

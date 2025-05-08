@@ -77,7 +77,7 @@ module ysyx_24080020_NPC(
 );
 
   // pc
-  wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu;
+  wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
   wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem, dnpc_wb;
   wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, is_dnpc_wb;
   wire is_jalr_idu;
@@ -402,6 +402,8 @@ module ysyx_24080020_NPC(
         .is_dnpc_wb(is_dnpc_wb),
         .dnpc_mem(dnpc_mem),
         .dnpc_wb(dnpc_wb),
+        .pc_lsu(pc_lsu),
+        .pc_wbu(pc_wbu),
 
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
@@ -434,6 +436,7 @@ module ysyx_24080020_NPC(
         .imm_idu(imm_idu),
         .is_load_idu(is_load_idu),
         .is_load_exu(is_load_exu),
+        .pc_exu(pc_exu),
 
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
@@ -538,6 +541,8 @@ module ysyx_24080020_NPC(
         .dnpc_mem(dnpc_mem),
         .is_dnpc_exu(is_dnpc_exu),
         .is_dnpc_mem(is_dnpc_mem),
+        .pc_exu(pc_exu),
+        .pc_mem(pc_lsu),
 
         .fencei_exu(fencei_exu),
         .fencei_mem(fencei_mem),
