@@ -107,7 +107,7 @@ module ysyx_24080020_REG
             wb_ifu_valid <= 1'b0;
 
             pc_wbu <= pc_lsu;
-            rd_wbu <= 'b0;
+            waddr_wb <= 'b0;
         end
         else if(mem_wb_valid) begin
             if(wb_ifu_valid) wb_mem_ready <= 1'b0;
