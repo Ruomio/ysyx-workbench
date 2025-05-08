@@ -10,6 +10,9 @@ module ysyx_24080020_IFU (
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     output reg if_en,
 
+    // pipeline
+    input control_adventure,
+
     // axi-lite
     input arready,
     output reg arvalid,
@@ -41,6 +44,7 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
 
     reg wb_ifu_shake_hands;
+    reg next_inst;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -104,19 +108,29 @@ module ysyx_24080020_IFU (
             is_dnpc <= 1'b0;
             dnpc <= 32'b0;
         end
-        else if(wb_ifu_shake_hands) begin
+        else if(wb_ifu_shake_hands && !control_adventure && next_inst) begin
             // update
             dnpc <= dnpc_wb;
             is_dnpc <= is_dnpc_wb;
             is_update_pc <= 1'b1;
 
             wb_ifu_shake_hands <= 1'b0;
+            next_inst <= 'b0;
         end
         else begin
             // wb_ifu_shake_hands <= 1'b0;
             is_update_pc <= 1'b0;
         end
 
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            next_inst <= 'b1;
+        end
+        if(idu_ifu_ready && ifu_idu_valid) begin
+            next_inst <= 'b1;
+        end
     end
 
 

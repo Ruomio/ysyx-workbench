@@ -37,6 +37,9 @@
 `define ysyx_24080020_MVENDORID_ADDR 12'hf11
 `define ysyx_24080020_MARCHID_ADDR 12'hf12
 
+// reg
+`define ysyx_24080020_REG_NUM 16
+`define ysyx_24080020_REG_WIDTH 4
 
 // ALU OP code
 `define ysyx_24080020_ALU_OP_WIDTH 5

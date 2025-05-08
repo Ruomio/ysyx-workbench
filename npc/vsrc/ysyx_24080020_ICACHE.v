@@ -6,6 +6,8 @@ module ysyx_24080020_ICACHE(
   input rst,
   input fencei_mem,
 
+  output in_flash_,
+
   // axi from lsu
   input arvalid_xbar_i,
   input [`ysyx_24080020_WIDTH-1:0] araddr_xbar_i,
@@ -168,6 +170,7 @@ module ysyx_24080020_ICACHE(
   assign in_flash = (araddr_xbar_i >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
   assign in_mrom = (araddr_xbar_i >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
   assign in_sdram = (araddr_xbar_i >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
+  assign in_flash_ = in_flash;
 
   `ifdef USE_DCACHE
   assign use_icache = in_flash | in_mrom | in_sdram;

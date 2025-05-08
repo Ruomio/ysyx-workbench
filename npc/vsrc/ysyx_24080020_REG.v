@@ -4,8 +4,8 @@ module ysyx_24080020_REG
     input clk,
     input rst,
 
-    input [4:0] raddr1,
-    input [4:0] raddr2,
+    input [`ysyx_24080020_REG_WIDTH-1:0] raddr1,
+    input [`ysyx_24080020_REG_WIDTH-1:0] raddr2,
 
     input is_load_mem,
     input is_dnpc_mem,
@@ -14,9 +14,10 @@ module ysyx_24080020_REG
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_wb,
 
     input wen_mem,
-    input [4:0] waddr_mem,
+    input [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
     input [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
     input [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
 
     //csr
     input wcsren_mem,
@@ -39,7 +40,7 @@ module ysyx_24080020_REG
     output reg wb_mem_ready
 );
 
-    reg [`ysyx_24080020_WIDTH-1:0] regs[`ysyx_24080020_WIDTH-1:0];
+    reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_WIDTH-1];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec
     reg [`ysyx_24080020_WIDTH-1:0] csrs[7:0];
 
@@ -57,7 +58,6 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
 
     reg wen_wb;
-    reg [4:0] waddr_wb;
 
     reg wcsren_wb;
     reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_wb;
@@ -146,7 +146,7 @@ module ysyx_24080020_REG
     // regs write
     always @(posedge clk) begin
         if(!rst) begin
-            for(i = 0; i<6'd32; i = i+1 ) begin
+            for(i = 0; i<`ysyx_24080020_REG_WIDTH; i = i+1 ) begin
                 regs[i] <= 32'b0;
             end
         end

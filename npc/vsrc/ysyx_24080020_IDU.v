@@ -5,8 +5,6 @@ module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
-    output [4:0] rs1,
-    output [4:0] rs2,
     // input [`ysyx_24080020_WIDTH-1:0] snpc_ifu,
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
 
@@ -15,7 +13,9 @@ module ysyx_24080020_IDU (
 
     // reg
     output reg wen_idu,
-    output reg [4:0] waddr_idu,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] rs1,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] rs2,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
     output reg is_load_idu,
     output reg is_dnpc_idu,

@@ -32,9 +32,9 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
     // regs
     input wen_exu,
-    input [4:0] waddr_exu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
     output reg wen_mem,
-    output reg [4:0] waddr_mem,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
 
     input reg is_load_exu,
     output reg is_load_mem,
