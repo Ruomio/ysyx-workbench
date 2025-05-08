@@ -133,7 +133,13 @@ module ysyx_24080020_EXU
 
     // bus
     always @(posedge clk) begin
-        if(idu_exu_valid) begin
+        if(mem_exu_ready && state) begin
+            exu_mem_valid <= 1'b0;
+            `ifdef CONFIG_DPIC
+            statistics_exu_complete_calcu();
+            `endif
+        end
+        else if(idu_exu_valid) begin
             if(exu_mem_valid) exu_idu_ready <=  1'b0;
             else begin
                 // shake hand successfully
@@ -180,12 +186,6 @@ module ysyx_24080020_EXU
 
                 // exu_mem_valid <= 1'b1;
             end
-        end
-        else if(mem_exu_ready && state) begin
-            exu_mem_valid <= 1'b0;
-            `ifdef CONFIG_DPIC
-            statistics_exu_complete_calcu();
-            `endif
         end
         else begin
             // exu_mem_valid <= 1'b1;

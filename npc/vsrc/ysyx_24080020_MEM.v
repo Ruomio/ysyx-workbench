@@ -235,6 +235,10 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             mem_exu_ready <= 1'b0;
         end
+        else if(mem_wb_valid && wb_mem_ready && state) begin
+            mem_wb_valid <= 1'b0;
+
+        end
         else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
             else if(mem_exu_ready) begin
@@ -244,10 +248,6 @@ module ysyx_24080020_MEM(
                 mem_exu_ready <= 1'b1;
 
             end
-        end
-        else if(wb_mem_ready && state) begin
-            mem_wb_valid <= 1'b0;
-
         end
         else begin
             mem_exu_ready <= 1'b0;

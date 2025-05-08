@@ -113,7 +113,10 @@ module ysyx_24080020_IDU (
     end
 
     always @(posedge clk) begin
-        if(ifu_idu_valid) begin
+        if(idu_exu_valid && exu_idu_ready && state) begin
+            idu_exu_valid <= 1'b0;
+        end
+        else if(ifu_idu_valid) begin
             if(idu_exu_valid) idu_ifu_ready <= 1'b0;
             else begin
                 // shake hands successfully
@@ -126,9 +129,6 @@ module ysyx_24080020_IDU (
                 // idu_exu_valid <= 1'b1;
                 cnt <= 1'b1;
             end
-        end
-        else if(idu_exu_valid && exu_idu_ready && state) begin
-            idu_exu_valid <= 1'b0;
         end
         else begin
             // idu_exu_valid <= 1'b0;

@@ -99,6 +99,10 @@ module ysyx_24080020_REG
         if(!rst) begin
 
         end
+        else if(wb_ifu_valid && ifu_wb_ready && state) begin
+            // shake hands successfully
+            wb_ifu_valid <= 1'b0;
+        end
         else if(mem_wb_valid) begin
             if(wb_ifu_valid) wb_mem_ready <= 1'b0;
             else begin
@@ -131,10 +135,6 @@ module ysyx_24080020_REG
                     wb_ifu_valid <= 1'b0;
                 end
             end
-        end
-        else if(ifu_wb_ready && state) begin
-            // shake hands successfully
-            wb_ifu_valid <= 1'b0;
         end
         else begin
             // wb_ifu_valid <= 1'b1;
