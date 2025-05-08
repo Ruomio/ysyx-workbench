@@ -5,7 +5,7 @@ module ysyx_24080020_REG
     input rst,
 
     input [`ysyx_24080020_WIDTH-1:0] pc_lsu,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu;
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu,
 
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr1,
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr2,
