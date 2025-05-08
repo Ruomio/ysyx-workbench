@@ -18,19 +18,30 @@ module ysyx_24080020_PC (
             cnt <= 1'b0;
             first_if <= 1'b0;
         end
-        else if(is_update_pc) begin
-            if(cnt == 1'b1) begin
-                addr <= is_dnpc ? dnpc :
-                        ~first_if ? addr : addr + 32'd4;
-                if_en <= 1'b1;
-                first_if <= 1'b1;
+        else if(cnt) begin
+            addr <= is_dnpc ? dnpc :
+                    ~first_if ? addr : addr + 32'd4;
+            if_en <= 1'b1;
+            first_if <= 1'b1;
 
-                // pc_ifu <= addr;
-                cnt <= 1'b0;
-            end
-            else begin
-                cnt <= 1'b1;
-            end
+            // pc_ifu <= addr;
+            cnt <= 1'b0;
+
+        end
+        else if(is_update_pc) begin
+            cnt = 'b1;
+            // if(cnt == 1'b1) begin
+            //     addr <= is_dnpc ? dnpc :
+            //             ~first_if ? addr : addr + 32'd4;
+            //     if_en <= 1'b1;
+            //     first_if <= 1'b1;
+
+            //     // pc_ifu <= addr;
+            //     cnt <= 1'b0;
+            // end
+            // else begin
+            //     cnt <= 1'b1;
+            // end
         end
         else begin
             // addr <= addr;
