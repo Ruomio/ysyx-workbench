@@ -49,6 +49,9 @@ module ysyx_24080020_HAZARD(
         else if(is_dnpc_exu) begin
             control_adventure <= 'b1;
         end
+        else begin
+            control_adventure <= 'b0;
+        end
     end
 
 
