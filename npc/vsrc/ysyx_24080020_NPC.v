@@ -387,7 +387,7 @@ module ysyx_24080020_NPC(
 
         .ifu_idu_valid(ifu_idu_valid),
         .exu_idu_ready(exu_idu_ready),
-        .idu_exu_valid(idu_exu_valid),
+        .idu_exu_valid_reg(idu_exu_valid),
         .idu_ifu_ready(idu_ifu_ready)
     );
 
