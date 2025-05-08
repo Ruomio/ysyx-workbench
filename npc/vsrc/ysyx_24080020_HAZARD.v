@@ -9,11 +9,11 @@ module ysyx_24080020_HAZARD(
     output reg structural_adventure,
 
     // Data adventures, between ifu and {idu, exu, wbu}
-    input rs1_idu,
-    input rs2_idu,
-    input rd_exu,
-    input rd_lsu,
-    input rd_wbu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rs1_idu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rs2_idu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rd_exu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rd_lsu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rd_wbu,
     output reg data_adventure,
 
     // control adventures, between ifu and exu
