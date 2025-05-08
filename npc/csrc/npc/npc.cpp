@@ -269,9 +269,9 @@ void exec_once_npc(uint32_t pc) {
     if(last_pc != g_get_pc()) {
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
-      Assert(0, "last_pc = 0x%x, g_pc = 0x%x\n", last_pc, g_pc);
       idu_type = None;
       if(g_pc < CONFIG_MBASE) {
+        Assert(0, "last_pc = 0x%x, g_pc = 0x%x\n", last_pc, g_pc);
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
         u_npc_state.ret = true;
@@ -478,7 +478,6 @@ uint32_t g_get_pc() {
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 #if defined (ysyxSoCFull)
-  printf("set_g_pc\n");
   // top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
   top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu = pc;
 #elif defined (ysyx_24080020_NPC)
