@@ -39,7 +39,7 @@
 
 // reg
 `define ysyx_24080020_REG_NUM 16
-`define ysyx_24080020_REG_WIDTH 4
+`define ysyx_24080020_REG_WIDTH 5
 
 // ALU OP code
 `define ysyx_24080020_ALU_OP_WIDTH 5
