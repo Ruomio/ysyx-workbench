@@ -135,6 +135,7 @@ module ysyx_24080020_EXU
     always @(posedge clk) begin
         if(mem_exu_ready && state) begin
             exu_mem_valid <= 1'b0;
+            waddr_exu <= 'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif

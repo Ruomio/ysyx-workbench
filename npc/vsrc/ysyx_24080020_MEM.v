@@ -240,6 +240,8 @@ module ysyx_24080020_MEM(
         else if(mem_wb_valid && wb_mem_ready && state) begin
             mem_wb_valid <= 1'b0;
 
+            waddr_mem <= 'b0;
+
         end
         else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
