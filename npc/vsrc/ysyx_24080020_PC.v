@@ -29,7 +29,7 @@ module ysyx_24080020_PC (
 
         end
         else if(is_update_pc) begin
-            cnt = 'b1;
+            cnt <= 'b1;
             // if(cnt == 1'b1) begin
             //     addr <= is_dnpc ? dnpc :
             //             ~first_if ? addr : addr + 32'd4;
