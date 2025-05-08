@@ -94,6 +94,7 @@ module ysyx_24080020_IFU (
             end
         end
         else if(idu_ifu_ready && state) begin
+            $display("ifu_idu_valid = 0");
             ifu_idu_valid <= 1'b0;
         end
         else begin
