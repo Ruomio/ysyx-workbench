@@ -4,7 +4,7 @@ module ysyx_24080020_REG
     input clk,
     input rst,
 
-    input [`ysyx_24080020_WIDTH-1:0] pc_lsu;
+    input [`ysyx_24080020_WIDTH-1:0] pc_lsu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu;
 
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr1,
