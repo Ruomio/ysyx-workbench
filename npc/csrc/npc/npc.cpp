@@ -478,6 +478,7 @@ uint32_t g_get_pc() {
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 #if defined (ysyxSoCFull)
+  printf("set_g_pc\n");
   // top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
   top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu = pc;
 #elif defined (ysyx_24080020_NPC)
