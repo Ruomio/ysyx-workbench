@@ -48,7 +48,7 @@ module ysyx_24080020_MEM(
     output reg fencei_mem,
 
     // axi-full
-    output reg arvalid_reg,
+    output arvalid_reg,
     output reg [3:0] arid,
     output reg [7:0] arlen,
     output [2:0] arsize,
@@ -64,7 +64,7 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] rdata,
 
     input awready,
-    output reg awvalid_reg,
+    output awvalid_reg,
     output reg [3:0] awid,
     output reg [7:0] awlen,
     output [2:0] awsize,
@@ -72,7 +72,7 @@ module ysyx_24080020_MEM(
     output [`ysyx_24080020_WIDTH-1:0] awaddr,
 
     input wready,
-    output reg wvalid_reg,
+    output wvalid_reg,
     output reg wlast,
     output reg [3:0] wstrb,
     output [`ysyx_24080020_WIDTH-1:0] wdata,
