@@ -344,6 +344,8 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IDU idu(
         .clk(clk),
         .rst(rst),
+        .data_adventure(data_adventure),
+
         .inst_ifu(inst_ifu),
         .rs1(rs1),
         .rs2(rs2),
@@ -385,7 +387,7 @@ module ysyx_24080020_NPC(
 
         .ifu_idu_valid(ifu_idu_valid),
         .exu_idu_ready(exu_idu_ready),
-        .idu_exu_valid(idu_exu_valid && data_adventure),
+        .idu_exu_valid(idu_exu_valid),
         .idu_ifu_ready(idu_ifu_ready)
     );
 

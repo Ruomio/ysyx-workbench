@@ -2,6 +2,8 @@
 module ysyx_24080020_IDU (
     input clk,
     input rst,
+    input data_adventure,
+
     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
@@ -55,7 +57,7 @@ module ysyx_24080020_IDU (
     input ifu_idu_valid,
     input exu_idu_ready,
     output reg idu_ifu_ready,
-    output reg idu_exu_valid
+    output reg idu_exu_valid_reg
 
 );
 `ifdef CONFIG_DPIC
@@ -81,6 +83,7 @@ module ysyx_24080020_IDU (
     reg cnt;
 
 
+    reg idu_exu_valid;
 
     reg [`ysyx_24080020_WIDTH-1:0] inst_idu;
 
@@ -91,6 +94,7 @@ module ysyx_24080020_IDU (
     assign rs2 = inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
 
+    assign idu_exu_valid_reg = idu_exu_valid && !data_adventure;
 
     always @(posedge clk) begin
         if(!rst) begin
