@@ -317,6 +317,8 @@ module ysyx_24080020_NPC(
         .inst_ifu(inst_ifu),
         .if_en(if_en),
 
+        .control_adventure(control_adventure),
+
         // axi-lite
         .arvalid(arvalid_ifu),
         .araddr(araddr_ifu),
@@ -977,6 +979,7 @@ module ysyx_24080020_NPC(
       .clk(clk),
       .rst(rst),
       .fencei_mem(fencei_mem),
+      .in_flash_(in_flash),
 
       // axi from lsu
       .arvalid_xbar_i(arvalid_xbar_i),
