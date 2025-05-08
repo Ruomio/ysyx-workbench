@@ -466,7 +466,8 @@ void check_trap(npc_state u_npc_state) {
 
 uint32_t g_get_pc() {
 #if defined (ysyxSoCFull)
-  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
+  // g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
+  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu;
 #elif defined (ysyx_24080020_NPC)
   g_pc =  top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr;
 #endif
@@ -476,7 +477,8 @@ uint32_t g_get_pc() {
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 #if defined (ysyxSoCFull)
-  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  // top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu = pc;
 #elif defined (ysyx_24080020_NPC)
   top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr = pc;
 #endif
