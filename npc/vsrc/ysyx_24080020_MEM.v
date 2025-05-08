@@ -2,7 +2,7 @@
 module ysyx_24080020_MEM(
     input clk,
     input rst,
-
+    input structural_adventure,
     // memory
     input mren_exu,
     input mrtype_exu,
@@ -48,7 +48,7 @@ module ysyx_24080020_MEM(
     output reg fencei_mem,
 
     // axi-full
-    output reg arvalid,
+    output reg arvalid_reg,
     output reg [3:0] arid,
     output reg [7:0] arlen,
     output [2:0] arsize,
@@ -64,7 +64,7 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] rdata,
 
     input awready,
-    output reg awvalid,
+    output reg awvalid_reg,
     output reg [3:0] awid,
     output reg [7:0] awlen,
     output [2:0] awsize,
@@ -72,7 +72,7 @@ module ysyx_24080020_MEM(
     output [`ysyx_24080020_WIDTH-1:0] awaddr,
 
     input wready,
-    output reg wvalid,
+    output reg wvalid_reg,
     output reg wlast,
     output reg [3:0] wstrb,
     output [`ysyx_24080020_WIDTH-1:0] wdata,
@@ -93,6 +93,11 @@ module ysyx_24080020_MEM(
     import "DPI-C" function void npc_difftest_skip_ref();
     import "DPI-C" function void statistics_lsu_get_data();
 `endif
+
+    reg arvalid, awvalid, wvalid;
+    assign arvalid_reg = arvalid && !structural_adventure;
+    assign awvalid_reg = awvalid && !structural_adventure;
+    assign wvalid_reg = wvalid && !structural_adventure;
 
     reg mren_mem;
     reg mwen_mem;

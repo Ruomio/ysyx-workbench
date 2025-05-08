@@ -497,6 +497,7 @@ module ysyx_24080020_NPC(
     ysyx_24080020_MEM u_mem(
         .clk(clk),
         .rst(rst),
+        .structural_adventure(structural_adventure),
         .mren_exu(mren_exu),
         .mrtype_exu(mrtype_exu),
         .mrlen_exu(mrlen_exu),
@@ -540,7 +541,7 @@ module ysyx_24080020_NPC(
         .fencei_mem(fencei_mem),
 
         // axi-lite
-        .arvalid(arvalid_mem && !structural_adventure),
+        .arvalid_reg(arvalid_mem),
         .araddr(araddr_mem),
         .arid(arid_mem),
         .arlen(arlen_mem),
@@ -555,7 +556,7 @@ module ysyx_24080020_NPC(
         .rlast(rlast_mem),
         .rdata(rdata_mem),
 
-        .awvalid(awvalid_mem && !structural_adventure),
+        .awvalid_reg(awvalid_mem),
         .awid(awid_mem),
         .awlen(awlen_mem),
         .awsize(awsize_mem),
@@ -563,7 +564,7 @@ module ysyx_24080020_NPC(
         .awaddr(awaddr_mem),
         .awready(awready_mem),
 
-        .wvalid(wvalid_mem && !structural_adventure),
+        .wvalid_reg(wvalid_mem),
         .wstrb(wstrb_mem),
         .wdata(wdata_axi_mem),
         .wlast(wlast_mem),
