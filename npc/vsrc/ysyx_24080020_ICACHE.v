@@ -498,6 +498,19 @@ module ysyx_24080020_ICACHE(
     end
   end
 
+  always @(posedge clk) begin
+    if(!rst) begin
+
+    end
+    else if((awvalid_xbar_i || wvalid_xbar_i) && !busy) begin
+      busy <= 1'b1;
+    end
+    else if(bvalid_icache_o && bready_xbar_i) begin
+      busy <= 'b0;
+    end
+
+  end
+
 `endif
 `ifndef USE_ICACHE
   // AR
