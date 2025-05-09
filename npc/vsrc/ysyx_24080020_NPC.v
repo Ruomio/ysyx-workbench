@@ -428,7 +428,7 @@ module ysyx_24080020_NPC(
         .rcsrdata(rcsrdata),
 
         .mem_wb_valid(mem_wb_valid),
-        .ifu_wb_ready(ifu_wb_ready),
+        .ifu_wb_ready(1'b1),
         .wb_mem_ready(wb_mem_ready),
         .wb_ifu_valid(wb_ifu_valid)
     );
