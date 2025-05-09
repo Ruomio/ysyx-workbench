@@ -552,7 +552,7 @@ void update_npc_cpu() {
   for(int i=0; i<32; i++) {
     npc_cpu.gpr[i] = g_get_reg(i);
   }
-  npc_cpu.pc = CONFIG_MBASE;
+  npc_cpu.pc = g_pc;
 }
 
 void update_dut() {
