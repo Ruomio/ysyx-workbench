@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "common.h"
 #include "define.h"
 #include <dlfcn.h>
 #include <cpu/difftest.h>
@@ -109,6 +110,7 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   ref_difftest_init(port);
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
   update_npc_cpu();
+  npc_cpu.pc = CONFIG_MBASE;
   ref_difftest_regcpy(&npc_cpu, DIFFTEST_TO_REF);
 }
 
