@@ -112,6 +112,7 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg exu_mem_shake_hands;
     reg finish_read;
+    reg next_inst;
 
     reg arlen_cnt;
     reg awlen_cnt;
@@ -236,11 +237,14 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             mem_exu_ready <= 1'b0;
+            next_inst <= 'b1;
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
             mem_wb_valid <= 1'b0;
 
             waddr_mem <= 'b0;
+
+            next_inst <= 'b1;
 
         end
         else if(exu_mem_valid) begin
@@ -248,7 +252,7 @@ module ysyx_24080020_MEM(
             else if(mem_exu_ready) begin
                 exu_mem_shake_hands <= 1'b1;
             end
-            else begin
+            else if(next_inst) begin
                 mem_exu_ready <= 1'b1;
 
             end
@@ -304,6 +308,7 @@ module ysyx_24080020_MEM(
             end
 
             exu_mem_shake_hands <= 1'b0;
+            next_inst <= 'b0;
         end
         else begin
           fencei_mem <= 'b0;
