@@ -110,6 +110,7 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);
   update_npc_cpu();
   ref_difftest_regcpy(&npc_cpu, DIFFTEST_TO_REF);
+  skip_dut_nr_inst += 1;
 }
 
 static void checkregs(CPU_state *ref, vaddr_t pc) {
