@@ -501,7 +501,11 @@ uint32_t g_get_snpc() {
 
 uint32_t g_get_dnpc() {
 #if defined (ysyxSoCFull)
-  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__is_dnpc_wb) {
+    return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+  }
+  else
+    return g_pc + 4;
 #elif defined (ysyx_24080020_NPC)
   return top->rootp->ysyx_24080020_NPC__DOT__is_dnpc_wb;
 #else
