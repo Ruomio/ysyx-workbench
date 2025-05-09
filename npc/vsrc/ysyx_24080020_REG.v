@@ -106,6 +106,7 @@ module ysyx_24080020_REG
             // shake hands successfully
             wb_ifu_valid <= 1'b0;
 
+            pc_wbu <= pc_lsu;
             waddr_wb <= 'b0;
         end
         else if(mem_wb_valid) begin
@@ -129,7 +130,6 @@ module ysyx_24080020_REG
                 alu_out_wb <= alu_out_mem;
                 is_load_wb <= is_load_mem;
 
-                pc_wbu <= pc_lsu;
                 is_dnpc_wb <= is_dnpc_mem;
                 dnpc_wb <= dnpc_mem;
 
