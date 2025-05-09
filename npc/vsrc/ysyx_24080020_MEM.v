@@ -448,7 +448,7 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             awvalid <= 1'b0;
         end
-        else if(awvalid && awready) begin
+        else if(awvalid_reg && awready) begin
             awvalid <= 1'b0;
 
             // mwen_mem <= 1'b0;
@@ -519,17 +519,17 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             wvalid <= 1'b0;
         end
-        else if(wvalid && wready && wlast && !awlen[0]) begin
+        else if(wvalid_reg && wready && wlast && !awlen[0]) begin
             // finish once
             wvalid <= 1'b0;
         end
-        else if(wvalid && wready && wlast && awlen[0]) begin
+        else if(wvalid_reg && wready && wlast && awlen[0]) begin
             // finish all
             wvalid <= 1'b0;
             // wlast <= 1'b0;
             awlen_cnt <= 1'b0;
         end
-        else if(wvalid && wready && awlen_cnt && awlen[0]) begin
+        else if(wvalid_reg && wready && awlen_cnt && awlen[0]) begin
             // next W
             // muti write, the second write
             wlast <= 1'b1;
