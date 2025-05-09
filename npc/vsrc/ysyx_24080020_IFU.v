@@ -117,6 +117,8 @@ module ysyx_24080020_IFU (
 
             wb_ifu_shake_hands <= 1'b0;
             next_inst <= 'b0;
+
+            need_update_pc <= 'b0;
         end
         else if(wb_ifu_shake_hands && !control_adventure && next_inst) begin
             need_update_pc <= 1'b1;
