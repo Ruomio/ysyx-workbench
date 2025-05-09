@@ -311,8 +311,8 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IFU ifu(
         .clk(clk),
         .rst(rst),
-        .dnpc_wb(dnpc_new_exu),
-        .is_dnpc_wb(is_dnpc_exu),
+        .dnpc_exu(dnpc_new_exu),
+        .is_dnpc_exu(is_dnpc_exu),
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
         .if_en(if_en),

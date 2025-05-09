@@ -3,8 +3,8 @@ module ysyx_24080020_IFU (
     input clk,
     input rst,
 
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_wb,
-    input is_dnpc_wb,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
+    input is_dnpc_exu,
 
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
@@ -44,7 +44,7 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
 
     reg wb_ifu_shake_hands;
-    reg next_inst;
+    reg next_inst, need_update_pc;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -107,15 +107,19 @@ module ysyx_24080020_IFU (
             wb_ifu_shake_hands <= 1'b0;
             is_dnpc <= 1'b0;
             dnpc <= 32'b0;
+            need_update_pc <= 1'b0;
         end
-        else if(wb_ifu_shake_hands && !control_adventure && next_inst) begin
+        else if(need_update_pc) begin
             // update
-            dnpc <= dnpc_wb;
-            is_dnpc <= is_dnpc_wb;
+            dnpc <= dnpc_exu;
+            is_dnpc <= is_dnpc_exu;
             is_update_pc <= 1'b1;
 
             wb_ifu_shake_hands <= 1'b0;
             next_inst <= 'b0;
+        end
+        else if(wb_ifu_shake_hands && !control_adventure && next_inst) begin
+            need_update_pc <= 1'b1;
         end
         else begin
             // wb_ifu_shake_hands <= 1'b0;
