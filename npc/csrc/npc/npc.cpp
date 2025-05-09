@@ -316,7 +316,7 @@ void exec_once_npc(uint32_t pc) {
   // RingBuffer_write(inst_buf, strlen(inst_buf));
 #endif
 
-  printf("npc exec pc: 0x%x, dnpc:0x%x\n", g_pc, g_get_dnpc());
+  // printf("npc exec pc: 0x%x, dnpc:0x%x\n", g_pc, g_get_dnpc());
   trace_and_difftest(g_pc);
 }
 
