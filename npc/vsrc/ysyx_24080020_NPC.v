@@ -305,6 +305,7 @@ module ysyx_24080020_NPC(
   // pipeline hazard
   wire in_flash;
   wire structural_adventure, data_adventure, control_adventure;
+  wire inst_fin;
 
 
 
@@ -318,6 +319,7 @@ module ysyx_24080020_NPC(
         .if_en(if_en),
 
         .control_adventure(control_adventure),
+        .inst_fin(inst_fin),
 
         // axi-lite
         .arvalid(arvalid_ifu),
@@ -1103,7 +1105,7 @@ module ysyx_24080020_NPC(
 
         // Structural adventures, between ifu and lsu
         .in_flash(in_flash),
-        .arvalid_xbar_i(arvalid_xbar_i),
+        .inst_fin(inst_fin),
         .rvalid_soc_i(rvalid_soc_i),
         .structural_adventure(structural_adventure),
 

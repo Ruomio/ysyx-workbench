@@ -5,7 +5,7 @@ module ysyx_24080020_HAZARD(
     // Structural adventures, between ifu and lsu
     input in_flash,
     input arvalid_xbar_i,
-    input rvalid_soc_i,
+    input inst_fin,
     output reg structural_adventure,
 
     // Data adventures, between ifu and {idu, exu, wbu}
@@ -26,7 +26,7 @@ module ysyx_24080020_HAZARD(
         if(!rst) begin
             structural_adventure <= 'b0;
         end
-        else if(in_flash && rvalid_soc_i) begin
+        else if(in_flash && inst_fin) begin
             structural_adventure <= 'b0;
         end
         else if(in_flash && arvalid_xbar_i) begin

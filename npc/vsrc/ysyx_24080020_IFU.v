@@ -13,6 +13,8 @@ module ysyx_24080020_IFU (
     // pipeline
     input control_adventure,
 
+    output inst_fin,
+
     // axi-lite
     input arready,
     output reg arvalid,
@@ -36,7 +38,6 @@ module ysyx_24080020_IFU (
     output reg ifu_idu_valid
 );
 
-    wire inst_fin;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
 
     reg is_dnpc;
