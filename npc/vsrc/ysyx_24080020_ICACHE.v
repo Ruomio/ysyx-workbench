@@ -295,7 +295,7 @@ module ysyx_24080020_ICACHE(
           end
           JUDGE: begin
               if(fin_judge) begin
-                araddr_tmp <= {araddr_xbar_i[31:2], 2'b0};
+                araddr_tmp <= {araddr_tmp[31:2], 2'b0};
                 fin_judge <= 'b0;
               end
               else if(tag_index < cache_way) begin
