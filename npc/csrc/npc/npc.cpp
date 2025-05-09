@@ -72,7 +72,7 @@ VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=CONFIG_MBASE, .ret = true};
 
-uint32_t g_pc;
+uint32_t g_pc, g_dnpc;
 static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
@@ -501,10 +501,11 @@ uint32_t g_get_snpc() {
 uint32_t g_get_dnpc() {
 #if defined (ysyxSoCFull)
   if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__is_dnpc_wb) {
-    return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
   }
   else
-    return g_pc + 4;
+    g_dnpc = g_pc + 4;
+  return g_dnpc;
 #elif defined (ysyx_24080020_NPC)
   return top->rootp->ysyx_24080020_NPC__DOT__is_dnpc_wb;
 #else
