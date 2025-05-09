@@ -317,7 +317,6 @@ void exec_once_npc(uint32_t pc) {
 #endif
 
 
-  printf("diff pc 0x%x\n", g_pc);
   trace_and_difftest(g_pc);
 }
 
