@@ -109,6 +109,8 @@ module ysyx_24080020_ICACHE(
 
   integer  i;
 
+  reg busy;
+
   // CACHE
   // cacheway maybe not the 2^n
   localparam cache_way = `ysyx_24080020_CACHE_WAY;
@@ -184,6 +186,7 @@ module ysyx_24080020_ICACHE(
           current_state <= 'b0;
           tag_index <= 'b0;
           toggle <= 'b0;
+          busy <= 'b0;
           for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
@@ -430,7 +433,7 @@ module ysyx_24080020_ICACHE(
       araddr_icache_o <= 'b0;
 
     end
-    else if(arvalid_xbar_i) begin
+    else if(arvalid_xbar_i && !busy) begin
       araddr_icache_o <= araddr_xbar_i;
       arlen_icache_o <= arlen_xbar_i;
       arid_icache_o <= arid_xbar_i;
@@ -462,6 +465,7 @@ module ysyx_24080020_ICACHE(
       rvalid_icache_o <= 'b0;
       rresp_icache_o <= 'b0;
       rlast_icache_o <= 'b0;
+      busy <= 'b0;
     end
     else if(all_fin) begin
       rvalid_icache_o <= 'b1;
