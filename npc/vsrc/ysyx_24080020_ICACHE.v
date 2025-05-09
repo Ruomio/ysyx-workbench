@@ -7,6 +7,7 @@ module ysyx_24080020_ICACHE(
   input fencei_mem,
 
   output in_flash_,
+  output reg busy,
 
   // axi from lsu
   input arvalid_xbar_i,
@@ -108,8 +109,6 @@ module ysyx_24080020_ICACHE(
   wire in_sdram;
 
   integer  i;
-
-  reg busy;
 
   // CACHE
   // cacheway maybe not the 2^n

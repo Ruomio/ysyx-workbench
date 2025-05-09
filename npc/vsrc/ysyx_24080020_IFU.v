@@ -5,6 +5,7 @@ module ysyx_24080020_IFU (
 
     input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
     input is_dnpc_exu,
+    input lsu_busy,
 
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
@@ -155,6 +156,7 @@ module ysyx_24080020_IFU (
     ysyx_24080020_IR u_ir(
         .clk(clk),
         .rst(rst),
+        .lsu_busy(lsu_busy),
         .if_en(if_en),
         .addr(addr),
         .inst(inst_ifu),

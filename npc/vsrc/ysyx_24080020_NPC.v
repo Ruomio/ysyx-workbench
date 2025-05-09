@@ -306,6 +306,7 @@ module ysyx_24080020_NPC(
   wire in_flash;
   wire structural_adventure, data_adventure, control_adventure;
   wire inst_fin;
+  wire lsu_busy;
 
 
 
@@ -318,6 +319,7 @@ module ysyx_24080020_NPC(
         .inst_ifu(inst_ifu),
         .if_en(if_en),
 
+        .lsu_busy(lsu_busy),
         .control_adventure(control_adventure),
         .inst_fin(inst_fin),
 
@@ -990,6 +992,7 @@ module ysyx_24080020_NPC(
       .rst(rst),
       .fencei_mem(fencei_mem),
       .in_flash_(in_flash),
+      .busy(lsu_busy),
 
       // axi from lsu
       .arvalid_xbar_i(arvalid_xbar_i),
