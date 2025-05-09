@@ -445,6 +445,7 @@ module ysyx_24080020_ICACHE(
       araddr_tmp <= araddr_xbar_i;
 
       r_en <= 'b1;
+      busy <= 'b1;
     end
     else begin
       arready_icache_o <= 1'b0;
