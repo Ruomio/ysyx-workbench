@@ -69,6 +69,8 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_wb;
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
 
+    reg [`ysyx_24080020_WIDTH-1:0] pc_tmp;
+
     // reg [`ysyx_24080020_WIDTH-1:0] result;
     wire [`ysyx_24080020_WIDTH-1:0] result;
 
@@ -106,7 +108,7 @@ module ysyx_24080020_REG
             // shake hands successfully
             wb_ifu_valid <= 1'b0;
 
-            pc_wbu <= pc_lsu;
+            pc_wbu <= pc_tmp;
             waddr_wb <= 'b0;
         end
         else if(mem_wb_valid) begin
@@ -132,6 +134,7 @@ module ysyx_24080020_REG
 
                 is_dnpc_wb <= is_dnpc_mem;
                 dnpc_wb <= dnpc_mem;
+                pc_tmp <= pc_lsu;
 
                 // wb_ifu_valid <= 1'b1;
                 if(!wen_mem) begin
