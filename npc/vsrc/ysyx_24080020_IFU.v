@@ -73,7 +73,6 @@ module ysyx_24080020_IFU (
         else if(inst_fin) begin
             ifu_idu_valid <= 1'b1;
             pc_ifu <= addr;
-            invalid_inst <= 'b0;
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
@@ -149,6 +148,14 @@ module ysyx_24080020_IFU (
         end
     end
 
+    always @(posedge clk) begin
+        if(!rst) begin
+
+        end
+        else if(invalid_inst && if_en) begin
+            invalid_inst <= 'b0;
+        end
+    end
 
 
     ysyx_24080020_PC u_pc(
