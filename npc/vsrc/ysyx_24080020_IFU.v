@@ -109,18 +109,6 @@ module ysyx_24080020_IFU (
             wb_ifu_shake_hands <= 1'b0;
             need_update_pc <= 1'b0;
         end
-        else if(control_adventure) begin
-            // update
-            dnpc <= dnpc_exu;
-            is_dnpc <= is_dnpc_exu;
-            is_update_pc <= 1'b1;
-
-            wb_ifu_shake_hands <= 1'b0;
-            next_inst <= 'b0;
-
-            need_update_pc <= 'b0;
-
-        end
         else if(need_update_pc) begin
             // update
             dnpc <= dnpc_exu;
@@ -132,7 +120,7 @@ module ysyx_24080020_IFU (
 
             need_update_pc <= 'b0;
         end
-        else if(wb_ifu_shake_hands && next_inst) begin
+        else if(wb_ifu_shake_hands && next_inst && !control_adventure) begin
             need_update_pc <= 1'b1;
         end
         else begin
@@ -159,7 +147,6 @@ module ysyx_24080020_IFU (
         .dnpc(dnpc),
         // .pc_ifu(pc_ifu),
         .is_dnpc(is_dnpc),
-        .control_adventure(control_adventure),
         .if_en(if_en),
         .addr(addr)
     );
