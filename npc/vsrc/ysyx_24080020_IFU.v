@@ -119,7 +119,7 @@ module ysyx_24080020_IFU (
 
             need_update_pc <= 'b0;
         end
-        else if(wb_ifu_shake_hands && next_inst && !control_adventure) begin
+        else if(wb_ifu_shake_hands && next_inst) begin
             need_update_pc <= 1'b1;
         end
         else begin
@@ -143,7 +143,8 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             next_inst <= 'b1;
         end
-        if((idu_ifu_ready && ifu_idu_valid) || (!is_dnpc && is_dnpc_exu)) begin
+        // if((idu_ifu_ready && ifu_idu_valid) || (!is_dnpc && is_dnpc_exu)) begin
+        if((idu_ifu_ready && ifu_idu_valid)) begin
             next_inst <= 'b1;
             // is_dnpc <= 1'b0;
         end
