@@ -16,6 +16,7 @@ module ysyx_24080020_MEM(
 
     input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
+    output reg exu_mem_shake_hands,
 
     // csrs
     input wcsren_exu,
@@ -110,7 +111,6 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
-    reg exu_mem_shake_hands;
     reg finish_read;
     reg next_inst;
 

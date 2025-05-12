@@ -18,7 +18,7 @@ module ysyx_24080020_HAZARD(
 
     // control adventures, between ifu and exu
     input is_dnpc_exu,
-    input exu_lsu_valid,
+    input exu_lsu_shake_hands,
     output reg control_adventure
 );
 
@@ -43,7 +43,7 @@ module ysyx_24080020_HAZARD(
         if(!rst) begin
             control_adventure <= 'b0;
         end
-        else if(exu_lsu_valid && !is_dnpc_exu) begin
+        else if(exu_lsu_shake_hands) begin
             control_adventure <= 'b0;
         end
         else if(is_dnpc_exu) begin

@@ -307,6 +307,7 @@ module ysyx_24080020_NPC(
   wire structural_adventure, data_adventure, control_adventure;
   wire inst_fin;
   wire lsu_busy;
+  wire exu_mem_shake_hands;
 
 
 
@@ -516,6 +517,7 @@ module ysyx_24080020_NPC(
         .mwaddr_exu(mwaddr_exu),
         .mwdata_exu(mwdata_exu),
         .mrdata_mem(mrdata_mem),
+        .exu_mem_shake_hands(exu_mem_shake_hands),
 
         .alu_out_exu(alu_out_exu),
         .alu_out_mem(alu_out_mem),
@@ -1122,7 +1124,7 @@ module ysyx_24080020_NPC(
 
         // control adventures, between ifu and exu
         .is_dnpc_exu(is_dnpc_exu),
-        .exu_lsu_valid(exu_mem_valid),
+        .exu_lsu_shake_hands(exu_mem_shake_hands),
         .control_adventure(control_adventure)
 
     );
