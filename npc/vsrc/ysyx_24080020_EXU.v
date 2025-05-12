@@ -103,6 +103,8 @@ module ysyx_24080020_EXU
 
     reg cnt;
 
+    reg idu_exu_shake_hand;
+
 
 
     // memory
@@ -149,51 +151,64 @@ module ysyx_24080020_EXU
                 // shake hand successfully
                 exu_idu_ready <= 1'b1;
 
-                // update all reg type control wire
-                wen_exu <= wen_idu;
-                waddr_exu <= waddr_idu;
-                wdata_exu <= wdata_idu;
+                idu_exu_shake_hand <= 1'b1;
 
-                mwen_exu <= mwen_idu;
-                mwmask_exu <= mwmask_idu;
-                mren_exu <= mren_idu;
-                mrtype_exu <= mrtype_idu;
-                mrlen_exu <= mrlen_idu;
-
-                is_load_exu <= is_load_idu;
-                is_dnpc_exu <= is_dnpc_idu;
-                branch_src1_exu <= branch_src1_idu;
-
-                alu_op_exu <= alu_op_idu;
-                alu_src2_con_exu <= alu_src2_con_idu;
-                // reg_dst_con_exu <= reg_dst_con_idu;
-                imm_exu <= imm_idu;
-
-                src1_exu <= src1_idu;
-                src2_exu <= src2_idu;
-                pc_exu <= pc_idu;
-                dnpc_exu <= dnpc_idu;
-                is_jalr_exu <= is_jalr_idu;
-
-                wcsren_exu <= wcsren_idu;
-                wcsraddr_exu <= wcsraddr_idu;
-                wcsrdata_exu <= wcsrdata_idu;
-                wcsren2_exu <= wcsren2_idu;
-                wcsraddr2_exu <= wcsraddr2_idu;
-                wcsrdata2_exu <= wcsrdata2_idu;
-
-                is_csrtype_exu <= is_csrtype_idu;
-
-                cnt <= 1'b1;
-
-                fencei_exu <= fencei_idu;
-
-                // exu_mem_valid <= 1'b1;
             end
         end
         else begin
             // exu_mem_valid <= 1'b1;
             exu_idu_ready <= 1'b0;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            idu_exu_shake_hand <= 1'b0;
+        end
+        else if(idu_exu_shake_hand) begin
+            idu_exu_shake_hand <= 1'b0;
+
+            // update all reg type control wire
+            wen_exu <= wen_idu;
+            waddr_exu <= waddr_idu;
+            wdata_exu <= wdata_idu;
+
+            mwen_exu <= mwen_idu;
+            mwmask_exu <= mwmask_idu;
+            mren_exu <= mren_idu;
+            mrtype_exu <= mrtype_idu;
+            mrlen_exu <= mrlen_idu;
+
+            is_load_exu <= is_load_idu;
+            is_dnpc_exu <= is_dnpc_idu;
+            branch_src1_exu <= branch_src1_idu;
+
+            alu_op_exu <= alu_op_idu;
+            alu_src2_con_exu <= alu_src2_con_idu;
+            // reg_dst_con_exu <= reg_dst_con_idu;
+            imm_exu <= imm_idu;
+
+            src1_exu <= src1_idu;
+            src2_exu <= src2_idu;
+            pc_exu <= pc_idu;
+            dnpc_exu <= dnpc_idu;
+            is_jalr_exu <= is_jalr_idu;
+
+            wcsren_exu <= wcsren_idu;
+            wcsraddr_exu <= wcsraddr_idu;
+            wcsrdata_exu <= wcsrdata_idu;
+            wcsren2_exu <= wcsren2_idu;
+            wcsraddr2_exu <= wcsraddr2_idu;
+            wcsrdata2_exu <= wcsrdata2_idu;
+
+            is_csrtype_exu <= is_csrtype_idu;
+
+            cnt <= 1'b1;
+
+            fencei_exu <= fencei_idu;
+
+            // exu_mem_valid <= 1'b1;
+
         end
     end
 
