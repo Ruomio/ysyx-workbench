@@ -178,6 +178,8 @@ module ysyx_24080020_IFU (
         .clk(clk),
         .rst(rst),
         .lsu_busy(lsu_busy),
+        .invalid_inst(invalid_inst),
+
         .if_en(if_en),
         .addr(addr),
         .inst(inst_ifu),

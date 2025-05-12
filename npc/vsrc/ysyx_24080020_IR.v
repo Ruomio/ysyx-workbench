@@ -4,6 +4,7 @@ module ysyx_24080020_IR(
     input rst,
     input if_en,
     input lsu_busy,
+    input invalid_inst,
     input [`ysyx_24080020_WIDTH-1:0] addr,
 
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
@@ -59,7 +60,7 @@ module ysyx_24080020_IR(
       arburst <= 'b0;
       arid <= 'b0;
     end
-    else if(if_en) begin
+    else if(if_en && !invalid_inst) begin
       need_fetch <= 1'b1;
     end
   end
