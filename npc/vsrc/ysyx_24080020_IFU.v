@@ -111,8 +111,6 @@ module ysyx_24080020_IFU (
             need_update_pc <= 1'b0;
         end
         else if(need_update_pc) begin
-            is_dnpc <= is_dnpc_exu;
-            dnpc <= dnpc_exu;
             // update
             is_update_pc <= 1'b1;
 
@@ -121,7 +119,7 @@ module ysyx_24080020_IFU (
 
             need_update_pc <= 'b0;
         end
-        else if(wb_ifu_shake_hands && next_inst) begin
+        else if(wb_ifu_shake_hands && next_inst && !control_adventure) begin
             need_update_pc <= 1'b1;
         end
         else begin
@@ -141,6 +139,8 @@ module ysyx_24080020_IFU (
         else if(control_adventure) begin
             // pc incorrect
             next_inst <= 'b1;
+            is_dnpc <= is_dnpc_exu;
+            dnpc <= dnpc_exu;
         end
     end
 
