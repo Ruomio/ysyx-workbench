@@ -112,6 +112,8 @@ module ysyx_24080020_IFU (
             need_update_pc <= 1'b0;
         end
         else if(need_update_pc) begin
+            is_dnpc <= is_csrtype_exu;
+            dnpc <= dnpc_exu;
             // update
             is_update_pc <= 1'b1;
 
@@ -128,16 +130,6 @@ module ysyx_24080020_IFU (
             is_update_pc <= 1'b0;
         end
 
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            is_dnpc <= 'b0;
-        end
-        else if(is_dnpc_exu) begin
-            is_dnpc <= 1'b1;
-            dnpc <= dnpc_exu;
-        end
     end
 
     always @(posedge clk) begin
