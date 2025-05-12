@@ -403,20 +403,20 @@ module ysyx_24080020_ICACHE(
   end
 
   // set icache invalid, when writing after reading.
-  always @(posedge clk) begin
-    if(!rst) begin
+  // always @(posedge clk) begin
+  //   if(!rst) begin
 
-    end
-    else if(bvalid_soc_i && use_icache && cache_hit) begin
-      // set invalid
-      cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
-    end
-    else if(awvalid_xbar_i && use_icache) begin
-      araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
-    end
+  //   end
+  //   else if(bvalid_soc_i && use_icache && cache_hit) begin
+  //     // set invalid
+  //     cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
+  //   end
+  //   else if(awvalid_xbar_i && use_icache) begin
+  //     araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
+  //   end
 
 
-  end
+  // end
 
   // AR
   always @(posedge clk) begin
