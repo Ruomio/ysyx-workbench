@@ -47,7 +47,7 @@ module ysyx_24080020_IFU (
 
     reg wb_ifu_shake_hands;
     reg next_inst, need_update_pc;
-    reg invalid_inst;
+    reg invalid_inst, set_invalid_low;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -158,10 +158,15 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
+            set_invalid_low <= 'b0;
             invalid_inst <= 'b0;
         end
+        else if(set_invalid_low) begin
+            invalid_inst <= 1'b0;
+            set_invalid_low <= 'b0;
+        end
         else if(inst_fin && invalid_inst) begin
-            invalid_inst <= 'b0;
+            set_invalid_low <= 'b1;
         end
     end
 
