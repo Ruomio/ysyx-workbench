@@ -47,7 +47,6 @@ module ysyx_24080020_IFU (
 
     reg wb_ifu_shake_hands;
     reg next_inst, need_update_pc;
-    reg invalid_inst;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -70,7 +69,7 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             ifu_idu_valid <= 1'b0;
         end
-        else if(inst_fin) begin
+        else if(inst_fin && !control_adventure) begin
             ifu_idu_valid <= 1'b1;
             pc_ifu <= addr;
         end
@@ -135,27 +134,16 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             next_inst <= 'b1;
-            invalid_inst <= 'b0;
         end
         if((idu_ifu_ready && ifu_idu_valid)) begin
             next_inst <= 'b1;
         end
-        else if((!is_dnpc && is_dnpc_exu)) begin
+        else if(control_adventure) begin
             // pc incorrect
             next_inst <= 'b1;
-
-            invalid_inst <= 1'b1;
         end
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-
-        end
-        else if(invalid_inst && if_en) begin
-            invalid_inst <= 'b0;
-        end
-    end
 
 
     ysyx_24080020_PC u_pc(
@@ -173,7 +161,6 @@ module ysyx_24080020_IFU (
         .clk(clk),
         .rst(rst),
         .lsu_busy(lsu_busy),
-        .invalid_inst(invalid_inst),
 
         .if_en(if_en),
         .addr(addr),
