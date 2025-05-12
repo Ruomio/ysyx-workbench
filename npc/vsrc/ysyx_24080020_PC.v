@@ -5,6 +5,7 @@ module ysyx_24080020_PC (
     input is_update_pc,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
+    input control_adventure,
     output reg if_en,
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
@@ -21,27 +22,17 @@ module ysyx_24080020_PC (
         else if(cnt) begin
             addr <= is_dnpc ? dnpc :
                     ~first_if ? addr : addr + 32'd4;
-            if_en <= 1'b1;
             first_if <= 1'b1;
 
             // pc_ifu <= addr;
-            cnt <= 1'b0;
+            if(!control_adventure) begin
+                cnt <= 1'b0;
+            if_en <= 1'b1;
+            end
 
         end
         else if(is_update_pc) begin
             cnt <= 'b1;
-            // if(cnt == 1'b1) begin
-            //     addr <= is_dnpc ? dnpc :
-            //             ~first_if ? addr : addr + 32'd4;
-            //     if_en <= 1'b1;
-            //     first_if <= 1'b1;
-
-            //     // pc_ifu <= addr;
-            //     cnt <= 1'b0;
-            // end
-            // else begin
-            //     cnt <= 1'b1;
-            // end
         end
         else begin
             // addr <= addr;
