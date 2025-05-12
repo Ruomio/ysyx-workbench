@@ -3,6 +3,7 @@ module ysyx_24080020_IDU (
     input clk,
     input rst,
     input data_adventure,
+    input control_adventure,
 
     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
@@ -94,7 +95,7 @@ module ysyx_24080020_IDU (
     assign rs2 = inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
 
-    assign idu_exu_valid_reg = idu_exu_valid && !data_adventure;
+    assign idu_exu_valid_reg = idu_exu_valid && !data_adventure && !control_adventure;
 
     always @(posedge clk) begin
         if(!rst) begin

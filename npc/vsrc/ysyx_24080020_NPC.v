@@ -350,6 +350,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
         .data_adventure(data_adventure),
+        .control_adventure(control_adventure),
 
         .inst_ifu(inst_ifu),
         .rs1(rs1),
