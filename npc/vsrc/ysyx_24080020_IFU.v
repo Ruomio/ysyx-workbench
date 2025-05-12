@@ -128,16 +128,6 @@ module ysyx_24080020_IFU (
 
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            is_dnpc <= 1'b0;
-            dnpc <= 'b0;
-        end
-        else if(is_dnpc_exu) begin
-            is_dnpc <= 1'b1;
-            dnpc <= dnpc_exu;
-        end
-    end
 
     always @(posedge clk) begin
         if(!rst) begin
