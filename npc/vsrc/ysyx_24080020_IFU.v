@@ -130,7 +130,7 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            inst_ifu <= 'b0;
+            is_dnpc <= 'b0;
         end
         else if(is_dnpc_exu) begin
             is_dnpc <= 1'b1;
