@@ -112,7 +112,7 @@ module ysyx_24080020_IFU (
             need_update_pc <= 1'b0;
         end
         else if(need_update_pc) begin
-            is_dnpc <= is_csrtype_exu;
+            is_dnpc <= is_dnpc_exu;
             dnpc <= dnpc_exu;
             // update
             is_update_pc <= 1'b1;
