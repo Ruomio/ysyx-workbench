@@ -113,6 +113,9 @@ module ysyx_24080020_IFU (
             // update
             is_update_pc <= 1'b1;
 
+            is_dnpc <= is_dnpc_exu;
+            dnpc <= dnpc_exu;
+
             wb_ifu_shake_hands <= 1'b0;
             next_inst <= 'b0;
 
