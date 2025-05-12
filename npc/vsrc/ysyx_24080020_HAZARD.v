@@ -43,7 +43,7 @@ module ysyx_24080020_HAZARD(
         if(!rst) begin
             control_adventure <= 'b0;
         end
-        else if(exu_lsu_valid) begin
+        else if(exu_lsu_valid && !is_dnpc_exu) begin
             control_adventure <= 'b0;
         end
         else if(is_dnpc_exu) begin

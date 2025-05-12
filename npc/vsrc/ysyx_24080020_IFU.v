@@ -41,9 +41,9 @@ module ysyx_24080020_IFU (
 
     wire [`ysyx_24080020_WIDTH-1:0] addr;
 
-    reg is_dnpc;
+    // reg is_dnpc;
     reg is_update_pc;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc;
+    // reg [`ysyx_24080020_WIDTH-1:0] dnpc;
 
     reg wb_ifu_shake_hands;
     reg next_inst, need_update_pc;
@@ -107,14 +107,10 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             wb_ifu_shake_hands <= 1'b0;
-            is_dnpc <= 1'b0;
-            dnpc <= 32'b0;
             need_update_pc <= 1'b0;
         end
         else if(need_update_pc) begin
             // update
-            dnpc <= dnpc_exu;
-            is_dnpc <= is_dnpc_exu;
             is_update_pc <= 1'b1;
 
             wb_ifu_shake_hands <= 1'b0;
@@ -146,9 +142,9 @@ module ysyx_24080020_IFU (
         .clk(clk),
         .rst(rst),
         .is_update_pc(is_update_pc),
-        .dnpc(dnpc),
+        .dnpc(dnpc_exu),
         // .pc_ifu(pc_ifu),
-        .is_dnpc(is_dnpc),
+        .is_dnpc(is_dnpc_exu),
         .if_en(if_en),
         .addr(addr)
     );
