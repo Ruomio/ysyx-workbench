@@ -111,8 +111,8 @@ module ysyx_24080020_IFU (
         end
         else if(need_update_pc) begin
             // update
-            dnpc <= dnpc_wb;
-            is_dnpc <= is_dnpc_wb;
+            dnpc <= dnpc_exu;
+            is_dnpc <= is_dnpc_exu;
             is_update_pc <= 1'b1;
 
             wb_ifu_shake_hands <= 1'b0;
