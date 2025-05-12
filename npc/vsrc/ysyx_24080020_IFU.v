@@ -134,7 +134,7 @@ module ysyx_24080020_IFU (
         end
         else if(is_dnpc_exu) begin
             is_dnpc <= 1'b1;
-            dnpc <= dnpc_exu
+            dnpc <= dnpc_exu;
         end
     end
 
