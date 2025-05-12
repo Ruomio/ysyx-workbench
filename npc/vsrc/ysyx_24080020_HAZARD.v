@@ -34,8 +34,8 @@ module ysyx_24080020_HAZARD(
         end
     end
 
-    assign data_adventure = (((rs1_idu == rd_exu) || (rs1_idu == rd_lsu) || (rs1_idu == rd_wbu) && (rs1_idu != 'b0))
-                         || ((rs2_idu == rd_exu) || (rs2_idu == rd_lsu) || (rs2_idu == rd_wbu)) && (rs2_idu != 'b0));
+    assign data_adventure = ((rs1_idu == rd_exu) || (rs1_idu == rd_lsu) || (rs1_idu == rd_wbu) && (rs1_idu != 'b0))
+                         || (((rs2_idu == rd_exu) || (rs2_idu == rd_lsu) || (rs2_idu == rd_wbu)) && (rs2_idu != 'b0));
 
 
     always @(posedge clk) begin
