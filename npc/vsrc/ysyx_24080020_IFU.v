@@ -111,8 +111,6 @@ module ysyx_24080020_IFU (
         end
         else if(need_update_pc) begin
             // update
-            dnpc <= dnpc_exu;
-            is_dnpc <= is_dnpc_exu;
             is_update_pc <= 1'b1;
 
             wb_ifu_shake_hands <= 1'b0;
@@ -132,10 +130,22 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
+            is_dnpc <= 1'b0;
+            dnpc <= 'b0;
+        end
+        else if(is_dnpc_exu) begin
+            is_dnpc <= 1'b1;
+            dnpc <= dnpc_exu;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
             next_inst <= 'b1;
         end
         if(idu_ifu_ready && ifu_idu_valid) begin
             next_inst <= 'b1;
+            is_dnpc <= 1'b0;
         end
     end
 
