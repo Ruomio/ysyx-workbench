@@ -66,7 +66,7 @@ module ysyx_24080020_IR(
       arid <= 'b0;
     end
     else if(if_en) begin
-      need_fetch <= 'b0;
+      need_fetch <= 'b1;
     end
 
   end
