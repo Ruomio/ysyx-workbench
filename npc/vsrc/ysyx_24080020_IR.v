@@ -77,8 +77,7 @@ module ysyx_24080020_IR(
       inst <= 'b0;
       inst_fin <= 'b0;
     end
-    else if(rvalid) begin
-      rready <= 'b1;
+    else if(rvalid && rready) begin
       if(rresp == 'b0) begin
         inst <= rdata;
         inst_fin <= 'b1;
@@ -88,6 +87,9 @@ module ysyx_24080020_IR(
         $error("ir read error");
         `endif
       end
+    end
+    else if(rvalid && rlast) begin
+      rready <= 'b1;
     end
     else begin
       rready <= 'b0;
