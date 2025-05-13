@@ -488,6 +488,15 @@ uint32_t g_get_reg(int i) {
 #if defined (ysyxSoCFull)
   return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
 #elif defined (ysyx_24080020_NPC)
+  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__csrs[i];
+#else
+  return 0;
+#endif
+}
+uint32_t g_get_csrs(int i) {
+#if defined (ysyxSoCFull)
+  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__csrs[i]);
+#elif defined (ysyx_24080020_NPC)
   return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i];
 #else
   return 0;
@@ -552,6 +561,9 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
 void update_npc_cpu() {
   for(int i=0; i<32; i++) {
     npc_cpu.gpr[i] = g_get_reg(i);
+    if(i<6) {
+      npc_cpu.csrs[i] = g_get_csrs(i);
+    }
   }
   npc_cpu.pc = g_pc;
 }
