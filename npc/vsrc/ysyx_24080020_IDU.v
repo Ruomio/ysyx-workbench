@@ -437,6 +437,9 @@ module ysyx_24080020_IDU (
                             `endif
                         end
                         else if(imm_idu == 32'b0) begin
+                            `ifdef CONFIG_DPIC
+                            $display("ecll");
+                            `endif
                             // ecall
                             // csrs[mepc] = pc;
                             wcsraddr_idu = `ysyx_24080020_MEPC_ADDR;
