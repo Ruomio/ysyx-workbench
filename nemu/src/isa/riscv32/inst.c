@@ -13,7 +13,6 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "isa.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
@@ -61,7 +60,6 @@ static void ecall(Decode *s) {
   bool success;
 #ifdef CONFIG_E_EXTENSION
   s->dnpc =  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);
-  // printf("before ecall $a5:0x%x\n", isa_reg_str2val("a5", &success));
   Assert(success, "isa_reg_str2val error.");
 #else
   s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
