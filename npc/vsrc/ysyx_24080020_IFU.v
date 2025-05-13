@@ -133,7 +133,7 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             next_inst <= 'b1;
         end
-        if((idu_ifu_ready && ifu_idu_valid)) begin
+        if(inst_fin) begin
             next_inst <= 'b1;
         end
         else if(control_adventure) begin
