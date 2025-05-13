@@ -76,6 +76,7 @@ module ysyx_24080020_IFU (
             else begin
                 ifu_idu_valid <= 1'b1;
                 pc_ifu <= addr;
+                next_inst <= 'b1;
             end
         end
         else begin
@@ -138,10 +139,7 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             next_inst <= 'b1;
         end
-        if(inst_fin) begin
-            next_inst <= 'b1;
-        end
-        else if(control_adventure) begin
+        if(control_adventure) begin
             // pc incorrect
             next_inst <= 'b1;
             is_dnpc <= is_dnpc_exu;
