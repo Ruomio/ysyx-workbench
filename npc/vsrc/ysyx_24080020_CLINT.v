@@ -78,6 +78,8 @@ module ysyx_24080020_CLINT(
         if(!rst) begin
             rdata <= 32'b0;
             rresp <= 2'b0;
+            rvalid <= 'b0;
+            rid <= 'b0;
         end
         else if(ren && rvalid == 1'b0) begin
             rdata <= l_or_h == 1'b0 ? timel : timeh;
@@ -124,6 +126,7 @@ module ysyx_24080020_CLINT(
         if(!rst) begin
             bvalid <= 1'b0;
             bresp <= 2'b0;
+            bid <= 'b0;
         end
         else if(wready && bvalid == 1'b0) begin
             bvalid <= 1'b1;

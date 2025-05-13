@@ -266,6 +266,38 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             exu_mem_shake_hands <= 1'b0;
+
+            wen_mem <= 'b0;
+            waddr_mem <= 'b0;
+
+            is_load_mem <= 'b0;
+            is_dnpc_mem <= 'b0;
+            dnpc_mem <= 'b0;
+
+            mren_mem <= 'b0;
+            mrtype_mem <= 'b0;
+            mrlen_mem <= 'b0;
+            mraddr_mem <= 'b0;
+            mwen_mem <= 'b0;
+            mwmask_mem <= 'b0;
+            mwaddr_mem <= 'b0;
+            mwdata_mem <= 'b0;
+
+            alu_out_mem <= 'b0;
+
+            wcsren_mem <= 'b0;
+            wcsraddr_mem <= 'b0;
+            wcsrdata_mem <= 'b0;
+            wcsren2_mem <= 'b0;
+            wcsraddr2_mem <= 'b0;
+            wcsrdata2_mem <= 'b0;
+
+            fencei_mem <= 'b0;
+
+            pc_mem <= 'b0;
+
+            mem_wb_valid <= 'b0;
+
         end
         else if(exu_mem_shake_hands) begin
 

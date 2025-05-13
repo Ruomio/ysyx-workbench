@@ -53,9 +53,9 @@ module ysyx_24080020_REG
 
     reg is_load_wb;
 
-    reg [2:0] wcsr_idx;
-    reg [2:0] wcsr_idx2;
-    reg [2:0] rcsr_idx;
+    wire [2:0] wcsr_idx;
+    wire [2:0] wcsr_idx2;
+    wire [2:0] rcsr_idx;
 
     reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
@@ -100,7 +100,21 @@ module ysyx_24080020_REG
 
     always @(posedge clk) begin
         if(!rst) begin
-
+            wb_mem_ready <= 'b0;
+            wen_wb <= 'b0;
+            waddr_wb <= 'b0;
+            mrdata_wb <= 'b0;
+            wcsren_wb <= 'b0;
+            wcsraddr_wb <= 'b0;
+            wcsrdata_wb <= 'b0;
+            wcsren2_wb <= 'b0;
+            wcsraddr2_wb <= 'b0;
+            wcsrdata2_wb <= 'b0;
+            alu_out_wb <= 'b0;
+            is_load_wb <= 'b0;
+            is_dnpc_wb <= 'b0;
+            dnpc_wb <= 'b0;
+            wb_ifu_valid <= 'b0;
         end
         else if(wb_ifu_valid && ifu_wb_ready && state) begin
             // shake hands successfully
@@ -170,7 +184,7 @@ module ysyx_24080020_REG
     // csrs write
     always @(posedge clk) begin
         if(!rst) begin
-            for(i = 0; i<3'd5; i = i+1) csrs[i] <= 32'b0;
+            for(i = 0; i<=3'd7; i = i+1) csrs[i] <= 32'b0;
             csrs[1] <= 32'h1800;
             csrs[4] <= 32'h79737978;
             csrs[5] <= 32'h16f6e94;
