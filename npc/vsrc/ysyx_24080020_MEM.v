@@ -355,7 +355,6 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             arvalid <= 1'b0;
             arlen <= 'b0;
-            arsize <= 'b0;
             arburst <= 'b0;
             arid <= 'b0;
         end
