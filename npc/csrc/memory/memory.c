@@ -106,7 +106,7 @@ uint8_t* guest_to_host(paddr_t paddr) {
   else if(paddr >= CONFIG_MBASE && paddr < CONFIG_MBASE + CONFIG_MSIZE) {
     return memory + paddr - CONFIG_MBASE;
   }
-  Assert(0,"paddr invalid! Not support sram");
+  Assert(0,"paddr invalid!");
 #endif
   return memory + paddr - CONFIG_MBASE;
 }

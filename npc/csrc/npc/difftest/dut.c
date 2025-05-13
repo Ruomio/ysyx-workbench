@@ -13,7 +13,6 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "common.h"
 #include "define.h"
 #include <dlfcn.h>
 #include <cpu/difftest.h>
