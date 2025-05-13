@@ -72,7 +72,7 @@ VerilatedContext *contextp = NULL;
 
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=CONFIG_MBASE, .ret = true};
 
-uint32_t g_pc;
+uint32_t g_pc, g_dnpc;
 static uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
@@ -217,7 +217,7 @@ void exec_once_npc(uint32_t pc) {
 #endif
     if(is_clk_high) {
       total_cycles++;
-      if(wait_cycles++ > 20000) {
+      if(wait_cycles++ > 30000) {
         printf("wait too many cycles, maybe dead loop\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
@@ -290,11 +290,11 @@ void exec_once_npc(uint32_t pc) {
 
 #ifdef CONFIG_ITRACE
   char *p = inst_buf;
-  p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", last_pc);
+  p += snprintf(p, sizeof(inst_buf), FMT_WORD ":", g_pc);
   // int ilen = g_get_snpc() - last_pc;
   int ilen = 4;
   int i;
-  uint32_t last_inst = paddr_read(last_pc, ilen);
+  uint32_t last_inst = paddr_read(g_pc, ilen);
   uint8_t *inst = (uint8_t *)&last_inst;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
@@ -309,14 +309,14 @@ void exec_once_npc(uint32_t pc) {
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, inst_buf + sizeof(inst_buf) - p,
-      MUXDEF(CONFIG_ISA_x86, g_get_snpc(), last_pc), (uint8_t *)&last_inst, ilen);
+      MUXDEF(CONFIG_ISA_x86, g_get_snpc(), g_pc), (uint8_t *)&last_inst, ilen);
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
   // RingBuffer_write(inst_buf, strlen(inst_buf));
 #endif
 
-
+  // printf("npc exec pc: 0x%x, dnpc:0x%x\n", g_pc, g_get_dnpc());
   trace_and_difftest(g_pc);
 }
 
@@ -466,7 +466,8 @@ void check_trap(npc_state u_npc_state) {
 
 uint32_t g_get_pc() {
 #if defined (ysyxSoCFull)
-  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
+  // g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
+  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu;
 #elif defined (ysyx_24080020_NPC)
   g_pc =  top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr;
 #endif
@@ -476,7 +477,8 @@ uint32_t g_get_pc() {
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 #if defined (ysyxSoCFull)
-  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  // top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
+  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu = pc;
 #elif defined (ysyx_24080020_NPC)
   top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr = pc;
 #endif
@@ -498,7 +500,12 @@ uint32_t g_get_snpc() {
 
 uint32_t g_get_dnpc() {
 #if defined (ysyxSoCFull)
-  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__is_dnpc_wb) {
+    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+  }
+  else
+    g_dnpc = g_pc + 4;
+  return g_dnpc;
 #elif defined (ysyx_24080020_NPC)
   return top->rootp->ysyx_24080020_NPC__DOT__is_dnpc_wb;
 #else
