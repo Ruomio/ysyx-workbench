@@ -53,9 +53,9 @@ module ysyx_24080020_REG
 
     reg is_load_wb;
 
-    wire [2:0] wcsr_idx;
-    wire [2:0] wcsr_idx2;
-    wire [2:0] rcsr_idx;
+    reg [2:0] wcsr_idx;
+    reg [2:0] wcsr_idx2;
+    reg [2:0] rcsr_idx;
 
     reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
