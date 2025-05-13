@@ -138,6 +138,8 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             next_inst <= 'b1;
+            dnpc <= 'b0;
+            is_dnpc <= 'b0;
         end
         if(control_adventure) begin
             // pc incorrect

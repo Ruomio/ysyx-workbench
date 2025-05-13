@@ -10,14 +10,14 @@ module ysyx_24080020_ARBITER (
     input [7:0] arlen_ifu,
     input [2:0] arsize_ifu,
     input [1:0] arburst_ifu,
-    output reg arready_ifu,
+    output arready_ifu,
 
     input rready_ifu,
-    output reg [3:0] rid_ifu,
-    output reg rlast_ifu,
-    output reg [`ysyx_24080020_WIDTH-1:0] rdata_ifu,
-    output reg [1:0] rresp_ifu,
-    output reg rvalid_ifu,
+    output [3:0] rid_ifu,
+    output rlast_ifu,
+    output [`ysyx_24080020_WIDTH-1:0] rdata_ifu,
+    output [1:0] rresp_ifu,
+    output rvalid_ifu,
     // ifu there isn't AW, W, B
 
     // master-2 mem
@@ -27,14 +27,14 @@ module ysyx_24080020_ARBITER (
     input [7:0] arlen_mem,
     input [2:0] arsize_mem,
     input [1:0] arburst_mem,
-    output reg arready_mem,
+    output arready_mem,
 
     input rready_mem,
-    output reg [`ysyx_24080020_WIDTH-1:0] rdata_mem,
-    output reg [3:0] rid_mem,
-    output reg rlast_mem,
-    output reg [1:0] rresp_mem,
-    output reg rvalid_mem,
+    output [`ysyx_24080020_WIDTH-1:0] rdata_mem,
+    output [3:0] rid_mem,
+    output rlast_mem,
+    output [1:0] rresp_mem,
+    output rvalid_mem,
 
     input [`ysyx_24080020_WIDTH-1:0] awaddr_mem,
     input awvalid_mem,
@@ -42,26 +42,26 @@ module ysyx_24080020_ARBITER (
     input [7:0] awlen_mem,
     input [2:0] awsize_mem,
     input [1:0] awburst_mem,
-    output reg awready_mem,
+    output awready_mem,
 
     input [`ysyx_24080020_WIDTH-1:0] wdata_mem,
     input [3:0] wstrb_mem,
     input wvalid_mem,
     input wlast_mem,
-    output reg wready_mem,
+    output wready_mem,
 
-    output reg [1:0] bresp_mem,
-    output reg bvalid_mem,
-    output reg [3:0] bid_mem,
+    output [1:0] bresp_mem,
+    output bvalid_mem,
+    output [3:0] bid_mem,
     input bready_mem,
 
     // arbiter deside
-    output reg arvalid_arbiter,
-    output reg [`ysyx_24080020_WIDTH-1:0] araddr_arbiter,
-    output reg [3:0] arid_arbiter,
-    output reg [7:0] arlen_arbiter,
-    output reg [2:0] arsize_arbiter,
-    output reg [1:0] arburst_arbiter,
+    output arvalid_arbiter,
+    output [`ysyx_24080020_WIDTH-1:0] araddr_arbiter,
+    output [3:0] arid_arbiter,
+    output [7:0] arlen_arbiter,
+    output [2:0] arsize_arbiter,
+    output [1:0] arburst_arbiter,
     input arready_xbar,
 
     input [`ysyx_24080020_WIDTH-1:0] rdata_xbar,
@@ -69,26 +69,26 @@ module ysyx_24080020_ARBITER (
     input rvalid_xbar,
     input [3:0] rid_xbar,
     input rlast_xbar,
-    output reg rready_arbiter,
+    output rready_arbiter,
 
-    output reg [`ysyx_24080020_WIDTH-1:0] awaddr_arbiter,
-    output reg awvalid_arbiter,
-    output reg [3:0] awid_arbiter,
-    output reg [7:0] awlen_arbiter,
-    output reg [2:0] awsize_arbiter,
-    output reg [1:0] awburst_arbiter,
+    output [`ysyx_24080020_WIDTH-1:0] awaddr_arbiter,
+    output awvalid_arbiter,
+    output [3:0] awid_arbiter,
+    output [7:0] awlen_arbiter,
+    output [2:0] awsize_arbiter,
+    output [1:0] awburst_arbiter,
     input awready_xbar,
 
-    output reg [`ysyx_24080020_WIDTH-1:0] wdata_arbiter,
-    output reg [3:0] wstrb_arbiter,
-    output reg wvalid_arbiter,
-    output reg wlast_arbiter,
+    output [`ysyx_24080020_WIDTH-1:0] wdata_arbiter,
+    output [3:0] wstrb_arbiter,
+    output wvalid_arbiter,
+    output wlast_arbiter,
     input wready_xbar,
 
     input [1:0] bresp_xbar,
     input bvalid_xbar,
     input [3:0] bid_xbar,
-    output reg bready_arbiter
+    output bready_arbiter
 );
   wire [2:0] max_cnt;
   reg [2:0] ifu_wait_cnt;
