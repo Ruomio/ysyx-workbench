@@ -2,11 +2,11 @@
 module ysyx_24080020_IDU (
     input clk,
     input rst,
+    input data_adventure,
+
     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
-    output [4:0] rs1,
-    output [4:0] rs2,
     // input [`ysyx_24080020_WIDTH-1:0] snpc_ifu,
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
 
@@ -15,7 +15,9 @@ module ysyx_24080020_IDU (
 
     // reg
     output reg wen_idu,
-    output reg [4:0] waddr_idu,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] rs1,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] rs2,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
     output reg is_load_idu,
     output reg is_dnpc_idu,
@@ -55,7 +57,7 @@ module ysyx_24080020_IDU (
     input ifu_idu_valid,
     input exu_idu_ready,
     output reg idu_ifu_ready,
-    output reg idu_exu_valid
+    output reg idu_exu_valid_reg
 
 );
 `ifdef CONFIG_DPIC
@@ -81,6 +83,7 @@ module ysyx_24080020_IDU (
     reg cnt;
 
 
+    reg idu_exu_valid;
 
     reg [`ysyx_24080020_WIDTH-1:0] inst_idu;
 
@@ -91,6 +94,7 @@ module ysyx_24080020_IDU (
     assign rs2 = inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
 
+    assign idu_exu_valid_reg = idu_exu_valid && !data_adventure;
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -109,7 +113,10 @@ module ysyx_24080020_IDU (
     end
 
     always @(posedge clk) begin
-        if(ifu_idu_valid) begin
+        if(idu_exu_valid_reg && exu_idu_ready && state) begin
+            idu_exu_valid <= 1'b0;
+        end
+        else if(ifu_idu_valid) begin
             if(idu_exu_valid) idu_ifu_ready <= 1'b0;
             else begin
                 // shake hands successfully
@@ -122,9 +129,6 @@ module ysyx_24080020_IDU (
                 // idu_exu_valid <= 1'b1;
                 cnt <= 1'b1;
             end
-        end
-        else if(idu_exu_valid && exu_idu_ready && state) begin
-            idu_exu_valid <= 1'b0;
         end
         else begin
             // idu_exu_valid <= 1'b0;
@@ -141,15 +145,11 @@ module ysyx_24080020_IDU (
             idu_exu_valid <= 1'b1;
             cnt <= 1'b0;
         end
-        else begin
-            cnt <= 1'b0;
-        end
-
     end
 
 
 
-    always @(inst_idu or rs1 or rs2 or rcsrdata) begin
+    always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2) begin
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;

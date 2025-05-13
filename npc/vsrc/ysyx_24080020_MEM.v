@@ -2,7 +2,7 @@
 module ysyx_24080020_MEM(
     input clk,
     input rst,
-
+    input structural_adventure,
     // memory
     input mren_exu,
     input mrtype_exu,
@@ -16,6 +16,7 @@ module ysyx_24080020_MEM(
 
     input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
+    output reg exu_mem_shake_hands,
 
     // csrs
     input wcsren_exu,
@@ -32,23 +33,25 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
     // regs
     input wen_exu,
-    input [4:0] waddr_exu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
     output reg wen_mem,
-    output reg [4:0] waddr_mem,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
 
     input reg is_load_exu,
     output reg is_load_mem,
 
     input is_dnpc_exu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     output reg is_dnpc_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_mem,
 
     input fencei_exu,
     output reg fencei_mem,
 
     // axi-full
-    output reg arvalid,
+    output arvalid_reg,
     output reg [3:0] arid,
     output reg [7:0] arlen,
     output [2:0] arsize,
@@ -64,7 +67,7 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] rdata,
 
     input awready,
-    output reg awvalid,
+    output awvalid_reg,
     output reg [3:0] awid,
     output reg [7:0] awlen,
     output [2:0] awsize,
@@ -72,7 +75,7 @@ module ysyx_24080020_MEM(
     output [`ysyx_24080020_WIDTH-1:0] awaddr,
 
     input wready,
-    output reg wvalid,
+    output wvalid_reg,
     output reg wlast,
     output reg [3:0] wstrb,
     output [`ysyx_24080020_WIDTH-1:0] wdata,
@@ -94,6 +97,11 @@ module ysyx_24080020_MEM(
     import "DPI-C" function void statistics_lsu_get_data();
 `endif
 
+    reg arvalid, awvalid, wvalid;
+    assign arvalid_reg = arvalid && !structural_adventure;
+    assign awvalid_reg = awvalid && !structural_adventure;
+    assign wvalid_reg = wvalid && !structural_adventure;
+
     reg mren_mem;
     reg mwen_mem;
     reg mrtype_mem;
@@ -103,8 +111,8 @@ module ysyx_24080020_MEM(
     reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
-    reg exu_mem_shake_hands;
     reg finish_read;
+    reg next_inst;
 
     reg arlen_cnt;
     reg awlen_cnt;
@@ -229,20 +237,25 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             mem_exu_ready <= 1'b0;
+            next_inst <= 'b1;
+        end
+        else if(mem_wb_valid && wb_mem_ready && state) begin
+            mem_wb_valid <= 1'b0;
+
+            waddr_mem <= 'b0;
+
+            next_inst <= 'b1;
+
         end
         else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
             else if(mem_exu_ready) begin
                 exu_mem_shake_hands <= 1'b1;
             end
-            else begin
+            else if(next_inst) begin
                 mem_exu_ready <= 1'b1;
 
             end
-        end
-        else if(wb_mem_ready && state) begin
-            mem_wb_valid <= 1'b0;
-
         end
         else begin
             mem_exu_ready <= 1'b0;
@@ -284,6 +297,8 @@ module ysyx_24080020_MEM(
 
             fencei_mem <= fencei_exu;
 
+            pc_mem <= pc_exu;
+
             // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin
                 mem_wb_valid <= 1'b1;
@@ -293,6 +308,7 @@ module ysyx_24080020_MEM(
             end
 
             exu_mem_shake_hands <= 1'b0;
+            next_inst <= 'b0;
         end
         else begin
           fencei_mem <= 'b0;
@@ -432,7 +448,7 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             awvalid <= 1'b0;
         end
-        else if(awvalid && awready) begin
+        else if(awvalid_reg && awready) begin
             awvalid <= 1'b0;
 
             // mwen_mem <= 1'b0;
@@ -503,17 +519,17 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             wvalid <= 1'b0;
         end
-        else if(wvalid && wready && wlast && !awlen[0]) begin
+        else if(wvalid_reg && wready && wlast && !awlen[0]) begin
             // finish once
             wvalid <= 1'b0;
         end
-        else if(wvalid && wready && wlast && awlen[0]) begin
+        else if(wvalid_reg && wready && wlast && awlen[0]) begin
             // finish all
             wvalid <= 1'b0;
             // wlast <= 1'b0;
             awlen_cnt <= 1'b0;
         end
-        else if(wvalid && wready && awlen_cnt && awlen[0]) begin
+        else if(wvalid_reg && wready && awlen_cnt && awlen[0]) begin
             // next W
             // muti write, the second write
             wlast <= 1'b1;

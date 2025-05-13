@@ -7,6 +7,7 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_WIDTH-1:0] imm_idu,
     input is_load_idu,
     output reg is_load_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_exu,
 
     // branch
     input is_jalr_idu,
@@ -28,10 +29,10 @@ module ysyx_24080020_EXU
 
     // reg
     input wen_idu,
-    input [4:0] waddr_idu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
     input [`ysyx_24080020_WIDTH-1:0] wdata_idu,
     output reg wen_exu,
-    output reg [4:0] waddr_exu,
+    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
     // output reg[`ysyx_24080020_WIDTH-1:0] wdata_exu,
 
     // memory
@@ -91,7 +92,6 @@ module ysyx_24080020_EXU
     reg is_csrtype_exu;
     reg alu_src2_con_exu;
     reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] pc_exu;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
     reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
@@ -102,6 +102,8 @@ module ysyx_24080020_EXU
     reg state;   // 0:idle;   1:wait_ready
 
     reg cnt;
+
+    reg idu_exu_shake_hand;
 
 
 
@@ -133,63 +135,80 @@ module ysyx_24080020_EXU
 
     // bus
     always @(posedge clk) begin
-        if(idu_exu_valid) begin
-            if(exu_mem_valid) exu_idu_ready <=  1'b0;
-            else begin
-                // shake hand successfully
-                exu_idu_ready <= 1'b1;
-
-                // update all reg type control wire
-                wen_exu <= wen_idu;
-                waddr_exu <= waddr_idu;
-                wdata_exu <= wdata_idu;
-
-                mwen_exu <= mwen_idu;
-                mwmask_exu <= mwmask_idu;
-                mren_exu <= mren_idu;
-                mrtype_exu <= mrtype_idu;
-                mrlen_exu <= mrlen_idu;
-
-                is_load_exu <= is_load_idu;
-                is_dnpc_exu <= is_dnpc_idu;
-                branch_src1_exu <= branch_src1_idu;
-
-                alu_op_exu <= alu_op_idu;
-                alu_src2_con_exu <= alu_src2_con_idu;
-                // reg_dst_con_exu <= reg_dst_con_idu;
-                imm_exu <= imm_idu;
-
-                src1_exu <= src1_idu;
-                src2_exu <= src2_idu;
-                pc_exu <= pc_idu;
-                dnpc_exu <= dnpc_idu;
-                is_jalr_exu <= is_jalr_idu;
-
-                wcsren_exu <= wcsren_idu;
-                wcsraddr_exu <= wcsraddr_idu;
-                wcsrdata_exu <= wcsrdata_idu;
-                wcsren2_exu <= wcsren2_idu;
-                wcsraddr2_exu <= wcsraddr2_idu;
-                wcsrdata2_exu <= wcsrdata2_idu;
-
-                is_csrtype_exu <= is_csrtype_idu;
-
-                cnt <= 1'b1;
-
-                fencei_exu <= fencei_idu;
-
-                // exu_mem_valid <= 1'b1;
-            end
-        end
-        else if(mem_exu_ready && state) begin
+        if(mem_exu_ready && state) begin
             exu_mem_valid <= 1'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif
         end
+        else if(mem_exu_ready && !exu_mem_valid) begin
+            waddr_exu <= 'b0;
+            is_dnpc_exu <= 'b0;
+        end
+        else if(idu_exu_valid) begin
+            if(exu_mem_valid) exu_idu_ready <=  1'b0;
+            else begin
+                // shake hand successfully
+                exu_idu_ready <= 1'b1;
+
+                idu_exu_shake_hand <= 1'b1;
+
+            end
+        end
         else begin
             // exu_mem_valid <= 1'b1;
             exu_idu_ready <= 1'b0;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            idu_exu_shake_hand <= 1'b0;
+        end
+        else if(idu_exu_shake_hand) begin
+            idu_exu_shake_hand <= 1'b0;
+
+            // update all reg type control wire
+            wen_exu <= wen_idu;
+            waddr_exu <= waddr_idu;
+            wdata_exu <= wdata_idu;
+
+            mwen_exu <= mwen_idu;
+            mwmask_exu <= mwmask_idu;
+            mren_exu <= mren_idu;
+            mrtype_exu <= mrtype_idu;
+            mrlen_exu <= mrlen_idu;
+
+            is_load_exu <= is_load_idu;
+            is_dnpc_exu <= is_dnpc_idu;
+            branch_src1_exu <= branch_src1_idu;
+
+            alu_op_exu <= alu_op_idu;
+            alu_src2_con_exu <= alu_src2_con_idu;
+            // reg_dst_con_exu <= reg_dst_con_idu;
+            imm_exu <= imm_idu;
+
+            src1_exu <= src1_idu;
+            src2_exu <= src2_idu;
+            pc_exu <= pc_idu;
+            dnpc_exu <= dnpc_idu;
+            is_jalr_exu <= is_jalr_idu;
+
+            wcsren_exu <= wcsren_idu;
+            wcsraddr_exu <= wcsraddr_idu;
+            wcsrdata_exu <= wcsrdata_idu;
+            wcsren2_exu <= wcsren2_idu;
+            wcsraddr2_exu <= wcsraddr2_idu;
+            wcsrdata2_exu <= wcsrdata2_idu;
+
+            is_csrtype_exu <= is_csrtype_idu;
+
+            cnt <= 1'b1;
+
+            fencei_exu <= fencei_idu;
+
+            // exu_mem_valid <= 1'b1;
+
         end
     end
 

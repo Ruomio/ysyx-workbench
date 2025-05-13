@@ -6,6 +6,9 @@ module ysyx_24080020_ICACHE(
   input rst,
   input fencei_mem,
 
+  output in_flash_,
+  output reg busy,
+
   // axi from lsu
   input arvalid_xbar_i,
   input [`ysyx_24080020_WIDTH-1:0] araddr_xbar_i,
@@ -165,9 +168,10 @@ module ysyx_24080020_ICACHE(
   assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
                      && ((cache_valid[cache_index_tmp] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
 
-  assign in_flash = (araddr_xbar_i >= 32'h30000000 && araddr_xbar_i < 32'h40000000) ? 1'b1 : 1'b0;
-  assign in_mrom = (araddr_xbar_i >= 32'h20000000 && araddr_xbar_i < 32'h20001000) ? 1'b1 : 1'b0;
-  assign in_sdram = (araddr_xbar_i >= 32'ha0000000 && araddr_xbar_i < 32'hc0000000) ? 1'b1 : 1'b0;
+  assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
+  assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
+  assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
+  assign in_flash_ = in_flash;
 
   `ifdef USE_DCACHE
   assign use_icache = in_flash | in_mrom | in_sdram;
@@ -181,6 +185,7 @@ module ysyx_24080020_ICACHE(
           current_state <= 'b0;
           tag_index <= 'b0;
           toggle <= 'b0;
+          busy <= 'b0;
           for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
@@ -289,7 +294,7 @@ module ysyx_24080020_ICACHE(
           end
           JUDGE: begin
               if(fin_judge) begin
-                araddr_tmp <= {araddr_xbar_i[31:2], 2'b0};
+                araddr_tmp <= {araddr_tmp[31:2], 2'b0};
                 fin_judge <= 'b0;
               end
               else if(tag_index < cache_way) begin
@@ -398,20 +403,20 @@ module ysyx_24080020_ICACHE(
   end
 
   // set icache invalid, when writing after reading.
-  always @(posedge clk) begin
-    if(!rst) begin
+  // always @(posedge clk) begin
+  //   if(!rst) begin
 
-    end
-    else if(bvalid_soc_i && use_icache && cache_hit) begin
-      // set invalid
-      cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
-    end
-    else if(awvalid_xbar_i && use_icache) begin
-      araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
-    end
+  //   end
+  //   else if(bvalid_soc_i && use_icache && cache_hit) begin
+  //     // set invalid
+  //     cache_valid[cache_index_tmp] <= cache_valid[cache_index_tmp] & ~(1 << (cache_offset_tmp >> 2));
+  //   end
+  //   else if(awvalid_xbar_i && use_icache) begin
+  //     araddr_tmp <= {awaddr_xbar_i[31:2], 2'b0};
+  //   end
 
 
-  end
+  // end
 
   // AR
   always @(posedge clk) begin
@@ -427,7 +432,7 @@ module ysyx_24080020_ICACHE(
       araddr_icache_o <= 'b0;
 
     end
-    else if(arvalid_xbar_i) begin
+    else if(arvalid_xbar_i && !busy) begin
       araddr_icache_o <= araddr_xbar_i;
       arlen_icache_o <= arlen_xbar_i;
       arid_icache_o <= arid_xbar_i;
@@ -439,6 +444,7 @@ module ysyx_24080020_ICACHE(
       araddr_tmp <= araddr_xbar_i;
 
       r_en <= 'b1;
+      busy <= 'b1;
     end
     else begin
       arready_icache_o <= 1'b0;
@@ -459,6 +465,7 @@ module ysyx_24080020_ICACHE(
       rvalid_icache_o <= 'b0;
       rresp_icache_o <= 'b0;
       rlast_icache_o <= 'b0;
+      busy <= 'b0;
     end
     else if(all_fin) begin
       rvalid_icache_o <= 'b1;
@@ -489,6 +496,19 @@ module ysyx_24080020_ICACHE(
       cache_valid[num_index[cache_num_bits-1:0]] <= {cache_way{1'b0}};
       num_index <= num_index + 'b1;
     end
+  end
+
+  always @(posedge clk) begin
+    if(!rst) begin
+
+    end
+    else if((awvalid_xbar_i || wvalid_xbar_i) && !busy) begin
+      busy <= 1'b1;
+    end
+    else if(bvalid_icache_o && bready_xbar_i) begin
+      busy <= 'b0;
+    end
+
   end
 
 `endif

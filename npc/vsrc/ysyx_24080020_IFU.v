@@ -3,12 +3,18 @@ module ysyx_24080020_IFU (
     input clk,
     input rst,
 
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_wb,
-    input is_dnpc_wb,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
+    input is_dnpc_exu,
+    input lsu_busy,
 
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     output reg if_en,
+
+    // pipeline
+    input control_adventure,
+
+    output inst_fin,
 
     // axi-lite
     input arready,
@@ -33,7 +39,6 @@ module ysyx_24080020_IFU (
     output reg ifu_idu_valid
 );
 
-    wire inst_fin;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
 
     reg is_dnpc;
@@ -41,6 +46,7 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
 
     reg wb_ifu_shake_hands;
+    reg next_inst, need_update_pc, skip_once;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -64,8 +70,14 @@ module ysyx_24080020_IFU (
             ifu_idu_valid <= 1'b0;
         end
         else if(inst_fin) begin
-            ifu_idu_valid <= 1'b1;
-            pc_ifu <= addr;
+            if(skip_once) begin
+                skip_once <= 1'b0;
+            end
+            else begin
+                ifu_idu_valid <= 1'b1;
+                pc_ifu <= addr;
+                next_inst <= 'b1;
+            end
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
@@ -76,6 +88,10 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             ifu_wb_ready <= 1'b0;
+        end
+        else if(ifu_idu_valid && idu_ifu_ready && state) begin
+            ifu_idu_valid <= 1'b0;
+            is_dnpc <= 'b0;
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
@@ -89,9 +105,6 @@ module ysyx_24080020_IFU (
 
             end
         end
-        else if(idu_ifu_ready && state) begin
-            ifu_idu_valid <= 1'b0;
-        end
         else begin
             // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
@@ -101,16 +114,19 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             wb_ifu_shake_hands <= 1'b0;
-            is_dnpc <= 1'b0;
-            dnpc <= 32'b0;
+            need_update_pc <= 1'b0;
         end
-        else if(wb_ifu_shake_hands) begin
+        else if(need_update_pc) begin
             // update
-            dnpc <= dnpc_wb;
-            is_dnpc <= is_dnpc_wb;
             is_update_pc <= 1'b1;
 
             wb_ifu_shake_hands <= 1'b0;
+            next_inst <= 'b0;
+
+            need_update_pc <= 'b0;
+        end
+        else if(wb_ifu_shake_hands && next_inst) begin
+            need_update_pc <= 1'b1;
         end
         else begin
             // wb_ifu_shake_hands <= 1'b0;
@@ -118,6 +134,20 @@ module ysyx_24080020_IFU (
         end
 
     end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            next_inst <= 'b1;
+        end
+        if(control_adventure) begin
+            // pc incorrect
+            next_inst <= 'b1;
+            is_dnpc <= is_dnpc_exu;
+            dnpc <= dnpc_exu;
+            skip_once <= 'b1;
+        end
+    end
+
 
 
     ysyx_24080020_PC u_pc(
@@ -134,6 +164,8 @@ module ysyx_24080020_IFU (
     ysyx_24080020_IR u_ir(
         .clk(clk),
         .rst(rst),
+        .lsu_busy(lsu_busy),
+
         .if_en(if_en),
         .addr(addr),
         .inst(inst_ifu),

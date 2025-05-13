@@ -77,7 +77,7 @@ module ysyx_24080020_NPC(
 );
 
   // pc
-  wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu;
+  wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
   wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem, dnpc_wb;
   wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, is_dnpc_wb;
   wire is_jalr_idu;
@@ -85,8 +85,6 @@ module ysyx_24080020_NPC(
   // inst
   wire if_en;
   wire [`ysyx_24080020_WIDTH-1:0] inst_ifu, inst_idu;
-  wire [4:0] rs1;
-  wire [4:0] rs2;
   wire [`ysyx_24080020_WIDTH-1:0] imm_idu, imm_exu;
 
   wire is_load_idu, is_load_exu, is_load_mem, is_load_wb;
@@ -99,7 +97,7 @@ module ysyx_24080020_NPC(
 
   // reg
   wire wen_idu, wen_exu, wen_mem, wen_wb;
-  wire [4:0] waddr_idu, waddr_exu, waddr_mem, waddr_wb;
+  wire [`ysyx_24080020_REG_WIDTH-1:0] rs1, rs2, waddr_idu, waddr_exu, waddr_mem, waddr_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wdata_idu, wdata_exu, wdata_mem, wdata_wb;
   wire [`ysyx_24080020_WIDTH-1:0] src1_idu, src1_exu;
   wire [`ysyx_24080020_WIDTH-1:0] src2_idu, src2_exu, src2_mem;
@@ -304,16 +302,27 @@ module ysyx_24080020_NPC(
   wire [3:0] bid_sram, bid_uart;
   `endif
 
+  // pipeline hazard
+  wire in_flash;
+  wire structural_adventure, data_adventure, control_adventure;
+  wire inst_fin;
+  wire lsu_busy;
+  wire exu_mem_shake_hands;
+
 
 
     ysyx_24080020_IFU ifu(
         .clk(clk),
         .rst(rst),
-        .dnpc_wb(dnpc_wb),
-        .is_dnpc_wb(is_dnpc_wb),
+        .dnpc_exu(dnpc_new_exu),
+        .is_dnpc_exu(is_dnpc_exu),
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
         .if_en(if_en),
+
+        .lsu_busy(lsu_busy),
+        .control_adventure(control_adventure),
+        .inst_fin(inst_fin),
 
         // axi-lite
         .arvalid(arvalid_ifu),
@@ -331,7 +340,7 @@ module ysyx_24080020_NPC(
         .rdata(rdata_ifu),
         .rready(rready_ifu),
 
-        .wb_ifu_valid(wb_ifu_valid),
+        .wb_ifu_valid(1'b1),
         .idu_ifu_ready(idu_ifu_ready),
         .ifu_idu_valid(ifu_idu_valid),
         .ifu_wb_ready(ifu_wb_ready)
@@ -340,6 +349,8 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IDU idu(
         .clk(clk),
         .rst(rst),
+        .data_adventure(data_adventure),
+
         .inst_ifu(inst_ifu),
         .rs1(rs1),
         .rs2(rs2),
@@ -381,7 +392,7 @@ module ysyx_24080020_NPC(
 
         .ifu_idu_valid(ifu_idu_valid),
         .exu_idu_ready(exu_idu_ready),
-        .idu_exu_valid(idu_exu_valid),
+        .idu_exu_valid_reg(idu_exu_valid),
         .idu_ifu_ready(idu_ifu_ready)
     );
 
@@ -396,11 +407,14 @@ module ysyx_24080020_NPC(
         .is_dnpc_wb(is_dnpc_wb),
         .dnpc_mem(dnpc_mem),
         .dnpc_wb(dnpc_wb),
+        .pc_lsu(pc_lsu),
+        .pc_wbu(pc_wbu),
 
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
         .mrdata_mem(mrdata_mem),
         .alu_out_mem(alu_out_mem),
+        .waddr_wb(waddr_wb),
 
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
@@ -415,7 +429,7 @@ module ysyx_24080020_NPC(
         .rcsrdata(rcsrdata),
 
         .mem_wb_valid(mem_wb_valid),
-        .ifu_wb_ready(ifu_wb_ready),
+        .ifu_wb_ready(1'b1),
         .wb_mem_ready(wb_mem_ready),
         .wb_ifu_valid(wb_ifu_valid)
     );
@@ -427,6 +441,7 @@ module ysyx_24080020_NPC(
         .imm_idu(imm_idu),
         .is_load_idu(is_load_idu),
         .is_load_exu(is_load_exu),
+        .pc_exu(pc_exu),
 
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
@@ -492,6 +507,7 @@ module ysyx_24080020_NPC(
     ysyx_24080020_MEM u_mem(
         .clk(clk),
         .rst(rst),
+        .structural_adventure(structural_adventure),
         .mren_exu(mren_exu),
         .mrtype_exu(mrtype_exu),
         .mrlen_exu(mrlen_exu),
@@ -501,6 +517,7 @@ module ysyx_24080020_NPC(
         .mwaddr_exu(mwaddr_exu),
         .mwdata_exu(mwdata_exu),
         .mrdata_mem(mrdata_mem),
+        .exu_mem_shake_hands(exu_mem_shake_hands),
 
         .alu_out_exu(alu_out_exu),
         .alu_out_mem(alu_out_mem),
@@ -530,12 +547,14 @@ module ysyx_24080020_NPC(
         .dnpc_mem(dnpc_mem),
         .is_dnpc_exu(is_dnpc_exu),
         .is_dnpc_mem(is_dnpc_mem),
+        .pc_exu(pc_exu),
+        .pc_mem(pc_lsu),
 
         .fencei_exu(fencei_exu),
         .fencei_mem(fencei_mem),
 
         // axi-lite
-        .arvalid(arvalid_mem),
+        .arvalid_reg(arvalid_mem),
         .araddr(araddr_mem),
         .arid(arid_mem),
         .arlen(arlen_mem),
@@ -550,7 +569,7 @@ module ysyx_24080020_NPC(
         .rlast(rlast_mem),
         .rdata(rdata_mem),
 
-        .awvalid(awvalid_mem),
+        .awvalid_reg(awvalid_mem),
         .awid(awid_mem),
         .awlen(awlen_mem),
         .awsize(awsize_mem),
@@ -558,7 +577,7 @@ module ysyx_24080020_NPC(
         .awaddr(awaddr_mem),
         .awready(awready_mem),
 
-        .wvalid(wvalid_mem),
+        .wvalid_reg(wvalid_mem),
         .wstrb(wstrb_mem),
         .wdata(wdata_axi_mem),
         .wlast(wlast_mem),
@@ -974,6 +993,8 @@ module ysyx_24080020_NPC(
       .clk(clk),
       .rst(rst),
       .fencei_mem(fencei_mem),
+      .in_flash_(in_flash),
+      .busy(lsu_busy),
 
       // axi from lsu
       .arvalid_xbar_i(arvalid_xbar_i),
@@ -1081,5 +1102,31 @@ module ysyx_24080020_NPC(
     assign bid_soc_i = io_master_bid;
     assign io_master_bready = bready_icache_o;
 `endif
+
+
+    ysyx_24080020_HAZARD u_hazard(
+        .clk(clk),
+        .rst(rst),
+
+        // Structural adventures, between ifu and lsu
+        .in_flash(in_flash),
+        .arvalid_xbar_i(arvalid_xbar_i),
+        .inst_fin(inst_fin),
+        .structural_adventure(structural_adventure),
+
+        // Data adventures, between ifu and {idu, exu, wbu}
+        .rs1_idu(rs1),
+        .rs2_idu(rs2),
+        .rd_exu(waddr_exu),
+        .rd_lsu(waddr_mem),
+        .rd_wbu(waddr_wb),
+        .data_adventure(data_adventure),
+
+        // control adventures, between ifu and exu
+        .is_dnpc(is_dnpc_exu),
+        .exu_lsu_shake_hands(exu_mem_shake_hands),
+        .control_adventure(control_adventure)
+
+    );
 
 endmodule

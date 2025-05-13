@@ -3,6 +3,7 @@ module ysyx_24080020_IR(
     input clk,
     input rst,
     input if_en,
+    input lsu_busy,
     input [`ysyx_24080020_WIDTH-1:0] addr,
 
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
@@ -30,6 +31,8 @@ module ysyx_24080020_IR(
   import "DPI-C" function void statistics_ifu_get_inst();
   `endif
 
+  reg need_fetch;
+
   always @(posedge clk) begin
     if(!rst) begin
       arvalid <= 'b0;
@@ -45,7 +48,16 @@ module ysyx_24080020_IR(
       statistics_ifu_get_inst();
       `endif
     end
-    else if(if_en) begin
+
+  end
+
+  always @(posedge clk) begin
+    if(!rst) begin
+      need_fetch <= 'b0;
+    end
+    else if(need_fetch && !lsu_busy) begin
+      need_fetch <= 'b0;
+
       araddr <= addr;
       arvalid <= 'b1;
       arsize <= 'b10;
@@ -53,6 +65,10 @@ module ysyx_24080020_IR(
       arburst <= 'b0;
       arid <= 'b0;
     end
+    else if(if_en) begin
+      need_fetch <= 'b1;
+    end
+
   end
 
   always @(posedge clk) begin
@@ -61,8 +77,7 @@ module ysyx_24080020_IR(
       inst <= 'b0;
       inst_fin <= 'b0;
     end
-    else if(rvalid) begin
-      rready <= 'b1;
+    else if(rvalid && rready) begin
       if(rresp == 'b0) begin
         inst <= rdata;
         inst_fin <= 'b1;
@@ -72,6 +87,9 @@ module ysyx_24080020_IR(
         $error("ir read error");
         `endif
       end
+    end
+    else if(rvalid && rlast) begin
+      rready <= 'b1;
     end
     else begin
       rready <= 'b0;
