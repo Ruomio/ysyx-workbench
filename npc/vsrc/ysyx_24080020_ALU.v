@@ -3,7 +3,7 @@ module ysyx_24080020_ALU(
     input [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op,
     input [`ysyx_24080020_WIDTH-1:0] alu_src1,
     input [`ysyx_24080020_WIDTH-1:0] alu_src2,
-    output [`ysyx_24080020_WIDTH-1:0] alu_out
+    output reg [`ysyx_24080020_WIDTH-1:0] alu_out
 );
 
     always @(*) begin
