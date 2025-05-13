@@ -438,7 +438,7 @@ module ysyx_24080020_IDU (
                         end
                         else if(imm_idu == 32'b0) begin
                             `ifdef CONFIG_DPIC
-                            $display("ecll");
+                            $display("ecall");
                             `endif
                             // ecall
                             // csrs[mepc] = pc;
