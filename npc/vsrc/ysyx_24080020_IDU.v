@@ -437,9 +437,6 @@ module ysyx_24080020_IDU (
                             `endif
                         end
                         else if(imm_idu == 32'b0) begin
-                            `ifdef CONFIG_DPIC
-                            $display("ecall");
-                            `endif
                             // ecall
                             // csrs[mepc] = pc;
                             wcsraddr_idu = `ysyx_24080020_MEPC_ADDR;
@@ -458,6 +455,7 @@ module ysyx_24080020_IDU (
                             is_dnpc_idu = 1'b1;
                             `ifdef CONFIG_DPIC
                             npc_difftest_skip_ref();
+                            $display("ecall, skip_ref pc:0x%x", pc_idu);
                             `endif
                         end
                         else if(imm_idu == 32'b1100000010) begin
