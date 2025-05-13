@@ -238,6 +238,7 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             mem_exu_ready <= 1'b0;
             next_inst <= 'b1;
+            waddr_mem <= 'b0;
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
             mem_wb_valid <= 1'b0;
@@ -353,6 +354,10 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             arvalid <= 1'b0;
+            arlen <= 'b0;
+            arsize <= 'b0;
+            arburst <= 'b0;
+            arid <= 'b0;
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
@@ -479,6 +484,7 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             awvalid <= 1'b0;
+            awlen <= 'b0;
         end
         else if(awvalid_reg && awready) begin
             awvalid <= 1'b0;
@@ -527,6 +533,8 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             awlen_cnt <= 1'b0;
             wlast <= 1'b0;
+            wstrb <= 'b0;
+            wdata <= 'b0;
         end
         else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0 && mwen_mem) begin
             // just once write

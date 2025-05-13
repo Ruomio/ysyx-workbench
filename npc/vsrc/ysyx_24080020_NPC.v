@@ -1129,4 +1129,21 @@ module ysyx_24080020_NPC(
 
     );
 
+    // slave
+    // AR
+    assign io_slave_arready <= 'b0;
+    assign io_slave_rvalid <= 'b0;
+    assign io_slave_rresp <= 'b0;
+    assign io_slave_rdata <= 'b0;
+    assign io_slave_rlast <= 'b0;
+    assign io_slave_rid <= 'b0;
+    // AW
+    assign io_slave_awready <= 'b0;
+    // W
+    assign io_slave_wready <= 'b0;
+    // B
+    assign io_slave_bvalid <= 'b0;
+    assign io_slave_bresp <= 'b0;
+    assign io_slave_bid <= 'b0;
+
 endmodule
