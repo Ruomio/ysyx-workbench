@@ -456,7 +456,7 @@ module ysyx_24080020_IDU (
 
                             is_dnpc_idu = 1'b1;
 
-                            skip_ref_idu = 1'b1;
+                            skip_ref_idu = 1'b0;
                             // `ifdef CONFIG_DPIC
                             // npc_difftest_skip_ref();
                             // `endif
