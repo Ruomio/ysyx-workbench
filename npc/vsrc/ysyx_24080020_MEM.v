@@ -18,6 +18,9 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
     output reg exu_mem_shake_hands,
 
+    input skip_ref_exu,
+    output reg skip_ref_mem,
+
     // csrs
     input wcsren_exu,
     input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_exu,
@@ -93,7 +96,6 @@ module ysyx_24080020_MEM(
 
 );
 `ifdef CONFIG_DPIC
-    import "DPI-C" function void npc_difftest_skip_ref();
     import "DPI-C" function void statistics_lsu_get_data();
 `endif
 
@@ -299,6 +301,8 @@ module ysyx_24080020_MEM(
 
             mem_wb_valid <= 'b0;
 
+            skip_ref_mem <= 'b0;
+
         end
         else if(exu_mem_shake_hands) begin
 
@@ -331,6 +335,8 @@ module ysyx_24080020_MEM(
             fencei_mem <= fencei_exu;
 
             pc_mem <= pc_exu;
+
+            skip_ref_mem <= skip_ref_exu;
 
             // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin
@@ -373,9 +379,10 @@ module ysyx_24080020_MEM(
                 || araddr >= 32'hc0000000 && araddr < 32'hffffffff
                 ) begin
                 // skip uart keyboard etc.
-                `ifdef CONFIG_DPIC
-                npc_difftest_skip_ref();
-                `endif
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
             end
             `endif
             `ifdef ysyx_24080020_NPC
@@ -383,9 +390,10 @@ module ysyx_24080020_MEM(
                 || araddr >= 32'ha0000048 && araddr < 32'ha0000050
                 ) begin
                 // skip uart keyboard etc.
-                `ifdef CONFIG_DPIC
-                npc_difftest_skip_ref();
-                `endif
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
             end
             `endif
 
@@ -504,9 +512,10 @@ module ysyx_24080020_MEM(
                 || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
                 ) begin
                 // skip uart keyboard etc.
-                `ifdef CONFIG_DPIC
-                npc_difftest_skip_ref();
-                `endif
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
             end
             `endif
             `ifdef ysyx_24080020_NPC
@@ -514,9 +523,10 @@ module ysyx_24080020_MEM(
                 || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
                 ) begin
                 // skip uart keyboard etc.
-                `ifdef CONFIG_DPIC
-                npc_difftest_skip_ref();
-                `endif
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
             end
 
 

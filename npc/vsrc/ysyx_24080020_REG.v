@@ -4,6 +4,8 @@ module ysyx_24080020_REG
     input clk,
     input rst,
 
+    input skip_ref_mem,
+
     input [`ysyx_24080020_WIDTH-1:0] pc_lsu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu,
 
@@ -42,6 +44,9 @@ module ysyx_24080020_REG
     output reg wb_ifu_valid,
     output reg wb_mem_ready
 );
+`ifdef CONFIG_DPIC
+    import "DPI-C" function void npc_difftest_skip_ref();
+`endif
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec
@@ -61,6 +66,8 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
 
     reg wen_wb;
+
+    reg skip_ref_wb;
 
     reg wcsren_wb;
     reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_wb;
@@ -115,6 +122,7 @@ module ysyx_24080020_REG
             is_dnpc_wb <= 'b0;
             dnpc_wb <= 'b0;
             wb_ifu_valid <= 'b0;
+            skip_ref_wb <= 'b0;
         end
         else if(wb_ifu_valid && ifu_wb_ready && state) begin
             // shake hands successfully
@@ -122,6 +130,13 @@ module ysyx_24080020_REG
 
             pc_wbu <= pc_lsu;
             waddr_wb <= 'b0;
+
+`ifdef CONFIG_DPIC
+            if(skip_ref_wb) begin
+                skip_ref_wb <= 1'b0;
+                npc_difftest_skip_ref();
+            end
+`endif  
         end
         else if(mem_wb_valid) begin
             if(wb_ifu_valid) wb_mem_ready <= 1'b0;
@@ -146,6 +161,8 @@ module ysyx_24080020_REG
 
                 is_dnpc_wb <= is_dnpc_mem;
                 dnpc_wb <= dnpc_mem;
+                
+                skip_ref_wb <= skip_ref_mem;
 
                 // wb_ifu_valid <= 1'b1;
                 if(!wen_mem) begin

@@ -9,6 +9,9 @@ module ysyx_24080020_EXU
     output reg is_load_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_exu,
 
+    input skip_ref_idu,
+    output reg skip_ref_exu,
+
     // branch
     input is_jalr_idu,
     input is_dnpc_idu,
@@ -205,6 +208,8 @@ module ysyx_24080020_EXU
 
             exu_mem_valid <= 'b0;
 
+            skip_ref_exu <= 'b0;
+
         end
         else if(idu_exu_shake_hand) begin
             idu_exu_shake_hand <= 1'b0;
@@ -247,6 +252,8 @@ module ysyx_24080020_EXU
             cnt <= 1'b1;
 
             fencei_exu <= fencei_idu;
+
+            skip_ref_exu <= skip_ref_idu;
 
             // exu_mem_valid <= 1'b1;
 
