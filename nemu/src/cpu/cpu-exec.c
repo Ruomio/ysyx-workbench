@@ -58,7 +58,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
   isa_exec_once(s);
-  // printf("ref exec pc: 0x%x, dnpc: 0x%x\n", s->pc, s->dnpc);
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
