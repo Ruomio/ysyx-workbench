@@ -310,6 +310,10 @@ module ysyx_24080020_NPC(
   wire exu_mem_shake_hands;
 
 
+  // skip difftest ref
+  wire skip_ref_idu, skip_ref_exu, skip_ref_mem;
+
+
 
     ysyx_24080020_IFU ifu(
         .clk(clk),
@@ -350,6 +354,8 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
         .data_adventure(data_adventure),
+
+        .skip_ref_idu(skip_ref_idu),
 
         .inst_ifu(inst_ifu),
         .rs1(rs1),
@@ -399,6 +405,9 @@ module ysyx_24080020_NPC(
     ysyx_24080020_REG u_reg(
         .clk(clk),
         .rst(rst),
+
+        .skip_ref_mem(skip_ref_mem),
+
         .raddr1(rs1),
         .raddr2(rs2),
 
@@ -437,6 +446,10 @@ module ysyx_24080020_NPC(
     ysyx_24080020_EXU exu(
         .clk(clk),
         .rst(rst),
+
+        .skip_ref_idu(skip_ref_idu),
+        .skip_ref_exu(skip_ref_exu),
+
         .pc_idu(pc_idu),
         .imm_idu(imm_idu),
         .is_load_idu(is_load_idu),
@@ -507,6 +520,10 @@ module ysyx_24080020_NPC(
     ysyx_24080020_MEM u_mem(
         .clk(clk),
         .rst(rst),
+
+        .skip_ref_exu(skip_ref_exu),
+        .skip_ref_mem(skip_ref_mem),
+
         .structural_adventure(structural_adventure),
         .mren_exu(mren_exu),
         .mrtype_exu(mrtype_exu),
@@ -1128,5 +1145,22 @@ module ysyx_24080020_NPC(
         .control_adventure(control_adventure)
 
     );
+
+    // slave
+    // AR
+    assign io_slave_arready = 'b0;
+    assign io_slave_rvalid = 'b0;
+    assign io_slave_rresp = 'b0;
+    assign io_slave_rdata = 'b0;
+    assign io_slave_rlast = 'b0;
+    assign io_slave_rid = 'b0;
+    // AW
+    assign io_slave_awready = 'b0;
+    // W
+    assign io_slave_wready = 'b0;
+    // B
+    assign io_slave_bvalid = 'b0;
+    assign io_slave_bresp = 'b0;
+    assign io_slave_bid = 'b0;
 
 endmodule

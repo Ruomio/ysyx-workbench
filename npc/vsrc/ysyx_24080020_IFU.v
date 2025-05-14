@@ -68,6 +68,7 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             ifu_idu_valid <= 1'b0;
+            pc_ifu <= 'b0;
         end
         else if(inst_fin) begin
             if(skip_once) begin
@@ -138,6 +139,8 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             next_inst <= 'b1;
+            dnpc <= 'b0;
+            is_dnpc <= 'b0;
         end
         if(control_adventure) begin
             // pc incorrect
