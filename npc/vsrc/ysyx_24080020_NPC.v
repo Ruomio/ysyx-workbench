@@ -354,8 +354,8 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
         .data_adventure(data_adventure),
+
         .skip_ref_idu(skip_ref_idu),
-        .skip_ref_exu(skip_ref_exu),
 
         .inst_ifu(inst_ifu),
         .rs1(rs1),
