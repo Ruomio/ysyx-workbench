@@ -40,6 +40,7 @@ module ysyx_24080020_IFU (
 );
 
     wire [`ysyx_24080020_WIDTH-1:0] addr;
+    wire [`ysyx_24080020_WIDTH-1:0] inst_tmp;
 
     reg is_dnpc;
     reg is_update_pc;
@@ -75,13 +76,28 @@ module ysyx_24080020_IFU (
                 skip_once <= 1'b0;
             end
             else begin
-                ifu_idu_valid <= 1'b1;
-                pc_ifu <= addr;
+                // ifu_idu_valid <= 1'b1;
+                // pc_ifu <= addr;
                 next_inst <= 'b1;
             end
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
+        end
+
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            ifu_idu_valid <= 'b0;
+        end
+        else if(ifu_idu_valid && idu_ifu_ready) begin
+            next_inst <= 'b0;
+        end
+        else if(next_inst) begin
+            ifu_idu_valid <= 'b1;
+            pc_ifu <= araddr;
+            inst_ifu <= inst_tmp;
         end
 
     end
@@ -122,11 +138,11 @@ module ysyx_24080020_IFU (
             is_update_pc <= 1'b1;
 
             wb_ifu_shake_hands <= 1'b0;
-            next_inst <= 'b0;
+            // next_inst <= 'b0;
 
             need_update_pc <= 'b0;
         end
-        else if(wb_ifu_shake_hands && next_inst) begin
+        else if(wb_ifu_shake_hands) begin
             need_update_pc <= 1'b1;
         end
         else begin
@@ -138,13 +154,14 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            next_inst <= 'b1;
+            next_inst <= 'b0;
             dnpc <= 'b0;
             is_dnpc <= 'b0;
         end
         if(control_adventure) begin
             // pc incorrect
-            next_inst <= 'b1;
+            // next_inst <= 'b1;
+            need_update_pc <= 'b1;
             is_dnpc <= is_dnpc_exu;
             dnpc <= dnpc_exu;
             skip_once <= 'b1;
@@ -171,7 +188,7 @@ module ysyx_24080020_IFU (
 
         .if_en(if_en),
         .addr(addr),
-        .inst(inst_ifu),
+        .inst(inst_tmp),
         .inst_fin(inst_fin),
 
         // axi-lite
