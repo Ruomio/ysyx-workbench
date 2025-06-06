@@ -46,7 +46,6 @@ private:
 
 public:
   shinfo *info;
-  int ppid;
 
   ForkShareMemory();
   ~ForkShareMemory();
