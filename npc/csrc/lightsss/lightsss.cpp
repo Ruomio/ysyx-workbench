@@ -55,7 +55,7 @@ void ForkShareMemory::shwait() {
 }
 
 void LightSSS::signal_handler(int signum) {
-  FORK_PRINTF("clear processes...\n")
+  FORK_PRINTF("clear processes...nn\n")
   while (!pidSlot.empty()) {
     pid_t temp = pidSlot.back();
     pidSlot.pop_back();
