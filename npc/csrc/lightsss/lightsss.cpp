@@ -29,6 +29,7 @@ ForkShareMemory::ForkShareMemory() {
   info->notgood = false;
   info->endCycles = 0;
   info->oldest = 0;
+  is_p_alive = true;
 }
 
 ForkShareMemory::~ForkShareMemory() {
@@ -50,6 +51,7 @@ void ForkShareMemory::shwait() {
     } else {
       // FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
       sleep(WAIT_INTERVAL);
+      if(!is_p_alive) exit(0);
     }
   }
 }
@@ -65,7 +67,6 @@ void LightSSS::signal_handler(int signum) {
   exit(EXIT_FAILURE); // 退出当前进程
 }
 void LightSSS::signal_handler_abort(int signum) {
-  FORK_PRINTF("clear processes...nn\n")
   if(is_child()) exit(EXIT_FAILURE);
   if(pidSlot.empty()) return;
   FORK_PRINTF("handler abort signum: %d, pidSlot size: %ld\n", signum, pidSlot.size());
