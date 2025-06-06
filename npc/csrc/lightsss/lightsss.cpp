@@ -55,7 +55,7 @@ void ForkShareMemory::shwait() {
 }
 
 void LightSSS::signal_handler(int signum) {
-  FORK_PRINTF("clear processes...nn\n")
+  FORK_PRINTF("clear processes...\n")
   while (!pidSlot.empty()) {
     pid_t temp = pidSlot.back();
     pidSlot.pop_back();
@@ -65,6 +65,7 @@ void LightSSS::signal_handler(int signum) {
   exit(EXIT_FAILURE); // 退出当前进程
 }
 void LightSSS::signal_handler_abort(int signum) {
+  FORK_PRINTF("clear processes...nn\n")
   if(is_child()) exit(EXIT_FAILURE);
   if(pidSlot.empty()) return;
   FORK_PRINTF("handler abort signum: %d, pidSlot size: %ld\n", signum, pidSlot.size());
