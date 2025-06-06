@@ -29,7 +29,6 @@ ForkShareMemory::ForkShareMemory() {
   info->notgood = false;
   info->endCycles = 0;
   info->oldest = 0;
-  is_p_alive = true;
 }
 
 ForkShareMemory::~ForkShareMemory() {
@@ -51,7 +50,7 @@ void ForkShareMemory::shwait() {
     } else {
       FORK_PRINTF("parent not dead, I'm sleep: pid: %d, ppid: %d\n", getpid(), getppid());
       sleep(WAIT_INTERVAL);
-      if(!is_p_alive) exit(0);
+      if(getppid() == 1) exit(0);
     }
   }
 }
@@ -118,6 +117,7 @@ int LightSSS::do_fork() {
   }
   // the original process
   else if (pid != 0) {
+    forkshm.ppid = getpid();
     slotCnt++;
     pidSlot.push_front(pid);
     return FORK_OK;

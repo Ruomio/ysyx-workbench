@@ -46,7 +46,7 @@ private:
 
 public:
   shinfo *info;
-  bool is_p_alive;
+  int ppid;
 
   ForkShareMemory();
   ~ForkShareMemory();
@@ -73,10 +73,7 @@ public:
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
       signal(SIGUSR1, signal_handler_abort); // 注册USR1处理器
   }
-  ~LightSSS() { 
-    printf("~LightSSS()\n");
-    forkshm.is_p_alive = false;
-  }
+  ~LightSSS() {}
   int do_fork();
   int wakeup_child(uint64_t cycles);
   static bool is_child();
