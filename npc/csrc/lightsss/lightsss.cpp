@@ -48,7 +48,7 @@ void ForkShareMemory::shwait() {
       else
         exit(0);
     } else {
-      // FORK_PRINTF("parent not dead, I'm sleep: pid: %d, ppid: %d\n", getpid(), getppid());
+      // FORK_PRINTF("parent not dead, I'm sleep: pid: %d\n", getpid());
       sleep(WAIT_INTERVAL);
     }
   }
