@@ -72,7 +72,7 @@ public:
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
       signal(SIGUSR1, signal_handler_abort); // 注册USR1处理器
   }
-  ~LightSSS() {}
+  ~LightSSS() { do_clear(); }
   int do_fork();
   int wakeup_child(uint64_t cycles);
   static bool is_child();
