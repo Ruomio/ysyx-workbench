@@ -593,6 +593,7 @@ module ysyx_24080020_ICACHE(
   reg s2_s0_valid;
   reg s0_s2_ready;
   reg s0_s1_shake_hands, s1_s2_shake_hands, s2_s0_shake_hands;
+  reg [`ysyx_24080020_WIDTH-1:0] inst_s0;
 
 
 // s0
@@ -602,6 +603,7 @@ module ysyx_24080020_ICACHE(
         if(!rst) begin
             s0_s1_valid <= 'b0;
             s0_s2_ready <= 'b0;
+            inst_s0 <= 'b0;
         end
         else if(s0_s1_valid && s1_s0_ready) begin
             s0_s1_valid <= 'b0;
@@ -692,6 +694,7 @@ module ysyx_24080020_ICACHE(
   reg [cache_num_bits-1:0]    cache_index_s2;
   reg [cache_size_bits-1:0]   cache_offset_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
+  reg [`ysyx_24080020_WIDTH-1:0] inst_s2;
 
   assign shift_rdata = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
   assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
@@ -705,11 +708,12 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
     if(!rst) begin
       s2_s1_ready <= 'b0;
-      s2_s3_valid <= 'b0;
+      s2_s0_valid <= 'b0;
 
       cache_tag_s2 <= 'b0;
       cache_index_s2 <= 'b0;
       cache_offset_s2 <= 'b0;
+      inst_s2 <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
