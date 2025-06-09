@@ -683,12 +683,16 @@ module ysyx_24080020_ICACHE(
   localparam AXIR = AXIAR + 1;
   localparam AXIDone = AXIR + 1;  // not use cache, such as sram
 
-  reg [cache_tag_size-1:0]    cache_tag_s2;
-  reg [cache_num_bits-1:0]    cache_index_s2;
-  reg [cache_size_bits-1:0]   cache_offset_s2;
+  wire [cache_tag_size-1:0]    cache_tag_s2;
+  wire [cache_num_bits-1:0]    cache_index_s2;
+  wire [cache_size_bits-1:0]   cache_offset_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s2;
+
+  assign cache_tag_s2 = araddr_s2[31 : cache_num_bits+cache_size_bits];
+  assign cache_index_s2 = araddr_s2[cache_num_bits+cache_size_bits-1 : cache_size_bits];
+  assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
 
   assign shift_rdata = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
   assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
@@ -719,9 +723,6 @@ module ysyx_24080020_ICACHE(
       s2_s1_ready <= 'b0;
       s2_s0_valid <= 'b0;
 
-      cache_tag_s2 <= 'b0;
-      cache_index_s2 <= 'b0;
-      cache_offset_s2 <= 'b0;
       inst_s2 <= 'b0;
 
       araddr_s2 <= 'b0;
@@ -736,9 +737,6 @@ module ysyx_24080020_ICACHE(
       if(current_state == IDLE) begin
         s2_s1_ready <= 1'b1;
 
-        cache_tag_s2 <= cache_tag_s1;
-        cache_index_s2 <= cache_index_s1;
-        cache_offset_s2 <= cache_offset_s1;
         araddr_s2 <= araddr_s1;
         araddr_s2_base <= araddr_s1;
       end
