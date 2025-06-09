@@ -687,6 +687,7 @@ module ysyx_24080020_ICACHE(
   reg [cache_num_bits-1:0]    cache_index_s2;
   reg [cache_size_bits-1:0]   cache_offset_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
+  reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s2;
 
   assign shift_rdata = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
@@ -736,6 +737,7 @@ module ysyx_24080020_ICACHE(
         cache_index_s2 <= cache_index_s1;
         cache_offset_s2 <= cache_offset_s1;
         araddr_s2 <= araddr_s1;
+        araddr_s2_base <= araddr_s1;
       end
     end
   end
@@ -872,7 +874,7 @@ module ysyx_24080020_ICACHE(
           end
           JUDGE: begin
               if(fin_judge) begin
-                araddr_s2 <= {araddr_s2[31:2], 2'b0};
+                araddr_s2 <= {araddr_s2_base[31:2], 2'b0};
                 fin_judge <= 'b0;
               end
               else if(tag_index < cache_way) begin
