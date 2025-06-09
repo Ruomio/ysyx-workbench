@@ -97,6 +97,7 @@ module ysyx_24080020_ARBITER (
   reg ifu_or_mem;
   reg wait_rdata;
   reg ar_tmp;
+  reg fin_trans;
 
   assign max_cnt = 3'd7;
 
@@ -114,15 +115,19 @@ module ysyx_24080020_ARBITER (
       ifu_or_mem   <= 1'b1;
 
       mem_wait_cnt <= 3'b0;
-    end else if (arvalid_ifu && !arvalid_mem) begin
+    end else if (arvalid_ifu && !arvalid_mem && fin_trans) begin
       ifu_or_mem   <= 1'b0;
 
       ifu_wait_cnt <= 3'b0;
+
+      fin_trans <= 'b0;
       // mem_wait_cnt <= mem_wait_cnt + 3'b1;
-    end else if (arvalid_mem && !arvalid_ifu) begin
+    end else if (arvalid_mem && !arvalid_ifu && fin_trans) begin
       ifu_or_mem   <= 1'b1;
 
       mem_wait_cnt <= 3'b0;
+
+      fin_trans <= 'b0;
       // ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
     end else if (!arvalid_ifu && !arvalid_mem) begin
       // shake hands success and set arvalid low
@@ -133,6 +138,18 @@ module ysyx_24080020_ARBITER (
       if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;
       else ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
     end
+  end
+
+  always @(posedge clk) begin
+      if(!rst) begin
+          fin_trans <= 'b1;
+      end
+      else if(!ifu_or_mem && rvalid_ifu && rready_ifu) begin
+          fin_trans <= 'b1;
+      end
+      else if(ifu_or_mem && rvalid_mem && rresp_mem) begin
+          fin_trans <= 'b1;
+      end
   end
 
   // AR
