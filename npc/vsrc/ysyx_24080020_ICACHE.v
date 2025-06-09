@@ -706,6 +706,13 @@ module ysyx_24080020_ICACHE(
   assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
   assign in_flash_ = in_flash;
 
+  `ifdef USE_DCACHE
+  assign use_icache = in_flash | in_mrom | in_sdram;
+  `endif
+  `ifndef USE_DCACHE
+  assign use_icache = in_flash | in_mrom;
+  `endif
+
   always @(posedge clk) begin
     if(!rst) begin
       s2_s1_ready <= 'b0;
