@@ -723,6 +723,9 @@ module ysyx_24080020_ICACHE(
       cache_index_s2 <= 'b0;
       cache_offset_s2 <= 'b0;
       inst_s2 <= 'b0;
+
+      araddr_s2 <= 'b0;
+      araddr_s2_base <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
