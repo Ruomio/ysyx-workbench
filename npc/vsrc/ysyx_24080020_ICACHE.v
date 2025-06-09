@@ -577,13 +577,6 @@ module ysyx_24080020_ICACHE(
 
 
 
-  assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_tmp})
-                     && ((cache_valid[cache_index_tmp] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
-
-  assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
-  assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
-  assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
-  assign in_flash_ = in_flash;
 
 // bus
   reg s0_s1_valid;
@@ -704,6 +697,14 @@ module ysyx_24080020_ICACHE(
   assign shift_rtag = (cache_tag[cache_index_s2] >> ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, tag_index} * cache_tag_width)) & ({ {tag_complete_bits{1'b0}}, {cache_tag_width{1'b1}} });
   assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_s2} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]} * cache_tag_width);
   assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]} * cache_tag_width);
+
+  assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_s2})
+                     && ((cache_valid[cache_index_s2] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
+
+  assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
+  assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
+  assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
+  assign in_flash_ = in_flash;
 
   always @(posedge clk) begin
     if(!rst) begin
