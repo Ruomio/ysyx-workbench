@@ -877,7 +877,7 @@ module ysyx_24080020_ICACHE(
           end
           JUDGE: begin
               if(fin_judge) begin
-                araddr_s2 <= {araddr_s2_base[31:2], 2'b0};
+                araddr_s2 <= {araddr_s2[31:2], 2'b0};
                 fin_judge <= 'b0;
               end
               else if(tag_index < cache_way) begin
@@ -952,7 +952,7 @@ module ysyx_24080020_ICACHE(
 
                       if(rlast_soc_i) begin
                         fin_r <= 1'b1;
-                        araddr_tmp <= {araddr_xbar_i[31 : 2], 2'b0};
+                        araddr_s2 <= {araddr_s2_base[31 : 2], 2'b0};
 
                         if(use_icache) begin
                           fifo_index[cache_index_s2] <= (fifo_index[cache_index_s2] + 'b1) % cache_way;
