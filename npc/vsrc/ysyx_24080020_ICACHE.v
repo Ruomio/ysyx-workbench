@@ -1005,7 +1005,7 @@ module ysyx_24080020_ICACHE(
       arready_icache_o <= 'b0;
       busy <= 'b0;
     end
-    else if(arvalid_xbar_i && !s0_s1_valid && !busy) begin
+    else if(arvalid_xbar_i && !s0_s1_valid) begin
       araddr_icache_o <= araddr_xbar_i;
       arlen_icache_o <= arlen_xbar_i;
       arid_icache_o <= arid_xbar_i;
