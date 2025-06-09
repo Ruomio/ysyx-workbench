@@ -750,6 +750,24 @@ module ysyx_24080020_ICACHE(
   end
 
 
+  always @(posedge clk) begin
+      if(!rst) begin
+          current_state <= 'b0;
+          tag_index <= 'b0;
+          toggle <= 'b0;
+          busy <= 'b0;
+          for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+              cache_data[i]   <= 'b0;
+              cache_tag[i]    <= 'b0;
+              cache_valid[i]  <= 'b0;
+              fifo_index[i]   <= 'b0;
+          end
+      end
+      else begin
+          current_state <= next_state;
+      end
+  end
+
   // next_state
   always @(*) begin
       case(current_state)
