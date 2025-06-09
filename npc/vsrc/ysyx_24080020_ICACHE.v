@@ -1003,15 +1003,16 @@ module ysyx_24080020_ICACHE(
     end
     else if(arvalid_xbar_i && arready_icache_o) begin
       arready_icache_o <= 'b0;
+      busy <= 'b0;
     end
-    else if(arvalid_xbar_i && !s0_s1_valid) begin
+    else if(arvalid_xbar_i && !s0_s1_valid && !busy) begin
       araddr_icache_o <= araddr_xbar_i;
       arlen_icache_o <= arlen_xbar_i;
       arid_icache_o <= arid_xbar_i;
       arburst_icache_o <= arburst_xbar_i;
       arsize_icache_o <= arsize_xbar_i;
 
-      // busy <= 'b1;
+      busy <= 'b1;
 
       arready_icache_o <= 1'b1;
       araddr_tmp <= araddr_xbar_i;
