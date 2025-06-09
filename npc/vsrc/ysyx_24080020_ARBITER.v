@@ -147,7 +147,7 @@ module ysyx_24080020_ARBITER (
       else if(!ifu_or_mem && rvalid_ifu && rready_ifu) begin
           fin_trans <= 'b1;
       end
-      else if(ifu_or_mem && rvalid_mem && rresp_mem) begin
+      else if(ifu_or_mem && rvalid_mem && rready_mem) begin
           fin_trans <= 'b1;
       end
   end
