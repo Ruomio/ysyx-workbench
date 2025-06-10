@@ -993,7 +993,7 @@ module ysyx_24080020_ICACHE(
       rid_i <= 'b0;
       // rdata_araddr <= 'b0;
     end
-    else if(rready_o && rvalid_o) begin
+    else if(rready_i && rvalid_i) begin
       rvalid_i <= 'b0;
       rresp_i <= 'b0;
       rlast_i <= 'b0;

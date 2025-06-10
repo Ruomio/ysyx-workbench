@@ -78,6 +78,7 @@ module ysyx_24080020_IR(
       inst_fin <= 'b0;
     end
     else if(rvalid && rready) begin
+      rready <= 'b0;
       if(rresp == 'b0) begin
         inst <= rdata;
         inst_fin <= 'b1;
