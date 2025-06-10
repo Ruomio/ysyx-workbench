@@ -121,6 +121,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     u_npc_state.ret = true;
 
     isa_reg_display();
+    printf("ref exec: 0x%x, dut exec: 0x%x\n", ref->pc, g_dnpc);
   }
 }
 
