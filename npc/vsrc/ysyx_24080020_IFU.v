@@ -75,9 +75,11 @@ module ysyx_24080020_IFU (
                 skip_once <= 1'b0;
             end
             else begin
-                ifu_idu_valid <= 1'b1;
-                pc_ifu <= addr;
-                next_inst <= 'b1;
+                if(!ifu_idu_valid) begin
+                    ifu_idu_valid <= 1'b1;
+                    pc_ifu <= addr;
+                    next_inst <= 'b1;
+                end
             end
         end
         else begin
