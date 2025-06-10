@@ -46,7 +46,7 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] dnpc;
 
     reg wb_ifu_shake_hands;
-    reg next_inst, need_update_pc, skip_once;
+    reg next_inst, need_update_pc, skip_once, trans_inst;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -69,6 +69,7 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             ifu_idu_valid <= 1'b0;
             pc_ifu <= 'b0;
+            trans_inst <= 'b0;
         end
         else if(inst_fin) begin
             if(skip_once) begin
@@ -76,11 +77,15 @@ module ysyx_24080020_IFU (
             end
             else begin
                 if(!ifu_idu_valid) begin
-                    ifu_idu_valid <= 1'b1;
-                    pc_ifu <= addr;
-                    next_inst <= 'b1;
+                    trans_inst <= 'b1;
                 end
             end
+        end
+        else if(trans_inst) begin
+            trans_inst <= 'b0;
+            ifu_idu_valid <= 1'b1;
+            pc_ifu <= addr;
+            next_inst <= 'b1;
         end
         else begin
             // ifu_idu_valid <= ifu_idu_valid;
