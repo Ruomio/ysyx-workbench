@@ -177,13 +177,13 @@ void init_npc(int argc, char **argv) {
       break;
     }
     if(is_clk_high) {
+      g_get_pc();
       total_cycles++;
 #if NVBOARD_ENABLE
       nvboard_update();
 #endif
     }
   }
-  g_get_pc();
 }
 
 void exec_once_npc(uint32_t pc) {
@@ -216,6 +216,7 @@ void exec_once_npc(uint32_t pc) {
     }
 #endif
     if(is_clk_high) {
+      g_get_pc();
       total_cycles++;
       if(wait_cycles++ > 30000) {
         printf("wait too many cycles, maybe dead loop\n");
