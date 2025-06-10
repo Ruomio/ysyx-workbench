@@ -955,7 +955,7 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
     if(!rst)begin
       r_en <= 'b0;
-      arready_o <= 'b0;
+      arready_i <= 'b0;
 
       arvalid_o <= 'b0;
       arid_o <= 'b0;
