@@ -87,7 +87,7 @@ module ysyx_24080020_IFU (
                 next_inst <= 'b1;
                 skip_once <= 'b0;
             end
-            if(inst_fin_valid && inst_fin_ready) begin
+            else if(inst_fin_valid && inst_fin_ready) begin
                 inst_fin_ready <= 'b0;
             end
             else if(!ifu_idu_valid) begin
