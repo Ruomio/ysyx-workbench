@@ -10,6 +10,7 @@ module ysyx_24080020_IR(
     output reg inst_fin_valid,
 
     input inst_fin_ready,
+    input control_adventure,
 
     // axi-full
     output reg arvalid,
@@ -57,7 +58,7 @@ module ysyx_24080020_IR(
     if(!rst) begin
       need_fetch <= 'b0;
     end
-    else if(need_fetch && !lsu_busy) begin
+    else if(need_fetch && !lsu_busy && !control_adventure) begin
       need_fetch <= 'b0;
 
       araddr <= addr;
@@ -66,6 +67,9 @@ module ysyx_24080020_IR(
       arlen <= 'b0;
       arburst <= 'b0;
       arid <= 'b0;
+    end
+    else if(control_adventure) begin
+      need_fetch <= 'b0;
     end
     else if(if_en) begin
       need_fetch <= 'b1;
