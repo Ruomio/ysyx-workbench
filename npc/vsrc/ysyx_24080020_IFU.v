@@ -43,7 +43,7 @@ module ysyx_24080020_IFU (
 
     reg is_dnpc;
     reg is_update_pc;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst, tmp_inst;
 
     reg wb_ifu_shake_hands;
     reg next_inst, need_update_pc, skip_once, trans_inst;
@@ -69,13 +69,17 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             ifu_idu_valid <= 1'b0;
             pc_ifu <= 'b0;
+            inst <= 'b0;
             trans_inst <= 'b0;
+            addr_tmp <= 'b0;
         end
         else if(inst_fin) begin
             if(skip_once) begin
                 skip_once <= 1'b0;
             end
             else begin
+                addr_tmp <= addr;
+                tmp_inst <= inst;
                 if(!ifu_idu_valid) begin
                     trans_inst <= 'b1;
                 end
@@ -84,7 +88,8 @@ module ysyx_24080020_IFU (
         else if(trans_inst) begin
             trans_inst <= 'b0;
             ifu_idu_valid <= 1'b1;
-            pc_ifu <= addr;
+            pc_ifu <= addr_tmp;
+            inst_ifu <= tmp_inst;
             next_inst <= 'b1;
         end
         else begin
@@ -178,7 +183,7 @@ module ysyx_24080020_IFU (
 
         .if_en(if_en),
         .addr(addr),
-        .inst(inst_ifu),
+        .inst(inst),
         .inst_fin(inst_fin),
 
         // axi-lite
