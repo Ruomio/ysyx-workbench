@@ -97,6 +97,7 @@ module ysyx_24080020_IFU (
                     pc_ifu <= addr;
                     inst_ifu <= inst;
                     next_inst <= 'b1;
+                    ifu_idu_valid <= 1'b1;
 
                 end
             end
