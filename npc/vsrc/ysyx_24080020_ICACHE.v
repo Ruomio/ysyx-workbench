@@ -10,75 +10,39 @@ module ysyx_24080020_ICACHE(
   output in_flash_,
   output reg busy,
 
+  output reg [`ysyx_24080020_WIDTH-1:0] rdata_araddr,
+
   // axi from lsu
-  input arvalid_xbar_i,
-  input [`ysyx_24080020_WIDTH-1:0] araddr_xbar_i,
-  input [3:0] arid_xbar_i,
-  input [7:0] arlen_xbar_i,
-  input [2:0] arsize_xbar_i,
-  input [1:0] arburst_xbar_i,
-  output reg arready_icache_o,
+  input arvalid_i,
+  input [`ysyx_24080020_WIDTH-1:0] araddr_i,
+  input [3:0] arid_i,
+  input [7:0] arlen_i,
+  input [2:0] arsize_i,
+  input [1:0] arburst_i,
+  output reg arready_i,
 
-  input rready_xbar_i,
-  output reg [`ysyx_24080020_WIDTH-1:0] rdata_icache_o,
-  output reg [1:0] rresp_icache_o,
-  output reg rvalid_icache_o,
-  output reg [3:0] rid_icache_o,
-  output reg rlast_icache_o,
-
-  input [`ysyx_24080020_WIDTH-1:0] awaddr_xbar_i,
-  input awvalid_xbar_i,
-  input [3:0] awid_xbar_i,
-  input [7:0] awlen_xbar_i,
-  input [2:0] awsize_xbar_i,
-  input [1:0] awburst_xbar_i,
-  output reg awready_icache_o,
-
-  input [`ysyx_24080020_WIDTH-1:0] wdata_xbar_i,
-  input [3:0] wstrb_xbar_i,
-  input wvalid_xbar_i,
-  input wlast_xbar_i,
-  output reg wready_icache_o,
-
-  input bready_xbar_i,
-  output reg bvalid_icache_o,
-  output reg [3:0] bid_icache_o,
-  output reg [1:0] bresp_icache_o,
+  input rready_i,
+  output reg [`ysyx_24080020_WIDTH-1:0] rdata_i,
+  output reg [1:0] rresp_i,
+  output reg rvalid_i,
+  output reg [3:0] rid_i,
+  output reg rlast_i,
 
   // axi to soc
-  output reg arvalid_icache_o,
-  output reg [`ysyx_24080020_WIDTH-1:0] araddr_icache_o,
-  output reg [3:0] arid_icache_o,
-  output reg [7:0] arlen_icache_o,
-  output reg [2:0] arsize_icache_o,
-  output reg [1:0] arburst_icache_o,
-  input arready_soc_i,
+  output reg arvalid_o,
+  output reg [`ysyx_24080020_WIDTH-1:0] araddr_o,
+  output reg [3:0] arid_o,
+  output reg [7:0] arlen_o,
+  output reg [2:0] arsize_o,
+  output reg [1:0] arburst_o,
+  input arready_o,
 
-  output reg rready_icache_o,
-  input [`ysyx_24080020_WIDTH-1:0] rdata_soc_i,
-  input [1:0] rresp_soc_i,
-  input rvalid_soc_i,
-  input [3:0] rid_soc_i,
-  input rlast_soc_i,
-
-  output reg [`ysyx_24080020_WIDTH-1:0] awaddr_icache_o,
-  output reg awvalid_icache_o,
-  output reg [3:0] awid_icache_o,
-  output reg [7:0] awlen_icache_o,
-  output reg [2:0] awsize_icache_o,
-  output reg [1:0] awburst_icache_o,
-  input awready_soc_i,
-
-  output reg [`ysyx_24080020_WIDTH-1:0] wdata_icache_o,
-  output reg [3:0] wstrb_icache_o,
-  output reg wvalid_icache_o,
-  output reg wlast_icache_o,
-  input wready_soc_i,
-
-  output reg bready_icache_o,
-  input bvalid_soc_i,
-  input [3:0] bid_soc_i,
-  input [1:0] bresp_soc_i
+  output reg rready_o,
+  input [`ysyx_24080020_WIDTH-1:0] rdata_o,
+  input [1:0] rresp_o,
+  input rvalid_o,
+  input [3:0] rid_o,
+  input rlast_o
 );
 
   `ifdef CONFIG_DPIC
@@ -500,18 +464,18 @@ module ysyx_24080020_ICACHE(
     end
   end
 
-  always @(posedge clk) begin
-    if(!rst) begin
+  // always @(posedge clk) begin
+  //   if(!rst) begin
 
-    end
-    else if((awvalid_xbar_i || wvalid_xbar_i) && !busy) begin
-      busy <= 1'b1;
-    end
-    else if(bvalid_icache_o && bready_xbar_i) begin
-      busy <= 'b0;
-    end
+  //   end
+  //   else if((awvalid_xbar_i || wvalid_xbar_i) && !busy) begin
+  //     busy <= 1'b1;
+  //   end
+  //   else if(bvalid_icache_o && bready_xbar_i) begin
+  //     busy <= 'b0;
+  //   end
 
-  end
+  // end
 
 `endif  // `ifndef ICACHE_PIPELINE
 
@@ -587,6 +551,7 @@ module ysyx_24080020_ICACHE(
   reg s0_s2_ready;
   reg s0_s1_shake_hands, s1_s2_shake_hands, s2_s0_shake_hands;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s0;
+  reg [`ysyx_24080020_WIDTH-1:0] rdata_araddr_s0;
 
 
 // s0
@@ -601,7 +566,7 @@ module ysyx_24080020_ICACHE(
         else if(s0_s1_valid && s1_s0_ready) begin
             s0_s1_valid <= 'b0;
         end
-        else if(arvalid_xbar_i && arready_icache_o) begin
+        else if(arvalid_i && arready_i) begin
             s0_s1_valid <= 'b1;
             araddr_s0 <= araddr_tmp;
         end
@@ -609,17 +574,18 @@ module ysyx_24080020_ICACHE(
 
     always @(posedge clk) begin
         if(!rst) begin
-
+            rdata_araddr_s0 <= 'b0;
         end
         else if(s2_s0_valid && s0_s2_ready) begin
             s0_s2_ready <= 'b0;
             s2_s0_shake_hands <= 'b1;
         end
         else if(s2_s0_valid) begin
-            if(!rvalid_icache_o) begin
+            if(!rvalid_o) begin
                 s0_s2_ready <= 'b1;
 
                 inst_s0 <= inst_s2;
+                rdata_araddr_s0 <= araddr_s2_base;
             end
         end
     end
@@ -869,7 +835,7 @@ module ysyx_24080020_ICACHE(
 
               tag_index <= 'b0;
 
-              rready_icache_o <= 'b0;
+              rready_o <= 'b0;
 
               num_index <= 'b0;
           end
@@ -905,13 +871,13 @@ module ysyx_24080020_ICACHE(
                       statistics_icache_hit();
                     else if(in_sdram)
                       statistics_dcache_hit();
-                    // $display("cache hit addr: 0x%x", araddr_icache_o);
+                    // $display("cache hit addr: 0x%x", araddr_o);
                   end
                   else
                     toggle <= 'b1;
               end
               else begin
-                // $display("cache miss addr: 0x%x", araddr_icache_o);
+                // $display("cache miss addr: 0x%x", araddr_o);
               end
               `endif
           end
@@ -919,36 +885,36 @@ module ysyx_24080020_ICACHE(
               // do nothing
           end
           AXIAR: begin
-              if(arready_soc_i && arvalid_icache_o) begin
-                  arvalid_icache_o <= 'b0;
+              if(arready_o && arvalid_o) begin
+                  arvalid_o <= 'b0;
                   fin_ar <= 'b1;
               end
               else if(!fin_ar) begin
-                  arvalid_icache_o <= 1'b1;
+                  arvalid_o <= 1'b1;
                   if(use_icache) begin
                     // burst trans in sdram
-                    araddr_icache_o <= araddr_s2 & ~(cache_size - 32'b1);
+                    araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
 
-                    arsize_icache_o <= 'b10;
-                    arid_icache_o <= 'b0;
-                    arlen_icache_o <= (cache_size >> 2) - 1;
-                    arburst_icache_o <= 'b01;
+                    arsize_o <= 'b10;
+                    arid_o <= 'b0;
+                    arlen_o <= (cache_size >> 2) - 1;
+                    arburst_o <= 'b01;
 
                     araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
                   end
               end
           end
           AXIR: begin
-              if(rvalid_soc_i && rready_icache_o) begin
-                  rready_icache_o <= 1'b0;
-                  if(rresp_soc_i == 2'b00) begin // OKAY
-                      rdata_tmp <= rdata_soc_i;
+              if(rvalid_o && rready_o) begin
+                  rready_o <= 1'b0;
+                  if(rresp_o == 2'b00) begin // OKAY
+                      rdata_tmp <= rdata_o;
                       if(use_icache) begin
                           // update cache
                           cache_data[cache_index_s2] <= (cache_data[cache_index_s2] & ~data_mask) | shift_wdata;
                       end
 
-                      if(rlast_soc_i) begin
+                      if(rlast_o) begin
                         fin_r <= 1'b1;
                         araddr_s2 <= {araddr_s2_base[31 : 2], 2'b0};
 
@@ -960,7 +926,7 @@ module ysyx_24080020_ICACHE(
                       end
                       else begin
                         // update araddr to adapt burst transmit, it's for icache parameter
-                        araddr_s2 <= araddr_s2 + 2 ** arsize_icache_o;
+                        araddr_s2 <= araddr_s2 + 2 ** arsize_o;
                       end
                   end
                   else begin
@@ -970,8 +936,8 @@ module ysyx_24080020_ICACHE(
                       `endif
                   end
               end
-              else if(rvalid_soc_i) begin
-                rready_icache_o <= 'b1;
+              else if(rvalid_o) begin
+                rready_o <= 'b1;
               end
           end
           AXIDone: begin
@@ -991,54 +957,56 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
     if(!rst)begin
       r_en <= 'b0;
-      arready_icache_o <= 'b0;
+      arready_o <= 'b0;
 
-      arvalid_icache_o <= 'b0;
-      arid_icache_o <= 'b0;
-      arlen_icache_o <= 'b0;
-      arburst_icache_o <= 'b0;
-      arsize_icache_o <= 'b0;
-      araddr_icache_o <= 'b0;
+      arvalid_o <= 'b0;
+      arid_o <= 'b0;
+      arlen_o <= 'b0;
+      arburst_o <= 'b0;
+      arsize_o <= 'b0;
+      araddr_o <= 'b0;
 
     end
-    else if(arvalid_xbar_i && arready_icache_o) begin
-      arready_icache_o <= 'b0;
+    else if(arvalid_i && arready_i) begin
+      arready_i <= 'b0;
       busy <= 'b0;
     end
-    else if(arvalid_xbar_i && !s0_s1_valid) begin
-      araddr_icache_o <= araddr_xbar_i;
-      arlen_icache_o <= arlen_xbar_i;
-      arid_icache_o <= arid_xbar_i;
-      arburst_icache_o <= arburst_xbar_i;
-      arsize_icache_o <= arsize_xbar_i;
+    else if(arvalid_i && !s0_s1_valid) begin
+      araddr_o <= araddr_i;
+      arlen_o <= arlen_i;
+      arid_o <= arid_i;
+      arburst_o <= arburst_i;
+      arsize_o <= arsize_i;
 
       busy <= 'b1;
 
-      arready_icache_o <= 1'b1;
-      araddr_tmp <= araddr_xbar_i;
+      arready_i <= 1'b1;
+      araddr_tmp <= araddr_i;
 
     end
   end
   // R
   always @(posedge clk) begin
     if(!rst) begin
-      rvalid_icache_o <= 'b0;
-      rdata_icache_o <= 'b0;
-      rlast_icache_o <= 'b0;
-      rresp_icache_o <= 'b0;
-      rid_icache_o <= 'b0;
+      rvalid_i <= 'b0;
+      rdata_i <= 'b0;
+      rlast_i <= 'b0;
+      rresp_i <= 'b0;
+      rid_i <= 'b0;
+      rdata_araddr <= 'b0;
     end
-    else if(rready_xbar_i && rvalid_icache_o) begin
-      rvalid_icache_o <= 'b0;
-      rresp_icache_o <= 'b0;
-      rlast_icache_o <= 'b0;
+    else if(rready_o && rvalid_o) begin
+      rvalid_i <= 'b0;
+      rresp_i <= 'b0;
+      rlast_i <= 'b0;
       busy <= 'b0;
     end
     else if(s2_s0_shake_hands) begin
-      rvalid_icache_o <= 'b1;
-      rdata_icache_o <= inst_s0;
-      rlast_icache_o <= 'b1;
-      rresp_icache_o <= 'b0;
+      rvalid_i <= 'b1;
+      rdata_i <= inst_s0;
+      rlast_i <= 'b1;
+      rresp_i <= 'b0;
+      rdata_araddr <= rdata_araddr_s0;
       s2_s0_shake_hands <= 'b0;
     end
   end
@@ -1066,18 +1034,18 @@ module ysyx_24080020_ICACHE(
     end
   end
 
-  always @(posedge clk) begin
-    if(!rst) begin
+  // always @(posedge clk) begin
+  //   if(!rst) begin
 
-    end
-    else if((awvalid_xbar_i || wvalid_xbar_i) && !busy) begin
-      busy <= 1'b1;
-    end
-    else if(bvalid_icache_o && bready_xbar_i) begin
-      busy <= 'b0;
-    end
+  //   end
+  //   else if((awvalid_xbar_i || wvalid_xbar_i) && !busy) begin
+  //     busy <= 1'b1;
+  //   end
+  //   else if(bvalid_icache_o && bready_xbar_i) begin
+  //     busy <= 'b0;
+  //   end
 
-  end
+  // end
 
 
 `endif // `ifdef ICACHE_PIPELINE
@@ -1089,42 +1057,22 @@ module ysyx_24080020_ICACHE(
 
 `ifndef USE_ICACHE
   // AR
-  assign arvalid_icache_o = arvalid_xbar_i;
-  assign araddr_icache_o = araddr_xbar_i;
-  assign arid_icache_o = arid_xbar_i;
-  assign arlen_icache_o = arlen_xbar_i;
-  assign arburst_icache_o = arburst_xbar_i;
-  assign arsize_icache_o = arsize_xbar_i;
-  assign arready_icache_o = arready_soc_i;
+  assign arvalid_o = arvalid_i;
+  assign araddr_o = araddr_i;
+  assign arid_o = arid_i;
+  assign arlen_o = arlen_i;
+  assign arburst_o = arburst_i;
+  assign arsize_o = arsize_i;
+  assign arready_i = arready_o;
 
   // R
-  assign rvalid_icache_o = rvalid_soc_i;
-  assign rdata_icache_o = rdata_soc_i;
-  assign rresp_icache_o = rresp_soc_i;
-  assign rid_icache_o = rid_soc_i;
-  assign rlast_icache_o = rlast_soc_i;
-  assign rready_icache_o = rready_xbar_i;
+  assign rvalid_i = rvalid_o;
+  assign rdata_i = rdata_o;
+  assign rresp_i = rresp_o;
+  assign rid_i = rid_o;
+  assign rlast_i = rlast_o;
+  assign rready_o = rready_i;
 
 `endif
-  // AW
-  assign awvalid_icache_o = awvalid_xbar_i;
-  assign awaddr_icache_o = awaddr_xbar_i;
-  assign awlen_icache_o = awlen_xbar_i;
-  assign awburst_icache_o = awburst_xbar_i;
-  assign awid_icache_o = awid_xbar_i;
-  assign awsize_icache_o = awsize_xbar_i;
-  assign awready_icache_o = awready_soc_i;
-  // W
-  assign wvalid_icache_o = wvalid_xbar_i;
-  assign wdata_icache_o = wdata_xbar_i;
-  assign wstrb_icache_o = wstrb_xbar_i;
-  assign wlast_icache_o = wlast_xbar_i;
-  assign wready_icache_o = wready_soc_i;
-  // B
-  assign bvalid_icache_o = bvalid_soc_i;
-  assign bid_icache_o = bid_soc_i;
-  assign bresp_icache_o = bresp_soc_i;
-  assign bready_icache_o = bready_xbar_i;
-
 
 endmodule
