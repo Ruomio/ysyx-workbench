@@ -7,7 +7,9 @@ module ysyx_24080020_IR(
     input [`ysyx_24080020_WIDTH-1:0] addr,
 
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
-    output reg inst_fin,
+    output reg inst_fin_valid,
+
+    input inst_fin_ready,
 
     // axi-full
     output reg arvalid,
@@ -75,13 +77,13 @@ module ysyx_24080020_IR(
     if(!rst) begin
       rready <= 'b0;
       inst <= 'b0;
-      inst_fin <= 'b0;
+      inst_fin_valid <= 'b0;
     end
     else if(rvalid && rready) begin
       rready <= 'b0;
       if(rresp == 'b0) begin
         inst <= rdata;
-        inst_fin <= 'b1;
+        inst_fin_valid <= 'b1;
       end
       else begin
         `ifdef CONFIG_DPIC
@@ -89,12 +91,12 @@ module ysyx_24080020_IR(
         `endif
       end
     end
-    else if(rvalid && rlast) begin
+    else if(rvalid && rlast && !inst_fin_valid) begin
       rready <= 'b1;
     end
-    else begin
+    else if(inst_fin_valid && inst_fin_ready) begin
       rready <= 'b0;
-      inst_fin <= 'b0;
+      inst_fin_valid <= 'b0;
     end
   end
 

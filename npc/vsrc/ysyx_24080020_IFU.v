@@ -39,7 +39,10 @@ module ysyx_24080020_IFU (
     output reg ifu_idu_valid
 );
 
+    wire inst_fin_valid;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
+
+    reg inst_fin_ready;
 
     reg is_dnpc;
     reg is_update_pc;
@@ -50,6 +53,8 @@ module ysyx_24080020_IFU (
 
 
     reg state; // 0: idle  ;  1: wait_ready
+
+    assign inst_fin = inst_fin_valid & inst_fin_ready;
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -72,16 +77,27 @@ module ysyx_24080020_IFU (
             inst <= 'b0;
             trans_inst <= 'b0;
             addr_tmp <= 'b0;
+            inst_fin_ready<= 'b0;
         end
-        else if(inst_fin) begin
+        else if(inst_fin_valid) begin
             if(skip_once) begin
                 skip_once <= 1'b0;
             end
             else begin
-                addr_tmp <= addr;
-                tmp_inst <= inst;
-                if(!ifu_idu_valid) begin
-                    trans_inst <= 'b1;
+                // addr_tmp <= addr;
+                // tmp_inst <= inst;
+                if(inst_fin_valid && inst_fin_ready) begin
+                    inst_fin_ready <= 'b0;
+                end
+                else if(!ifu_idu_valid) begin
+                    // trans_inst <= 'b1;
+
+                    inst_fin_ready <= 'b1;
+
+                    pc_ifu <= addr;
+                    inst_ifu <= inst;
+                    next_inst <= 'b1;
+
                 end
             end
         end
@@ -184,7 +200,8 @@ module ysyx_24080020_IFU (
         .if_en(if_en),
         .addr(addr),
         .inst(inst),
-        .inst_fin(inst_fin),
+        .inst_fin_valid(inst_fin_valid),
+        .inst_fin_ready(inst_fin_ready),
 
         // axi-lite
         .arvalid(arvalid),
