@@ -80,26 +80,26 @@ module ysyx_24080020_IFU (
             inst_fin_ready<= 'b0;
         end
         else if(inst_fin_valid) begin
+            // addr_tmp <= addr;
+            // tmp_inst <= inst;
             if(skip_once) begin
-                skip_once <= 1'b0;
+                inst_fin_ready <= 'b1;
+                next_inst <= 'b1;
+                skip_once <= 'b0;
             end
-            else begin
-                // addr_tmp <= addr;
-                // tmp_inst <= inst;
-                if(inst_fin_valid && inst_fin_ready) begin
-                    inst_fin_ready <= 'b0;
-                end
-                else if(!ifu_idu_valid) begin
-                    // trans_inst <= 'b1;
+            if(inst_fin_valid && inst_fin_ready) begin
+                inst_fin_ready <= 'b0;
+            end
+            else if(!ifu_idu_valid) begin
+                // trans_inst <= 'b1;
 
-                    inst_fin_ready <= 'b1;
+                inst_fin_ready <= 'b1;
 
-                    pc_ifu <= addr;
-                    inst_ifu <= inst;
-                    next_inst <= 'b1;
-                    ifu_idu_valid <= 1'b1;
+                pc_ifu <= addr;
+                inst_ifu <= inst;
+                next_inst <= 'b1;
+                ifu_idu_valid <= 1'b1;
 
-                end
             end
         end
         else if(trans_inst) begin
