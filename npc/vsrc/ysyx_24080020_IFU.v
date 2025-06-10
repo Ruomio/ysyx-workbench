@@ -43,7 +43,7 @@ module ysyx_24080020_IFU (
 
     reg is_dnpc;
     reg is_update_pc;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst, tmp_inst;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst, tmp_inst, addr_tmp;
 
     reg wb_ifu_shake_hands;
     reg next_inst, need_update_pc, skip_once, trans_inst;
