@@ -121,7 +121,7 @@ module ysyx_24080020_IFU (
         end
         else if(ifu_idu_valid && idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
-            is_dnpc <= 'b0;
+            // is_dnpc <= 'b0;
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
@@ -171,12 +171,15 @@ module ysyx_24080020_IFU (
             dnpc <= 'b0;
             is_dnpc <= 'b0;
         end
-        if(control_adventure) begin
+        else if(control_adventure) begin
             // pc incorrect
             next_inst <= 'b1;
             is_dnpc <= is_dnpc_exu;
             dnpc <= dnpc_exu;
             skip_once <= 'b1;
+        end
+        else if(arvalid && arready) begin
+            is_dnpc <= 'b0;
         end
     end
 
