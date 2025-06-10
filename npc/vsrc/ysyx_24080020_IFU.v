@@ -121,7 +121,7 @@ module ysyx_24080020_IFU (
         end
         else if(ifu_idu_valid && idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
-            is_dnpc <= 'b0;
+            // is_dnpc <= 'b0;
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
@@ -161,6 +161,7 @@ module ysyx_24080020_IFU (
         else begin
             // wb_ifu_shake_hands <= 1'b0;
             is_update_pc <= 1'b0;
+            is_dnpc <= 'b0;
         end
 
     end
