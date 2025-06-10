@@ -10,8 +10,6 @@ module ysyx_24080020_ICACHE(
   output in_flash_,
   output reg busy,
 
-  output reg [`ysyx_24080020_WIDTH-1:0] rdata_araddr,
-
   // axi from lsu
   input arvalid_i,
   input [`ysyx_24080020_WIDTH-1:0] araddr_i,
@@ -120,7 +118,7 @@ module ysyx_24080020_ICACHE(
 
 
   assign shift_rdata = cache_data[cache_index_tmp] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
   assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_tmp]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_tmp} << 3));
 
 
@@ -551,7 +549,7 @@ module ysyx_24080020_ICACHE(
   reg s0_s2_ready;
   reg s0_s1_shake_hands, s1_s2_shake_hands, s2_s0_shake_hands;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s0;
-  reg [`ysyx_24080020_WIDTH-1:0] rdata_araddr_s0;
+  // reg [`ysyx_24080020_WIDTH-1:0] rdata_araddr_s0;
 
 
 // s0
@@ -574,7 +572,7 @@ module ysyx_24080020_ICACHE(
 
     always @(posedge clk) begin
         if(!rst) begin
-            rdata_araddr_s0 <= 'b0;
+            // rdata_araddr_s0 <= 'b0;
         end
         else if(s2_s0_valid && s0_s2_ready) begin
             s0_s2_ready <= 'b0;
@@ -585,7 +583,7 @@ module ysyx_24080020_ICACHE(
                 s0_s2_ready <= 'b1;
 
                 inst_s0 <= inst_s2;
-                rdata_araddr_s0 <= araddr_s2_base;
+                // rdata_araddr_s0 <= araddr_s2_base;
             end
         end
     end
@@ -661,7 +659,7 @@ module ysyx_24080020_ICACHE(
   assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
 
   assign shift_rdata = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_soc_i} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
+  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
   assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
 
 
@@ -993,7 +991,7 @@ module ysyx_24080020_ICACHE(
       rlast_i <= 'b0;
       rresp_i <= 'b0;
       rid_i <= 'b0;
-      rdata_araddr <= 'b0;
+      // rdata_araddr <= 'b0;
     end
     else if(rready_o && rvalid_o) begin
       rvalid_i <= 'b0;
@@ -1006,7 +1004,7 @@ module ysyx_24080020_ICACHE(
       rdata_i <= inst_s0;
       rlast_i <= 'b1;
       rresp_i <= 'b0;
-      rdata_araddr <= rdata_araddr_s0;
+      // rdata_araddr <= rdata_araddr_s0;
       s2_s0_shake_hands <= 'b0;
     end
   end

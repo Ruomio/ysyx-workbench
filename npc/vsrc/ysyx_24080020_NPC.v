@@ -1020,9 +1020,6 @@ module ysyx_24080020_NPC(
       .fencei_mem(fencei_mem),
       .in_flash_(in_flash),
       .busy(lsu_busy),
-      .rdata_araddr(rdata_araddr_icache),
-
-      // axi from IFU, To ARBITER
 
       // axi from lsu
       .arvalid_i(arvalid_ifu),
