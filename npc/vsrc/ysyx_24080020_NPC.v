@@ -335,6 +335,7 @@ module ysyx_24080020_NPC(
         .lsu_busy(lsu_busy),
         .control_adventure(control_adventure),
         .inst_fin(inst_fin),
+        .exu_mem_shake_hands(exu_mem_shake_hands),
 
         // axi-lite
         .arvalid(arvalid_ifu),

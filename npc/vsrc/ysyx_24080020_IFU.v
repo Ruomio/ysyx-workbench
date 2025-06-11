@@ -10,6 +10,7 @@ module ysyx_24080020_IFU (
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     output reg if_en,
+    input exu_mem_shake_hands,
 
     // pipeline
     input control_adventure,
@@ -178,7 +179,7 @@ module ysyx_24080020_IFU (
             dnpc <= dnpc_exu;
             // skip_once <= 'b1;
         end
-        else if(arvalid && arready) begin
+        else if(exu_mem_shake_hands) begin
             is_dnpc <= 'b0;
         end
     end
