@@ -48,6 +48,7 @@ module ysyx_24080020_IFU (
 
     reg is_dnpc;
     reg is_update_pc;
+    reg dnpc_en;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst, tmp_inst, addr_tmp;
 
     reg wb_ifu_shake_hands;
@@ -88,6 +89,7 @@ module ysyx_24080020_IFU (
                 inst_fin_ready <= 'b1;
                 skip_once <= 'b0;
                 // next_inst <= 'b1;
+                dnpc_en <= 'b1;
             end
             else if(inst_fin_valid && inst_fin_ready) begin
                 inst_fin_ready <= 'b0;
@@ -172,16 +174,20 @@ module ysyx_24080020_IFU (
             next_inst <= 'b1;
             dnpc <= 'b0;
             is_dnpc <= 'b0;
+            dnpc_en <= 'b1;
         end
         else if(rvalid && rready) begin
             is_dnpc <= 'b0;
         end
         else if(control_adventure) begin
-            // pc incorrect
-            next_inst <= 'b1;
-            is_dnpc <= is_dnpc_exu;
-            dnpc <= dnpc_exu;
-            skip_once <= 'b1;
+            if(dnpc_en) begin
+                dnpc_en <= 'b0;
+                // pc incorrect
+                next_inst <= 'b1;
+                is_dnpc <= is_dnpc_exu;
+                dnpc <= dnpc_exu;
+                skip_once <= 'b1;
+            end
         end
     end
 
