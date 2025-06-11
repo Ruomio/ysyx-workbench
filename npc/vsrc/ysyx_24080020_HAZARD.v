@@ -23,6 +23,8 @@ module ysyx_24080020_HAZARD(
     output reg control_adventure
 );
 
+    reg en;
+
     always @(posedge clk) begin
         if(!rst) begin
             structural_adventure <= 'b0;
