@@ -12,6 +12,8 @@ module ysyx_24080020_EXU
     input skip_ref_idu,
     output reg skip_ref_exu,
 
+    output reg idu_exu_shake_hand,
+
     // branch
     input is_jalr_idu,
     input is_dnpc_idu,
@@ -106,7 +108,7 @@ module ysyx_24080020_EXU
 
     reg cnt;
 
-    reg idu_exu_shake_hand;
+    // reg idu_exu_shake_hand;
 
 
 

@@ -316,6 +316,7 @@ module ysyx_24080020_NPC(
   wire inst_fin;
   wire lsu_busy;
   wire exu_mem_shake_hands;
+  wire idu_exu_shake_hands;
   wire update_pc;
 
 
