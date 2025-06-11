@@ -53,6 +53,9 @@ module ysyx_24080020_IR(
       statistics_ifu_get_inst();
       `endif
     end
+    else begin
+        update_pc <= 'b0;
+    end
 
   end
 
