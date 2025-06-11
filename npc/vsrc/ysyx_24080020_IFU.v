@@ -180,7 +180,7 @@ module ysyx_24080020_IFU (
             next_inst <= 'b1;
             is_dnpc <= is_dnpc_exu;
             dnpc <= dnpc_exu;
-            // skip_once <= 'b1;
+            skip_once <= 'b1;
         end
     end
 
