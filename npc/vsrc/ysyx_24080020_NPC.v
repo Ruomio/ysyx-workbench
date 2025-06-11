@@ -1079,9 +1079,9 @@ module ysyx_24080020_NPC(
         .data_adventure(data_adventure),
 
         // control adventures, between ifu and exu
-        .is_dnpc(is_dnpc_exu),
+        .is_dnpc(is_dnpc_idu),
         .update_pc(update_pc),
-        .exu_lsu_shake_hands(exu_mem_shake_hands),
+        .exu_lsu_shake_hands(idu_exu_shake_hands),
         .control_adventure(control_adventure)
 
     );
