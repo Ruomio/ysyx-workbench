@@ -314,7 +314,7 @@ module ysyx_24080020_NPC(
   wire in_flash;
   wire structural_adventure, data_adventure, control_adventure;
   wire inst_fin;
-  wire lsu_busy;
+  wire lsu_busy, lsu_busy_unused;
   wire exu_mem_shake_hands;
   wire idu_exu_shake_hands;
   wire update_pc;
@@ -1028,7 +1028,7 @@ module ysyx_24080020_NPC(
       .rst(rst),
       .fencei_mem(fencei_mem),
       .in_flash_(in_flash),
-      .busy(1'b0),
+      .busy(lsu_busy_unused),
 
       // axi from lsu
       .arvalid_i(arvalid_ifu),
