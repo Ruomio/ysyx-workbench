@@ -173,7 +173,7 @@ module ysyx_24080020_IFU (
             dnpc <= 'b0;
             is_dnpc <= 'b0;
         end
-        else if(if_en) begin
+        else if(rvalid && rready) begin
             is_dnpc <= 'b0;
         end
         else if(control_adventure) begin
