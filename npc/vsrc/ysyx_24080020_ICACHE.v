@@ -8,6 +8,7 @@ module ysyx_24080020_ICACHE(
   input fencei_mem,
 
   output in_flash_,
+  input busy_i,
   output reg busy,
 
   // axi from lsu
@@ -887,7 +888,7 @@ module ysyx_24080020_ICACHE(
                   arvalid_o <= 'b0;
                   fin_ar <= 'b1;
               end
-              else if(!fin_ar) begin
+              else if(!fin_ar && !busy_i) begin
                   busy <= 'b1;
                   arvalid_o <= 1'b1;
                   if(use_icache) begin

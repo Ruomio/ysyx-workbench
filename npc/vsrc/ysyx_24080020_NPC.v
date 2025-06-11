@@ -1029,6 +1029,7 @@ module ysyx_24080020_NPC(
       .fencei_mem(fencei_mem),
       .in_flash_(in_flash),
       .busy(lsu_busy_unused),
+      .busy_i(lsu_busy),
 
       // axi from lsu
       .arvalid_i(arvalid_ifu),
