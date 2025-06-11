@@ -368,9 +368,9 @@ module ysyx_24080020_MEM(
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
+            axi_busy <= 'b1;
         end
         else if(mren_mem) begin
-            axi_busy <= 'b1;
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= {{7{1'b0}},get_arlen};
