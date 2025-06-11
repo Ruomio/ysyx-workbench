@@ -86,8 +86,8 @@ module ysyx_24080020_IFU (
             // tmp_inst <= inst;
             if(skip_once) begin
                 inst_fin_ready <= 'b1;
-                next_inst <= 'b1;
                 skip_once <= 'b0;
+                // next_inst <= 'b1;
             end
             else if(inst_fin_valid && inst_fin_ready) begin
                 inst_fin_ready <= 'b0;
