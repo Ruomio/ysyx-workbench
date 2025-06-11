@@ -20,7 +20,7 @@ module ysyx_24080020_MEM(
 
     input skip_ref_exu,
     output reg skip_ref_mem,
-    input axi_busy,
+    output reg axi_busy,
 
     // csrs
     input wcsren_exu,
@@ -101,7 +101,7 @@ module ysyx_24080020_MEM(
 `endif
 
     reg arvalid, awvalid, wvalid;
-    assign arvalid_reg = arvalid && !structural_adventure && !axi_busy;
+    assign arvalid_reg = arvalid && !structural_adventure;
     assign awvalid_reg = awvalid && !structural_adventure;
     assign wvalid_reg = wvalid && !structural_adventure;
 
@@ -364,11 +364,13 @@ module ysyx_24080020_MEM(
             arlen <= 'b0;
             arburst <= 'b0;
             arid <= 'b0;
+            axi_busy <= 'b0;
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
         end
         else if(mren_mem) begin
+            axi_busy <= 'b1;
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= {{7{1'b0}},get_arlen};
@@ -410,6 +412,7 @@ module ysyx_24080020_MEM(
         end
         else if(rvalid && rlast) begin
             // finish all read
+            axi_busy <= 'b0;
             rready <= 1'b1;
             finish_read <= 1'b1;
             if(rresp != 2'b0) begin
