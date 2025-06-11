@@ -469,7 +469,7 @@ module ysyx_24080020_NPC(
         .is_load_exu(is_load_exu),
         .pc_exu(pc_exu),
 
-        .idu_exu_shake_hands(idu_exu_shake_hands),
+        .idu_exu_shake_hand(idu_exu_shake_hands),
 
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
