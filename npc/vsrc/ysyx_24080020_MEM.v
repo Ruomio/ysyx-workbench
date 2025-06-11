@@ -415,6 +415,7 @@ module ysyx_24080020_MEM(
         end
         else if(rvalid && rlast) begin
             // finish all read
+            axi_busy <= 'b0;
             rready <= 1'b1;
             finish_read <= 1'b1;
             if(rresp != 2'b0) begin
@@ -458,7 +459,7 @@ module ysyx_24080020_MEM(
                 `endif
             end
         end
-        else begin
+        else if(rvalid && rready) begin
             rready <= 1'b0;
         end
     end
