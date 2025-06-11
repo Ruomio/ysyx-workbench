@@ -1073,7 +1073,7 @@ module ysyx_24080020_NPC(
         // Structural adventures, between ifu and lsu
         .in_flash(in_flash),
         .arvalid_AND_arready(arvalid_icache & arready_icache),
-        .inst_fin(inst_fin),
+        .inst_fin(rvalid_icache && rready_icache && rlast_icache),
         .structural_adventure(structural_adventure),
 
         // Data adventures, between ifu and {idu, exu, wbu}
