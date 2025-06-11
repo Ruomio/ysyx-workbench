@@ -10,7 +10,6 @@ module ysyx_24080020_IR(
     output reg inst_fin_valid,
 
     input inst_fin_ready,
-    input control_adventure,
     output reg update_pc,
 
     // axi-full

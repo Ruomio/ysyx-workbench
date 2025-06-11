@@ -208,7 +208,6 @@ module ysyx_24080020_IFU (
         .inst(inst),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
-        .control_adventure(control_adventure),
         .update_pc(update_pc),
 
         // axi-lite
