@@ -11,6 +11,7 @@ module ysyx_24080020_IFU (
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     output reg if_en,
     input exu_mem_shake_hands,
+    output update_pc,
 
     // pipeline
     input control_adventure,
@@ -180,7 +181,7 @@ module ysyx_24080020_IFU (
             next_inst <= 'b1;
             is_dnpc <= is_dnpc_exu;
             dnpc <= dnpc_exu;
-            // skip_once <= 'b1;
+            skip_once <= 'b1;
         end
     end
 
@@ -208,6 +209,7 @@ module ysyx_24080020_IFU (
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
         .control_adventure(control_adventure),
+        .update_pc(update_pc),
 
         // axi-lite
         .arvalid(arvalid),

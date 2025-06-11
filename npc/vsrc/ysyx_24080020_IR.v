@@ -11,6 +11,7 @@ module ysyx_24080020_IR(
 
     input inst_fin_ready,
     input control_adventure,
+    output reg update_pc,
 
     // axi-full
     output reg arvalid,
@@ -44,9 +45,11 @@ module ysyx_24080020_IR(
       arsize <= 'b0;
       arlen <= 'b0;
       arburst <= 'b0;
+      update_pc <= 'b0;
     end
     else if(arready && arvalid) begin
       arvalid <= 'b0;
+      update_pc <= 'b1;
       `ifdef CONFIG_DPIC
       statistics_ifu_get_inst();
       `endif
@@ -58,7 +61,7 @@ module ysyx_24080020_IR(
     if(!rst) begin
       need_fetch <= 'b0;
     end
-    else if(need_fetch && !lsu_busy && !control_adventure) begin
+    else if(need_fetch && !lsu_busy) begin
       need_fetch <= 'b0;
 
       araddr <= addr;

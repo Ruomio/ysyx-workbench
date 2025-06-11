@@ -316,6 +316,7 @@ module ysyx_24080020_NPC(
   wire inst_fin;
   wire lsu_busy;
   wire exu_mem_shake_hands;
+  wire update_pc;
 
 
   // skip difftest ref
@@ -336,6 +337,7 @@ module ysyx_24080020_NPC(
         .control_adventure(control_adventure),
         .inst_fin(inst_fin),
         .exu_mem_shake_hands(exu_mem_shake_hands),
+        .update_pc(update_pc),
 
         // axi-lite
         .arvalid(arvalid_ifu),
@@ -1077,6 +1079,7 @@ module ysyx_24080020_NPC(
 
         // control adventures, between ifu and exu
         .is_dnpc(is_dnpc_exu),
+        .update_pc(update_pc),
         .exu_lsu_shake_hands(exu_mem_shake_hands),
         .control_adventure(control_adventure)
 
