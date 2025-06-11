@@ -458,7 +458,7 @@ module ysyx_24080020_MEM(
                 `endif
             end
         end
-        else if(rvalid && rready) begin
+        if(rvalid && rready && rlast) begin
             rready <= 1'b0;
         end
     end
