@@ -55,7 +55,7 @@ module ysyx_24080020_HAZARD(
         else if(exu_lsu_shake_hands) begin
             en <= 'b1;
         end
-        else if(update_pc && control_adventure) begin
+        if(update_pc && control_adventure) begin
             control_adventure <= 'b0;
         end
     end
