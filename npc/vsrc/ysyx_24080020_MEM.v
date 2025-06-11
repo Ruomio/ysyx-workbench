@@ -20,6 +20,7 @@ module ysyx_24080020_MEM(
 
     input skip_ref_exu,
     output reg skip_ref_mem,
+    input axi_busy,
 
     // csrs
     input wcsren_exu,
@@ -100,7 +101,7 @@ module ysyx_24080020_MEM(
 `endif
 
     reg arvalid, awvalid, wvalid;
-    assign arvalid_reg = arvalid && !structural_adventure;
+    assign arvalid_reg = arvalid && !structural_adventure && !axi_busy;
     assign awvalid_reg = awvalid && !structural_adventure;
     assign wvalid_reg = wvalid && !structural_adventure;
 

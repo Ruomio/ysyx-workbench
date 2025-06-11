@@ -888,6 +888,7 @@ module ysyx_24080020_ICACHE(
                   fin_ar <= 'b1;
               end
               else if(!fin_ar) begin
+                  busy <= 'b1;
                   arvalid_o <= 1'b1;
                   if(use_icache) begin
                     // burst trans in sdram
@@ -913,6 +914,7 @@ module ysyx_24080020_ICACHE(
                       end
 
                       if(rlast_o) begin
+                        busy <= 'b0;
                         fin_r <= 1'b1;
                         araddr_s2 <= {araddr_s2_base[31 : 2], 2'b0};
 
@@ -967,7 +969,7 @@ module ysyx_24080020_ICACHE(
     end
     else if(arvalid_i && arready_i) begin
       arready_i <= 'b0;
-      busy <= 'b0;
+      // busy <= 'b0;
     end
     else if(arvalid_i && !s0_s1_valid) begin
       araddr_o <= araddr_i;
@@ -976,7 +978,7 @@ module ysyx_24080020_ICACHE(
       arburst_o <= arburst_i;
       arsize_o <= arsize_i;
 
-      busy <= 'b1;
+      // busy <= 'b1;
 
       arready_i <= 1'b1;
       araddr_tmp <= araddr_i;
@@ -997,7 +999,7 @@ module ysyx_24080020_ICACHE(
       rvalid_i <= 'b0;
       rresp_i <= 'b0;
       rlast_i <= 'b0;
-      busy <= 'b0;
+      // busy <= 'b0;
     end
     else if(s2_s0_shake_hands) begin
       rvalid_i <= 'b1;

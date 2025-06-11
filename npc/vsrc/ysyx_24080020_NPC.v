@@ -539,6 +539,8 @@ module ysyx_24080020_NPC(
         .skip_ref_exu(skip_ref_exu),
         .skip_ref_mem(skip_ref_mem),
 
+        .axi_busy(lsu_busy),
+
         .structural_adventure(structural_adventure),
         .mren_exu(mren_exu),
         .mrtype_exu(mrtype_exu),
