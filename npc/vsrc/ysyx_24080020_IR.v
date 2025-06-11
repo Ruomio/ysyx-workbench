@@ -71,9 +71,6 @@ module ysyx_24080020_IR(
       arburst <= 'b0;
       arid <= 'b0;
     end
-    else if(control_adventure) begin
-      need_fetch <= 'b0;
-    end
     else if(if_en) begin
       need_fetch <= 'b1;
     end
