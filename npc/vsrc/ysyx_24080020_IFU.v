@@ -172,7 +172,7 @@ module ysyx_24080020_IFU (
             dnpc <= 'b0;
             is_dnpc <= 'b0;
         end
-        else if(exu_mem_shake_hands) begin
+        else if(if_en) begin
             is_dnpc <= 'b0;
         end
         else if(control_adventure) begin
