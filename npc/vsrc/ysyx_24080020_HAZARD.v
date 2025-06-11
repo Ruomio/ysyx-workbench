@@ -59,12 +59,10 @@ module ysyx_24080020_HAZARD(
         //     control_adventure <= 'b0;
         // end
         else if(exu_lsu_shake_hands) begin
-            if(is_dnpc) begin
-                control_adventure <= 'b1;
-            end
-            else begin
-                control_adventure <= 'b0;
-            end
+            control_adventure <= 'b0;
+        end
+        else if(is_dnpc) begin
+            control_adventure <= 'b1;
         end
     end
 
