@@ -372,6 +372,7 @@ module ysyx_24080020_MEM(
         end
         else if(mren_mem) begin
             if(!structural_adventure) begin
+                axi_busy <= 'b0;
                 arvalid <= 1'b1;
                 arid <= 4'b0;
                 arlen <= {{7{1'b0}},get_arlen};
@@ -414,7 +415,6 @@ module ysyx_24080020_MEM(
         end
         else if(rvalid && rlast) begin
             // finish all read
-            axi_busy <= 'b0;
             rready <= 1'b1;
             finish_read <= 1'b1;
             if(rresp != 2'b0) begin
