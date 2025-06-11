@@ -44,7 +44,7 @@ static int skip_dut_nr_inst = 0;
 
 extern npc_state u_npc_state;
 extern CPU_state npc_cpu;
-extern uint32_t g_dnpc;
+extern uint32_t g_dnpc, g_pc;
 
 extern void update_npc_cpu();
 
@@ -121,9 +121,9 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     u_npc_state.ret = true;
 
     isa_reg_display();
-    printf("ref exec: 0x%x, dut exec: 0x%x\n", ref->pc, g_dnpc);
+    printf("ref exec: 0x%x, dut exec: 0x%x\n", ref->pc, g_pc);
   }
-  printf("ref exec: 0x%x, dut exec: 0x%x\n", ref->pc, g_dnpc);
+  printf("ref exec: 0x%x, dut exec: 0x%x\n", ref->pc, g_pc);
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
