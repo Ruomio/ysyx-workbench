@@ -68,6 +68,7 @@ module ysyx_24080020_PC (
         end
         else if(is_dnpc) begin
             is_dnpc_pc <= 'b1;
+            dnpc_pc <= dnpc;
         end
 
     end
