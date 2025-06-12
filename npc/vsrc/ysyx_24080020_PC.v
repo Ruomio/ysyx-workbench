@@ -2,6 +2,7 @@
 module ysyx_24080020_PC (
     input clk,
     input rst,
+    input next,
     input is_update_pc,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
@@ -18,7 +19,7 @@ module ysyx_24080020_PC (
             cnt <= 1'b0;
             first_if <= 1'b0;
         end
-        else if(cnt) begin
+        else if(cnt && next) begin
             addr <= is_dnpc ? dnpc :
                     ~first_if ? addr : addr + 32'd4;
             first_if <= 1'b1;
