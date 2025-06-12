@@ -11,7 +11,7 @@ module ysyx_24080020_ICACHE(
   input busy_i,
   output reg busy,
 
-  output raddr,
+  output [`ysyx_24080020_WIDTH-1:0] raddr,
 
   // axi from lsu
   input arvalid_i,
