@@ -54,7 +54,7 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst, tmp_inst, addr_tmp;
 
     reg wb_ifu_shake_hands;
-    reg next_inst, need_update_pc, skip_once, trans_inst;
+    reg next_inst, need_update_pc, skip_once, trans_inst, first_fetch;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -156,6 +156,7 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             wb_ifu_shake_hands <= 1'b0;
             need_update_pc <= 1'b0;
+            first_fetch <= 'b1;
         end
         else if(need_update_pc) begin
             // update
@@ -166,8 +167,14 @@ module ysyx_24080020_IFU (
 
             need_update_pc <= 'b0;
         end
-        else if(wb_ifu_shake_hands && next_inst && arvalid && arready) begin
-            need_update_pc <= 1'b1;
+        else if(wb_ifu_shake_hands && next_inst) begin
+            if(first_fetch) begin
+                need_update_pc <= 1'b1;
+                first_fetch <= 'b0;
+            end
+            else if(arvalid && arready) begin
+                need_update_pc <= 'b1;
+            end
         end
         else begin
             // wb_ifu_shake_hands <= 1'b0;
