@@ -190,7 +190,7 @@ module ysyx_24080020_IFU (
         .lsu_busy(lsu_busy),
 
         // pc <-> ir
-        .if_en_valid(if_en_valid),
+        .if_en_valid(if_en),
         .if_en_ready(if_en_ready),
         .addr(addr),
 
