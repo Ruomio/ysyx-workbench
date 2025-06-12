@@ -115,7 +115,7 @@ module ysyx_24080020_IFU (
         else if(trans_inst) begin
             trans_inst <= 'b0;
             ifu_idu_valid <= 1'b1;
-            pc_ifu <= addr_tmp;
+            pc_ifu <= raddr;
             inst_ifu <= tmp_inst;
             next_inst <= 'b1;
         end
