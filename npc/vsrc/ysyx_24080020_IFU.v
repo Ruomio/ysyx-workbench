@@ -221,7 +221,6 @@ module ysyx_24080020_IFU (
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
         .update_pc(update_pc),
-        .raddr(raddr),
 
         // axi-lite
         .arvalid(arvalid),
