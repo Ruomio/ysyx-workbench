@@ -600,6 +600,9 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             bready <= 1'b0;
         end
+        else if(bvalid && bready) begin
+            bready <= 'b0;
+        end
         else if(bvalid) begin
             bready <= 1'b1;
 
@@ -610,9 +613,6 @@ module ysyx_24080020_MEM(
                 $error("the bresp are not 2'b0");
                 `endif
             end
-        end
-        else begin
-            bready <= 1'b0;
         end
     end
 
