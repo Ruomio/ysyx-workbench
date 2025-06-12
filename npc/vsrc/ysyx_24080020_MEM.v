@@ -412,7 +412,7 @@ module ysyx_24080020_MEM(
             mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
         end
-        if(rvalid && rready && rlast) begin
+        else if(rvalid && rready) begin
             rready <= 1'b0;
         end
         else if(rvalid && rlast) begin
