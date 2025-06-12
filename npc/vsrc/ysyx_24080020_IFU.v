@@ -166,7 +166,7 @@ module ysyx_24080020_IFU (
 
             need_update_pc <= 'b0;
         end
-        else if(wb_ifu_shake_hands && next_inst) begin
+        else if(wb_ifu_shake_hands && next_inst && arvalid && arready) begin
             need_update_pc <= 1'b1;
         end
         else begin
