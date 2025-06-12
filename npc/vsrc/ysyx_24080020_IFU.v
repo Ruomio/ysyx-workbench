@@ -108,6 +108,7 @@ module ysyx_24080020_IFU (
                 inst_ifu <= inst;
                 next_inst <= 'b1;
                 ifu_idu_valid <= 1'b1;
+                flush_pipeline <= 'b0;
 
             end
         end
@@ -132,7 +133,6 @@ module ysyx_24080020_IFU (
         else if(ifu_idu_valid && idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
             // is_dnpc <= 'b0;
-            flush_pipeline <= 'b0;
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
