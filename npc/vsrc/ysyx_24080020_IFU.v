@@ -102,7 +102,7 @@ module ysyx_24080020_IFU (
                     flush_pipeline <= 'b1;
                 end
                 else begin
-                    flush_pipeline <= 'b1;
+                    flush_pipeline <= 'b0;
                 end
             end
         end
