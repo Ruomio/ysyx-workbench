@@ -43,7 +43,7 @@ module ysyx_24080020_IFU (
     output reg ifu_idu_valid
 );
 
-    wire update_pc_ready;
+    // wire update_pc_ready;
     wire inst_fin_valid;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
     wire if_en_ready;
@@ -51,7 +51,7 @@ module ysyx_24080020_IFU (
     reg inst_fin_ready;
 
     reg is_dnpc;
-    reg update_pc_valid;
+    // reg update_pc_valid;
     reg dnpc_en;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst;
 
@@ -140,19 +140,18 @@ module ysyx_24080020_IFU (
         end
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            wb_ifu_shake_hands <= 1'b0;
-            update_pc_valid <= 'b0;
-        end
-        else if(update_pc_valid && update_pc_ready) begin
-            update_pc_valid <= 'b0;
-        end
-        else if(wb_ifu_shake_hands && !update_pc_valid) begin
-            update_pc_valid <= 'b1;
-        end
-
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         wb_ifu_shake_hands <= 1'b0;
+    //         update_pc_valid <= 'b0;
+    //     end
+    //     else if(update_pc_valid && update_pc_ready) begin
+    //         update_pc_valid <= 'b0;
+    //     end
+    //     else if(wb_ifu_shake_hands && !update_pc_valid) begin
+    //         update_pc_valid <= 'b1;
+    //     end
+    // end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -173,8 +172,9 @@ module ysyx_24080020_IFU (
         .rst(rst),
 
         // ifu <-> pc
-        .update_pc_valid(update_pc_valid),
-        .update_pc_ready(update_pc_ready),
+        .update_pc(inst_fin_valid && inst_fin_ready),
+        // .update_pc_valid(update_pc_valid),
+        // .update_pc_ready(update_pc_ready),
         .dnpc(dnpc_exu),
         .is_dnpc(is_dnpc_exu),
 

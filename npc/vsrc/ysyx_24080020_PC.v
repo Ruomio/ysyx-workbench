@@ -4,8 +4,9 @@ module ysyx_24080020_PC (
     input rst,
 
     // ifu <-> pc
-    input update_pc_valid,
-    output reg update_pc_ready,
+    // input update_pc_valid,
+    // output reg update_pc_ready,
+    input update_pc,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
 
@@ -28,29 +29,17 @@ module ysyx_24080020_PC (
             is_dnpc_ir <= 'b0;
             dnpc_ir <= 'b0;
         end
-        else if(update_pc_valid && update_pc_ready) begin
-            update_pc_ready <= 'b0;
-
-            // pc_en <= 'b1;
-
-            is_dnpc_ir <= is_dnpc;
-            dnpc_ir <= dnpc;
-
-        end
-        else if(update_pc_valid) begin
-            if(!if_en_valid) begin
-                update_pc_ready <= 'b1;
-            end
+        else if(update_pc) begin
+            pc_en <= 'b1;
         end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
-
+            pc_en <= 'b1;
         end
         else if(if_en_valid && if_en_ready) begin
             if_en_valid <= 'b0;
-            pc_en <= 'b1;
         end
         else if(pc_en) begin
             pc_en <= 'b0;
@@ -70,7 +59,6 @@ module ysyx_24080020_PC (
                 end
             end
         end
-
     end
 
 
