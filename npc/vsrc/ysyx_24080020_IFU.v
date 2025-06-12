@@ -16,6 +16,7 @@ module ysyx_24080020_IFU (
 
     // pipeline
     input control_adventure,
+    output reg flush_pipeline,
 
     output inst_fin,
 
@@ -130,6 +131,7 @@ module ysyx_24080020_IFU (
         else if(ifu_idu_valid && idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
             // is_dnpc <= 'b0;
+            flush_pipeline <= 'b0;
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
@@ -190,6 +192,7 @@ module ysyx_24080020_IFU (
                 next_inst <= 'b1;
                 is_dnpc <= is_dnpc_exu;
                 dnpc <= dnpc_exu;
+                flush_pipeline <= 'b1;
                 // if(!lsu_busy) begin
                 //     skip_once <= 'b1;
                 // end

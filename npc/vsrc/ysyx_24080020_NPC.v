@@ -317,7 +317,7 @@ module ysyx_24080020_NPC(
   wire lsu_busy, lsu_busy_unused;
   wire exu_mem_shake_hands;
   wire idu_exu_shake_hands;
-  wire update_pc;
+  wire update_pc, flush_pipeline;
 
 
   // skip difftest ref
@@ -339,6 +339,7 @@ module ysyx_24080020_NPC(
         .inst_fin(inst_fin),
         .exu_mem_shake_hands(exu_mem_shake_hands),
         .update_pc(update_pc),
+        .flush_pipeline(flush_pipeline),
 
         .raddr(raddr_ifu),
         // axi-lite
@@ -367,7 +368,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
         .data_adventure(data_adventure),
-        .control_adventure(control_adventure),
+        .flush_pipeline(flush_pipeline),
 
         .skip_ref_idu(skip_ref_idu),
 
