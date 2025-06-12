@@ -18,16 +18,16 @@ module ysyx_24080020_PC (
 
     reg first_if, pc_en;;
 
-    reg is_dnpc_ir;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc_ir;
+    reg is_dnpc_pc;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc_pc;
 
     always @(posedge clk) begin
         if(!rst) begin
             addr <= `ysyx_24080020_MBASE;
             first_if <= 1'b0;
             pc_en <= 'b1;
-            is_dnpc_ir <= 'b0;
-            dnpc_ir <= 'b0;
+            is_dnpc_pc <= 'b0;
+            dnpc_pc <= 'b0;
         end
         else if(update_pc) begin
             pc_en <= 'b1;
@@ -44,21 +44,32 @@ module ysyx_24080020_PC (
         else if(pc_en) begin
             pc_en <= 'b0;
             if_en_valid <= 'b1;
-            is_dnpc_ir <= 'b0;
+            is_dnpc_pc <= 'b0;
 
             if(!first_if) begin
                 first_if <= 1'b1;
                 addr <= addr;
             end
             else begin
-                if(is_dnpc_ir) begin
-                    addr <= dnpc_ir;
+                if(is_dnpc_pc) begin
+                    addr <= dnpc_pc;
+                    is_dnpc_pc <= 'b0;
                 end
                 else begin
                     addr <=  addr + 32'd4;
                 end
             end
         end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+
+        end
+        else if(is_dnpc) begin
+            is_dnpc_pc <= 'b1;
+        end
+
     end
 
 
