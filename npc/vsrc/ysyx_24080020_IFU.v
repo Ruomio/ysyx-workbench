@@ -43,18 +43,19 @@ module ysyx_24080020_IFU (
     output reg ifu_idu_valid
 );
 
+    wire update_pc_ready;
     wire inst_fin_valid;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
 
     reg inst_fin_ready;
 
     reg is_dnpc;
-    reg is_update_pc;
+    reg update_pc_valid;
     reg dnpc_en;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst;
 
     reg wb_ifu_shake_hands;
-    reg next_inst, need_update_pc, skip_once;
+    reg need_update_pc;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -88,27 +89,29 @@ module ysyx_24080020_IFU (
             end
             else if(inst_fin_ready) begin
                 inst_fin_ready <= 'b0;
-                dnpc_en <= 'b1;
+                if((raddr == dnpc_exu) && !dnpc_en) begin
+                    dnpc_en <= 'b1;
+                    flush_pipeline <= 'b0;
+                end
             end
             else if(!ifu_idu_valid) begin
-
                 inst_fin_ready <= 'b1;
 
                 pc_ifu <= raddr;
                 inst_ifu <= inst;
                 next_inst <= 'b1;
                 ifu_idu_valid <= 1'b1;
-                if((control_adventure && dnpc_en)) begin
-                    flush_pipeline <= 'b1;
-                end
-                else begin
-                    flush_pipeline <= 'b0;
-                end
+
+                // if((control_adventure && dnpc_en)) begin
+                //     flush_pipeline <= 'b1;
+                // end
+                // else begin
+                //     flush_pipeline <= 'b0;
+                // end
             end
         end
         else begin
             inst_fin_ready <= 'b0;
-            // ifu_idu_valid <= ifu_idu_valid;
         end
 
     end
@@ -119,7 +122,6 @@ module ysyx_24080020_IFU (
         end
         else if(ifu_idu_valid && idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
-            // is_dnpc <= 'b0;
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
@@ -130,11 +132,9 @@ module ysyx_24080020_IFU (
                 ifu_wb_ready <= 1'b1;
 
                 wb_ifu_shake_hands <= 1'b1;
-
             end
         end
         else begin
-            // if_en <= 1'b0;
             ifu_wb_ready <= 1'b0;
         end
     end
@@ -142,32 +142,19 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             wb_ifu_shake_hands <= 1'b0;
-            need_update_pc <= 1'b0;
+            update_pc_valid <= 'b0;
         end
-        else if(need_update_pc) begin
-            // update
-            is_update_pc <= 1'b1;
-
-            wb_ifu_shake_hands <= 1'b0;
-            next_inst <= 'b0;
-
-            need_update_pc <= 'b0;
+        else if(update_pc_valid && update_pc_ready) begin
+            update_pc_valid <= 'b0;
         end
-        else if(wb_ifu_shake_hands) begin
-            need_update_pc <= 1'b1;
-        end
-        else begin
-            // wb_ifu_shake_hands <= 1'b0;
-            is_update_pc <= 1'b0;
+        else if(wb_ifu_shake_hands && !update_pc_valid) begin
+            update_pc_valid <= 'b1;
         end
 
     end
 
     always @(posedge clk) begin
         if(!rst) begin
-            next_inst <= 'b1;
-            // dnpc <= 'b0;
-            // is_dnpc <= 'b0;
             dnpc_en <= 'b1;
         end
         else if(if_en) begin
@@ -176,14 +163,7 @@ module ysyx_24080020_IFU (
         else if(control_adventure) begin
             if(dnpc_en) begin
                 dnpc_en <= 'b0;
-                // pc incorrect
-                next_inst <= 'b1;
-                // is_dnpc <= is_dnpc_exu;
-                // dnpc <= dnpc_exu;
                 flush_pipeline <= 'b1;
-                // if(!lsu_busy) begin
-                //     skip_once <= 'b1;
-                // end
             end
         end
     end
@@ -193,12 +173,14 @@ module ysyx_24080020_IFU (
     ysyx_24080020_PC u_pc(
         .clk(clk),
         .rst(rst),
-        .next(arvalid && arready),
-        .is_update_pc(is_update_pc),
+
+        .update_pc_valid(update_pc_valid),
+        .update_pc_ready(update_pc_ready),
         .dnpc(dnpc_exu),
-        // .pc_ifu(pc_ifu),
         .is_dnpc(is_dnpc_exu),
-        .if_en(if_en),
+
+        .if_en_valid(if_en),
+        .if_en_ready(if_en_ready),
         .addr(addr)
     );
 
@@ -207,12 +189,15 @@ module ysyx_24080020_IFU (
         .rst(rst),
         .lsu_busy(lsu_busy),
 
-        .if_en(if_en),
+        // pc <-> ir
+        .if_en_valid(if_en_valid),
+        .if_en_ready(if_en_ready),
         .addr(addr),
+
+        // ir <-> ifu
         .inst(inst),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
-        .update_pc(update_pc),
 
         // axi-lite
         .arvalid(arvalid),

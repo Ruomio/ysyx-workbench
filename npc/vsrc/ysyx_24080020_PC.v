@@ -2,47 +2,45 @@
 module ysyx_24080020_PC (
     input clk,
     input rst,
-    input next,
-    input is_update_pc,
+
+    // ifu <-> pc
+    input update_pc_valid,
+    output reg update_pc_ready,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
-    output reg if_en,
+
+    // pc <-> ir
+    input if_en_ready,
+    output reg if_en_valid,
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
 
-    reg cnt, dnpc_en, update;
-    reg first_if;
+    reg first_if, pc_en;;
+
+    reg is_dnpc_ir;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc_ir;
 
     always @(posedge clk) begin
         if(!rst) begin
             addr <= `ysyx_24080020_MBASE;
-            cnt <= 1'b0;
             first_if <= 1'b0;
+            pc_en <= 'b1;
+            is_dnpc_ir <= 'b0;
+            dnpc_ir <= 'b0;
         end
-        else if(cnt) begin
-            if(!first_if) begin
-                first_if <= 1'b1;
+        else if(update_pc_valid && update_pc_ready) begin
+            update_pc_ready <= 'b0;
 
-                addr <= addr;
-                cnt <= 1'b0;
-                if_en <= 1'b1;
-            end
-            else if(next) begin
-                if(dnpc_en) begin
-                    addr <= dnpc;
-                    dnpc_en <=  'b0;
-                    update <= 'b1;
-                end
-                else begin
-                    addr <=  addr + 32'd4;
-                    update <= 'b0;
-                end
-                cnt <= 1'b0;
-                if_en <= 1'b1;
-            end
+            pc_en <= 'b1;
+
+            is_dnpc_ir <= is_dnpc;
+            dnpc_ir <= dnpc;
+
         end
-        else if(is_update_pc) begin
-            cnt <= 'b1;
+        else if(update_pc_valid) begin
+            if(!if_en_valid) begin
+                update_pc_ready <= 'b1;
+            end
         end
         else begin
             // addr <= addr;
@@ -53,14 +51,32 @@ module ysyx_24080020_PC (
 
     always @(posedge clk) begin
         if(!rst) begin
-            dnpc_en <= 'b0;
-            update <= 'b0;
-        end
-        else if(is_dnpc && !update) begin
-            dnpc_en <= 'b1;
-        end
-    end
 
+        end
+        else if(if_en_valid && if_en_ready) begin
+            if_en_valid <= 'b0;
+        end
+        else if(pc_en) begin
+            pc_en <= 'b0;
+            if_en_valid <= 'b1;
+            is_dnpc_ir <= 'b0;
+
+            if(!first_if) begin
+                first_if <= 1'b1;
+                addr <= addr;
+            end
+            else begin
+                if(is_dnpc_ir) begin
+                    addr <= dnpc_ir;
+                    dnpc_en <=  'b0;
+                end
+                else begin
+                    addr <=  addr + 32'd4;
+                end
+            end
+        end
+
+    end
 
 
 endmodule
