@@ -53,7 +53,7 @@ module ysyx_24080020_IFU (
 
     reg is_dnpc;
     // reg update_pc_valid;
-    reg dnpc_en;
+    // reg dnpc_en;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst;
 
     reg wb_ifu_shake_hands;
@@ -86,14 +86,15 @@ module ysyx_24080020_IFU (
             inst_fin_ready<= 'b0;
         end
         else if(inst_fin_valid) begin
-            if((raddr != dnpc_exu) && !dnpc_en) begin
+            if((raddr != dnpc_exu) /* && !dnpc_en */) begin
                 inst_fin_ready <= 'b1;
             end
             else if(inst_fin_ready) begin
                 inst_fin_ready <= 'b0;
-                if((raddr == dnpc_exu) && !dnpc_en) begin
-                    dnpc_en <= 'b1;
+                if((raddr == dnpc_exu) /* && !dnpc_en */) begin
+                    // dnpc_en <= 'b1;
                     flush_pipeline <= 'b0;
+                    get_right_inst <= 'b1;
                 end
             end
             else if(!ifu_idu_valid) begin
@@ -156,13 +157,17 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            dnpc_en <= 'b1;
+            // dnpc_en <= 'b1;
+            get_right_inst <= 'b0;
         end
-        else if(is_dnpc_exu) begin
-            if(dnpc_en) begin
-                dnpc_en <= 'b0;
-                flush_pipeline <= 'b1;
-            end
+        else if(control_adventure) begin
+            // if(dnpc_en) begin
+            //     dnpc_en <= 'b0;
+            //     flush_pipeline <= 'b1;
+            //     get_right_inst <= 'b0;
+            // end
+            flush_pipeline <= 'b1;
+            get_right_inst <= 'b0;
         end
     end
 
