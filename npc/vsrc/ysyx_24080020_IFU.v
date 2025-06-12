@@ -92,7 +92,7 @@ module ysyx_24080020_IFU (
             //     skip_once <= 'b0;
             //     // next_inst <= 'b1;
             // end
-            if(raddr != dnpc) begin
+            if((raddr != dnpc) && !dnpc_en) begin
                 inst_fin_ready <= 'b1;
             end
             else if(inst_fin_ready) begin
