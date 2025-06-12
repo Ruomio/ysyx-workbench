@@ -38,7 +38,7 @@ module ysyx_24080020_PC (
 
         end
         else if(update_pc_valid) begin
-            if(!if_en_valid) begin
+            if(!if_en_valid && (!first_if || (if_en_valid && if_en_ready))) begin
                 update_pc_ready <= 'b1;
             end
         end
