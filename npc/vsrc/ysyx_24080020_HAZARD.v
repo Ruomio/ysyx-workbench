@@ -52,7 +52,7 @@ module ysyx_24080020_HAZARD(
     always @(posedge is_dnpc) begin
         if(!rst) begin
         end
-        else begin
+        else if(!get_right_inst) begin
             control_adventure <= 'b1;
         end
     end
