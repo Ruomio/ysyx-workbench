@@ -206,6 +206,7 @@ module ysyx_24080020_IFU (
     ysyx_24080020_PC u_pc(
         .clk(clk),
         .rst(rst),
+        .next(arvalid && arready),
         .is_update_pc(is_update_pc),
         .dnpc(dnpc),
         // .pc_ifu(pc_ifu),
@@ -218,7 +219,6 @@ module ysyx_24080020_IFU (
         .clk(clk),
         .rst(rst),
         .lsu_busy(lsu_busy),
-        .next(arvalid && arready),
 
         .if_en(if_en),
         .addr(addr),
