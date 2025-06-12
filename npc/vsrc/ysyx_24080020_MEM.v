@@ -412,6 +412,9 @@ module ysyx_24080020_MEM(
             mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
         end
+        if(rvalid && rready && rlast) begin
+            rready <= 1'b0;
+        end
         else if(rvalid && rlast) begin
             // finish all read
             axi_busy <= 'b0;
@@ -457,9 +460,6 @@ module ysyx_24080020_MEM(
                 $display("rresp not be 0b00, ERROR");
                 `endif
             end
-        end
-        if(rvalid && rready && rlast) begin
-            rready <= 1'b0;
         end
     end
 
