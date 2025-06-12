@@ -83,7 +83,7 @@ module ysyx_24080020_IFU (
             inst_fin_ready<= 'b0;
         end
         else if(inst_fin_valid) begin
-            if((raddr != dnpc) && !dnpc_en) begin
+            if((raddr != dnpc_exu) && !dnpc_en) begin
                 inst_fin_ready <= 'b1;
             end
             else if(inst_fin_ready) begin
@@ -162,20 +162,20 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             next_inst <= 'b1;
-            dnpc <= 'b0;
-            is_dnpc <= 'b0;
+            // dnpc <= 'b0;
+            // is_dnpc <= 'b0;
             dnpc_en <= 'b1;
         end
         else if(if_en) begin
-            is_dnpc <= 'b0;
+            // is_dnpc <= 'b0;
         end
         else if(control_adventure) begin
             if(dnpc_en) begin
                 dnpc_en <= 'b0;
                 // pc incorrect
                 next_inst <= 'b1;
-                is_dnpc <= is_dnpc_exu;
-                dnpc <= dnpc_exu;
+                // is_dnpc <= is_dnpc_exu;
+                // dnpc <= dnpc_exu;
                 flush_pipeline <= 'b1;
                 // if(!lsu_busy) begin
                 //     skip_once <= 'b1;
@@ -191,9 +191,9 @@ module ysyx_24080020_IFU (
         .rst(rst),
         .next(arvalid && arready),
         .is_update_pc(is_update_pc),
-        .dnpc(dnpc),
+        .dnpc(dnpc_exu),
         // .pc_ifu(pc_ifu),
-        .is_dnpc(is_dnpc),
+        .is_dnpc(is_dnpc_exu),
         .if_en(if_en),
         .addr(addr)
     );
