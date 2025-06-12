@@ -10,7 +10,7 @@ module ysyx_24080020_PC (
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
 
-    reg cnt;
+    reg cnt, dnpc_en;
     reg first_if;
 
     always @(posedge clk) begin
@@ -28,10 +28,11 @@ module ysyx_24080020_PC (
                 if_en <= 1'b1;
             end
             else if(next) begin
-                addr <= is_dnpc ? dnpc :
+                addr <= dnpc_en ? dnpc :
                         ~first_if ? addr : addr + 32'd4;
                 cnt <= 1'b0;
                 if_en <= 1'b1;
+                dnpc_en <= 'b0;
             end
         end
         else if(is_update_pc) begin
@@ -42,6 +43,15 @@ module ysyx_24080020_PC (
             if_en <= 1'b0;
         end
 
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            dnpc_en <= 'b0;
+        end
+        else if(is_dnpc) begin
+            dnpc_en <= 'b1;
+        end
     end
 
 
