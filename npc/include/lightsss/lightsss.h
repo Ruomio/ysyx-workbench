@@ -30,7 +30,7 @@
 // exit when error when fork
 #define FAIL_EXIT    exit(EXIT_FAILURE);
 #define SLOT_SIZE 3
-#define WAIT_INTERVAL 1
+#define WAIT_INTERVAL 5
 
 typedef struct shinfo {
   bool flag;
