@@ -12,7 +12,7 @@ module ysyx_24080020_IFU (
     output reg if_en,
     input exu_mem_shake_hands,
     output update_pc,
-    input raddr,
+    input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
     input control_adventure,
