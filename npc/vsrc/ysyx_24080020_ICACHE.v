@@ -925,10 +925,10 @@ module ysyx_24080020_ICACHE(
                           cache_valid[cache_index_s2] <= cache_valid[cache_index_s2] | (1 << (fifo_index[cache_index_s2]));
                         end
                       end
-                      else begin
-                        // update araddr to adapt burst transmit, it's for icache parameter
-                        araddr_s2 <= araddr_s2 + 2 ** arsize_o;
-                      end
+                      // else begin
+                      //   // update araddr to adapt burst transmit, it's for icache parameter
+                      //   araddr_s2 <= araddr_s2 + 2 ** arsize_o;
+                      // end
                   end
                   else begin
                       // error
