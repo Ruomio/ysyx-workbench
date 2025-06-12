@@ -28,11 +28,15 @@ module ysyx_24080020_PC (
                 if_en <= 1'b1;
             end
             else if(next) begin
-                addr <= dnpc_en ? dnpc :
-                        ~first_if ? addr : addr + 32'd4;
+                if(dnpc_en) begin
+                    addr <= dnpc;
+                    dnpc_en <= 'b0;
+                end
+                else begin
+                    addr <=  addr + 32'd4;
+                end
                 cnt <= 1'b0;
                 if_en <= 1'b1;
-                dnpc_en <= 'b0;
             end
         end
         else if(is_update_pc) begin
