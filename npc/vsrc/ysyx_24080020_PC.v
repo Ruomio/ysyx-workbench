@@ -31,14 +31,14 @@ module ysyx_24080020_PC (
         else if(update_pc_valid && update_pc_ready) begin
             update_pc_ready <= 'b0;
 
-            pc_en <= 'b1;
+            // pc_en <= 'b1;
 
             is_dnpc_ir <= is_dnpc;
             dnpc_ir <= dnpc;
 
         end
         else if(update_pc_valid) begin
-            if(!if_en_valid && (!first_if || (if_en_valid && if_en_ready))) begin
+            if(!if_en_valid) begin
                 update_pc_ready <= 'b1;
             end
         end
@@ -50,6 +50,7 @@ module ysyx_24080020_PC (
         end
         else if(if_en_valid && if_en_ready) begin
             if_en_valid <= 'b0;
+            pc_en <= 'b1;
         end
         else if(pc_en) begin
             pc_en <= 'b0;
