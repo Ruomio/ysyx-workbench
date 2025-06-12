@@ -1089,7 +1089,6 @@ module ysyx_24080020_NPC(
 
         // control adventures, between ifu and exu
         .is_dnpc(is_dnpc_exu),
-        .update_pc(update_pc),
         .exu_lsu_shake_hands(exu_mem_shake_hands),
         .control_adventure(control_adventure)
 

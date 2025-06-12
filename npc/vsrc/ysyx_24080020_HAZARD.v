@@ -19,7 +19,6 @@ module ysyx_24080020_HAZARD(
     // control adventures, between ifu and exu
     input is_dnpc,
     input exu_lsu_shake_hands,
-    input update_pc,
     output reg control_adventure
 );
 

@@ -17,6 +17,7 @@ module ysyx_24080020_IFU (
     // pipeline
     input control_adventure,
     output reg flush_pipeline,
+    output reg get_right_inst,
 
     output inst_fin,
 
