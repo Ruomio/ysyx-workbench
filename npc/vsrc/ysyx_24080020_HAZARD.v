@@ -41,30 +41,19 @@ module ysyx_24080020_HAZARD(
                          || (((rs2_idu == rd_exu) || (rs2_idu == rd_lsu) || (rs2_idu == rd_wbu)) && (rs2_idu != 'b0));
 
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            control_adventure <= 'b0;
-            en <= 'b1;
-        end
-        // else if(en) begin
-        //     if(is_dnpc) begin
-        //         control_adventure <= 'b1;
-        //         en <= 'b0;
-        //     end
-        // end
-        // else if(exu_lsu_shake_hands) begin
-        //     en <= 'b1;
-        // end
-        // if(update_pc && control_adventure) begin
-        //     control_adventure <= 'b0;
-        // end
-        else if(exu_lsu_shake_hands) begin
-            control_adventure <= 'b0;
-        end
-        else if(is_dnpc) begin
-            control_adventure <= 'b1;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         control_adventure <= 'b0;
+    //     end
+    //     else if(exu_lsu_shake_hands) begin
+    //         control_adventure <= 'b0;
+    //     end
+    //     else if(is_dnpc) begin
+    //         control_adventure <= 'b1;
+    //     end
+    // end
+
+    assign control_adventure = is_dnpc ? 'b1 : 'b0;
 
 
 endmodule
