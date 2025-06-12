@@ -30,7 +30,7 @@
 // exit when error when fork
 #define FAIL_EXIT    exit(EXIT_FAILURE);
 #define SLOT_SIZE 3
-#define WAIT_INTERVAL 5
+#define WAIT_INTERVAL 1
 
 typedef struct shinfo {
   bool flag;
@@ -66,9 +66,9 @@ class LightSSS {
   static ForkShareMemory forkshm;
 
 public:
-  LightSSS() { 
+  LightSSS() {
       signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
-      signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
+      signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
       signal(SIGUSR1, signal_handler_abort); // 注册USR1处理器
   }
