@@ -44,7 +44,7 @@ module ysyx_24080020_PC (
         end
         else begin
             // addr <= addr;
-            if_en <= 1'b0;
+            if_en_valid <= 1'b0;
         end
 
     end
@@ -68,7 +68,6 @@ module ysyx_24080020_PC (
             else begin
                 if(is_dnpc_ir) begin
                     addr <= dnpc_ir;
-                    dnpc_en <=  'b0;
                 end
                 else begin
                     addr <=  addr + 32'd4;

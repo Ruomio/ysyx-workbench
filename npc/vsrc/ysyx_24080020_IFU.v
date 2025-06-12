@@ -46,6 +46,7 @@ module ysyx_24080020_IFU (
     wire update_pc_ready;
     wire inst_fin_valid;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
+    wire if_en_ready;
 
     reg inst_fin_ready;
 
@@ -99,8 +100,8 @@ module ysyx_24080020_IFU (
 
                 pc_ifu <= raddr;
                 inst_ifu <= inst;
-                next_inst <= 'b1;
                 ifu_idu_valid <= 1'b1;
+                // next_inst <= 'b1;
 
                 // if((control_adventure && dnpc_en)) begin
                 //     flush_pipeline <= 'b1;
@@ -157,9 +158,6 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             dnpc_en <= 'b1;
         end
-        else if(if_en) begin
-            // is_dnpc <= 'b0;
-        end
         else if(control_adventure) begin
             if(dnpc_en) begin
                 dnpc_en <= 'b0;
@@ -174,11 +172,13 @@ module ysyx_24080020_IFU (
         .clk(clk),
         .rst(rst),
 
+        // ifu <-> pc
         .update_pc_valid(update_pc_valid),
         .update_pc_ready(update_pc_ready),
         .dnpc(dnpc_exu),
         .is_dnpc(is_dnpc_exu),
 
+        // pc <-> ir
         .if_en_valid(if_en),
         .if_en_ready(if_en_ready),
         .addr(addr)
