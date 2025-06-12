@@ -98,8 +98,12 @@ module ysyx_24080020_IFU (
                 inst_ifu <= inst;
                 next_inst <= 'b1;
                 ifu_idu_valid <= 1'b1;
-                flush_pipeline <= 'b0;
-
+                if((control_adventure && dnpc_en)) begin
+                    flush_pipeline <= 'b1;
+                end
+                else begin
+                    flush_pipeline <= 'b1;
+                end
             end
         end
         else begin
