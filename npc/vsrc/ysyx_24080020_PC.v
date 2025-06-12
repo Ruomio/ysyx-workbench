@@ -30,7 +30,7 @@ module ysyx_24080020_PC (
             else if(next) begin
                 if(dnpc_en) begin
                     addr <= dnpc;
-                    dnpc_en <= 'b0;
+                    dnpc_en <= is_dnpc ? 'b1 : 'b0;
                 end
                 else begin
                     addr <=  addr + 32'd4;
