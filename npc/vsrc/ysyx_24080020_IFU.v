@@ -119,6 +119,7 @@ module ysyx_24080020_IFU (
             next_inst <= 'b1;
         end
         else begin
+            inst_fin_ready <= 'b0;
             // ifu_idu_valid <= ifu_idu_valid;
         end
 
