@@ -160,7 +160,7 @@ module ysyx_24080020_IFU (
             // dnpc_en <= 'b1;
             get_right_inst <= 'b0;
         end
-        else if(control_adventure) begin
+        else if(is_dnpc_exu && !control_adventure) begin
             // if(dnpc_en) begin
             //     dnpc_en <= 'b0;
             //     flush_pipeline <= 'b1;
