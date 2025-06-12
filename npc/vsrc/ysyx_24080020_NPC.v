@@ -155,7 +155,7 @@ module ysyx_24080020_NPC(
   wire [1:0] rresp_ifu;
   wire rlast_ifu;
   wire [3:0] rid_ifu;
-  wire [`ysyx_24080020_WIDTH-1:0] rdata_ifu;
+  wire [`ysyx_24080020_WIDTH-1:0] rdata_ifu, raddr_ifu;
 
   wire arvalid_icache, arready_icache;
   wire [1:0] arburst_icache;
@@ -340,6 +340,7 @@ module ysyx_24080020_NPC(
         .exu_mem_shake_hands(exu_mem_shake_hands),
         .update_pc(update_pc),
 
+        .raddr(raddr_ifu),
         // axi-lite
         .arvalid(arvalid_ifu),
         .araddr(araddr_ifu),
@@ -1031,6 +1032,7 @@ module ysyx_24080020_NPC(
       .busy(lsu_busy_unused),
       .busy_i(lsu_busy),
 
+      .raddr(raddr_ifu),
       // axi from lsu
       .arvalid_i(arvalid_ifu),
       .araddr_i(araddr_ifu),

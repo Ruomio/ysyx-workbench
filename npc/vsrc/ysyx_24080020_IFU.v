@@ -12,6 +12,7 @@ module ysyx_24080020_IFU (
     output reg if_en,
     input exu_mem_shake_hands,
     output update_pc,
+    output raddr,
 
     // pipeline
     input control_adventure,
@@ -85,13 +86,15 @@ module ysyx_24080020_IFU (
         else if(inst_fin_valid) begin
             // addr_tmp <= addr;
             // tmp_inst <= inst;
-            if(skip_once) begin
+            // if(skip_once) begin
+            //     inst_fin_ready <= 'b1;
+            //     skip_once <= 'b0;
+            //     // next_inst <= 'b1;
+            // end
+            if(raddr != dnpc) begin
                 inst_fin_ready <= 'b1;
-                skip_once <= 'b0;
-                // next_inst <= 'b1;
-                inst_fin_ready <= 'b0;
             end
-            else if(inst_fin_valid && inst_fin_ready) begin
+            else if(inst_fin_ready) begin
                 inst_fin_ready <= 'b0;
                 dnpc_en <= 'b1;
             end
@@ -187,9 +190,9 @@ module ysyx_24080020_IFU (
                 next_inst <= 'b1;
                 is_dnpc <= is_dnpc_exu;
                 dnpc <= dnpc_exu;
-                if(!lsu_busy) begin
-                    skip_once <= 'b1;
-                end
+                // if(!lsu_busy) begin
+                //     skip_once <= 'b1;
+                // end
             end
         end
     end
@@ -218,6 +221,7 @@ module ysyx_24080020_IFU (
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
         .update_pc(update_pc),
+        .raddr(raddr),
 
         // axi-lite
         .arvalid(arvalid),

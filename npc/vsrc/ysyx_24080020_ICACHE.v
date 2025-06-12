@@ -11,6 +11,8 @@ module ysyx_24080020_ICACHE(
   input busy_i,
   output reg busy,
 
+  output raddr,
+
   // axi from lsu
   input arvalid_i,
   input [`ysyx_24080020_WIDTH-1:0] araddr_i,
@@ -554,13 +556,14 @@ module ysyx_24080020_ICACHE(
 
 
 // s0
-    reg [`ysyx_24080020_WIDTH-1:0] araddr_s0;
+    reg [`ysyx_24080020_WIDTH-1:0] araddr_s0, raddr_s0;
 
     always @(posedge clk) begin
         if(!rst) begin
             s0_s1_valid <= 'b0;
             s0_s2_ready <= 'b0;
             inst_s0 <= 'b0;
+            raddr_s0 <= 'b0;
         end
         else if(s0_s1_valid && s1_s0_ready) begin
             s0_s1_valid <= 'b0;
@@ -584,6 +587,7 @@ module ysyx_24080020_ICACHE(
                 s0_s2_ready <= 'b1;
 
                 inst_s0 <= inst_s2;
+                raddr_s0 <= raddr_s2;
                 // rdata_araddr_s0 <= araddr_s2_base;
             end
         end
@@ -653,7 +657,7 @@ module ysyx_24080020_ICACHE(
   wire [cache_size_bits-1:0]   cache_offset_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
-  reg [`ysyx_24080020_WIDTH-1:0] inst_s2;
+  reg [`ysyx_24080020_WIDTH-1:0] inst_s2, raddr_s2;
 
   assign cache_tag_s2 = araddr_s2[31 : cache_num_bits+cache_size_bits];
   assign cache_index_s2 = araddr_s2[cache_num_bits+cache_size_bits-1 : cache_size_bits];
@@ -692,6 +696,7 @@ module ysyx_24080020_ICACHE(
 
       araddr_s2 <= 'b0;
       araddr_s2_base <= 'b0;
+      raddr_s2 <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
@@ -721,6 +726,7 @@ module ysyx_24080020_ICACHE(
 
         inst_s2 <= rdata_tmp;
         s1_s2_shake_hands <= 'b0;
+        raddr_s2 <= araddr_s2_base;
       end
     end
   end
@@ -1007,6 +1013,7 @@ module ysyx_24080020_ICACHE(
       rdata_i <= inst_s0;
       rlast_i <= 'b1;
       rresp_i <= 'b0;
+      raddr <= raddr_s0;
       // rdata_araddr <= rdata_araddr_s0;
       s2_s0_shake_hands <= 'b0;
     end
