@@ -50,7 +50,11 @@ module ysyx_24080020_HAZARD(
     end
 
     always @(posedge is_dnpc) begin
-        control_adventure <= 'b1;
+        if(!rst) begin
+        end
+        else begin
+            control_adventure <= 'b1;
+        end
     end
 
     // assign control_adventure = is_dnpc ? 'b1 : 'b0;
