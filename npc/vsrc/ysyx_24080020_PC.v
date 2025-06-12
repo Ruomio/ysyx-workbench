@@ -42,11 +42,6 @@ module ysyx_24080020_PC (
                 update_pc_ready <= 'b1;
             end
         end
-        else begin
-            // addr <= addr;
-            if_en_valid <= 1'b0;
-        end
-
     end
 
     always @(posedge clk) begin
