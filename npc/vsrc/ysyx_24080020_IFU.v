@@ -51,10 +51,10 @@ module ysyx_24080020_IFU (
     reg is_dnpc;
     reg is_update_pc;
     reg dnpc_en;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst, tmp_inst, addr_tmp;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst;
 
     reg wb_ifu_shake_hands;
-    reg next_inst, need_update_pc, skip_once, trans_inst;
+    reg next_inst, need_update_pc, skip_once;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -80,18 +80,9 @@ module ysyx_24080020_IFU (
             ifu_idu_valid <= 1'b0;
             pc_ifu <= 'b0;
             inst <= 'b0;
-            trans_inst <= 'b0;
-            addr_tmp <= 'b0;
             inst_fin_ready<= 'b0;
         end
         else if(inst_fin_valid) begin
-            // addr_tmp <= addr;
-            // tmp_inst <= inst;
-            // if(skip_once) begin
-            //     inst_fin_ready <= 'b1;
-            //     skip_once <= 'b0;
-            //     // next_inst <= 'b1;
-            // end
             if((raddr != dnpc) && !dnpc_en) begin
                 inst_fin_ready <= 'b1;
             end
@@ -100,24 +91,16 @@ module ysyx_24080020_IFU (
                 dnpc_en <= 'b1;
             end
             else if(!ifu_idu_valid) begin
-                // trans_inst <= 'b1;
 
                 inst_fin_ready <= 'b1;
 
-                pc_ifu <= addr;
+                pc_ifu <= raddr;
                 inst_ifu <= inst;
                 next_inst <= 'b1;
                 ifu_idu_valid <= 1'b1;
                 flush_pipeline <= 'b0;
 
             end
-        end
-        else if(trans_inst) begin
-            trans_inst <= 'b0;
-            ifu_idu_valid <= 1'b1;
-            pc_ifu <= raddr;
-            inst_ifu <= tmp_inst;
-            next_inst <= 'b1;
         end
         else begin
             inst_fin_ready <= 'b0;
