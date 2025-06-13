@@ -894,13 +894,13 @@ module ysyx_24080020_ICACHE(
               // do nothing
           end
           AXIAR: begin
-              if(bubble) begin
-                if(arready_o && arvalid_o) begin
-                    arvalid_o <= 'b0;
-                    fin_ar <= 'b1;
-                    bubble <= 'b0;
-                end
-                else if(!fin_ar && !busy_i) begin
+            if(arready_o && arvalid_o) begin
+                arvalid_o <= 'b0;
+                fin_ar <= 'b1;
+                bubble <= 'b0;
+            end
+            else if(!fin_ar && !busy_i) begin
+                if(bubble && !busy_i) begin
                     busy <= 'b1;
                     arvalid_o <= 1'b1;
                     if(use_icache) begin
@@ -915,10 +915,10 @@ module ysyx_24080020_ICACHE(
                         araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
                     end
                 end
-              end
-              else begin
-                  bubble <= 'b1;
-              end
+                else if(!bubble && !busy_i) begin
+                    bubble <= 'b1;
+                end
+            end
           end
           AXIR: begin
               if(rvalid_o && rready_o) begin
