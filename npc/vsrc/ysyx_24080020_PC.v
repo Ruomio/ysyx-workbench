@@ -51,7 +51,7 @@ module ysyx_24080020_PC (
                 addr <= addr;
             end
             else begin
-                if(is_dnpc_pc) begin
+                if(is_dnpc && !is_dnpc_pc) begin
                     addr <= dnpc_pc;
                     is_dnpc_pc <= 'b0;
                 end
