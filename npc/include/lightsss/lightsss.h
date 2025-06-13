@@ -66,9 +66,9 @@ class LightSSS {
   static ForkShareMemory forkshm;
 
 public:
-  LightSSS() {
+  LightSSS() { 
       signal(SIGINT, signal_handler); // 注册SIGINT处理器 ctrl c
-      signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill
+      signal(SIGTERM, signal_handler); // 注册SIGTERM处理器 kill 
       signal(SIGABRT, signal_handler_abort); // 注册SIGTERM处理器 assert faile
       signal(SIGUSR1, signal_handler_abort); // 注册USR1处理器
   }

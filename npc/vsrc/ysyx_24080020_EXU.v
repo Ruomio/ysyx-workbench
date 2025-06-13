@@ -138,15 +138,15 @@ module ysyx_24080020_EXU
 
     // bus
     always @(posedge clk) begin
-        if(mem_exu_ready && exu_mem_valid) begin
+        if(mem_exu_ready && state) begin
             exu_mem_valid <= 1'b0;
-            is_dnpc_exu <= 'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif
         end
         else if(mem_exu_ready && !exu_mem_valid) begin
             waddr_exu <= 'b0;
+            is_dnpc_exu <= 'b0;
         end
         else if(idu_exu_valid) begin
             if(exu_mem_valid) exu_idu_ready <=  1'b0;
