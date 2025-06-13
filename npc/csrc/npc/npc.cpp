@@ -1,5 +1,6 @@
 #include <readline/chardefs.h>
 #include "define.h"
+#include "difftest-def.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
 #include "common.h"
@@ -73,7 +74,7 @@ VerilatedContext *contextp = NULL;
 npc_state u_npc_state = {.state=NPC_RUNNING, .pc=CONFIG_MBASE, .ret = true};
 
 uint32_t g_pc, g_dnpc;
-static uint32_t last_pc;
+uint32_t last_pc;
 static bool g_print_step = false;
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
@@ -177,13 +178,13 @@ void init_npc(int argc, char **argv) {
       break;
     }
     if(is_clk_high) {
+      g_get_pc();
       total_cycles++;
 #if NVBOARD_ENABLE
       nvboard_update();
 #endif
     }
   }
-  g_get_pc();
 }
 
 void exec_once_npc(uint32_t pc) {
@@ -216,6 +217,7 @@ void exec_once_npc(uint32_t pc) {
     }
 #endif
     if(is_clk_high) {
+      g_get_pc();
       total_cycles++;
       if(wait_cycles++ > 30000) {
         printf("wait too many cycles, maybe dead loop\n");
@@ -267,6 +269,10 @@ void exec_once_npc(uint32_t pc) {
       }
     }
     if(last_pc != g_get_pc()) {
+      if(g_pc == CONFIG_MBASE || g_pc == 0) {
+          last_pc = g_pc;
+          continue;
+      }
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
       idu_type = None;
@@ -367,7 +373,7 @@ void exec_npc(uint64_t n) {
 
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
-    int snapshot_interval_seconds = 200; // 快照间隔时间（ms）
+    int snapshot_interval_seconds = 20; // 快照间隔时间（ms）
 
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
