@@ -72,7 +72,6 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             ifu_idu_valid <= 1'b0;
             pc_ifu <= 'b0;
-            inst <= 'b0;
             inst_fin_ready<= 'b0;
         end
         else if(inst_fin_valid && inst_fin_ready) begin
