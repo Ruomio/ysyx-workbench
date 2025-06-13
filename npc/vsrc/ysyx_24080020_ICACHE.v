@@ -655,7 +655,9 @@ module ysyx_24080020_ICACHE(
   wire [cache_tag_size-1:0]    cache_tag_s2;
   wire [cache_num_bits-1:0]    cache_index_s2;
   wire [cache_size_bits-1:0]   cache_offset_s2;
+
   reg bubble;
+
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s2, raddr_s2;
@@ -892,27 +894,29 @@ module ysyx_24080020_ICACHE(
               // do nothing
           end
           AXIAR: begin
-              if(arready_o && arvalid_o) begin
-                  arvalid_o <= 'b0;
-                  fin_ar <= 'b1;
-                  bubble <= 'b0;
-              end
-              else if(!fin_ar && !busy_i && bubble) begin
-                  busy <= 'b1;
-                  arvalid_o <= 1'b1;
-                  if(use_icache) begin
-                    // burst trans in sdram
-                    araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
+              if(bubble) begin
+                if(arready_o && arvalid_o) begin
+                    arvalid_o <= 'b0;
+                    fin_ar <= 'b1;
+                    bubble <= 'b0;
+                end
+                else if(!fin_ar && !busy_i) begin
+                    busy <= 'b1;
+                    arvalid_o <= 1'b1;
+                    if(use_icache) begin
+                        // burst trans in sdram
+                        araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
 
-                    arsize_o <= 'b10;
-                    arid_o <= 'b0;
-                    arlen_o <= (cache_size >> 2) - 1;
-                    arburst_o <= 'b01;
+                        arsize_o <= 'b10;
+                        arid_o <= 'b0;
+                        arlen_o <= (cache_size >> 2) - 1;
+                        arburst_o <= 'b01;
 
-                    araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
-                  end
+                        araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
+                    end
+                end
               end
-              else if(!fin_ar && !busy_i && !bubble) begin
+              else begin
                   bubble <= 'b1;
               end
           end
@@ -961,7 +965,6 @@ module ysyx_24080020_ICACHE(
           end
       endcase
   end
-
 
 
 
