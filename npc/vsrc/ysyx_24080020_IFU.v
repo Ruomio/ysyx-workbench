@@ -138,7 +138,7 @@ module ysyx_24080020_IFU (
 
         // ifu <-> pc
         // .update_pc(inst_fin_valid && inst_fin_ready),
-        .update_pc(rvalid && rready),
+        .update_pc(arvalid && arready),
         .dnpc(dnpc_exu),
         .is_dnpc(is_dnpc_exu),
 
