@@ -31,11 +31,9 @@ module ysyx_24080020_ALU(
             end
             `ysyx_24080020_ALU_SLL: begin
                 alu_out = alu_src1 << alu_src2[4:0];
-                $display("%x << %x = %x", alu_src1, alu_src2, alu_out);
             end
             `ysyx_24080020_ALU_SRL: begin
                 alu_out = alu_src1 >> alu_src2[4:0];
-                $display("%x >> %x = %x", alu_src1, alu_src2, alu_out);
             end
             `ysyx_24080020_ALU_SRA: begin
                 alu_out = alu_src1 >> alu_src2[4:0] | ({32{alu_src1[31]}} & ~(32'hffffffff >> alu_src2[4:0]));
