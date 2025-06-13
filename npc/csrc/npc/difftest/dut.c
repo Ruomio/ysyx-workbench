@@ -121,9 +121,9 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     u_npc_state.ret = true;
 
     isa_reg_display();
-    printf("ref n_pc: 0x%x, dut execd: 0x%x, dut n_pc: 0x%x\n", ref->pc, g_pc, g_dnpc);
+    // printf("ref n_pc: 0x%x, dut execd: 0x%x, dut n_pc: 0x%x\n", ref->pc, g_pc, g_dnpc);
   }
-  // printf("ref n_pc: 0x%x, dut execd: 0x%x, dut n_pc: 0x%x\n", ref->pc, g_pc, g_dnpc);
+  printf("ref n_pc: 0x%x, dut execd: 0x%x, dut n_pc: 0x%x\n", ref->pc, g_pc, g_dnpc);
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
