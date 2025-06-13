@@ -206,9 +206,11 @@ module ysyx_24080020_IDU (
                     end
                     `ysyx_24080020_SLLI: begin
                         alu_op_idu = `ysyx_24080020_ALU_SLL;
+                        wen_idu = inst_idu[25] == 'b1 ? 'b0 : 'b1;
                     end
                     `ysyx_24080020_SRLAI: begin
                         alu_op_idu = imm_idu[10] == 0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
+                        wen_idu = inst_idu[25] == 'b1 ? 'b0 : 'b1;
                     end
 
                     default: begin
