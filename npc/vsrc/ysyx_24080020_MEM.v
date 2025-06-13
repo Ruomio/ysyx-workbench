@@ -348,7 +348,7 @@ module ysyx_24080020_MEM(
             else begin
                 mem_wb_valid <= 1'b0;
             end
-            if(mren_exu) begin
+            if(mren_exu && !structural_adventure) begin
                 axi_busy <= 'b1;
             end
 
@@ -373,6 +373,7 @@ module ysyx_24080020_MEM(
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
+            axi_busy <= 'b1;
         end
         else if(mren_mem) begin
             if(!structural_adventure) begin
