@@ -1,5 +1,6 @@
 #include <readline/chardefs.h>
 #include "define.h"
+#include "difftest-def.h"
 #include "memory/paddr.h"
 #include "verilated_vcd_c.h"
 #include "common.h"
@@ -218,7 +219,7 @@ void exec_once_npc(uint32_t pc) {
     if(is_clk_high) {
       g_get_pc();
       total_cycles++;
-      if(wait_cycles++ > 50000) {
+      if(wait_cycles++ > 30000) {
         printf("wait too many cycles, maybe dead loop\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
@@ -268,6 +269,9 @@ void exec_once_npc(uint32_t pc) {
       }
     }
     if(last_pc != g_get_pc()) {
+      if(g_pc == CONFIG_MBASE || g_pc == 0) {
+          continue;
+      }
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
       idu_type = None;
