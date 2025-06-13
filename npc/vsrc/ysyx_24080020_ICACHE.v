@@ -655,6 +655,7 @@ module ysyx_24080020_ICACHE(
   wire [cache_tag_size-1:0]    cache_tag_s2;
   wire [cache_num_bits-1:0]    cache_index_s2;
   wire [cache_size_bits-1:0]   cache_offset_s2;
+  reg bubble;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s2, raddr_s2;
@@ -697,6 +698,7 @@ module ysyx_24080020_ICACHE(
       araddr_s2 <= 'b0;
       araddr_s2_base <= 'b0;
       raddr_s2 <= 'b0;
+      bubble <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
@@ -894,7 +896,10 @@ module ysyx_24080020_ICACHE(
                   arvalid_o <= 'b0;
                   fin_ar <= 'b1;
               end
-              else if(!fin_ar && !busy_i) begin
+              else if(!fin_ar && !busy_i && !bubble) begin
+                  bubble <= 'b1;
+              end
+              else if(!fin_ar && !busy_i && bubble) begin
                   busy <= 'b1;
                   arvalid_o <= 1'b1;
                   if(use_icache) begin
@@ -949,6 +954,7 @@ module ysyx_24080020_ICACHE(
           end
           AXIDone: begin
               all_fin <= 1'b1;
+              bubble <= 'b0
           end
           default: begin
               // do nothing
