@@ -83,7 +83,6 @@ module ysyx_24080020_NPC(
   wire is_jalr_idu;
 
   // inst
-  wire if_en;
   wire [`ysyx_24080020_WIDTH-1:0] inst_ifu, inst_idu;
   wire [`ysyx_24080020_WIDTH-1:0] imm_idu, imm_exu;
 
@@ -333,16 +332,11 @@ module ysyx_24080020_NPC(
         .is_dnpc_exu(is_dnpc_exu),
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
-        .if_en(if_en),
 
         .lsu_busy(lsu_busy),
         .control_adventure(control_adventure),
         .inst_fin(inst_fin),
-        .exu_mem_shake_hands(exu_mem_shake_hands),
-        // .update_pc(update_pc),
         .flush_pipeline(flush_pipeline),
-        // .get_right_inst(get_right_inst),
-
         .raddr(raddr_ifu),
         // axi-lite
         .arvalid(arvalid_ifu),
@@ -472,8 +466,6 @@ module ysyx_24080020_NPC(
         .is_load_idu(is_load_idu),
         .is_load_exu(is_load_exu),
         .pc_exu(pc_exu),
-
-        .idu_exu_shake_hand(idu_exu_shake_hands),
 
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),

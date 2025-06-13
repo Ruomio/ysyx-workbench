@@ -9,14 +9,11 @@ module ysyx_24080020_IFU (
 
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
-    output reg if_en,
-    input exu_mem_shake_hands,
     input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
     input control_adventure,
     output reg flush_pipeline,
-    // output reg get_right_inst,
 
     output inst_fin,
 
@@ -43,21 +40,14 @@ module ysyx_24080020_IFU (
     output reg ifu_idu_valid
 );
 
-    // wire update_pc_ready;
-    wire update_pc;
-    wire inst_fin_valid;
-    wire [`ysyx_24080020_WIDTH-1:0] addr;
+    wire [`ysyx_24080020_WIDTH-1:0] addr, inst;
+    wire if_en;
     wire if_en_ready;
 
+    wire inst_fin_valid;
     reg inst_fin_ready;
 
-    reg is_dnpc;
-    // reg update_pc_valid;
-    // reg dnpc_en;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc, inst;
-
     reg wb_ifu_shake_hands;
-    reg need_update_pc;
 
 
     reg state; // 0: idle  ;  1: wait_ready
@@ -133,26 +123,11 @@ module ysyx_24080020_IFU (
         end
     end
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         wb_ifu_shake_hands <= 1'b0;
-    //         update_pc_valid <= 'b0;
-    //     end
-    //     else if(update_pc_valid && update_pc_ready) begin
-    //         update_pc_valid <= 'b0;
-    //     end
-    //     else if(wb_ifu_shake_hands && !update_pc_valid) begin
-    //         update_pc_valid <= 'b1;
-    //     end
-    // end
-
     always @(posedge clk) begin
         if(!rst) begin
-            // get_right_inst <= 'b0;
         end
         else if(is_dnpc_exu && !control_adventure) begin
             flush_pipeline <= 'b1;
-            // get_right_inst <= 'b0;
         end
     end
 
@@ -164,8 +139,6 @@ module ysyx_24080020_IFU (
 
         // ifu <-> pc
         .update_pc(inst_fin_valid && inst_fin_ready),
-        // .update_pc_valid(update_pc_valid),
-        // .update_pc_ready(update_pc_ready),
         .dnpc(dnpc_exu),
         .is_dnpc(is_dnpc_exu),
 
