@@ -40,6 +40,7 @@ module ysyx_24080020_ALU(
             end
 
             default: begin
+                $display("err op: %d", alu_op);
                 alu_out = 32'b0;
             end
         endcase
