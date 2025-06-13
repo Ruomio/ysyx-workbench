@@ -127,7 +127,7 @@ module ysyx_24080020_ARBITER (
     end else if (!arvalid_ifu && !arvalid_mem) begin
       // shake hands success and set arvalid low
       ifu_or_mem <= ifu_or_mem;
-    end else begin
+    end else if(arvalid_ifu && arvalid_mem) begin
       // both high level
       ifu_or_mem <= ifu_or_mem;
       if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;

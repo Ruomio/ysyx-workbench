@@ -128,7 +128,7 @@ module ysyx_24080020_REG
             // shake hands successfully
             wb_ifu_valid <= 1'b0;
 
-            pc_wbu <= pc_lsu;
+            // pc_wbu <= pc_lsu;
             waddr_wb <= 'b0;
 
 `ifdef CONFIG_DPIC
@@ -136,7 +136,7 @@ module ysyx_24080020_REG
                 skip_ref_wb <= 1'b0;
                 npc_difftest_skip_ref();
             end
-`endif  
+`endif
         end
         else if(mem_wb_valid) begin
             if(wb_ifu_valid) wb_mem_ready <= 1'b0;
@@ -161,7 +161,8 @@ module ysyx_24080020_REG
 
                 is_dnpc_wb <= is_dnpc_mem;
                 dnpc_wb <= dnpc_mem;
-                
+                pc_wbu <= pc_lsu;
+
                 skip_ref_wb <= skip_ref_mem;
 
                 // wb_ifu_valid <= 1'b1;

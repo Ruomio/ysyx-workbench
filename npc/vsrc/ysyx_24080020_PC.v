@@ -2,42 +2,83 @@
 module ysyx_24080020_PC (
     input clk,
     input rst,
-    input is_update_pc,
+
+    // ifu <-> pc
+    input update_pc,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
-    output reg if_en,
+
+    // pc <-> ir
+    input if_en_ready,
+    output reg if_en_valid,
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
 
-    reg cnt;
-    reg first_if;
+    reg first_if, pc_en;;
+
+    reg is_dnpc_pc, is_dnpc_next;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc_pc;
 
     always @(posedge clk) begin
         if(!rst) begin
             addr <= `ysyx_24080020_MBASE;
-            cnt <= 1'b0;
             first_if <= 1'b0;
+            pc_en <= 'b1;
         end
-        else if(cnt) begin
-            addr <= is_dnpc ? dnpc :
-                    ~first_if ? addr : addr + 32'd4;
-            first_if <= 1'b1;
-
-            // pc_ifu <= addr;
-            cnt <= 1'b0;
-            if_en <= 1'b1;
-
+        else if(update_pc) begin
+            pc_en <= 'b1;
         end
-        else if(is_update_pc) begin
-            cnt <= 'b1;
-        end
-        else begin
-            // addr <= addr;
-            if_en <= 1'b0;
-        end
-
     end
 
+    always @(posedge clk) begin
+        if(!rst) begin
+            pc_en <= 'b1;
+        end
+        else if(if_en_valid && if_en_ready) begin
+            if_en_valid <= 'b0;
+        end
+        else if(pc_en) begin
+            pc_en <= 'b0;
+            if_en_valid <= 'b1;
+
+            if(!first_if) begin
+                first_if <= 1'b1;
+                addr <= addr;
+            end
+            else begin
+                if(is_dnpc_pc) begin
+                    addr <= dnpc_pc;
+                    is_dnpc_pc <= 'b0;
+                end
+                else begin
+                    addr <=  addr + 32'd4;
+                end
+            end
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            is_dnpc_pc <= 'b0;
+            dnpc_pc <= 'b0;
+        end
+        else if(is_dnpc && !is_dnpc_next) begin
+            is_dnpc_pc <= 'b1;
+            dnpc_pc <= dnpc;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            is_dnpc_next <= 'b0;
+        end
+        else if(is_dnpc) begin
+            is_dnpc_next <= 'b1;
+        end
+        else begin
+            is_dnpc_next <= 'b0;
+        end
+    end
 
 
 endmodule

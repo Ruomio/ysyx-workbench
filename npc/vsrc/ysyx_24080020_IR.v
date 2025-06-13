@@ -2,12 +2,17 @@
 module ysyx_24080020_IR(
     input clk,
     input rst,
-    input if_en,
     input lsu_busy,
-    input [`ysyx_24080020_WIDTH-1:0] addr,
 
+    // pc <-> ir
+    input [`ysyx_24080020_WIDTH-1:0] addr,
+    input if_en_valid,
+    output reg if_en_ready,
+
+    // ir <-> ifu
+    output reg inst_fin_valid,
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
-    output reg inst_fin,
+    input inst_fin_ready,
 
     // axi-full
     output reg arvalid,
@@ -31,7 +36,6 @@ module ysyx_24080020_IR(
   import "DPI-C" function void statistics_ifu_get_inst();
   `endif
 
-  reg need_fetch;
 
   always @(posedge clk) begin
     if(!rst) begin
@@ -48,39 +52,42 @@ module ysyx_24080020_IR(
       statistics_ifu_get_inst();
       `endif
     end
+    else begin
+    end
 
   end
 
   always @(posedge clk) begin
     if(!rst) begin
-      need_fetch <= 'b0;
+        if_en_ready <= 'b0;
     end
-    else if(need_fetch && !lsu_busy) begin
-      need_fetch <= 'b0;
+    else if(if_en_valid && if_en_ready) begin
+        if_en_ready <= 'b0;
+    end
+    else if(if_en_valid) begin
+        if(!lsu_busy) begin
+            araddr <= addr;
+            arvalid <= 'b1;
+            arsize <= 'b10;
+            arlen <= 'b0;
+            arburst <= 'b0;
+            arid <= 'b0;
 
-      araddr <= addr;
-      arvalid <= 'b1;
-      arsize <= 'b10;
-      arlen <= 'b0;
-      arburst <= 'b0;
-      arid <= 'b0;
+            if_en_ready <= 'b1;
+        end
     end
-    else if(if_en) begin
-      need_fetch <= 'b1;
-    end
-
   end
 
   always @(posedge clk) begin
     if(!rst) begin
       rready <= 'b0;
       inst <= 'b0;
-      inst_fin <= 'b0;
     end
     else if(rvalid && rready) begin
+      rready <= 'b0;
       if(rresp == 'b0) begin
         inst <= rdata;
-        inst_fin <= 'b1;
+        inst_fin_valid <= 'b1;
       end
       else begin
         `ifdef CONFIG_DPIC
@@ -88,13 +95,18 @@ module ysyx_24080020_IR(
         `endif
       end
     end
-    else if(rvalid && rlast) begin
+    else if(rvalid && rlast && !inst_fin_valid) begin
       rready <= 'b1;
     end
-    else begin
-      rready <= 'b0;
-      inst_fin <= 'b0;
-    end
+  end
+
+  always @(posedge clk) begin
+      if(!rst) begin
+          inst_fin_valid <= 'b0;
+      end
+      else if(inst_fin_valid && inst_fin_ready) begin
+        inst_fin_valid <= 'b0;
+      end
   end
 
 endmodule
