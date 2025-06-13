@@ -348,7 +348,7 @@ module ysyx_24080020_MEM(
             else begin
                 mem_wb_valid <= 1'b0;
             end
-            if(mrlen_exu) begin
+            if(mren_exu) begin
                 axi_busy <= 'b1;
             end
 
