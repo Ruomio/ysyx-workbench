@@ -26,8 +26,6 @@ module ysyx_24080020_PC (
             addr <= `ysyx_24080020_MBASE;
             first_if <= 1'b0;
             pc_en <= 'b1;
-            is_dnpc_pc <= 'b0;
-            dnpc_pc <= 'b0;
         end
         else if(update_pc) begin
             pc_en <= 'b1;
@@ -51,7 +49,7 @@ module ysyx_24080020_PC (
                 addr <= addr;
             end
             else begin
-                if(is_dnpc && !is_dnpc_pc) begin
+                if(is_dnpc_pc) begin
                     addr <= dnpc_pc;
                     is_dnpc_pc <= 'b0;
                 end
@@ -64,13 +62,25 @@ module ysyx_24080020_PC (
 
     always @(posedge clk) begin
         if(!rst) begin
-
+            is_dnpc_pc <= 'b0;
+            dnpc_pc <= 'b0;
         end
-        else if(is_dnpc) begin
+        else if(is_dnpc && !is_dnpc_next) begin
             is_dnpc_pc <= 'b1;
             dnpc_pc <= dnpc;
         end
+    end
 
+    always @(posedge clk) begin
+        if(!rst) begin
+            is_dnpc_next <= 'b0;
+        end
+        else if(is_dnpc) begin
+            is_dnpc_next <= 'b1;
+        end
+        else begin
+            is_dnpc_next <= 'b0;
+        end
     end
 
 
