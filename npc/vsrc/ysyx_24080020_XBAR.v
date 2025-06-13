@@ -196,7 +196,7 @@ module ysyx_24080020_XBAR(
     */
     reg [2:0] device_addr;
 
-    /* 
+    /*
      *   if clint: -> clint
      *   else: -> soc
     */
@@ -269,12 +269,12 @@ module ysyx_24080020_XBAR(
                           device_addr == 3'd2 ? arready_uart :
                           `endif
                           `ifdef ysyxSoCFull
-                          device_addr == 3'd4 ? arready_soc : 
+                          device_addr == 3'd4 ? arready_soc :
                           `endif
                           1'b0;
 
 
-    /* R:  
+    /* R:
            SRAM --- |
            UART --- |
            SOC  --- |
