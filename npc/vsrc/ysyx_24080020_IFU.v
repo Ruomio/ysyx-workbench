@@ -11,7 +11,6 @@ module ysyx_24080020_IFU (
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     output reg if_en,
     input exu_mem_shake_hands,
-    // output update_pc,
     input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
@@ -45,6 +44,7 @@ module ysyx_24080020_IFU (
 );
 
     // wire update_pc_ready;
+    wire update_pc,
     wire inst_fin_valid;
     wire [`ysyx_24080020_WIDTH-1:0] addr;
     wire if_en_ready;

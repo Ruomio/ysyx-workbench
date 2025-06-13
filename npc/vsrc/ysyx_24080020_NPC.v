@@ -339,7 +339,7 @@ module ysyx_24080020_NPC(
         .control_adventure(control_adventure),
         .inst_fin(inst_fin),
         .exu_mem_shake_hands(exu_mem_shake_hands),
-        .update_pc(update_pc),
+        // .update_pc(update_pc),
         .flush_pipeline(flush_pipeline),
         // .get_right_inst(get_right_inst),
 
