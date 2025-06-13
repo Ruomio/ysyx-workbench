@@ -11,13 +11,13 @@ module ysyx_24080020_IFU (
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     output reg if_en,
     input exu_mem_shake_hands,
-    output update_pc,
+    // output update_pc,
     input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
     input control_adventure,
     output reg flush_pipeline,
-    output reg get_right_inst,
+    // output reg get_right_inst,
 
     output inst_fin,
 
@@ -85,17 +85,12 @@ module ysyx_24080020_IFU (
             inst <= 'b0;
             inst_fin_ready<= 'b0;
         end
+        else if(inst_fin_valid && inst_fin_ready) begin
+            inst_fin_ready <= 'b0;
+        end
         else if(inst_fin_valid) begin
-            if((raddr != dnpc_exu) /* && !dnpc_en */) begin
+            if((raddr != dnpc_exu) && flush_pipeline) begin
                 inst_fin_ready <= 'b1;
-            end
-            else if(inst_fin_ready) begin
-                inst_fin_ready <= 'b0;
-                if((raddr == dnpc_exu) /* && !dnpc_en */) begin
-                    // dnpc_en <= 'b1;
-                    flush_pipeline <= 'b0;
-                    get_right_inst <= 'b1;
-                end
             end
             else if(!ifu_idu_valid) begin
                 inst_fin_ready <= 'b1;
@@ -103,14 +98,10 @@ module ysyx_24080020_IFU (
                 pc_ifu <= raddr;
                 inst_ifu <= inst;
                 ifu_idu_valid <= 1'b1;
-                // next_inst <= 'b1;
+                if((raddr == dnpc_exu) && flush_pipeline ) begin
+                    flush_pipeline <= 'b0;
+                end
 
-                // if((control_adventure && dnpc_en)) begin
-                //     flush_pipeline <= 'b1;
-                // end
-                // else begin
-                //     flush_pipeline <= 'b0;
-                // end
             end
         end
         else begin
@@ -157,17 +148,11 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            // dnpc_en <= 'b1;
-            get_right_inst <= 'b0;
+            // get_right_inst <= 'b0;
         end
         else if(is_dnpc_exu && !control_adventure) begin
-            // if(dnpc_en) begin
-            //     dnpc_en <= 'b0;
-            //     flush_pipeline <= 'b1;
-            //     get_right_inst <= 'b0;
-            // end
             flush_pipeline <= 'b1;
-            get_right_inst <= 'b0;
+            // get_right_inst <= 'b0;
         end
     end
 

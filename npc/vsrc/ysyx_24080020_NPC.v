@@ -341,7 +341,7 @@ module ysyx_24080020_NPC(
         .exu_mem_shake_hands(exu_mem_shake_hands),
         .update_pc(update_pc),
         .flush_pipeline(flush_pipeline),
-        .get_right_inst(get_right_inst),
+        // .get_right_inst(get_right_inst),
 
         .raddr(raddr_ifu),
         // axi-lite
@@ -1091,7 +1091,7 @@ module ysyx_24080020_NPC(
 
         // control adventures, between ifu and exu
         .is_dnpc(is_dnpc_exu),
-        .get_right_inst(get_right_inst),
+        .exu_mem_shake_hands(exu_mem_shake_hands),
         .control_adventure(control_adventure)
 
     );
