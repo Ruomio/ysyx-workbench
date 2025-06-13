@@ -900,23 +900,18 @@ module ysyx_24080020_ICACHE(
                 bubble <= 'b0;
             end
             else if(!fin_ar && !busy_i) begin
-                if(bubble && !busy_i) begin
-                    busy <= 'b1;
-                    arvalid_o <= 1'b1;
-                    if(use_icache) begin
-                        // burst trans in sdram
-                        araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
+                busy <= 'b1;
+                arvalid_o <= 1'b1;
+                if(use_icache) begin
+                    // burst trans in sdram
+                    araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
 
-                        arsize_o <= 'b10;
-                        arid_o <= 'b0;
-                        arlen_o <= (cache_size >> 2) - 1;
-                        arburst_o <= 'b01;
+                    arsize_o <= 'b10;
+                    arid_o <= 'b0;
+                    arlen_o <= (cache_size >> 2) - 1;
+                    arburst_o <= 'b01;
 
-                        araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
-                    end
-                end
-                else if(!bubble && !busy_i) begin
-                    bubble <= 'b1;
+                    araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
                 end
             end
           end
