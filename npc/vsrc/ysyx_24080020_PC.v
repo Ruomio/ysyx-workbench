@@ -40,7 +40,6 @@ module ysyx_24080020_PC (
         else if(pc_en) begin
             pc_en <= 'b0;
             if_en_valid <= 'b1;
-            is_dnpc_pc <= 'b0;
 
             if(!first_if) begin
                 first_if <= 1'b1;
