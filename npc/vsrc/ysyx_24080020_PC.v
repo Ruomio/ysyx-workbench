@@ -18,7 +18,7 @@ module ysyx_24080020_PC (
 
     reg first_if, pc_en;;
 
-    reg is_dnpc_pc;
+    reg is_dnpc_pc, is_dnpc_next;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_pc;
 
     always @(posedge clk) begin
