@@ -34,13 +34,13 @@ module ysyx_24080020_ALU(
             end
             `ysyx_24080020_ALU_SRL: begin
                 alu_out = alu_src1 >> alu_src2[4:0];
+                $display("%d >> %d = %d", alu_src1, alu_src2, alu_out);
             end
             `ysyx_24080020_ALU_SRA: begin
                 alu_out = alu_src1 >> alu_src2[4:0] | ({32{alu_src1[31]}} & ~(32'hffffffff >> alu_src2[4:0]));
             end
 
             default: begin
-                $display("err op: %d", alu_op);
                 alu_out = 32'b0;
             end
         endcase
