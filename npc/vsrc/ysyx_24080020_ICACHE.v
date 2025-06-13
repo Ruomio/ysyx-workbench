@@ -895,6 +895,7 @@ module ysyx_24080020_ICACHE(
               if(arready_o && arvalid_o) begin
                   arvalid_o <= 'b0;
                   fin_ar <= 'b1;
+                  bubble <= 'b0;
               end
               else if(!fin_ar && !busy_i && bubble) begin
                   busy <= 'b1;
@@ -954,7 +955,6 @@ module ysyx_24080020_ICACHE(
           end
           AXIDone: begin
               all_fin <= 1'b1;
-              bubble <= 'b0;
           end
           default: begin
               // do nothing
