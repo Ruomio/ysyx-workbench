@@ -954,7 +954,7 @@ module ysyx_24080020_ICACHE(
           end
           AXIDone: begin
               all_fin <= 1'b1;
-              bubble <= 'b0
+              bubble <= 'b0;
           end
           default: begin
               // do nothing
