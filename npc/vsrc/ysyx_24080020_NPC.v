@@ -334,7 +334,6 @@ module ysyx_24080020_NPC(
         .inst_ifu(inst_ifu),
 
         .lsu_busy(lsu_busy),
-        .update_pc(rvalid_ifu && rready_ifu),
         .control_adventure(control_adventure),
         .inst_fin(inst_fin),
         .flush_pipeline(flush_pipeline),

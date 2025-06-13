@@ -12,7 +12,6 @@ module ysyx_24080020_IFU (
     input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
-    input update_pc,
     input control_adventure,
     output reg flush_pipeline,
 
@@ -138,8 +137,7 @@ module ysyx_24080020_IFU (
         .rst(rst),
 
         // ifu <-> pc
-        // .update_pc(inst_fin_valid && inst_fin_ready),
-        .update_pc(update_pc),
+        .update_pc(inst_fin_valid && inst_fin_ready),
         .dnpc(dnpc_exu),
         .is_dnpc(is_dnpc_exu),
 
