@@ -187,12 +187,11 @@ V_SRC_TEST = $(notdir $(shell find $(OBJ_DIR_TEST) -name "*.cpp"))
 
 OBJS_TEST = $(CPPSRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o) \
 			$(CCSRC_TEST:%.cc=$(OBJ_DIR_TEST)/%.o) \
-			$(CSRC_TEST:%.c=$(OBJ_DIR_TEST)/%.o) \
-			$(CSRC:%.c=$(OBJ_DIR_TEST)/%.o)
+			$(CSRC_TEST:%.c=$(OBJ_DIR_TEST)/%.o)
 
 V_OBJS_TEST = $(V_SRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o);
 
-C_FLAGS = $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull -D__GUEST_ISA__=$(GUEST_ISA)
+C_FLAGS = $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull -D__GUEST_ISA__=$(GUEST_ISA) -MMD -MP
 LD_FLAGS_TEST = -lreadline -ldl -pie $(shell llvm-config --libs) \
 				-L$(OBJ_DIR_TEST) -lV$(TOPNAME) -lverilated
 
@@ -210,22 +209,22 @@ sv: $(VSRC)
 $(OBJ_DIR_TEST)/%.o: $(OBJ_DIR_TEST)/%.cpp
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@ 
+	@g++ $(C_FLAGS) -c $< -o $@
 
 $(OBJ_DIR_TEST)/%.o: %.cpp
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@ 
+	@g++ $(C_FLAGS) -c $< -o $@
 
 $(OBJ_DIR_TEST)/%.o: %.cc
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@ 
+	@g++ $(C_FLAGS) -c $< -o $@
 
-$(OBJ_DIR_TEST)/%.o: %.c $(CINC_DIR)
+$(OBJ_DIR_TEST)/%.o: %.c
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@ 
+	@g++ $(C_FLAGS) -c $< -o $@
 
 test_bin: $(OBJS_TEST) $(V_OBJS_TEST)
 	@echo + LD $@
@@ -233,3 +232,6 @@ test_bin: $(OBJS_TEST) $(V_OBJS_TEST)
 
 test: sv
 	make test_bin
+
+-include $(OBJS_TEST:.o=.d)
+-include $(V_OBJS_TEST:.o=.d)
