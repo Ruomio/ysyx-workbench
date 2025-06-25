@@ -166,3 +166,60 @@ lldb: $(BIN)
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
+
+# test single compile
+OBJ_DIR_TEST = build/obj_dir_test
+$(shell mkdir -p $(OBJ_DIR_TEST))
+
+VINC_DIR = $(addprefix -I, $(VINC_PATH))
+V_FLAGS := $(VINC_DIR) -cc -j 16 --trace --timescale "1ns/1ns" --no-timing
+V_FLAGS += --top-module $(TOPNAME)
+
+CINC_DIR = $(shell find $(abspath .) -type d -name "include")
+CINC_DIR += $(abspath $(OBJ_DIR_TEST))
+CINC_DIR += $(shell find /usr/share/verilator/include -type d)
+
+CPPSRC_TEST := $(shell find csrc -name "*.cpp")
+CPPSRC_TEST += $(notdir $(shell find $(OBJ_DIR_TEST) -name "*.cpp"))
+CCSRC_TEST := $(shell find csrc -name "*.cc")
+CSRC_TEST := $(shell find csrc -name "*.c")
+
+OBJS_TEST := $(CPPSRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o) \
+			$(CCSRC_TEST:%.cc=$(OBJ_DIR_TEST)/%.o) \
+			$(CSRC_TEST:%.c=$(OBJ_DIR_TEST)/%.o)
+
+C_FLAGS := $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull
+LD_FLAGS_TEST := -lreadline -ldl -pie $(shell llvm-config --libs) \
+				-L$(OBJ_DIR_TEST) -lV$(TOPNAME) -lverilated
+
+print:
+	@echo $(C_FLAGS) ----
+	@echo $(CPPSRC_TEST) ----
+	@echo $(OBJS_TEST) ----
+	@echo $(LIBS) ----
+
+sv: $(VSRC)
+	@verilator $(V_FLAGS) $^  -Mdir $(OBJ_DIR_TEST)
+	@make -C $(OBJ_DIR_TEST) -f V$(TOPNAME).mk
+
+$(OBJ_DIR_TEST)/%.o: %.cpp
+	@echo + CXX $< $(CINC_DIR)
+	@mkdir -p $(dir $@)
+	@g++ $(C_FLAGS) -c $< -o $@ 
+
+$(OBJ_DIR_TEST)/%.o: %.cc
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++ $(C_FLAGS) -c $< -o $@ 
+
+$(OBJ_DIR_TEST)/%.o: %.c
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++ $(C_FLAGS) -c $< -o $@ 
+
+test_bin: $(OBJS_TEST)
+	@echo + LD $@
+	@echo + LD_FLAGS_TEST $(LD_FLAGS_TEST)
+	@g++ $(LD_FLAGS_TEST) $^ -o build/$@
+
+test: sv test_bin
