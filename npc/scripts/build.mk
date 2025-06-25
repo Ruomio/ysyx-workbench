@@ -170,7 +170,6 @@ clean:
 # test single compile
 OBJ_DIR_TEST = build/obj_dir_test
 $(shell mkdir -p $(OBJ_DIR_TEST))
-$(shell cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR_TEST))
 
 VINC_DIR = $(addprefix -I, $(VINC_PATH))
 V_FLAGS = $(VINC_DIR) --MMD --cc -j 0  --trace-vcd --timescale "1ns/1ns" --no-timing
@@ -192,7 +191,7 @@ OBJS_TEST = $(CPPSRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o) \
 
 V_OBJS_TEST = $(V_SRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o);
 
-C_FLAGS = $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull
+C_FLAGS = $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull -D__GUEST_ISA__=$(GUEST_ISA)
 LD_FLAGS_TEST = -lreadline -ldl -pie $(shell llvm-config --libs) \
 				-L$(OBJ_DIR_TEST) -lV$(TOPNAME) -lverilated
 
@@ -203,10 +202,11 @@ print:
 	@echo $(LIBS) ----
 
 sv: $(VSRC)
+	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR_TEST)
 	@verilator $(V_FLAGS) $^  -Mdir $(OBJ_DIR_TEST)
 	@make -s -C $(OBJ_DIR_TEST) -f V$(TOPNAME).mk
 
-%.o: %.cpp
+$(OBJ_DIR_TEST)/%.o: $(OBJ_DIR_TEST)/%.cpp
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
 	@g++ $(C_FLAGS) -c $< -o $@ 
