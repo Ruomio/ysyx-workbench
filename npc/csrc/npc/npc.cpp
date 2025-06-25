@@ -594,7 +594,6 @@ void printf_info() {
 
 extern "C" void npc_difftest_skip_ref() {
     printf("skip ref at: 0x%x\n", g_pc);
-    assert(0);
   IFDEF(CONFIG_DIFFTEST, difftest_skip_ref());
 }
 

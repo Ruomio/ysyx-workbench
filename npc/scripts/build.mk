@@ -172,7 +172,7 @@ OBJ_DIR_TEST = build/obj_dir_test
 $(shell mkdir -p $(OBJ_DIR_TEST))
 
 VINC_DIR = $(addprefix -I, $(VINC_PATH))
-V_FLAGS = $(VINC_DIR) --MMD --cc -j 0  --trace-vcd --timescale "1ns/1ns" --no-timing
+V_FLAGS = $(VINC_DIR) --MMD --cc -j 0  --trace-vcd --timescale "1ns/1ns" --no-timing -DCONFIG_DPIC
 # V_FLAGS = $(VINC_DIR) $(VERILATOR_CFLAGS)
 V_FLAGS += --top-module $(TOPNAME)
 
