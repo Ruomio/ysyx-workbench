@@ -187,7 +187,8 @@ V_SRC_TEST = $(notdir $(shell find $(OBJ_DIR_TEST) -name "*.cpp"))
 
 OBJS_TEST = $(CPPSRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o) \
 			$(CCSRC_TEST:%.cc=$(OBJ_DIR_TEST)/%.o) \
-			$(CSRC_TEST:%.c=$(OBJ_DIR_TEST)/%.o)
+			$(CSRC_TEST:%.c=$(OBJ_DIR_TEST)/%.o) \
+			$(CSRC:%.c=$(OBJ_DIR_TEST)/%.o)
 
 V_OBJS_TEST = $(V_SRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o);
 
@@ -221,7 +222,7 @@ $(OBJ_DIR_TEST)/%.o: %.cc
 	@mkdir -p $(dir $@)
 	@g++ $(C_FLAGS) -c $< -o $@ 
 
-$(OBJ_DIR_TEST)/%.o: %.c
+$(OBJ_DIR_TEST)/%.o: %.c $(CINC_DIR)
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
 	@g++ $(C_FLAGS) -c $< -o $@ 
