@@ -172,7 +172,8 @@ OBJ_DIR_TEST = build/obj_dir_test
 $(shell mkdir -p $(OBJ_DIR_TEST))
 
 VINC_DIR = $(addprefix -I, $(VINC_PATH))
-V_FLAGS := $(VINC_DIR) -cc -j 16 --trace --timescale "1ns/1ns" --no-timing
+V_FLAGS := $(VINC_DIR) --MMD --cc -j 0  --trace-vcd --timescale "1ns/1ns" --no-timing
+# V_FLAGS := $(VINC_DIR) $(VERILATOR_CFLAGS)
 V_FLAGS += --top-module $(TOPNAME)
 
 CINC_DIR = $(shell find $(abspath .) -type d -name "include")
@@ -199,11 +200,12 @@ print:
 	@echo $(LIBS) ----
 
 sv: $(VSRC)
+	@cp /usr/share/verilator/include/verilated{_vcd_c.cpp,.cpp,_threads.cpp} $(OBJ_DIR_TEST)
 	@verilator $(V_FLAGS) $^  -Mdir $(OBJ_DIR_TEST)
 	@make -C $(OBJ_DIR_TEST) -f V$(TOPNAME).mk
 
 $(OBJ_DIR_TEST)/%.o: %.cpp
-	@echo + CXX $< $(CINC_DIR)
+	@echo + CXX $<
 	@mkdir -p $(dir $@)
 	@g++ $(C_FLAGS) -c $< -o $@ 
 
