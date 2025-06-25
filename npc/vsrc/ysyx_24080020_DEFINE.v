@@ -7,6 +7,7 @@
 `endif
 `endif
 
+
 `ifdef ysyxSoCFull
 `define ysyx_24080020_MBASE 32'h30000000
 // IOE
