@@ -170,27 +170,30 @@ clean:
 # test single compile
 OBJ_DIR_TEST = build/obj_dir_test
 $(shell mkdir -p $(OBJ_DIR_TEST))
+$(shell cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR_TEST))
 
 VINC_DIR = $(addprefix -I, $(VINC_PATH))
-V_FLAGS := $(VINC_DIR) --MMD --cc -j 0  --trace-vcd --timescale "1ns/1ns" --no-timing
-# V_FLAGS := $(VINC_DIR) $(VERILATOR_CFLAGS)
+V_FLAGS = $(VINC_DIR) --MMD --cc -j 0  --trace-vcd --timescale "1ns/1ns" --no-timing
+# V_FLAGS = $(VINC_DIR) $(VERILATOR_CFLAGS)
 V_FLAGS += --top-module $(TOPNAME)
 
 CINC_DIR = $(shell find $(abspath .) -type d -name "include")
 CINC_DIR += $(abspath $(OBJ_DIR_TEST))
 CINC_DIR += $(shell find /usr/share/verilator/include -type d)
 
-CPPSRC_TEST := $(shell find csrc -name "*.cpp")
-CPPSRC_TEST += $(notdir $(shell find $(OBJ_DIR_TEST) -name "*.cpp"))
-CCSRC_TEST := $(shell find csrc -name "*.cc")
-CSRC_TEST := $(shell find csrc -name "*.c")
+CPPSRC_TEST = $(shell find csrc -name "*.cpp")
+CCSRC_TEST = $(shell find csrc -name "*.cc")
+CSRC_TEST = $(shell find csrc -name "*.c")
+V_SRC_TEST = $(notdir $(shell find $(OBJ_DIR_TEST) -name "*.cpp"))
 
-OBJS_TEST := $(CPPSRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o) \
+OBJS_TEST = $(CPPSRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o) \
 			$(CCSRC_TEST:%.cc=$(OBJ_DIR_TEST)/%.o) \
 			$(CSRC_TEST:%.c=$(OBJ_DIR_TEST)/%.o)
 
-C_FLAGS := $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull
-LD_FLAGS_TEST := -lreadline -ldl -pie $(shell llvm-config --libs) \
+V_OBJS_TEST = $(V_SRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o);
+
+C_FLAGS = $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull
+LD_FLAGS_TEST = -lreadline -ldl -pie $(shell llvm-config --libs) \
 				-L$(OBJ_DIR_TEST) -lV$(TOPNAME) -lverilated
 
 print:
@@ -200,9 +203,13 @@ print:
 	@echo $(LIBS) ----
 
 sv: $(VSRC)
-	@cp /usr/share/verilator/include/verilated{_vcd_c.cpp,.cpp,_threads.cpp} $(OBJ_DIR_TEST)
 	@verilator $(V_FLAGS) $^  -Mdir $(OBJ_DIR_TEST)
-	@make -C $(OBJ_DIR_TEST) -f V$(TOPNAME).mk
+	@make -s -C $(OBJ_DIR_TEST) -f V$(TOPNAME).mk
+
+%.o: %.cpp
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++ $(C_FLAGS) -c $< -o $@ 
 
 $(OBJ_DIR_TEST)/%.o: %.cpp
 	@echo + CXX $<
@@ -219,9 +226,9 @@ $(OBJ_DIR_TEST)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@g++ $(C_FLAGS) -c $< -o $@ 
 
-test_bin: $(OBJS_TEST)
+test_bin: $(OBJS_TEST) $(V_OBJS_TEST)
 	@echo + LD $@
-	@echo + LD_FLAGS_TEST $(LD_FLAGS_TEST)
-	@g++ $(LD_FLAGS_TEST) $^ -o build/$@
+	@g++ $(LD_FLAGS_TEST) $^ -o build/$(TOPNAME)
 
-test: sv test_bin
+test: sv
+	make test_bin
