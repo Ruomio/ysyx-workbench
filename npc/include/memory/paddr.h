@@ -36,6 +36,7 @@ static inline bool in_pmem(paddr_t addr) {
          addr - CONFIG_SRAM_BASE < CONFIG_SRAM_SIZE |
          addr - CONFIG_SDRAM_BASE < CONFIG_SDRAM_SIZE;
 #endif
+  printf("not in defins \n");
   return addr - CONFIG_MBASE < CONFIG_MSIZE;
 }
 
