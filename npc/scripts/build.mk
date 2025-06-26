@@ -170,6 +170,7 @@ else
 link: $(OBJS) $(V_OBJS)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo + LD
+	@echo csrc $(CSRC)
 	@echo objs $(OBJS) --- $(V_OBJS)
 	@g++ $(LDFLAGS) $^ -o build/$(TOPNAME)
 # $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
