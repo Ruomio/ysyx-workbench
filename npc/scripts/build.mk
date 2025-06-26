@@ -116,7 +116,7 @@ VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
-	@g++ $(CFLAGS) -c $< -o $@
+	@g++ $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cc
 	@echo + CXX $<
