@@ -91,7 +91,7 @@ VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
 endif
 VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
-CSRC += $(shell find csrc -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+CSRC += $(shell find csrc -name "*.c" -or -name "*.cpp")
 V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 #
 # # parameters
