@@ -584,7 +584,7 @@ module ysyx_24080020_ICACHE(
             raddr_s0 <= raddr_s2;
         end
         else if(s2_s0_valid) begin
-            if(!rvalid_o) begin
+            if(!rvalid_i) begin
                 s0_s2_ready <= 'b1;
 
                 inst_s0 <= inst_s2;
