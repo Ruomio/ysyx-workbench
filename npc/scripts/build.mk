@@ -158,8 +158,6 @@ ifeq ($(NVBOARD_ENABLE), 1)
 link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo + LD
-	@echo csrc $(CSRC)
-	@echo objs $(OBJS) --- $(V_OBJS)
 	@g++ $(LDFLAGS) $^ -o build/$(TOPNAME)
 
 # $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
@@ -173,8 +171,6 @@ else
 link: $(OBJS) $(V_OBJS)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo + LD
-	@echo csrc $(CSRC)
-	@echo objs $(OBJS) --- $(V_OBJS)
 	@g++ $(LDFLAGS) $^ -o build/$(TOPNAME)
 # $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
 # 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
