@@ -125,7 +125,6 @@ $(OBJ_DIR)/%.o: %.cc
 	$(call call_fixdep, $(@:.o=.d), $@)
 $(OBJ_DIR)/%.o: %.cpp
 	@echo + CXX $<
-	@echo + $(CXXFLAGS)
 	@mkdir -p $(dir $@)
 	@g++ $(CXXFLAGS) -c $< -o $@
 	$(call call_fixdep, $(@:.o=.d), $@)
