@@ -25,7 +25,7 @@ module ysyx_24080020_PC (
             first_if <= 1'b0;
             pc_en <= 'b1;
         end
-        else if(update_pc) begin
+        else if(update_pc && !pc_en) begin
             pc_en <= 'b1;
         end
     end
@@ -36,9 +36,9 @@ module ysyx_24080020_PC (
         end
         else if(if_en_valid && if_en_ready) begin
             if_en_valid <= 'b0;
+            pc_en <= 'b0;
         end
         else if(pc_en) begin
-            pc_en <= 'b0;
             if_en_valid <= 'b1;
 
             if(!first_if) begin
