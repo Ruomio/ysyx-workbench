@@ -123,8 +123,6 @@ module ysyx_24080020_MEM(
     reg awlen_cnt;
     reg [31:0] rdata1, rdata2;
 
-    reg arready_next;
-
     reg state; // 0: idle;   1: wait_ready
 
     wire [31:0] rdata_shift_1, rdata_shift_2, rdata_shift;
@@ -363,18 +361,6 @@ module ysyx_24080020_MEM(
     end
 
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            arready_next <= 'b0;
-        end
-        else if(arready) begin
-            arready_next <= 'b1;
-        end
-        else begin
-            arready_next <= 'b0;
-        end
-
-    end
 
 
     always @(posedge clk) begin
