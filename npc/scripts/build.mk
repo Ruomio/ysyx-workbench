@@ -171,6 +171,7 @@ link: $(OBJS) $(V_OBJS)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo + LD $(BIN)
 	@g++ $(LDFLAGS) $^ -o $(BIN)
+
 # $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
 # 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 # 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
@@ -184,15 +185,15 @@ perf: $(BIN)
 	$(call git_commit, "perf NPC")
 	@date | tee -a build/perf.log ;
 	@if make -s -C $(AM_HOME)/../yosys-sta sta  > /dev/null ;then \
-		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" | tee -a build/perf.log ; \
-		echo "" | tee -a build/perf.log ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" | tee -a .log/perf.log ; \
+		echo "" | tee -a .log/perf.log ; \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" | tee -a build/perf.log ; \
 	else \
 		$(shell echo "yosys-sta failed"); \
 	fi
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
-		| grep "\\[.* statistic\\]" | tee -a build/perf.log
+		| grep "\\[.* statistic\\]" | tee -a .log/perf.log
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
@@ -216,72 +217,3 @@ lldb: $(BIN)
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
-
-# test single compile
-OBJ_DIR_TEST = build/obj_dir_test
-$(shell mkdir -p $(OBJ_DIR_TEST))
-
-VINC_DIR = $(addprefix -I, $(VINC_PATH))
-V_FLAGS = $(VINC_DIR) --MMD --cc -j 0  --trace-vcd --timescale "1ns/1ns" --no-timing -DCONFIG_DPIC
-# V_FLAGS = $(VINC_DIR) $(VERILATOR_CFLAGS)
-V_FLAGS += --top-module $(TOPNAME)
-
-CINC_DIR = $(shell find $(abspath .) -type d -name "include")
-CINC_DIR += $(abspath $(OBJ_DIR_TEST))
-CINC_DIR += $(shell find /usr/share/verilator/include -type d)
-
-CPPSRC_TEST = $(shell find csrc -name "*.cpp")
-CCSRC_TEST = $(shell find csrc -name "*.cc")
-CSRC_TEST = $(shell find csrc -name "*.c")
-V_SRC_TEST = $(notdir $(shell find $(OBJ_DIR_TEST) -name "*.cpp"))
-
-OBJS_TEST = $(CPPSRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o) \
-			$(CCSRC_TEST:%.cc=$(OBJ_DIR_TEST)/%.o) \
-			$(CSRC_TEST:%.c=$(OBJ_DIR_TEST)/%.o)
-
-V_OBJS_TEST = $(V_SRC_TEST:%.cpp=$(OBJ_DIR_TEST)/%.o);
-
-C_FLAGS = $(addprefix -I, $(CINC_DIR)) -DysyxSoCFull -D__GUEST_ISA__=$(GUEST_ISA) -MMD -MP
-LD_FLAGS_TEST = -lreadline -ldl -pie $(shell llvm-config --libs) \
-				-L$(OBJ_DIR_TEST) -lV$(TOPNAME) -lverilated
-
-print:
-	@echo $(C_FLAGS) ----
-	@echo $(CPPSRC_TEST) ----
-	@echo $(OBJS_TEST) ----
-	@echo $(LIBS) ----
-
-sv: $(VSRC)
-	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR_TEST)
-	@verilator $(V_FLAGS) $^  -Mdir $(OBJ_DIR_TEST)
-	@make -s -C $(OBJ_DIR_TEST) -f V$(TOPNAME).mk
-
-$(OBJ_DIR_TEST)/%.o: $(OBJ_DIR_TEST)/%.cpp
-	@echo + CXX $<
-	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@
-
-$(OBJ_DIR_TEST)/%.o: %.cpp
-	@echo + CXX $<
-	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@
-
-$(OBJ_DIR_TEST)/%.o: %.cc
-	@echo + CXX $<
-	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@
-
-$(OBJ_DIR_TEST)/%.o: %.c
-	@echo + CXX $<
-	@mkdir -p $(dir $@)
-	@g++ $(C_FLAGS) -c $< -o $@
-
-test_bin: $(OBJS_TEST) $(V_OBJS_TEST)
-	@echo + LD $@
-	@g++ $(LD_FLAGS_TEST) $^ -o build/$(TOPNAME)
-
-test: sv
-	make test_bin
-
--include $(OBJS_TEST:.o=.d)
--include $(V_OBJS_TEST:.o=.d)
