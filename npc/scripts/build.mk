@@ -141,7 +141,7 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 all: $(BIN)
 
 $(BIN): v_to_cpp
-	make link
+	@make link
 
 v_to_cpp: $(VSRC)
 	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
@@ -183,11 +183,11 @@ endif
 
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
-	@date | tee -a build/perf.log ;
+	@date | tee -a .log/perf.log ;
 	@if make -s -C $(AM_HOME)/../yosys-sta sta  > /dev/null ;then \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" | tee -a .log/perf.log ; \
 		echo "" | tee -a .log/perf.log ; \
-		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" | tee -a build/perf.log ; \
+		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/yosys.log | grep -A 2 "Chip area for top module '\\\ysyx_24080020'" | tee -a .log/perf.log ; \
 	else \
 		$(shell echo "yosys-sta failed"); \
 	fi
