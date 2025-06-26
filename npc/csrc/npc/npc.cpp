@@ -38,7 +38,7 @@
 
 #define NVBOARD_ENABLE 1
 
-void nvboard_bind_all_pins(TOP_NAME*);
+void nvboard_bind_all_pins(TOP_NAME *top);
 void nvboard_init(int);
 void nvboard_update();
 void nvboard_quit();
