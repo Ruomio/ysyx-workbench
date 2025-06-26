@@ -656,6 +656,10 @@ module ysyx_24080020_ICACHE(
   wire [cache_num_bits-1:0]    cache_index_s2;
   wire [cache_size_bits-1:0]   cache_offset_s2;
 
+  logic has_hit;
+  logic total_hits [0 : cache_way - 1];
+  logic [cache_way-1:0] tmp_tag_index;
+
   reg bubble;
 
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
@@ -677,6 +681,24 @@ module ysyx_24080020_ICACHE(
 
   assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_s2})
                      && ((cache_valid[cache_index_s2] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
+
+  generate
+    genvar j;
+    for (j = 0; j < cache_way; j++) begin
+        assign total_hits[j] = (cache_tag[cache_index_s2][(j+1)*cache_tag_width-1:j*cache_tag_width] == cache_tag_s2) && ((cache_valid[cache_index_s2] & ({ {(cache_way-1){1'b0}}, 1'b1} << j)) != 'b0);
+    end
+  endgenerate
+
+  always_comb begin
+      tmp_tag_index = 0;
+      has_hit = 0;
+      for (int i = 0; i < cache_way; i++) begin
+          if (total_hits[i]) begin
+              has_hit = 'b1;
+              tmp_tag_index = i[cache_way-1:0];
+          end
+      end
+  end
 
   assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
   assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
@@ -850,22 +872,35 @@ module ysyx_24080020_ICACHE(
           end
           JUDGE: begin
               if(fin_judge) begin
-                araddr_s2 <= {araddr_s2[31:2], 2'b0};
-                fin_judge <= 'b0;
+                  araddr_s2 <= {araddr_s2[31:2], 2'b0};
+                  fin_judge <= 'b0;
               end
-              else if(tag_index < cache_way) begin
-                if(cache_hit) begin
+              else if(has_hit) begin
                   is_hit <= 'b1;
+                  tag_index <= tmp_tag_index;
                   fin_judge <= 'b1;
-                end
-                else begin
-                  tag_index <= tag_index + 'b1;
-                end
               end
               else begin
-                tag_index <= 'b0;
-                fin_judge <= 'b1;
+                  is_hit <= 'b0;
+                  fin_judge <= 'b1;
               end
+              // if(fin_judge) begin
+              //   araddr_s2 <= {araddr_s2[31:2], 2'b0};
+              //   fin_judge <= 'b0;
+              // end
+              // else if(tag_index < cache_way) begin
+              //   if(cache_hit) begin
+              //     is_hit <= 'b1;
+              //     fin_judge <= 'b1;
+              //   end
+              //   else begin
+              //     tag_index <= tag_index + 'b1;
+              //   end
+              // end
+              // else begin
+              //   tag_index <= 'b0;
+              //   fin_judge <= 'b1;
+              // end
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
