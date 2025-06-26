@@ -135,8 +135,8 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 	$(call call_fixdep, $(@:.o=.d), $@)
 #
 # # Depencies
-# -include $(OBJS:.o=.d)
-# -include $(V_OBJS:.o=.d)
+-include $(OBJS:.o=.d)
+-include $(V_OBJS:.o=.d)
 
 all: $(BIN)
 
