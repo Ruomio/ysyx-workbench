@@ -155,6 +155,7 @@ ifeq ($(NVBOARD_ENABLE), 1)
 link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo + LD
+	@echo objs $(OBJS) --- $(V_OBJS)
 	@g++ $(LDFLAGS) $^ -o build/$(TOPNAME)
 
 # $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
