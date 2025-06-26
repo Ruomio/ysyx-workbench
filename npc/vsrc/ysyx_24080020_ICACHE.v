@@ -661,6 +661,7 @@ module ysyx_24080020_ICACHE(
   logic [cache_way-1:0] tmp_tag_index;
 
   reg bubble;
+  reg all_fin_ready;
 
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
@@ -742,17 +743,22 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
     if(!rst) begin
       s2_s0_valid <= 'b0;
+      all_fin_ready <= 'b0;
     end
     else if(s2_s0_valid && s0_s2_ready) begin
       s2_s0_valid <= 1'b0;
+      all_fin_ready <= 'b0;
     end
     else if(s1_s2_shake_hands) begin
-      if(all_fin) begin
+      if(all_fin && all_fin_ready && !s2_s0_valid) begin
         s2_s0_valid <= 1'b1;
 
         inst_s2 <= rdata_tmp;
         s1_s2_shake_hands <= 'b0;
         raddr_s2 <= araddr_s2_base;
+      end
+      else if(all_fin) begin
+        all_fin_ready <= 'b1;
       end
     end
   end
@@ -804,7 +810,7 @@ module ysyx_24080020_ICACHE(
                   next_state = JUDGE;
           end
           CHIT: begin
-              if(all_fin) begin
+              if(all_fin && all_fin_ready) begin
                   next_state = IDLE;
               end
               else begin
@@ -840,7 +846,7 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIDone: begin
-              if(all_fin) begin
+              if(all_fin && all_fin_ready) begin
                   next_state = IDLE;
               end
               else begin
@@ -904,7 +910,9 @@ module ysyx_24080020_ICACHE(
           end
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
-              all_fin <= 'b1;
+
+              if(!all_fin_ready)
+                all_fin <= 'b1;
 
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
@@ -988,7 +996,8 @@ module ysyx_24080020_ICACHE(
               end
           end
           AXIDone: begin
-              all_fin <= 1'b1;
+              if(!all_fin_ready)
+                all_fin <= 1'b1;
           end
           default: begin
               // do nothing
