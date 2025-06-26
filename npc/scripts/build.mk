@@ -79,7 +79,7 @@ VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find . -maxdepth 1 -type d -name "vsrc")
 
-INC_PATH += $(shell find include -type d -name "include")
+INC_PATH += $(shell find $(abspath include) -type d -name "include")
 INC_PATH += $(shell find /usr/share/verilator/include -type d)
 INC_PATH += $(abspath $(OBJ_DIR))
 
