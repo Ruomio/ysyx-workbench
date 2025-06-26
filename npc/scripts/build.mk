@@ -1,7 +1,7 @@
 .DEFAULT_GOAL = all
 
 VERILATOR=verilator
-VERILATOR_CFLAGS += -MMD --build -cc \
+VERILATOR_CFLAGS += -MMD -cc \
 					-j 16 --threads 1  \
 					-O3 --x-assign fast --x-initial fast --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
@@ -9,29 +9,29 @@ VERILATOR_CFLAGS += -MMD --build -cc \
 
 NXDC_FILES = constr/top.nxdc
 
-CSRC=$(shell find csrc -name "*.c")
-CPPSRC=$(shell find csrc -name "*.cpp")
-HSRC=$(shell find $(abspath ./include) -name "*.h")
-# CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c")
-INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-
-ifeq ($(SOC_EN), 1)
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
-
-VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
-VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
-endif
-VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
-
-VSRC += $(shell find $(abspath vsrc) -maxdepth 1 -name "*.v")
+# CSRC=$(shell find csrc -name "*.c")
+# CPPSRC=$(shell find csrc -name "*.cpp")
+# HSRC=$(shell find $(abspath ./include) -name "*.h")
+# # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c")
+# INC_PATH += $(shell find $(abspath ./) -type d -name "include")
+#
+# ifeq ($(SOC_EN), 1)
+# VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+# VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+#
+# VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
+# VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
+# endif
+# VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
+#
+# VSRC += $(shell find $(abspath vsrc) -maxdepth 1 -name "*.v")
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
-BUILD_DIR=$(shell pwd)/build
+BUILD_DIR=build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
 BIN=$(BUILD_DIR)/$(TOPNAME)
 
-$(shell mkdir -p $(BUILD_DIR))
+$(shell mkdir -p $(OBJ_DIR))
 
 
 ifdef CONFIG_ITRACE
@@ -72,10 +72,27 @@ CSRC += $(SRC_AUTO_BIND)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 endif
 
+# include dir
+ifeq ($(SOC_EN), 1)
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
+VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+endif
+VINC_PATH += $(shell find . -maxdepth 1 -type d -name "vsrc")
+
+INC_PATH += $(shell find $(abspath .) -type d -name "include")
+INC_PATH += $(shell find /usr/share/verilator/include -type d)
+INC_PATH += $(OBJ_DIR)
+
+
 # project source
-# VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-# CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
-# CSRCS += $(SRC_AUTO_BIND)
+ifeq ($(SOC_EN), 1)
+VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
+VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
+endif
+VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
+
+CSRC += $(shell find csrc -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 #
 # # parameters
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
@@ -84,28 +101,49 @@ override IMG +=
 
 
 # CSRC_NODIR := $(notdir $(CSRC))
-# OBJS := $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CPPSRC:%.cpp=$(OBJ_DIR)/%.o)
+OBJS = $(CSRC:%.c=$(OBJ_DIR)/%.o) $(CSRC:%.cc=$(OBJ_DIR)/%.o) $(CSRC:%.cpp=$(OBJ_DIR)/%.o)
+V_OBJS = $(V_CSRC:%.cpp=$(OBJ_DIR)/%.o)
 
-# $(OBJ_DIR)/%.o: %.c
-# 	@echo + CC $<
-# 	@mkdir -p $(dir $@)
-# 	@gcc $(INCFLAGS) $(CFLAGS) -c $< -o $@
-# # $(call call_fixdep, $(@:.o=.d), $@)
-# $(OBJ_DIR)/%.o: %.cc
-# 	@echo + CXX $<
-# 	@mkdir -p $(dir $@)
-# 	@g++  $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
-# # $(call call_fixdep, $(@:.o=.d), $@)
-# $(OBJ_DIR)/%.o: %.cpp
-# 	@echo + CXX $<
-# 	@mkdir -p $(dir $@)
-# 	@g++ $(INCFLAGS) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
-# # $(call call_fixdep, $(@:.o=.d), $@)
+CFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
+CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
+LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
+
+VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
+
+$(OBJ_DIR)/%.o: %.c
+	@echo + CC $<
+	@mkdir -p $(dir $@)
+	@g++ $(CFLAGS) -c $< -o $@
+	$(call call_fixdep, $(@:.o=.d), $@)
+$(OBJ_DIR)/%.o: %.cc
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++ $(CXXFLAGS) -c $< -o $@
+	$(call call_fixdep, $(@:.o=.d), $@)
+$(OBJ_DIR)/%.o: %.cpp
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++ $(CXXFLAGS) -c $< -o $@
+	$(call call_fixdep, $(@:.o=.d), $@)
+$(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
+	@echo + CXX $<
+	@mkdir -p $(dir $@)
+	@g++ $(CXXFLAGS) -c $< -o $@
+	$(call call_fixdep, $(@:.o=.d), $@)
 #
 # # Depencies
 # -include $(OBJS:.o=.d)
+# -include $(V_OBJS:.o=.d)
 
 all: $(BIN)
+
+$(BIN): v_to_cpp
+	make link
+
+v_to_cpp: $(VSRC)
+	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
+	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
+	@make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -113,21 +151,30 @@ sim:
 	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifeq ($(NVBOARD_ENABLE), 1)
-$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
-	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
-		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+	@echo + LD
+	@g++ $(LDFLAGS) $^ -o build/$(TOPNAME)
+
+# $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+# 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+# 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+# 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+# 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
+# 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+# 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 else
-$(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
-	@echo $(NVBOARD_ENABLE) $(TOPNAME)
-	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-	@$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
-		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+link: $(OBJS) $(V_OBJS)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@echo + LD
+	@g++ $(LDFLAGS) $^ -o build/$(TOPNAME)
+# $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
+# 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+# 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+# 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+# 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
+# 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+# 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 endif
 
 perf: $(BIN)
