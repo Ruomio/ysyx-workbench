@@ -581,12 +581,12 @@ module ysyx_24080020_ICACHE(
         else if(s2_s0_valid && s0_s2_ready) begin
             s0_s2_ready <= 'b0;
             s2_s0_shake_hands <= 'b1;
+            inst_s0 <= inst_s2;
         end
         else if(s2_s0_valid) begin
             if(!rvalid_o) begin
                 s0_s2_ready <= 'b1;
 
-                inst_s0 <= inst_s2;
                 raddr_s0 <= raddr_s2;
                 // rdata_araddr_s0 <= araddr_s2_base;
             end
@@ -1045,6 +1045,7 @@ module ysyx_24080020_ICACHE(
       rvalid_i <= 'b0;
       rresp_i <= 'b0;
       rlast_i <= 'b0;
+      raddr <= raddr_s0;
       // busy <= 'b0;
     end
     else if(s2_s0_shake_hands) begin
@@ -1052,7 +1053,6 @@ module ysyx_24080020_ICACHE(
       rdata_i <= inst_s0;
       rlast_i <= 'b1;
       rresp_i <= 'b0;
-      raddr <= raddr_s0;
       // rdata_araddr <= rdata_araddr_s0;
       s2_s0_shake_hands <= 'b0;
     end
