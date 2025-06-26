@@ -7,14 +7,6 @@
 #include "paddr.h"
 #include "vaddr.h"
 
-// #include "svdpi.h"
-// #ifdef ysyxSoCFull
-// #include "VysyxSoCFull__Dpi.h"
-// #endif
-// #ifdef ysyx_24080020_NPC
-// #include "Vysyx_24080020_NPC__Dpi.h"
-// #endif
-
 typedef  uint32_t word_t;
 typedef  uint32_t paddr_t;
 
