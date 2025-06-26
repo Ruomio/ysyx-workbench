@@ -4,16 +4,16 @@
 #include <assert.h>
 #include <stdint.h>
 #include "define.h"
-#include "svdpi.h"
 #include "paddr.h"
 #include "vaddr.h"
 
-#ifdef ysyxSoCFull
-#include "VysyxSoCFull__Dpi.h"
-#endif
-#ifdef ysyx_24080020_NPC
-#include "Vysyx_24080020_NPC__Dpi.h"
-#endif
+// #include "svdpi.h"
+// #ifdef ysyxSoCFull
+// #include "VysyxSoCFull__Dpi.h"
+// #endif
+// #ifdef ysyx_24080020_NPC
+// #include "Vysyx_24080020_NPC__Dpi.h"
+// #endif
 
 typedef  uint32_t word_t;
 typedef  uint32_t paddr_t;
@@ -47,7 +47,7 @@ static inline void host_write(void *addr, int len, word_t data) {
 }
 
 
-// #define paddr_read read_memory  
+// #define paddr_read read_memory
 // #define paddr_write write_memory
 
 
