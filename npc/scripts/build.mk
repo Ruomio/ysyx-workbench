@@ -63,7 +63,7 @@ endif
 
 ifeq ($(NVBOARD_ENABLE), 1)
 # constraint file
-SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
+SRC_AUTO_BIND = $(BUILD_DIR)/auto_bind.cpp
 $(SRC_AUTO_BIND): $(NXDC_FILES)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 
@@ -104,8 +104,8 @@ override IMG +=
 TMP_C = $(filter %.c, $(CSRC))
 TMP_CC = $(filter %.cc, $(CSRC))
 TMP_CPP = $(filter %.cpp, $(CSRC))
-OBJS = $(TMP_C:%.c=$(OBJ_DIR)/%.o) $(TMP_CC:%.cc=$(OBJ_DIR)/%.o) $(TMP_CPP:%.cpp=$(OBJ_DIR)/%.o)
-V_OBJS = $(V_CSRC:%.cpp=$(OBJ_DIR)/%.o)
+OBJS += $(TMP_C:%.c=$(OBJ_DIR)/%.o) $(TMP_CC:%.cc=$(OBJ_DIR)/%.o) $(TMP_CPP:%.cpp=$(OBJ_DIR)/%.o)
+V_OBJS += $(V_CSRC:%.cpp=$(OBJ_DIR)/%.o)
 
 CFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
