@@ -36,10 +36,10 @@ module ysyx_24080020_PC (
         end
         else if(if_en_valid && if_en_ready) begin
             if_en_valid <= 'b0;
-            pc_en <= 'b0;
         end
         else if(pc_en) begin
             if_en_valid <= 'b1;
+            pc_en <= 'b0;
 
             if(!first_if) begin
                 first_if <= 1'b1;
