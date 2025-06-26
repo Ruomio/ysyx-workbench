@@ -581,13 +581,13 @@ module ysyx_24080020_ICACHE(
         else if(s2_s0_valid && s0_s2_ready) begin
             s0_s2_ready <= 'b0;
             s2_s0_shake_hands <= 'b1;
-            inst_s0 <= inst_s2;
+            raddr_s0 <= raddr_s2;
         end
         else if(s2_s0_valid) begin
             if(!rvalid_o) begin
                 s0_s2_ready <= 'b1;
 
-                raddr_s0 <= raddr_s2;
+                inst_s0 <= inst_s2;
                 // rdata_araddr_s0 <= araddr_s2_base;
             end
         end
