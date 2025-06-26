@@ -170,8 +170,8 @@ link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
 else
 link: $(OBJS) $(V_OBJS)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo + LD
-	@g++ $(LDFLAGS) $^ -o build/$(TOPNAME)
+	@echo + LD $(BIN)
+	@g++ $(LDFLAGS) $^ -o $(BIN)
 # $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
 # 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 # 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
