@@ -219,6 +219,8 @@ module ysyx_24080020_NPC(
   wire [3:0] bid_xbar;
   wire [1:0] bresp_xbar;
 
+  wire special_pc_i, special_pc_o;
+
   // Xbar
   wire arvalid_xbar_sram, arready_sram,
         arvalid_xbar_uart, arready_uart,
@@ -338,6 +340,8 @@ module ysyx_24080020_NPC(
         .inst_fin(inst_fin),
         .flush_pipeline(flush_pipeline),
         .raddr(raddr_ifu),
+        .special_pc_o(special_pc_o),
+        .special_pc_i(special_pc_i),
         // axi-lite
         .arvalid(arvalid_ifu),
         .araddr(araddr_ifu),
@@ -1028,6 +1032,8 @@ module ysyx_24080020_NPC(
       .busy_i(lsu_busy),
 
       .raddr(raddr_ifu),
+      .special_pc_i(special_pc_o),
+      .special_pc_o(special_pc_i),
       // axi from lsu
       .arvalid_i(arvalid_ifu),
       .araddr_i(araddr_ifu),
