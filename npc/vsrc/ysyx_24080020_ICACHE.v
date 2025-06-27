@@ -565,6 +565,32 @@ module ysyx_24080020_ICACHE(
   reg [1:0] arburst_tmp;
   reg [2:0] arsize_tmp;
 
+// tmp <-> s0
+
+    reg tmp_s0_valid;
+    reg s0_tmp_ready;
+    reg tmp_s0_shake_hands;
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            tmp_s0_valid <= 'b0;
+            s0_tmp_ready <= 'b1;
+            tmp_s0_shake_hands <= 'b0;
+        end
+        else if(tmp_s0_valid && s0_tmp_ready) begin
+            s0_tmp_ready <= 'b0;
+            tmp_s0_shake_hands <= 'b1;
+            arready_i <= 1'b1;
+
+            araddr_s0 <= araddr_tmp;
+            arlen_s0 <= arlen_tmp;
+            arid_s0 <= arid_tmp;
+            arburst_s0 <= arburst_tmp;
+            arsize_s0 <= arsize_tmp;
+            special_pc_s0 <= special_pc_tmp;
+        end
+    end
+
 
 // s0
     reg [`ysyx_24080020_WIDTH-1:0] araddr_s0, raddr_s0;
@@ -576,7 +602,7 @@ module ysyx_24080020_ICACHE(
     always @(posedge clk) begin
         if(!rst) begin
             s0_s1_valid <= 'b0;
-            s0_s2_ready <= 'b0;
+            s0_s2_ready <= 'b1;
             inst_s0 <= 'b0;
             raddr_s0 <= 'b0;
             special_pc_s0 <= 'b0;
@@ -590,15 +616,21 @@ module ysyx_24080020_ICACHE(
         end
         else if(s0_s1_valid && s1_s0_ready) begin
             s0_s1_valid <= 'b0;
+            s0_tmp_ready <= 'b1;
+            s0_s1_shake_hands <= 'b1;
+
+            // s1_s0_ready <= 1'b1; // s1 -> s2 hands
+            araddr_s1 <= araddr_s0;
+            arlen_s1 <= arlen_s0;
+            arid_s1 <= arid_s0;
+            arburst_s1 <= arburst_s0;
+            arsize_s1 <= arsize_s0;
+            special_pc_s1 <= special_pc_s0;
+
         end
-        else if(arvalid_i && arready_i) begin
+        else if(tmp_s0_shake_hands) begin
+            tmp_s0_shake_hands <= 'b0;
             s0_s1_valid <= 'b1;
-            araddr_s0 <= araddr_tmp;
-            arlen_s0 <= arlen_tmp;
-            arid_s0 <= arid_tmp;
-            arburst_s0 <= arburst_tmp;
-            arsize_s0 <= arsize_tmp;
-            special_pc_s0 <= special_pc_tmp;
         end
     end
 
@@ -609,16 +641,20 @@ module ysyx_24080020_ICACHE(
         else if(s2_s0_valid && s0_s2_ready) begin
             s0_s2_ready <= 'b0;
             s2_s0_shake_hands <= 'b1;
+
             raddr_s0 <= raddr_s2;
             special_pc_s0_o <= special_pc_s2_o;
-        end
-        else if(s2_s0_valid) begin
-            if(!rvalid_i) begin
-                s0_s2_ready <= 'b1;
 
-                inst_s0 <= inst_s2;
-                // rdata_araddr_s0 <= araddr_s2_base;
-            end
+            inst_s0 <= inst_s2;
+        end
+        else if(s2_s0_shake_hands) begin
+          s2_s0_shake_hands <= 'b0;
+
+          rvalid_i <= 'b1;
+          rdata_i <= inst_s0;
+          rlast_i <= 'b1;
+          rresp_i <= 'b0;
+          // rdata_araddr <= rdata_araddr_s0;
         end
     end
 
@@ -638,7 +674,7 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
     if(!rst) begin
       s1_s2_valid <= 'b0;
-      s1_s0_ready <= 'b0;
+      s1_s0_ready <= 'b1;
 
       araddr_s1 <= 'b0;
       arlen_s1 <= 'b0;
@@ -653,19 +689,10 @@ module ysyx_24080020_ICACHE(
     end
     else if(s0_s1_valid && s1_s0_ready) begin
         s1_s0_ready <= 'b0;
-        s0_s1_shake_hands <= 'b1;
     end
-    else if(s0_s1_valid) begin
-      // condition
-      if(!s1_s2_valid) begin
-        s1_s0_ready <= 1'b1;
-        araddr_s1 <= araddr_s0;
-        arlen_s1 <= arlen_s0;
-        arid_s1 <= arid_s0;
-        arburst_s1 <= arburst_s0;
-        arsize_s1 <= arsize_s0;
-        special_pc_s1 <= special_pc_s0;
-      end
+    else if(s0_s1_shake_hands) begin
+        s0_s1_shake_hands <= 'b0;
+
     end
   end
 
@@ -675,17 +702,23 @@ module ysyx_24080020_ICACHE(
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s1_s2_valid <= 1'b0;
+      s1_s2_shake_hands <= 'b1;
+
+      araddr_s2 <= araddr_s1;
+      arlen_s2 <= arlen_s1;
+      arid_s2 <= arid_s1;
+      arburst_s2 <= arburst_s1;
+      arsize_s2 <= arsize_s1;
+
+      araddr_s2_base <= araddr_s1;
+      special_pc_s2_i <= special_pc_s1;
     end
     else if(s0_s1_shake_hands) begin
-      if(!s2_s0_valid) begin
         s1_s2_valid <= 1'b1;
-
         cache_tag_s1 <= araddr_s1[31 : cache_num_bits+cache_size_bits];
         cache_index_s1 <= araddr_s1[cache_num_bits+cache_size_bits-1 : cache_size_bits];
         cache_offset_s1 <= araddr_s1[cache_size_bits-1 : 0];
 
-        s0_s1_shake_hands <= 'b0;
-      end
     end
   end
 
@@ -768,7 +801,7 @@ module ysyx_24080020_ICACHE(
 
   always @(posedge clk) begin
     if(!rst) begin
-      s2_s1_ready <= 'b0;
+      s2_s1_ready <= 'b1;
       s2_s0_valid <= 'b0;
 
       inst_s2 <= 'b0;
@@ -787,21 +820,10 @@ module ysyx_24080020_ICACHE(
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
       s1_s2_shake_hands <= 'b1;
+      s1_s0_ready <= 'b1;
     end
-    else if(s1_s2_valid) begin
-      // condition
-      if((current_state == IDLE) && !s2_s0_valid) begin
-        s2_s1_ready <= 1'b1;
+    else if(s1_s2_shake_hands) begin
 
-        araddr_s2 <= araddr_s1;
-        arlen_s2 <= arlen_s1;
-        arid_s2 <= arid_s1;
-        arburst_s2 <= arburst_s1;
-        arsize_s2 <= arsize_s1;
-
-        araddr_s2_base <= araddr_s1;
-        special_pc_s2_i <= special_pc_s1;
-      end
     end
   end
 
@@ -812,20 +834,19 @@ module ysyx_24080020_ICACHE(
     end
     else if(s2_s0_valid && s0_s2_ready) begin
       s2_s0_valid <= 1'b0;
-      all_fin_ready <= 'b0;
+      s2_s1_ready <= 1'b1;
     end
-    else if(s1_s2_shake_hands) begin
-      if(all_fin && all_fin_ready && !s2_s0_valid) begin
+    else if(all_fin && all_fin_ready) begin
+        all_fin_ready <= 'b0;
         s2_s0_valid <= 1'b1;
 
         inst_s2 <= rdata_tmp;
         s1_s2_shake_hands <= 'b0;
         raddr_s2 <= araddr_s2_base;
         special_pc_s2_o <= special_pc_s2_i;
-      end
-      else if(all_fin) begin
+    end
+    else if(all_fin) begin
         all_fin_ready <= 'b1;
-      end
     end
   end
 
@@ -1098,7 +1119,7 @@ module ysyx_24080020_ICACHE(
       arready_i <= 'b0;
       // busy <= 'b0;
     end
-    else if(arvalid_i && !s0_s1_valid) begin
+    else if(arvalid_i) begin
       arlen_tmp <= arlen_i;
       arid_tmp <= arid_i;
       arburst_tmp <= arburst_i;
@@ -1106,10 +1127,10 @@ module ysyx_24080020_ICACHE(
 
       // busy <= 'b1;
 
-      arready_i <= 1'b1;
+      // arready_i <= 1'b1;
       araddr_tmp <= araddr_i;
       special_pc_tmp <= special_pc_i;
-
+      tmp_s0_valid <= 'b1;
     end
   end
   // R
@@ -1130,14 +1151,7 @@ module ysyx_24080020_ICACHE(
       raddr <= raddr_s0;
       special_pc_o <= special_pc_s0_o;
       // busy <= 'b0;
-    end
-    else if(s2_s0_shake_hands) begin
-      rvalid_i <= 'b1;
-      rdata_i <= inst_s0;
-      rlast_i <= 'b1;
-      rresp_i <= 'b0;
-      // rdata_araddr <= rdata_araddr_s0;
-      s2_s0_shake_hands <= 'b0;
+      s0_s2_ready <= 'b1;
     end
   end
 
