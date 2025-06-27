@@ -128,7 +128,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   if (ITRACE_COND) { log_write("%s\n", inst_buf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(g_pc, g_get_dnpc()));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(last_pc, dnpc));
 
 #ifdef CONFIG_WATCH_POINT
   // scan and print all watch point and break point
@@ -554,14 +554,16 @@ const char *regs_name[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
+  bool flag = true;
   for(int i=0; i<sizeof(ref_r->gpr)/sizeof(ref_r->gpr[0]); i++) {
     if(ref_r->gpr[i] != g_get_reg(i)) {
       printf("The %s reg is diff, shoud be %#x  but get %#x.\n", regs_name[i], ref_r->gpr[i], g_get_reg(i));
-      return false;
+      flag = false;
+      break;
     }
   }
-  if(pc != g_pc) return false;
-  return true;
+  if(pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, pc); flag = false;}
+  return flag;
 }
 
 void update_npc_cpu() {
