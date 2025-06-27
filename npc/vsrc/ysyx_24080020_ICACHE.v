@@ -578,6 +578,7 @@ module ysyx_24080020_ICACHE(
             tmp_s0_shake_hands <= 'b0;
         end
         else if(tmp_s0_valid && s0_tmp_ready) begin
+            tmp_s0_valid <= 'b0;
             s0_tmp_ready <= 'b0;
             tmp_s0_shake_hands <= 'b1;
             // arready_i <= 1'b1;
@@ -1119,7 +1120,7 @@ module ysyx_24080020_ICACHE(
       arready_i <= 'b0;
       // busy <= 'b0;
     end
-    else if(arvalid_i && s0_tmp_ready) begin
+    else if(arvalid_i) begin
       arlen_tmp <= arlen_i;
       arid_tmp <= arid_i;
       arburst_tmp <= arburst_i;
