@@ -123,6 +123,7 @@ const char *regs_name[] = {
 };
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   bool flag = true;
+  if(g_pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, g_pc); flag = false;}
   for(int i=0; i<sizeof(ref_r->gpr)/sizeof(ref_r->gpr[0]); i++) {
     if(ref_r->gpr[i] != g_get_reg(i)) {
       printf("The %s reg is diff, shoud be %#x  but get %#x.\n", regs_name[i], ref_r->gpr[i], g_get_reg(i));
@@ -130,7 +131,6 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
       break;
     }
   }
-  if(g_pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, g_pc); flag = false;}
   return flag;
 }
 
