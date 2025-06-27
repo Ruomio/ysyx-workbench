@@ -128,7 +128,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
     if(ref_r->gpr[i] != g_get_reg(i)) {
       printf("The %s reg is diff, shoud be %#x  but get %#x.\n", regs_name[i], ref_r->gpr[i], g_get_reg(i));
       flag = false;
-      break;
+      // break;
     }
   }
   return flag;
