@@ -1046,7 +1046,6 @@ module ysyx_24080020_ICACHE(
       // busy <= 'b0;
     end
     else if(arvalid_i && !s0_s1_valid) begin
-      araddr_o <= araddr_i;
       arlen_o <= arlen_i;
       arid_o <= arid_i;
       arburst_o <= arburst_i;
