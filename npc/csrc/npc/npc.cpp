@@ -562,7 +562,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
       break;
     }
   }
-  if(pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, pc); flag = false;}
+  if(g_pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, g_pc); flag = false;}
   return flag;
 }
 
