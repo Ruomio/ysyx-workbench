@@ -547,24 +547,6 @@ uint32_t g_get_rd() {
 #endif
 }
 
-const char *regs_name[] = {
-  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-};
-bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  bool flag = true;
-  for(int i=0; i<sizeof(ref_r->gpr)/sizeof(ref_r->gpr[0]); i++) {
-    if(ref_r->gpr[i] != g_get_reg(i)) {
-      printf("The %s reg is diff, shoud be %#x  but get %#x.\n", regs_name[i], ref_r->gpr[i], g_get_reg(i));
-      flag = false;
-      break;
-    }
-  }
-  if(g_pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, g_pc); flag = false;}
-  return flag;
-}
 
 void update_npc_cpu() {
   for(int i=0; i<32; i++) {
