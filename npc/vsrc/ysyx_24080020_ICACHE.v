@@ -1120,7 +1120,7 @@ module ysyx_24080020_ICACHE(
       arready_i <= 'b0;
       // busy <= 'b0;
     end
-    else if(arvalid_i) begin
+    else if(arvalid_i && s0_tmp_ready) begin
       arlen_tmp <= arlen_i;
       arid_tmp <= arid_i;
       arburst_tmp <= arburst_i;
