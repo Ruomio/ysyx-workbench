@@ -731,7 +731,7 @@ module ysyx_24080020_ICACHE(
     end
     else if(s1_s2_valid) begin
       // condition
-      if(current_state == IDLE) begin
+      if((current_state == IDLE) && !s2_s0_valid) begin
         s2_s1_ready <= 1'b1;
 
         araddr_s2 <= araddr_s1;
