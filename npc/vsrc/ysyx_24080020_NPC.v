@@ -325,6 +325,8 @@ module ysyx_24080020_NPC(
   // skip difftest ref
   wire skip_ref_idu, skip_ref_exu, skip_ref_mem;
 
+  wire is_ebreak_idu, is_ebreak_exu, is_ebreak_lsu;
+
 
 
     ysyx_24080020_IFU ifu(
@@ -371,6 +373,7 @@ module ysyx_24080020_NPC(
         .flush_pipeline(flush_pipeline),
 
         .skip_ref_idu(skip_ref_idu),
+        .is_ebreak(is_ebreak_idu),
 
         .inst_ifu(inst_ifu),
         .rs1(rs1),
@@ -422,6 +425,7 @@ module ysyx_24080020_NPC(
         .rst(rst),
 
         .skip_ref_mem(skip_ref_mem),
+        .is_ebreak_lsu(is_ebreak_lsu),
 
         .raddr1(rs1),
         .raddr2(rs2),
@@ -464,6 +468,9 @@ module ysyx_24080020_NPC(
 
         .skip_ref_idu(skip_ref_idu),
         .skip_ref_exu(skip_ref_exu),
+
+        .is_ebreak_idu(is_ebreak_idu),
+        .is_ebreak_exu(is_ebreak_exu),
 
         .pc_idu(pc_idu),
         .imm_idu(imm_idu),
@@ -538,6 +545,9 @@ module ysyx_24080020_NPC(
 
         .skip_ref_exu(skip_ref_exu),
         .skip_ref_mem(skip_ref_mem),
+
+        .is_ebreak_exu(is_ebreak_exu),
+        .is_ebreak_lsu(is_ebreak_lsu),
 
         .axi_busy(lsu_busy),
 

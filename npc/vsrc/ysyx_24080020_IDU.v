@@ -14,6 +14,7 @@ module ysyx_24080020_IDU (
     output reg [`ysyx_24080020_WIDTH-1:0] imm_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
 
+    output reg is_ebreak,
     // reg
     output reg wen_idu,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] rs1,
@@ -63,7 +64,6 @@ module ysyx_24080020_IDU (
 
 );
 `ifdef CONFIG_DPIC
-    import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
     import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
@@ -170,6 +170,7 @@ module ysyx_24080020_IDU (
         fencei_idu = 'b0;
 
         skip_ref_idu = 1'b0;
+        is_ebreak = 'b0;
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
@@ -439,9 +440,10 @@ module ysyx_24080020_IDU (
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
                         if(imm_idu == 32'b1) begin
-                            `ifdef CONFIG_DPIC
-                            ebreak();
-                            `endif
+                            is_ebreak = 1;
+                            // `ifdef CONFIG_DPIC
+                            // ebreak();
+                            // `endif
                         end
                         else if(imm_idu == 32'b0) begin
                             // ecall
