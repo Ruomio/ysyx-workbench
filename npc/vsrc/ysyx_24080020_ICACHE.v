@@ -999,8 +999,9 @@ module ysyx_24080020_ICACHE(
           CHIT: begin
               rdata_tmp <= shift_rdata[31:0];
 
-              if(!all_fin_ready)
-                all_fin <= 'b1;
+              all_fin <= 'b1;
+              // if(!all_fin_ready)
+              //   all_fin <= 'b1;
 
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
