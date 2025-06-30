@@ -22,9 +22,6 @@ module ysyx_24080020_MEM(
     output reg skip_ref_mem,
     output reg axi_busy,
 
-    input is_ebreak_exu,
-    output reg is_ebreak_lsu,
-
     // csrs
     input wcsren_exu,
     input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_exu,
@@ -309,8 +306,6 @@ module ysyx_24080020_MEM(
 
             skip_ref_mem <= 'b0;
 
-            is_ebreak_lsu <= 'b0;
-
         end
         else if(exu_mem_shake_hands) begin
 
@@ -345,8 +340,6 @@ module ysyx_24080020_MEM(
             pc_mem <= pc_exu;
 
             skip_ref_mem <= skip_ref_exu;
-
-            is_ebreak_lsu <= is_ebreak_exu;
 
             // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin

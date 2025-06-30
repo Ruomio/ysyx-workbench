@@ -128,7 +128,7 @@ static void trace_and_difftest(vaddr_t dnpc) {
   if (ITRACE_COND) { log_write("%s\n", inst_buf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(inst_buf)); }
-  IFDEF(CONFIG_DIFFTEST, difftest_step(last_pc, dnpc));
+  IFDEF(CONFIG_DIFFTEST, difftest_step(g_pc, g_get_dnpc()));
 
 #ifdef CONFIG_WATCH_POINT
   // scan and print all watch point and break point
@@ -219,7 +219,7 @@ void exec_once_npc(uint32_t pc) {
     if(is_clk_high) {
       g_get_pc();
       total_cycles++;
-      if(wait_cycles++ > 40000) {
+      if(wait_cycles++ > 30000) {
         printf("wait too many cycles, maybe dead loop\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
@@ -547,6 +547,22 @@ uint32_t g_get_rd() {
 #endif
 }
 
+const char *regs_name[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
+  for(int i=0; i<sizeof(ref_r->gpr)/sizeof(ref_r->gpr[0]); i++) {
+    if(ref_r->gpr[i] != g_get_reg(i)) {
+      printf("The %s reg is diff, shoud be %#x  but get %#x.\n", regs_name[i], ref_r->gpr[i], g_get_reg(i));
+      return false;
+    }
+  }
+  if(pc != g_pc) return false;
+  return true;
+}
 
 void update_npc_cpu() {
   for(int i=0; i<32; i++) {

@@ -24,8 +24,6 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
 
-    input is_ebreak_lsu,
-
     //csr
     input wcsren_mem,
     input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_mem,
@@ -47,7 +45,6 @@ module ysyx_24080020_REG
     output reg wb_mem_ready
 );
 `ifdef CONFIG_DPIC
-    import "DPI-C" function void ebreak();
     import "DPI-C" function void npc_difftest_skip_ref();
 `endif
 
@@ -168,7 +165,6 @@ module ysyx_24080020_REG
 
                 skip_ref_wb <= skip_ref_mem;
 
-
                 // wb_ifu_valid <= 1'b1;
                 if(!wen_mem) begin
                     wb_ifu_valid <= 1'b1;
@@ -176,9 +172,6 @@ module ysyx_24080020_REG
                 else begin
                     wb_ifu_valid <= 1'b0;
                 end
-                `ifdef CONFIG_DPIC
-                if(is_ebreak_lsu) ebreak();
-                `endif
             end
         end
         else begin
