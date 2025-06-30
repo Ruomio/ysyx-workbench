@@ -152,7 +152,7 @@ module ysyx_24080020_IDU (
 
 
 
-    always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2) begin
+    always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2 or ifu_idu_valid) begin
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
@@ -171,6 +171,7 @@ module ysyx_24080020_IDU (
 
         skip_ref_idu = 1'b0;
         is_ebreak = 'b0;
+
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
