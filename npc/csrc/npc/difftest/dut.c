@@ -143,7 +143,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     isa_reg_display();
   }
   // printf("ref n_pc: 0x%x, dut execd: 0x%x, dut n_pc: 0x%x\n", ref->pc, last_pc, g_pc);
-  printf("execd: 0x%x\n", last_pc);
+  printf("0x%x:\n", last_pc);
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
