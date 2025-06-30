@@ -17,6 +17,8 @@ module ysyx_24080020_IFU (
 
     output inst_fin,
 
+    output special_pc_o,
+    input special_pc_i,
     // axi-lite
     input arready,
     output reg arvalid,
@@ -43,6 +45,7 @@ module ysyx_24080020_IFU (
     wire [`ysyx_24080020_WIDTH-1:0] addr, inst;
     wire if_en;
     wire if_en_ready;
+    wire special_pc;
 
     wire inst_fin_valid;
     reg inst_fin_ready;
@@ -87,7 +90,7 @@ module ysyx_24080020_IFU (
                 pc_ifu <= raddr;
                 inst_ifu <= inst;
                 ifu_idu_valid <= 1'b1;
-                if((raddr == dnpc_exu) && flush_pipeline ) begin
+                if((raddr == dnpc_exu) && flush_pipeline && special_pc_i) begin
                     flush_pipeline <= 'b0;
                 end
 
@@ -137,11 +140,13 @@ module ysyx_24080020_IFU (
         .rst(rst),
 
         // ifu <-> pc
-        .update_pc(inst_fin_valid && inst_fin_ready),
+        // .update_pc(inst_fin_valid && inst_fin_ready),
+        .update_pc(arvalid && arready),
         .dnpc(dnpc_exu),
         .is_dnpc(is_dnpc_exu),
 
         // pc <-> ir
+        .special_pc(special_pc),
         .if_en_valid(if_en),
         .if_en_ready(if_en_ready),
         .addr(addr)
@@ -153,6 +158,7 @@ module ysyx_24080020_IFU (
         .lsu_busy(lsu_busy),
 
         // pc <-> ir
+        .special_pc_i(special_pc),
         .if_en_valid(if_en),
         .if_en_ready(if_en_ready),
         .addr(addr),
@@ -162,6 +168,7 @@ module ysyx_24080020_IFU (
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
+        .special_pc_o(special_pc_o),
         // axi-lite
         .arvalid(arvalid),
         .araddr(araddr),

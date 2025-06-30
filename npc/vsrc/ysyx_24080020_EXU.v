@@ -12,6 +12,9 @@ module ysyx_24080020_EXU
     input skip_ref_idu,
     output reg skip_ref_exu,
 
+    input is_ebreak_idu,
+    output reg is_ebreak_exu,
+
     // branch
     input is_jalr_idu,
     input is_dnpc_idu,
@@ -209,6 +212,7 @@ module ysyx_24080020_EXU
             exu_mem_valid <= 'b0;
 
             skip_ref_exu <= 'b0;
+            is_ebreak_exu <= 'b0;
 
         end
         else if(idu_exu_shake_hand) begin
@@ -254,6 +258,8 @@ module ysyx_24080020_EXU
             fencei_exu <= fencei_idu;
 
             skip_ref_exu <= skip_ref_idu;
+
+            is_ebreak_exu <= is_ebreak_idu;
 
             // exu_mem_valid <= 1'b1;
 
