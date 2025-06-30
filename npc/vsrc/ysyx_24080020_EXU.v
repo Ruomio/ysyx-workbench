@@ -296,7 +296,7 @@ module ysyx_24080020_EXU
         end
     end
 
-    assign alu_src1 = src1_exu;
+    assign alu_src1 = src1_idu;
     assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
 
     ysyx_24080020_ALU alu(
