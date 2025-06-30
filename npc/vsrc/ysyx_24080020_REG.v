@@ -25,6 +25,7 @@ module ysyx_24080020_REG
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
 
     input is_ebreak_lsu,
+    output [`ysyx_24080020_WIDTH-1:0] result,
 
     //csr
     input wcsren_mem,
@@ -80,7 +81,6 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
 
     // reg [`ysyx_24080020_WIDTH-1:0] result;
-    wire [`ysyx_24080020_WIDTH-1:0] result;
 
     assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
     // always @(mrdata_wb or alu_out_wb or is_load_wb) begin

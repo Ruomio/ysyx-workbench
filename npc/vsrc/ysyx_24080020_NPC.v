@@ -101,6 +101,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] src1_idu, src1_exu;
   wire [`ysyx_24080020_WIDTH-1:0] src2_idu, src2_exu, src2_mem;
   wire [`ysyx_24080020_WIDTH-1:0] val_raddr1, val_raddr2;
+  wire [`ysyx_24080020_WIDTH-1:0] result_wb;
   // csrs
   wire is_csrtype_idu;
   wire wcsren_idu, wcsren_exu, wcsren_mem, wcsren_wb;
@@ -327,6 +328,11 @@ module ysyx_24080020_NPC(
 
   wire is_ebreak_idu, is_ebreak_exu, is_ebreak_lsu;
 
+  // forward
+  wire [`ysyx_24080020_WIDTH-1:0] rd_data1_forward;
+  wire [`ysyx_24080020_WIDTH-1:0] rd_data2_forward;
+  wire rs1_conflict;
+  wire rs2_conflict;
 
 
     ysyx_24080020_IFU ifu(
@@ -443,6 +449,7 @@ module ysyx_24080020_NPC(
         .mrdata_mem(mrdata_mem),
         .alu_out_mem(alu_out_mem),
         .waddr_wb(waddr_wb),
+        .result(result_wb),
 
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
@@ -1102,6 +1109,28 @@ module ysyx_24080020_NPC(
         .exu_lsu_shake_hands(exu_mem_shake_hands),
         .control_adventure(control_adventure)
 
+    );
+
+    ysyx_24080020_FORWARD u_forward(
+		.clk(clk),
+		.rst(rst),
+
+		.rs1_idu(rs1),
+		.rs2_idu(rs2),
+
+		.rd_exu(waddr_exu),
+		.rd_data_exu(alu_out_exu),
+
+		.rd_lsu(waddr_mem),
+		.rd_data_lsu(alu_out_mem),
+
+		.rd_wbu(waddr_wb),
+		.rd_data_wbu(result_wb),
+
+		.rd_data1_forward(rd_data1_forward),
+		.rd_data2_forward(rd_data2_forward),
+		.rs1_conflict(rs1_conflict),
+		.rs2_conflict(rs2_conflict)
     );
 
     // slave

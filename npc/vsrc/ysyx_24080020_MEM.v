@@ -264,6 +264,50 @@ module ysyx_24080020_MEM(
             else if(next_inst) begin
                 mem_exu_ready <= 1'b1;
 
+                // update reg
+                wen_mem <= wen_exu;
+                waddr_mem <= waddr_exu;
+
+                is_load_mem <= is_load_exu;
+                is_dnpc_mem <= is_dnpc_exu;
+                dnpc_mem <= dnpc_new_exu;
+
+                mren_mem <= mren_exu;
+                mrtype_mem <= mrtype_exu;
+                mrlen_mem <= mrlen_exu;
+                mraddr_mem <= mraddr_exu;
+                mwen_mem <= mwen_exu;
+                mwmask_mem <= mwmask_exu;
+                mwaddr_mem <= mwaddr_exu;
+                mwdata_mem <= mwdata_exu;
+
+                alu_out_mem <= alu_out_exu;
+
+                wcsren_mem <= wcsren_exu;
+                wcsraddr_mem <= wcsraddr_exu;
+                wcsrdata_mem <= wcsrdata_exu;
+                wcsren2_mem <= wcsren2_exu;
+                wcsraddr2_mem <= wcsraddr2_exu;
+                wcsrdata2_mem <= wcsrdata2_exu;
+
+                fencei_mem <= fencei_exu;
+
+                pc_mem <= pc_exu;
+
+                skip_ref_mem <= skip_ref_exu;
+
+                is_ebreak_lsu <= is_ebreak_exu;
+
+                next_inst <= 'b0;
+
+                // mem_wb_valid <= 1'b1;
+                if(!mwen_exu && !mren_exu) begin
+                    mem_wb_valid <= 1'b1;
+                end
+                if(mren_exu && !structural_adventure) begin
+                    axi_busy <= 'b1;
+                end
+
             end
         end
         else begin
@@ -313,54 +357,7 @@ module ysyx_24080020_MEM(
 
         end
         else if(exu_mem_shake_hands) begin
-
-            // update reg
-            wen_mem <= wen_exu;
-            waddr_mem <= waddr_exu;
-
-            is_load_mem <= is_load_exu;
-            is_dnpc_mem <= is_dnpc_exu;
-            dnpc_mem <= dnpc_new_exu;
-
-            mren_mem <= mren_exu;
-            mrtype_mem <= mrtype_exu;
-            mrlen_mem <= mrlen_exu;
-            mraddr_mem <= mraddr_exu;
-            mwen_mem <= mwen_exu;
-            mwmask_mem <= mwmask_exu;
-            mwaddr_mem <= mwaddr_exu;
-            mwdata_mem <= mwdata_exu;
-
-            alu_out_mem <= alu_out_exu;
-
-            wcsren_mem <= wcsren_exu;
-            wcsraddr_mem <= wcsraddr_exu;
-            wcsrdata_mem <= wcsrdata_exu;
-            wcsren2_mem <= wcsren2_exu;
-            wcsraddr2_mem <= wcsraddr2_exu;
-            wcsrdata2_mem <= wcsrdata2_exu;
-
-            fencei_mem <= fencei_exu;
-
-            pc_mem <= pc_exu;
-
-            skip_ref_mem <= skip_ref_exu;
-
-            is_ebreak_lsu <= is_ebreak_exu;
-
-            // mem_wb_valid <= 1'b1;
-            if(!mwen_exu && !mren_exu) begin
-                mem_wb_valid <= 1'b1;
-            end
-            else begin
-                mem_wb_valid <= 1'b0;
-            end
-            if(mren_exu && !structural_adventure) begin
-                axi_busy <= 'b1;
-            end
-
             exu_mem_shake_hands <= 1'b0;
-            next_inst <= 'b0;
         end
         else begin
           fencei_mem <= 'b0;
