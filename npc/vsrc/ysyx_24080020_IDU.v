@@ -14,6 +14,7 @@ module ysyx_24080020_IDU (
     output reg [`ysyx_24080020_WIDTH-1:0] imm_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
 
+    output reg is_ebreak,
     // reg
     output reg wen_idu,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] rs1,
@@ -63,9 +64,8 @@ module ysyx_24080020_IDU (
 
 );
 `ifdef CONFIG_DPIC
-    import "DPI-C" function void ebreak();
     import "DPI-C" function void invalid_inst();
-    import "DPI-C" function void halt();
+    // import "DPI-C" function void halt();
     import "DPI-C" function void update_ftrace_dpi();
     import "DPI-C" function void statistics_idu_calculate_type();
     import "DPI-C" function void statistics_idu_load_type();
@@ -145,14 +145,14 @@ module ysyx_24080020_IDU (
         else if(cnt == 1'b1) begin
             if(!flush_pipeline) begin
                 idu_exu_valid <= 1'b1;
+                cnt <= 1'b0;
             end
-            cnt <= 1'b0;
         end
     end
 
 
 
-    always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2) begin
+    always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2 or ifu_idu_valid) begin
         // initial
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
@@ -170,6 +170,8 @@ module ysyx_24080020_IDU (
         fencei_idu = 'b0;
 
         skip_ref_idu = 1'b0;
+        is_ebreak = 'b0;
+
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
@@ -439,9 +441,10 @@ module ysyx_24080020_IDU (
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
                         if(imm_idu == 32'b1) begin
-                            `ifdef CONFIG_DPIC
-                            ebreak();
-                            `endif
+                            is_ebreak = 1;
+                            // `ifdef CONFIG_DPIC
+                            // ebreak();
+                            // `endif
                         end
                         else if(imm_idu == 32'b0) begin
                             // ecall
@@ -555,7 +558,7 @@ module ysyx_24080020_IDU (
                 `endif
                 if(imm_idu == 32'b0) begin
                     `ifdef CONFIG_DPIC
-                    halt();
+                    // halt();
                     `endif
                 end
                 `ifdef CONFIG_DPIC

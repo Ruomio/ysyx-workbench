@@ -5,6 +5,7 @@ module ysyx_24080020_IR(
     input lsu_busy,
 
     // pc <-> ir
+    input special_pc_i,
     input [`ysyx_24080020_WIDTH-1:0] addr,
     input if_en_valid,
     output reg if_en_ready,
@@ -14,6 +15,7 @@ module ysyx_24080020_IR(
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
     input inst_fin_ready,
 
+    output reg special_pc_o,
     // axi-full
     output reg arvalid,
     output reg [1:0] arburst,
@@ -72,6 +74,8 @@ module ysyx_24080020_IR(
             arlen <= 'b0;
             arburst <= 'b0;
             arid <= 'b0;
+
+            special_pc_o <= special_pc_i;
 
             if_en_ready <= 'b1;
         end

@@ -10,6 +10,7 @@ module ysyx_24080020_PC (
 
     // pc <-> ir
     input if_en_ready,
+    output reg special_pc,
     output reg if_en_valid,
     output reg [`ysyx_24080020_WIDTH-1:0] addr
 );
@@ -25,7 +26,7 @@ module ysyx_24080020_PC (
             first_if <= 1'b0;
             pc_en <= 'b1;
         end
-        else if(update_pc) begin
+        else if(update_pc && !pc_en) begin
             pc_en <= 'b1;
         end
     end
@@ -33,13 +34,15 @@ module ysyx_24080020_PC (
     always @(posedge clk) begin
         if(!rst) begin
             pc_en <= 'b1;
+            special_pc <= 'b0;
         end
         else if(if_en_valid && if_en_ready) begin
             if_en_valid <= 'b0;
+            special_pc <= 'b0;
         end
         else if(pc_en) begin
-            pc_en <= 'b0;
             if_en_valid <= 'b1;
+            pc_en <= 'b0;
 
             if(!first_if) begin
                 first_if <= 1'b1;
@@ -49,6 +52,7 @@ module ysyx_24080020_PC (
                 if(is_dnpc_pc) begin
                     addr <= dnpc_pc;
                     is_dnpc_pc <= 'b0;
+                    special_pc <= 'b1;
                 end
                 else begin
                     addr <=  addr + 32'd4;
