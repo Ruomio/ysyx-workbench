@@ -182,6 +182,8 @@ module ysyx_24080020_IDU (
         skip_ref_idu = 1'b0;
         is_ebreak = 'b0;
 
+        waddr_idu = 'b0;
+
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
