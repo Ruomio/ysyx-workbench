@@ -646,9 +646,9 @@ module ysyx_24080020_IDU (
 
             default: begin
                 imm_idu = 32'b0;
-                `ifdef CONFIG_DPIC
-                invalid_inst();
-                `endif
+                // `ifdef CONFIG_DPIC
+                // invalid_inst();
+                // `endif
             end
         endcase
     end
