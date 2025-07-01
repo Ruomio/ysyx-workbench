@@ -126,7 +126,7 @@ module ysyx_24080020_IDU (
         end
         else if(ifu_idu_valid) begin
             if(idu_exu_valid) idu_ifu_ready <= 1'b0;
-            else begin
+            else if(!need_stall) begin
                 // shake hands successfully
                 idu_ifu_ready <= 1'b1;
 
@@ -150,7 +150,7 @@ module ysyx_24080020_IDU (
             cnt <= 1'b0;
         end
         else if(cnt == 1'b1) begin
-            if(!flush_pipeline && !need_stall) begin
+            if(!flush_pipeline) begin
                 idu_exu_valid <= 1'b1;
                 cnt <= 1'b0;
             end
