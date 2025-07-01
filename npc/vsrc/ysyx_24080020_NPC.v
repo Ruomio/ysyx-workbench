@@ -375,6 +375,11 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IDU idu(
         .clk(clk),
         .rst(rst),
+
+        .rs1_conflict(rs1_conflict),
+        .rs2_conflict(rs2_conflict),
+        .rd_data1_forward(rd_data1_forward),
+        .rd_data2_forward(rd_data2_forward),
         .data_adventure(data_adventure),
         .flush_pipeline(flush_pipeline),
 

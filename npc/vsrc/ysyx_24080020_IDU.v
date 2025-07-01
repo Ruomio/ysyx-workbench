@@ -588,7 +588,8 @@ module ysyx_24080020_IDU (
                 alu_src2_con_idu = 1'b0;
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
-                branch_src1_idu = val_raddr1;
+                // branch_src1_idu = val_raddr1;
+                branch_src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
 
                 is_jalr_idu = 1'b1;
                 // update_ftrace_dpi();
