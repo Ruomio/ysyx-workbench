@@ -126,6 +126,13 @@ module ysyx_24080020_IDU (
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
             idu_ifu_ready <= 1'b0;
+
+            // update inst reg
+            pc_idu <= pc_ifu;
+            inst_idu <= inst_ifu;
+
+            // idu_exu_valid <= 1'b1;
+            cnt <= 1'b1;
         end
         else if(ifu_idu_valid) begin
             if(idu_exu_valid) idu_ifu_ready <= 1'b0;
@@ -133,12 +140,6 @@ module ysyx_24080020_IDU (
                 // shake hands successfully
                 idu_ifu_ready <= 1'b1;
 
-                // update inst reg
-                pc_idu <= pc_ifu;
-                inst_idu <= inst_ifu;
-
-                // idu_exu_valid <= 1'b1;
-                cnt <= 1'b1;
             end
         end
         else begin
