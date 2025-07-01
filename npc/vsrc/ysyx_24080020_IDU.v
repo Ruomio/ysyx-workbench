@@ -150,7 +150,7 @@ module ysyx_24080020_IDU (
             cnt <= 1'b0;
         end
         else if(cnt == 1'b1) begin
-            if(!flush_pipeline && !is_load_mem) begin
+            if(!flush_pipeline) begin
                 idu_exu_valid <= 1'b1;
                 cnt <= 1'b0;
             end
