@@ -100,6 +100,7 @@ module ysyx_24080020_IDU (
     always @(posedge clk) begin
         if(!rst) begin
             state <= 1'b0;
+            idu_exu_valid <= 'b0;
         end
         else if(!state) begin
             if(idu_exu_valid) state <= 1'b1;

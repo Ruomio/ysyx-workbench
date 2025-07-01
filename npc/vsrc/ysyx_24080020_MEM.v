@@ -300,13 +300,6 @@ module ysyx_24080020_MEM(
 
                 next_inst <= 'b0;
 
-                // mem_wb_valid <= 1'b1;
-                if(!mwen_exu && !mren_exu) begin
-                    mem_wb_valid <= 1'b1;
-                end
-                if(mren_exu && !structural_adventure) begin
-                    axi_busy <= 'b1;
-                end
 
             end
         end
@@ -358,6 +351,14 @@ module ysyx_24080020_MEM(
         end
         else if(exu_mem_shake_hands) begin
             exu_mem_shake_hands <= 1'b0;
+
+            // mem_wb_valid <= 1'b1;
+            if(!mwen_exu && !mren_exu) begin
+                mem_wb_valid <= 1'b1;
+            end
+            if(mren_exu && !structural_adventure) begin
+                axi_busy <= 'b1;
+            end
         end
         else begin
           fencei_mem <= 'b0;
