@@ -260,6 +260,7 @@ module ysyx_24080020_MEM(
         else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
             else if(mem_exu_ready) begin
+                mem_exu_ready <= 'b0;
                 exu_mem_shake_hands <= 1'b1;
             end
             else if(next_inst) begin
@@ -304,10 +305,6 @@ module ysyx_24080020_MEM(
 
             end
         end
-        else begin
-            mem_exu_ready <= 1'b0;
-        end
-
     end
 
     always @(posedge clk) begin
