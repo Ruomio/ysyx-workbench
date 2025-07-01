@@ -3,7 +3,7 @@ module ysyx_24080020_IDU (
     input clk,
     input rst,
     input data_adventure,
-    input is_load_mem,
+    input need_stall,
     input rs1_conflict,
     input rs2_conflict,
     input [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
@@ -150,7 +150,7 @@ module ysyx_24080020_IDU (
             cnt <= 1'b0;
         end
         else if(cnt == 1'b1) begin
-            if(!flush_pipeline) begin
+            if(!flush_pipeline && !need_stall) begin
                 idu_exu_valid <= 1'b1;
                 cnt <= 1'b0;
             end

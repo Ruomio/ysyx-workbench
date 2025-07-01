@@ -252,6 +252,7 @@ module ysyx_24080020_MEM(
             mem_wb_valid <= 1'b0;
 
             waddr_mem <= 'b0;
+            is_load_mem <= 'b0;
 
             next_inst <= 'b1;
 

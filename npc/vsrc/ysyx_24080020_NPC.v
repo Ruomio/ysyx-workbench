@@ -333,6 +333,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] rd_data2_forward;
   wire rs1_conflict;
   wire rs2_conflict;
+  wire need_stall;
 
 
     ysyx_24080020_IFU ifu(
@@ -376,7 +377,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .is_load_mem(is_load_mem),
+        .need_stall(need_stall),
         .rs1_conflict(rs1_conflict),
         .rs2_conflict(rs2_conflict),
         .rd_data1_forward(rd_data1_forward),
@@ -1129,10 +1130,14 @@ module ysyx_24080020_NPC(
 
 		.rd_lsu(waddr_mem),
 		.rd_data_lsu(alu_out_mem),
+		.is_load(is_load_mem),
+		.mrdata(mrdata_mem),
+		.fin_load(mem_wb_valid),
 
 		.rd_wbu(waddr_wb),
 		.rd_data_wbu(result_wb),
 
+		.need_stall(need_stall),
 		.rd_data1_forward(rd_data1_forward),
 		.rd_data2_forward(rd_data2_forward),
 		.rs1_conflict(rs1_conflict),
