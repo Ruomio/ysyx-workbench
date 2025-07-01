@@ -151,7 +151,6 @@ $(V_CPP_FILES):
 v_to_cpp: $(VSRC)
 	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
 	@make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
-	@echo v_to_cpp done
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
