@@ -262,9 +262,6 @@ module ysyx_24080020_MEM(
             else if(mem_exu_ready) begin
                 mem_exu_ready <= 'b0;
                 exu_mem_shake_hands <= 1'b1;
-            end
-            else if(next_inst) begin
-                mem_exu_ready <= 1'b1;
 
                 // update reg
                 wen_mem <= wen_exu;
@@ -301,6 +298,10 @@ module ysyx_24080020_MEM(
                 is_ebreak_lsu <= is_ebreak_exu;
 
                 next_inst <= 'b0;
+
+            end
+            else if(next_inst) begin
+                mem_exu_ready <= 1'b1;
 
 
             end
