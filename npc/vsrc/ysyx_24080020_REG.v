@@ -184,6 +184,11 @@ module ysyx_24080020_REG
                 `endif
             end
         end
+        else begin
+            // wb_ifu_valid <= 1'b1;
+            wb_mem_ready <= 1'b0;
+        end
+
     end
 
     // regs write
