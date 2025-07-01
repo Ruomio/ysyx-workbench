@@ -160,10 +160,6 @@ module ysyx_24080020_EXU
             if(exu_mem_valid) exu_idu_ready <=  1'b0;
             else if(exu_idu_ready) begin
                 idu_exu_shake_hand <= 'b1;
-            end
-            else begin
-                // shake hand successfully
-                exu_idu_ready <= 1'b1;
 
                 // update all reg type control wire
                 wen_exu <= wen_idu;
@@ -208,6 +204,11 @@ module ysyx_24080020_EXU
 
                 is_ebreak_exu <= is_ebreak_idu;
 
+
+            end
+            else begin
+                // shake hand successfully
+                exu_idu_ready <= 1'b1;
 
 
             end
