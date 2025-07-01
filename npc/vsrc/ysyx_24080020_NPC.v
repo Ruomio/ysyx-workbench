@@ -376,6 +376,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
+        .is_load_mem(is_load_mem),
         .rs1_conflict(rs1_conflict),
         .rs2_conflict(rs2_conflict),
         .rd_data1_forward(rd_data1_forward),
