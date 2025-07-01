@@ -109,6 +109,8 @@ module ysyx_24080020_EXU
 
     reg cnt;
 
+    reg idu_exu_shake_hand;
+
 
 
     // memory
@@ -156,6 +158,9 @@ module ysyx_24080020_EXU
         // end
         else if(idu_exu_valid) begin
             if(exu_mem_valid) exu_idu_ready <=  1'b0;
+            else if(exu_idu_ready) begin
+                idu_exu_shake_hand <= 'b1;
+            end
             else begin
                 // shake hand successfully
                 exu_idu_ready <= 1'b1;
@@ -195,7 +200,7 @@ module ysyx_24080020_EXU
 
                 is_csrtype_exu <= is_csrtype_idu;
 
-                cnt <= 1'b1;
+                // cnt <= 1'b1;
 
                 fencei_exu <= fencei_idu;
 
@@ -215,6 +220,7 @@ module ysyx_24080020_EXU
 
     always @(posedge clk) begin
         if(!rst) begin
+            idu_exu_shake_hand <= 1'b0;
 
             wen_exu <= 'b0;
             waddr_exu <= 'b0;
@@ -257,6 +263,12 @@ module ysyx_24080020_EXU
 
             skip_ref_exu <= 'b0;
             is_ebreak_exu <= 'b0;
+
+        end
+        else if(idu_exu_shake_hand) begin
+            idu_exu_shake_hand <= 1'b0;
+
+            cnt <= 1'b1;
         end
     end
 
