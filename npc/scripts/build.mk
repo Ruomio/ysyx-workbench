@@ -93,7 +93,9 @@ VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
 CSRC += $(shell find csrc -name "*.c" -or -name "*.cpp")
 V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
-#
+
+V_CPP_FILES := $(addprefix $(OBJ_DIR)/, verilated.cpp, verited_threads.cpp, verited_vcd_c.cpp)
+
 # # parameters
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
 override ARGS += --diff=$(DIFFTEST_REF_SO) $(NPCFLAGS)
@@ -140,11 +142,13 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-$(BIN): v_to_cpp
+$(BIN): v_to_cpp $(V_CPP_FILES)
 	@make link
 
-v_to_cpp: $(VSRC)
+$(V_CPP_FILES):
 	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
+
+v_to_cpp: $(VSRC)
 	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
 	@make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
 	@echo v_to_cpp done
