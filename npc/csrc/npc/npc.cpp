@@ -637,6 +637,10 @@ extern "C" void statistics_icache_hit() {
   ifu_icache_hit_cnt ++;
 }
 
+extern "C" void statistics_icache_miss_hit_cnt() {
+    ifu_icache_hit_cnt --;
+}
+
 extern "C" void statistics_dcache_hit() {
   dcache_hit_cnt ++;
 }
