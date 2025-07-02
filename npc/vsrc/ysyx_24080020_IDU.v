@@ -121,7 +121,7 @@ module ysyx_24080020_IDU (
     end
 
     always @(posedge clk) begin
-        if(idu_exu_valid_reg && exu_idu_ready && state) begin
+        if(idu_exu_valid_reg && exu_idu_ready && state &&!cnt) begin
             idu_exu_valid <= 1'b0;
             inst_idu <= 'b0;
         end
