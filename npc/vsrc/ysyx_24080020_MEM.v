@@ -13,7 +13,6 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
-    output reg mwen_mem,
 
     input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
@@ -112,7 +111,7 @@ module ysyx_24080020_MEM(
     assign wvalid_reg = wvalid;
 
     reg mren_mem;
-    // reg mwen_mem;
+    reg mwen_mem;
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;

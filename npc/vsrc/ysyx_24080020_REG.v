@@ -23,7 +23,6 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
     input [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
-    input mwen_mem,
 
     input is_ebreak_lsu,
     output [`ysyx_24080020_WIDTH-1:0] result,
@@ -51,12 +50,6 @@ module ysyx_24080020_REG
 `ifdef CONFIG_DPIC
     import "DPI-C" function void ebreak();
     import "DPI-C" function void npc_difftest_skip_ref();
-    import "DPI-C" function void update_ftrace_dpi();
-    import "DPI-C" function void statistics_idu_calculate_type();
-    import "DPI-C" function void statistics_idu_load_type();
-    import "DPI-C" function void statistics_idu_store_type();
-    import "DPI-C" function void statistics_idu_csr_type();
-    import "DPI-C" function void statistics_idu_jump_type();
 `endif
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
@@ -181,12 +174,6 @@ module ysyx_24080020_REG
 
             `ifdef CONFIG_DPIC
             if(is_ebreak_lsu) ebreak();
-
-            if(is_load_mem) statistics_idu_load_type();
-            else if(mwen_mem) statistics_idu_store_type();
-            else if(wcsren_mem) statistics_idu_csr_type();
-            else if(is_dnpc_mem) statistics_idu_jump_type();
-            else statistics_idu_calculate_type();
             `endif
         end
         else if(mem_wb_valid) begin

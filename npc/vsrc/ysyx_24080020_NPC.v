@@ -457,7 +457,6 @@ module ysyx_24080020_NPC(
         .alu_out_mem(alu_out_mem),
         .waddr_wb(waddr_wb),
         .result(result_wb),
-        .mwen_mem(mwen_mem),
 
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
@@ -576,7 +575,6 @@ module ysyx_24080020_NPC(
         .mwaddr_exu(mwaddr_exu),
         .mwdata_exu(mwdata_exu),
         .mrdata_mem(mrdata_mem),
-        .mwen_mem(mwen_mem),
         .exu_mem_shake_hands(exu_mem_shake_hands),
 
         .alu_out_exu(alu_out_exu),
