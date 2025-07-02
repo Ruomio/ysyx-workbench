@@ -334,6 +334,7 @@ module ysyx_24080020_NPC(
   wire rs1_conflict;
   wire rs2_conflict;
   wire need_stall;
+  wire need_stall_imme;
 
 
     ysyx_24080020_IFU ifu(
@@ -377,7 +378,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .need_stall(need_stall),
+        .need_stall(need_stall | need_stall_imme),
         .rs1_conflict(rs1_conflict),
         .rs2_conflict(rs2_conflict),
         .rd_data1_forward(rd_data1_forward),
@@ -1138,6 +1139,7 @@ module ysyx_24080020_NPC(
 		.rd_data_wbu(result_wb),
 
 		.need_stall(need_stall),
+		.need_stall_imme(need_stall_imme),
 		.rd_data1_forward(rd_data1_forward),
 		.rd_data2_forward(rd_data2_forward),
 		.rs1_conflict(rs1_conflict),

@@ -19,6 +19,7 @@ module ysyx_24080020_FORWARD(
     input [`ysyx_24080020_WIDTH-1:0] rd_data_wbu,
 
     output reg need_stall,
+    output need_stall_imme,
     output reg [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
     output reg [`ysyx_24080020_WIDTH-1:0] rd_data2_forward,
     output reg rs1_conflict,
@@ -42,6 +43,9 @@ module ysyx_24080020_FORWARD(
                                 rs2_idu == rd_wbu ? rd_data_wbu :
                                 'b0
                             : 'b0;
+
+
+    assign need_stall_imme = is_load && !is_load_next;
 
     always @(posedge clk) begin
         if(!rst) begin
