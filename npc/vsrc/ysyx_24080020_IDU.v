@@ -123,6 +123,7 @@ module ysyx_24080020_IDU (
     always @(posedge clk) begin
         if(idu_exu_valid_reg && exu_idu_ready && state) begin
             idu_exu_valid <= 1'b0;
+            inst_idu <= 'b0;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
             idu_ifu_ready <= 1'b0;
