@@ -44,6 +44,7 @@ module ysyx_24080020_IFU (
 
     `ifdef CONFIG_DPIC
     import "DPI-C" function void statistics_icache_miss_hit_cnt();
+    import "DPI-C" function void statistics_ifu_get_inst();
     `endif
 
     wire [`ysyx_24080020_WIDTH-1:0] addr, inst;
@@ -116,6 +117,9 @@ module ysyx_24080020_IFU (
         end
         else if(ifu_idu_valid && idu_ifu_ready && state) begin
             ifu_idu_valid <= 1'b0;
+            `ifdef CONFIG_DPIC
+            statistics_ifu_get_inst();
+            `endif
         end
         else if(wb_ifu_valid) begin
             if(ifu_idu_valid) begin
