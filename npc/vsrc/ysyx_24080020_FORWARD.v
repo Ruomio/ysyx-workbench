@@ -45,7 +45,7 @@ module ysyx_24080020_FORWARD(
                             : 'b0;
 
 
-    assign need_stall_imme = is_load && !is_load_next;
+    assign need_stall_imme = is_load;
 
     always @(posedge clk) begin
         if(!rst) begin
