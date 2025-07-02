@@ -25,6 +25,7 @@ module ysyx_24080020_REG
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
 
     input is_ebreak_lsu,
+    output [`ysyx_24080020_WIDTH-1:0] result,
 
     //csr
     input wcsren_mem,
@@ -80,7 +81,6 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
 
     // reg [`ysyx_24080020_WIDTH-1:0] result;
-    wire [`ysyx_24080020_WIDTH-1:0] result;
 
     assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
     // always @(mrdata_wb or alu_out_wb or is_load_wb) begin
@@ -141,51 +141,50 @@ module ysyx_24080020_REG
             end
 `endif
         end
+        else if(mem_wb_valid && wb_mem_ready) begin
+            wb_mem_ready <= 'b0;
+
+            // shake hands successfully
+            wen_wb <= wen_mem;
+            waddr_wb <= waddr_mem;
+            mrdata_wb <= mrdata_mem;
+
+            wcsren_wb <= wcsren_mem;
+            wcsraddr_wb <= wcsraddr_mem;
+            wcsrdata_wb <= wcsrdata_mem;
+
+            wcsren2_wb <= wcsren2_mem;
+            wcsraddr2_wb <= wcsraddr2_mem;
+            wcsrdata2_wb <= wcsrdata2_mem;
+
+            alu_out_wb <= alu_out_mem;
+            is_load_wb <= is_load_mem;
+
+            is_dnpc_wb <= is_dnpc_mem;
+            dnpc_wb <= dnpc_mem;
+            pc_wbu <= pc_lsu;
+
+            skip_ref_wb <= skip_ref_mem;
+
+
+            // wb_ifu_valid <= 1'b1;
+            if(!wen_mem) begin
+                wb_ifu_valid <= 1'b1;
+            end
+            else begin
+                wb_ifu_valid <= 1'b0;
+            end
+            `ifdef CONFIG_DPIC
+            if(is_ebreak_lsu) ebreak();
+            `endif
+        end
         else if(mem_wb_valid) begin
             if(wb_ifu_valid) wb_mem_ready <= 1'b0;
             else begin
                 wb_mem_ready <= 1'b1;
 
-                // shake hands successfully
-                wen_wb <= wen_mem;
-                waddr_wb <= waddr_mem;
-                mrdata_wb <= mrdata_mem;
-
-                wcsren_wb <= wcsren_mem;
-                wcsraddr_wb <= wcsraddr_mem;
-                wcsrdata_wb <= wcsrdata_mem;
-
-                wcsren2_wb <= wcsren2_mem;
-                wcsraddr2_wb <= wcsraddr2_mem;
-                wcsrdata2_wb <= wcsrdata2_mem;
-
-                alu_out_wb <= alu_out_mem;
-                is_load_wb <= is_load_mem;
-
-                is_dnpc_wb <= is_dnpc_mem;
-                dnpc_wb <= dnpc_mem;
-                pc_wbu <= pc_lsu;
-
-                skip_ref_wb <= skip_ref_mem;
-
-
-                // wb_ifu_valid <= 1'b1;
-                if(!wen_mem) begin
-                    wb_ifu_valid <= 1'b1;
-                end
-                else begin
-                    wb_ifu_valid <= 1'b0;
-                end
-                `ifdef CONFIG_DPIC
-                if(is_ebreak_lsu) ebreak();
-                `endif
             end
         end
-        else begin
-            // wb_ifu_valid <= 1'b1;
-            wb_mem_ready <= 1'b0;
-        end
-
     end
 
     // regs write

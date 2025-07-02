@@ -141,29 +141,76 @@ module ysyx_24080020_EXU
 
     // bus
     always @(posedge clk) begin
-        if(mem_exu_ready && exu_mem_valid) begin
+        if(!rst) begin
+            exu_mem_valid <= 'b0;
+            exu_idu_ready <= 1'b0;
+        end
+        else if(mem_exu_ready && exu_mem_valid && state) begin
             exu_mem_valid <= 1'b0;
             is_dnpc_exu <= 'b0;
+            waddr_exu <= 'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif
         end
-        else if(mem_exu_ready && !exu_mem_valid) begin
-            waddr_exu <= 'b0;
-        end
         else if(idu_exu_valid) begin
             if(exu_mem_valid) exu_idu_ready <=  1'b0;
+            else if(exu_idu_ready) begin
+                exu_idu_ready <= 'b0;
+                idu_exu_shake_hand <= 'b1;
+
+                // update all reg type control wire
+                wen_exu <= wen_idu;
+                waddr_exu <= waddr_idu;
+                wdata_exu <= wdata_idu;
+
+                mwen_exu <= mwen_idu;
+                mwmask_exu <= mwmask_idu;
+                mren_exu <= mren_idu;
+                mrtype_exu <= mrtype_idu;
+                mrlen_exu <= mrlen_idu;
+
+                is_load_exu <= is_load_idu;
+                is_dnpc_exu <= is_dnpc_idu;
+                branch_src1_exu <= branch_src1_idu;
+
+                alu_op_exu <= alu_op_idu;
+                alu_src2_con_exu <= alu_src2_con_idu;
+                // reg_dst_con_exu <= reg_dst_con_idu;
+                imm_exu <= imm_idu;
+
+                src1_exu <= src1_idu;
+                src2_exu <= src2_idu;
+                pc_exu <= pc_idu;
+                dnpc_exu <= dnpc_idu;
+                is_jalr_exu <= is_jalr_idu;
+
+                wcsren_exu <= wcsren_idu;
+                wcsraddr_exu <= wcsraddr_idu;
+                wcsrdata_exu <= wcsrdata_idu;
+                wcsren2_exu <= wcsren2_idu;
+                wcsraddr2_exu <= wcsraddr2_idu;
+                wcsrdata2_exu <= wcsrdata2_idu;
+
+                is_csrtype_exu <= is_csrtype_idu;
+
+                // cnt <= 1'b1;
+
+                fencei_exu <= fencei_idu;
+
+                skip_ref_exu <= skip_ref_idu;
+
+                is_ebreak_exu <= is_ebreak_idu;
+
+
+            end
             else begin
                 // shake hand successfully
                 exu_idu_ready <= 1'b1;
-
-                idu_exu_shake_hand <= 1'b1;
-
             end
         end
         else begin
             // exu_mem_valid <= 1'b1;
-            exu_idu_ready <= 1'b0;
         end
     end
 
@@ -209,7 +256,6 @@ module ysyx_24080020_EXU
 
             fencei_exu <= 'b0;
 
-            exu_mem_valid <= 'b0;
 
             skip_ref_exu <= 'b0;
             is_ebreak_exu <= 'b0;
@@ -218,51 +264,7 @@ module ysyx_24080020_EXU
         else if(idu_exu_shake_hand) begin
             idu_exu_shake_hand <= 1'b0;
 
-            // update all reg type control wire
-            wen_exu <= wen_idu;
-            waddr_exu <= waddr_idu;
-            wdata_exu <= wdata_idu;
-
-            mwen_exu <= mwen_idu;
-            mwmask_exu <= mwmask_idu;
-            mren_exu <= mren_idu;
-            mrtype_exu <= mrtype_idu;
-            mrlen_exu <= mrlen_idu;
-
-            is_load_exu <= is_load_idu;
-            is_dnpc_exu <= is_dnpc_idu;
-            branch_src1_exu <= branch_src1_idu;
-
-            alu_op_exu <= alu_op_idu;
-            alu_src2_con_exu <= alu_src2_con_idu;
-            // reg_dst_con_exu <= reg_dst_con_idu;
-            imm_exu <= imm_idu;
-
-            src1_exu <= src1_idu;
-            src2_exu <= src2_idu;
-            pc_exu <= pc_idu;
-            dnpc_exu <= dnpc_idu;
-            is_jalr_exu <= is_jalr_idu;
-
-            wcsren_exu <= wcsren_idu;
-            wcsraddr_exu <= wcsraddr_idu;
-            wcsrdata_exu <= wcsrdata_idu;
-            wcsren2_exu <= wcsren2_idu;
-            wcsraddr2_exu <= wcsraddr2_idu;
-            wcsrdata2_exu <= wcsrdata2_idu;
-
-            is_csrtype_exu <= is_csrtype_idu;
-
             cnt <= 1'b1;
-
-            fencei_exu <= fencei_idu;
-
-            skip_ref_exu <= skip_ref_idu;
-
-            is_ebreak_exu <= is_ebreak_idu;
-
-            // exu_mem_valid <= 1'b1;
-
         end
     end
 
