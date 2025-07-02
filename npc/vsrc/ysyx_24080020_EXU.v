@@ -156,7 +156,7 @@ module ysyx_24080020_EXU
             `endif
         end
         else if(idu_exu_valid) begin
-            if(exu_mem_valid && need_stall) exu_idu_ready <=  1'b0;
+            if(exu_mem_valid) exu_idu_ready <=  1'b0;
             else if(exu_idu_ready) begin
                 exu_idu_ready <= 'b0;
                 idu_exu_shake_hand <= 'b1;
@@ -206,7 +206,7 @@ module ysyx_24080020_EXU
 
 
             end
-            else begin
+            else if(!need_stall) begin
                 // shake hand successfully
                 exu_idu_ready <= 1'b1;
 
