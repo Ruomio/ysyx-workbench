@@ -8,6 +8,7 @@
 
 #include "isa.h"
 #include <cpu/difftest.h>
+#include <stdio.h>
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
@@ -275,7 +276,7 @@ void exec_once_npc(uint32_t pc) {
       }
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
-      idu_type = None;
+      // idu_type = None;
       if(g_pc < CONFIG_MBASE) {
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
@@ -340,6 +341,12 @@ static void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
   Log("total_cycles = " NUMBERIC_FMT "  IPC = %lf", total_cycles, ((double)g_nr_guest_inst / total_cycles));
 
+  if(!ifu_get_inst_cnt) printf("ifu_get_inst_cnt is 0\n");
+  if(!idu_jump_type_cnt) printf("idu_jump_type_cnt is 0\n");
+  if(!idu_csr_type_cnt) printf("idu_csr_type_cnt is 0\n");
+  if(!idu_store_type_cnt) printf("idu_store_type_cnt is 0\n");
+  if(!idu_load_type_cnt) printf("idu_load_type_cnt is 0\n");
+  if(!idu_calculate_type_cnt) printf("idu_calculate_type_cnt is 0\n");
   if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
   float access_time = ifu_icache_hit_cycles*1.0 / ifu_icache_hit_cnt;
   float icache_hit_rate = ifu_icache_hit_cnt*1.0 / ifu_get_inst_cnt;
@@ -628,6 +635,10 @@ extern "C" void statistics_icache_hit() {
   // printf("ifu_icache_hit_cnt: %ld  pc: 0x%x \n", ifu_icache_hit_cnt, g_pc);
   idu_type = Icache_Hit;
   ifu_icache_hit_cnt ++;
+}
+
+extern "C" void statistics_icache_miss_hit_cnt() {
+    ifu_icache_hit_cnt --;
 }
 
 extern "C" void statistics_dcache_hit() {

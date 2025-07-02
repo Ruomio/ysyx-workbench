@@ -171,9 +171,7 @@ module ysyx_24080020_REG
             if(!wen_mem) begin
                 wb_ifu_valid <= 1'b1;
             end
-            else begin
-                wb_ifu_valid <= 1'b0;
-            end
+
             `ifdef CONFIG_DPIC
             if(is_ebreak_lsu) ebreak();
             `endif

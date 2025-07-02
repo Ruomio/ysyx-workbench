@@ -80,6 +80,12 @@ module ysyx_24080020_EXU
 );
 `ifdef CONFIG_DPIC
     import "DPI-C" function void statistics_exu_complete_calcu();
+
+    import "DPI-C" function void statistics_idu_calculate_type();
+    import "DPI-C" function void statistics_idu_load_type();
+    import "DPI-C" function void statistics_idu_store_type();
+    import "DPI-C" function void statistics_idu_csr_type();
+    import "DPI-C" function void statistics_idu_jump_type();
 `endif
 
     wire [`ysyx_24080020_WIDTH-1:0] alu_src1;
@@ -202,6 +208,13 @@ module ysyx_24080020_EXU
 
                 is_ebreak_exu <= is_ebreak_idu;
 
+                `ifdef CONFIG_DPIC
+                if(is_load_idu) statistics_idu_load_type();
+                else if(mwen_idu) statistics_idu_store_type();
+                else if(is_csrtype_idu) statistics_idu_csr_type();
+                else if(is_dnpc_idu) statistics_idu_jump_type();
+                else statistics_idu_calculate_type();
+                `endif
 
             end
             else begin

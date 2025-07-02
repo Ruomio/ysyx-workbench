@@ -491,7 +491,7 @@ module ysyx_24080020_ICACHE(
   reg flush_cache;
   reg [cache_num-1:0] num_index;
 
-  reg toggle;
+  reg cache_hit_next;
 
   wire use_icache;
   wire in_flash;
@@ -856,7 +856,6 @@ module ysyx_24080020_ICACHE(
       if(!rst) begin
           current_state <= 'b0;
           tag_index <= 'b0;
-          toggle <= 'b0;
           busy <= 'b0;
           for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
@@ -867,6 +866,18 @@ module ysyx_24080020_ICACHE(
       end
       else begin
           current_state <= next_state;
+      end
+  end
+
+  always @(posedge clk) begin
+      if(!rst) begin
+          cache_hit_next <= 'b0;
+      end
+      else if(current_state == CHIT) begin
+          cache_hit_next <= 'b1;
+      end
+      else begin
+          cache_hit_next <= 'b0;
       end
   end
 
@@ -1005,18 +1016,15 @@ module ysyx_24080020_ICACHE(
 
               `ifdef CONFIG_DPIC
               // hit cache and not by axi
-              if(!fin_r) begin
-                  if(toggle) begin
-                    toggle <= 'b0;
-                    if(in_flash)
-                      statistics_icache_hit();
-                    else if(in_sdram)
-                      statistics_dcache_hit();
-                    // $display("cache hit addr: 0x%x", araddr_o);
-                  end
-                  else
-                    toggle <= 'b1;
-              end
+              if(!cache_hit_next) begin
+                if(!fin_r) begin
+                        if(in_flash)
+                        statistics_icache_hit();
+                        else if(in_sdram)
+                        statistics_dcache_hit();
+                        // $display("cache hit addr: 0x%x", araddr_o);
+                    end
+                end
               else begin
                 // $display("cache miss addr: 0x%x", araddr_o);
               end
