@@ -486,8 +486,6 @@ module ysyx_24080020_NPC(
         .is_ebreak_idu(is_ebreak_idu),
         .is_ebreak_exu(is_ebreak_exu),
 
-        .need_stall(need_stall),
-
         .pc_idu(pc_idu),
         .imm_idu(imm_idu),
         .is_load_idu(is_load_idu),

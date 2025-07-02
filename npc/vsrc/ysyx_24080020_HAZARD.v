@@ -21,7 +21,7 @@ module ysyx_24080020_HAZARD(
     input exu_lsu_shake_hands,
     output reg control_adventure
 );
-    wire data1_adventure, data2_adventure;
+
     reg en;
 
     always @(posedge clk) begin
@@ -36,9 +36,8 @@ module ysyx_24080020_HAZARD(
         end
     end
 
-    assign data1_adventure = (((rs1_idu == rd_exu) || (rs1_idu == rd_lsu) || (rs1_idu == rd_wbu)) && (rs1_idu != 'b0));
-    assign data2_adventure = (((rs2_idu == rd_exu) || (rs2_idu == rd_lsu) || (rs2_idu == rd_wbu)) && (rs2_idu != 'b0));
-    assign data_adventure = data1_adventure || data2_adventure;
+    assign data_adventure = (((rs1_idu == rd_exu) || (rs1_idu == rd_lsu) || (rs1_idu == rd_wbu)) && (rs1_idu != 'b0))
+                         || (((rs2_idu == rd_exu) || (rs2_idu == rd_lsu) || (rs2_idu == rd_wbu)) && (rs2_idu != 'b0));
 
 
     always @(posedge clk) begin
