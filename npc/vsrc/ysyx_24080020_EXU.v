@@ -155,13 +155,10 @@ module ysyx_24080020_EXU
             statistics_exu_complete_calcu();
             `endif
         end
-        else if(idu_exu_valid && exu_idu_ready) begin
-            exu_idu_ready <= 'b0;
-        end
         else if(idu_exu_valid) begin
             if(exu_mem_valid) exu_idu_ready <=  1'b0;
-            else begin
-                exu_idu_ready <= 'b1;
+            else if(exu_idu_ready) begin
+                exu_idu_ready <= 'b0;
                 idu_exu_shake_hand <= 'b1;
 
                 // update all reg type control wire
@@ -209,7 +206,12 @@ module ysyx_24080020_EXU
 
 
             end
+            else begin
+                // shake hand successfully
+                exu_idu_ready <= 1'b1;
 
+
+            end
         end
         else begin
             // exu_mem_valid <= 1'b1;
