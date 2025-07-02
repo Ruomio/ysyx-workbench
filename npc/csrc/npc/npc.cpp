@@ -8,6 +8,7 @@
 
 #include "isa.h"
 #include <cpu/difftest.h>
+#include <stdio.h>
 
 #if defined(ysyxSoCFull)
 #include "VysyxSoCFull.h"
@@ -340,6 +341,12 @@ static void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
   Log("total_cycles = " NUMBERIC_FMT "  IPC = %lf", total_cycles, ((double)g_nr_guest_inst / total_cycles));
 
+  if(!ifu_get_inst_cnt) printf("ifu_get_inst_cnt is 0\n");
+  if(!idu_jump_type_cnt) printf("idu_jump_type_cnt is 0\n");
+  if(!idu_csr_type_cnt) printf("idu_csr_type_cnt is 0\n");
+  if(!idu_store_type_cnt) printf("idu_store_type_cnt is 0\n");
+  if(!idu_load_type_cnt) printf("idu_load_type_cnt is 0\n");
+  if(!idu_calculate_type_cnt) printf("idu_calculate_type_cnt is 0\n");
   if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
   float access_time = ifu_icache_hit_cycles*1.0 / ifu_icache_hit_cnt;
   float icache_hit_rate = ifu_icache_hit_cnt*1.0 / ifu_get_inst_cnt;
