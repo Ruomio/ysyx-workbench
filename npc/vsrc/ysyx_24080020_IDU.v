@@ -101,7 +101,7 @@ module ysyx_24080020_IDU (
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
 
     // assign idu_exu_valid_reg = idu_exu_valid && !data_adventure;
-    assign idu_exu_valid_reg = idu_exu_valid;
+    assign idu_exu_valid_reg = idu_exu_valid && !need_stall;
 
     always @(posedge clk) begin
         if(!rst) begin
