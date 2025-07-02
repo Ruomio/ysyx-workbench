@@ -30,16 +30,16 @@ module ysyx_24080020_FORWARD(
     assign rs2_conflict = ((rs2_idu == rd_exu) || (rs2_idu == rd_lsu) || (rs2_idu == rd_wbu)) && (rs2_idu != 'b0);
 
     assign rd_data1_forward = rs1_conflict ?
-                                rs1_idu == rd_exu ? rd_data_exu :
-                                rs1_idu == rd_lsu ? is_load ? mrdata : rd_data_lsu :
                                 rs1_idu == rd_wbu ? rd_data_wbu :
+                                rs1_idu == rd_lsu ? is_load ? mrdata : rd_data_lsu :
+                                rs1_idu == rd_exu ? rd_data_exu :
                                 'b0
                             : 'b0;
 
     assign rd_data2_forward = rs2_conflict ?
-                                rs2_idu == rd_exu ? rd_data_exu :
-                                rs2_idu == rd_lsu ? is_load ? mrdata : rd_data_lsu :
                                 rs2_idu == rd_wbu ? rd_data_wbu :
+                                rs2_idu == rd_lsu ? is_load ? mrdata : rd_data_lsu :
+                                rs2_idu == rd_exu ? rd_data_exu :
                                 'b0
                             : 'b0;
 
