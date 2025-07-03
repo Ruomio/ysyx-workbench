@@ -15,7 +15,7 @@ OBJS = $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
 
 CC = g++
-CXX_FLAGS = $(addprefix -I, $(INCLUDE_DIR)) -MMD -MP -o2
+CXX_FLAGS = $(addprefix -I, $(INCLUDE_DIR)) -MMD -MP -o2 -g
 LD_FLAGS = -lreadline
 
 .DEFAULT_GOAL = $(BIN)
