@@ -16,7 +16,7 @@ OBJS = $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
 CC = g++
 CXX_FLAGS = $(addprefix -I, $(INCLUDE_DIR)) -MMD -MP -o2 -g
-LD_FLAGS = -lreadline
+LD_FLAGS =
 
 .DEFAULT_GOAL = $(BIN)
 
@@ -34,7 +34,7 @@ run: $(BIN)
 	@$(BIN) $(DISASM_FILE_PATH) $(PC_STREAM_FILE_PATH)
 
 gdb: $(BIN)
-	@$(call git_commit, "run BranchSim")
+	@$(call git_commit, "gdb BranchSim")
 	@gdb --args $(BIN) $(DISASM_FILE_PATH) $(PC_STREAM_FILE_PATH)
 
 clean:
