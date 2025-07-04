@@ -274,7 +274,6 @@ module ysyx_24080020_BTB(
             pc_tmp <= pc;
 
             pc <= predict_pc;
-            out_special_pc <= 'b0;
         end
         else if(in_valid && (current_state == IDLE)) begin
             in_ready <= 'b1;
@@ -289,6 +288,9 @@ module ysyx_24080020_BTB(
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
+
+            out_special_pc <= 'b0;
+
             // if(!is_dnpc_tmp) begin
             //     pc <= predict_pc;
             //     out_special_pc <= 'b0;
