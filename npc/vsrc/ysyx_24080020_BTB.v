@@ -72,6 +72,24 @@ module ysyx_24080020_BTB(
 
     assign branch_hit = 'b1;
 
+    generate
+      genvar j;
+      for (j = 0; j < branch_way; j++) begin
+          assign total_hits[j] = (branch_tag[branch_index_s2][(j+1)*branch_tag_width-1:j*branch_tag_width] == branch_tag_s2) && ((branch_valid[branch_index_s2] & ({ {(branch_way-1){1'b0}}, 1'b1} << j)) != 'b0);
+      end
+    endgenerate
+
+    always_comb begin
+        tmp_tag_index = 0;
+        has_hit = 0;
+        for (int i = 0; i < branch_way; i++) begin
+            if (total_hits[i]) begin
+                has_hit = 'b1;
+                tmp_tag_index = i[branch_way-1:0];
+            end
+        end
+    end
+
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             current_state <= 'b0;
@@ -112,28 +130,23 @@ module ysyx_24080020_BTB(
     end
 
     always @(posedge clk) begin
-        if(!rst) begin
-
-        end
-        else if(current_state == IDLE) begin
-            in_ready <= 1'b1;
-            out_valid <= 1'b0;
+        if(current_state == IDLE) begin
+            // init
+            is_hit <= 'b0;
         end
         else if(current_state == JUDGE) begin
-            in_ready <= 1'b0;
-            out_valid <= 1'b0;
+            if(branch_hit) begin
+                is_hit <= 'b1;
+            end
+            else begin
+                is_hit <= 'b0;
+            end
         end
         else if(current_state == HIT) begin
-            in_ready <= 1'b0;
-            out_valid <= 1'b1;
         end
         else if(current_state == MISS) begin
-            in_ready <= 1'b0;
-            out_valid <= 1'b1;
         end
         else if(current_state == Done) begin
-            in_ready <= 1'b1;
-            out_valid <= 1'b0;
         end
     end
 
