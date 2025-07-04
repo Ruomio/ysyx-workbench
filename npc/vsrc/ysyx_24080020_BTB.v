@@ -165,6 +165,7 @@ module ysyx_24080020_BTB(
         else if(current_state == JUDGE) begin
             if(has_hit) begin
                 is_hit <= 'b1;
+                tag_index <= tmp_tag_index;
             end
             else begin
                 is_hit <= 'b0;
@@ -240,7 +241,9 @@ module ysyx_24080020_BTB(
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
-            pc <= pc + 32'd4;
+            if(!is_dnpc_tmp) begin
+                pc <= pc + 32'd4;
+            end
         end
     end
 endmodule
