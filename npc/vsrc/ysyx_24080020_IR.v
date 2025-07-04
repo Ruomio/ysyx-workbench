@@ -59,8 +59,7 @@ module ysyx_24080020_IR(
     end
     else if(if_en_valid && if_en_ready) begin
         if_en_ready <= 'b0;
-    end
-    else if(if_en_valid) begin
+
         if(!lsu_busy) begin
             araddr <= addr;
             arvalid <= 'b1;
@@ -71,6 +70,10 @@ module ysyx_24080020_IR(
 
             special_pc_o <= special_pc_i;
 
+        end
+    end
+    else if(if_en_valid) begin
+        if(!arvalid) begin
             if_en_ready <= 'b1;
         end
     end
