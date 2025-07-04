@@ -304,9 +304,7 @@ module ysyx_24080020_BTB(
         end
         if(update_en) begin
             update_en <= 'b0;
-            if(!in_valid) begin
-                in_valid <= 'b1;
-            end
+            in_valid <= 'b1;
         end
         else if(update_pc && !update_en) begin
             update_en <= 'b1;
