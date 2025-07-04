@@ -214,7 +214,9 @@ module ysyx_24080020_BTB(
         else if(is_dnpc_tmp) begin
             is_dnpc_tmp <= 'b0;
 
-            pc <= pc_new;
+            in_valid <= 'b1;
+
+            pc <= dnpc_tmp;
             out_special_pc <= 'b1;
 
             // write BTB
