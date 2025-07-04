@@ -283,6 +283,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             out_valid <= 'b0;
             pc <= `ysyx_24080020_MBASE;
+            predict_pc <= `ysyx_24080020_MBASE + 32'd4;
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
