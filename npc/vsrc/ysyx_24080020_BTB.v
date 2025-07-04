@@ -160,12 +160,14 @@ module ysyx_24080020_BTB(
                     next_state = Done;
                 end
                 Done: begin
-                    if(out_valid && out_ready) begin
-                        next_state = IDLE;
-                    end
-                    else begin
-                        next_state = Done;
-                    end
+                    // if(out_valid && out_ready) begin
+                    //     next_state = IDLE;
+                    // end
+                    // else begin
+                    //     next_state = Done;
+                    // end
+
+                    next_state = IDLE;
                 end
                 default: begin
                     next_state = IDLE;
