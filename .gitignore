@@ -12,6 +12,7 @@
 !init.sh
 !digital-circuit-experiments/*
 !/cachesim/**
+!/branchsim/**
 
 /fceux-am
 /nvboard

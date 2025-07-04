@@ -1,0 +1,169 @@
+`include "ysyx_24080020_DEFINE.v"
+
+module ysyx_24080020_BTB(
+    input clk,
+    input rst,
+
+    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
+    input is_dnpc,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc,
+
+    output reg [`ysyx_24080020_WIDTH-1:0] predict_pc,
+
+    // bus
+    input in_valid,
+    output reg in_ready,
+    output reg out_valid,
+    input out_ready
+);
+
+    // BRANCH
+    // branchway maybe not the 2^n
+    localparam branch_way = `ysyx_24080020_BRANCH_WAY;
+    localparam branch_size = `ysyx_24080020_BRANCH_SIZE;
+    localparam branch_num = `ysyx_24080020_BRANCH_NUM;
+
+    localparam branch_size_bits = $clog2(branch_size);
+    localparam branch_size_shift = $clog2(branch_size << 3);
+    localparam branch_num_bits = $clog2(branch_num);
+
+    localparam branch_tag_size = 32 - branch_size_bits - branch_num_bits;
+    localparam branch_data_ingroup_width = (branch_size << 3) * branch_way;
+    localparam branch_tag_width = branch_tag_size;
+    localparam branch_tag_ingroup_width = branch_tag_width * branch_way;
+    localparam data_complete_bits = branch_data_ingroup_width - 32;
+    localparam tag_complete_bits = branch_tag_ingroup_width - branch_tag_size;
+
+    localparam IDLE = 0;
+    localparam JUDGE = IDLE + 1;
+    localparam HIT = JUDGE + 1;
+    localparam MISS = HIT + 1;
+    localparam Done = MISS + 1;  // not use cache, such as sram
+
+    wire [branch_data_ingroup_width-1 : 0] shift_rdata;
+    wire [branch_data_ingroup_width-1 : 0] shift_wdata;
+    wire [branch_data_ingroup_width-1 : 0] data_mask;
+
+    wire [branch_tag_ingroup_width-1 : 0]  shift_rtag;
+    wire [branch_tag_ingroup_width-1 : 0]  shift_wtag;
+    wire [branch_tag_ingroup_width-1 : 0]  tag_mask;
+
+    wire                                     branch_hit;
+    wire [branch_tag_size-1:0]               branch_tag_tmp;
+    wire [branch_num_bits-1:0]               branch_index_tmp;
+    wire [branch_size_bits-1:0]              branch_offset_tmp;
+
+    reg [branch_data_ingroup_width - 1 : 0]  branch_data  [0 : branch_num - 1];
+    reg [branch_tag_ingroup_width - 1 : 0]   branch_tag   [0 : branch_num - 1];
+    reg [branch_way - 1 : 0]                 branch_valid [0 : branch_num - 1];
+
+    reg [branch_way - 1 : 0]                 fifo_index [0 : branch_num - 1];
+    reg [branch_way - 1 : 0]                 tag_index;
+
+    wire [2:0] next_state;
+
+    reg [2:0] current_state;
+    reg [`ysyx_24080020_WIDTH-1:0] pc;
+
+
+    assign branch_tag_tmp = pc_tmp[31 : branch_num_bits+branch_size_bits];
+    assign branch_index_tmp = pc_tmp[branch_num_bits+branch_size_bits-1 : branch_size_bits];
+    assign branch_offset_tmp = pc_tmp[branch_size_bits-1 : 0];
+
+    assign branch_hit = 'b1;
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            current_state <= 'b0;
+        end else begin
+            current_state <= next_state;
+        end
+    end
+
+    always @(*) begin
+        case(current_state)
+            IDLE: begin
+                if(in_valid && in_ready && is_dnpc) begin
+                    next_state = JUDGE;
+                end else begin
+                    next_state = IDLE;
+                end
+            end
+            JUDGE: begin
+                if(hit) begin
+                    next_state = HIT;
+                end else begin
+                    next_state = MISS;
+                end
+            end
+            HIT: begin
+                next_state = Done;
+            end
+            MISS: begin
+                next_state = Done;
+            end
+            Done: begin
+                next_state = IDLE;
+            end
+            default: begin
+                next_state = IDLE;
+            end
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+
+        end
+        else if(current_state == IDLE) begin
+            in_ready <= 1'b1;
+            out_valid <= 1'b0;
+        end
+        else if(current_state == JUDGE) begin
+            in_ready <= 1'b0;
+            out_valid <= 1'b0;
+        end
+        else if(current_state == HIT) begin
+            in_ready <= 1'b0;
+            out_valid <= 1'b1;
+        end
+        else if(current_state == MISS) begin
+            in_ready <= 1'b0;
+            out_valid <= 1'b1;
+        end
+        else if(current_state == Done) begin
+            in_ready <= 1'b1;
+            out_valid <= 1'b0;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            pc <= `ysyx_24080020_MBASE - 32'd4;
+            pc_tmp <= 'b0;
+            dnpc_tmp <= 'b0;
+            is_dnpc_tmp <= 'b0;
+            in_ready <= 'b0;
+        end
+        else if(in_valid && in_ready) begin
+            in_ready <= 'b0;
+            pc_tmp <= pc;
+            dnpc_tmp <= pc;
+            is_dnpc_tmp <= is_dnpc;
+            btb_busy <= 'b1;
+        end
+        else if(in_valid && (current_state == IDLE)) begin
+            in_ready <= 'b1;
+        end
+    end
+
+    always @(posedge clk)begin
+        if(!rst) begin
+            out_valid <= 'b0;
+        end
+        else if(out_valid && out_ready) begin
+            out_valid <= 'b0;
+        end
+
+    end
+endmodule
