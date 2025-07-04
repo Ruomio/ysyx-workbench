@@ -220,7 +220,7 @@ module ysyx_24080020_NPC(
   wire [3:0] bid_xbar;
   wire [1:0] bresp_xbar;
 
-  wire special_pc_i, special_pc_o;
+  wire special_pc_pc, special_pc_i, special_pc_o;
 
   // Xbar
   wire arvalid_xbar_sram, arready_sram,
@@ -335,22 +335,45 @@ module ysyx_24080020_NPC(
   wire rs2_conflict;
   wire need_stall;
 
+  // flatten ifu
+  wire inst_fin_valid, inst_fin_ready;
+  wire if_en_valid, if_en_ready;
+  wire [`ysyx_24080020_WIDTH-1:0] addr_pc, inst_ir;
 
-    ysyx_24080020_IFU ifu(
+    ysyx_24080020_PC u_pc(
         .clk(clk),
         .rst(rst),
-        .dnpc_exu(dnpc_new_exu),
-        .is_dnpc_exu(is_dnpc_exu),
-        .pc_ifu(pc_ifu),
-        .inst_ifu(inst_ifu),
 
+        // exu <-> pc
+        // .update_pc(inst_fin_valid && inst_fin_ready),
+        .update_pc(arvalid_ifu && arready_ifu),
+        .dnpc(dnpc_new_exu),
+        .is_dnpc(is_dnpc_exu),
+
+        // pc <-> ir
+        .special_pc(special_pc_pc),
+        .if_en_valid(if_en_valid),
+        .if_en_ready(if_en_ready),
+        .addr(addr_pc)
+    );
+
+    ysyx_24080020_IR u_ir(
+        .clk(clk),
+        .rst(rst),
         .lsu_busy(lsu_busy),
-        .control_adventure(control_adventure),
-        .inst_fin(inst_fin),
-        .flush_pipeline(flush_pipeline),
-        .raddr(raddr_ifu),
+
+        // pc <-> ir
+        .special_pc_i(special_pc_pc),
+        .if_en_valid(if_en_valid),
+        .if_en_ready(if_en_ready),
+        .addr(addr_pc),
+
+        // ir <-> ifu
+        .inst(inst_ir),
+        .inst_fin_valid(inst_fin_valid),
+        .inst_fin_ready(inst_fin_ready),
+
         .special_pc_o(special_pc_o),
-        .special_pc_i(special_pc_i),
         // axi-lite
         .arvalid(arvalid_ifu),
         .araddr(araddr_ifu),
@@ -365,7 +388,25 @@ module ysyx_24080020_NPC(
         .rid(rid_ifu),
         .rresp(rresp_ifu),
         .rdata(rdata_ifu),
-        .rready(rready_ifu),
+        .rready(rready_ifu)
+    );
+
+    ysyx_24080020_IFU ifu(
+        .clk(clk),
+        .rst(rst),
+        .dnpc_exu(dnpc_new_exu),
+        .is_dnpc_exu(is_dnpc_exu),
+        .inst(inst_ir),
+        .pc_ifu(pc_ifu),
+        .inst_ifu(inst_ifu),
+
+        .control_adventure(control_adventure),
+        .inst_fin(inst_fin),
+        .flush_pipeline(flush_pipeline),
+        .raddr(raddr_ifu),
+        .special_pc_i(special_pc_i),
+        .inst_fin_valid(inst_fin_valid),
+        .inst_fin_ready(inst_fin_ready),
 
         .wb_ifu_valid(1'b1),
         .idu_ifu_ready(idu_ifu_ready),
