@@ -5,7 +5,6 @@ module ysyx_24080020_IFU (
 
     input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
     input is_dnpc_exu,
-    input lsu_busy,
 
     input [`ysyx_24080020_WIDTH-1:0] inst,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
@@ -18,27 +17,11 @@ module ysyx_24080020_IFU (
 
     output inst_fin,
 
-    output special_pc_o,
     input special_pc_i,
 
+    // ifu <-> ir
     input inst_fin_valid,
     output reg inst_fin_ready,
-    // axi-lite
-    // input arready,
-    // output reg arvalid,
-    // output reg [1:0] arburst,
-    // output reg [2:0] arsize,
-    // output reg [3:0] arid,
-    // output reg [7:0] arlen,
-    // output reg [`ysyx_24080020_WIDTH-1:0] araddr,
-
-    // input rvalid,
-    // input rlast,
-    // input [1:0] rresp,
-    // input [3:0] rid,
-    // input [`ysyx_24080020_WIDTH-1:0] rdata,
-    // output reg rready,
-
 
     input wb_ifu_valid,
     input idu_ifu_ready,
@@ -51,13 +34,10 @@ module ysyx_24080020_IFU (
     import "DPI-C" function void statistics_ifu_get_inst();
     `endif
 
-    // wire [`ysyx_24080020_WIDTH-1:0] addr, inst;
     wire if_en;
     wire if_en_ready;
     wire special_pc;
 
-    // wire inst_fin_valid;
-    // reg inst_fin_ready;
 
     reg wb_ifu_shake_hands;
 
@@ -148,59 +128,6 @@ module ysyx_24080020_IFU (
             flush_pipeline <= 'b1;
         end
     end
-
-
-
-    // ysyx_24080020_PC u_pc(
-    //     .clk(clk),
-    //     .rst(rst),
-
-    //     // ifu <-> pc
-    //     // .update_pc(inst_fin_valid && inst_fin_ready),
-    //     .update_pc(arvalid && arready),
-    //     .dnpc(dnpc_exu),
-    //     .is_dnpc(is_dnpc_exu),
-
-    //     // pc <-> ir
-    //     .special_pc(special_pc),
-    //     .if_en_valid(if_en),
-    //     .if_en_ready(if_en_ready),
-    //     .addr(addr)
-    // );
-
-    // ysyx_24080020_IR u_ir(
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .lsu_busy(lsu_busy),
-
-    //     // pc <-> ir
-    //     .special_pc_i(special_pc),
-    //     .if_en_valid(if_en),
-    //     .if_en_ready(if_en_ready),
-    //     .addr(addr),
-
-    //     // ir <-> ifu
-    //     .inst(inst),
-    //     .inst_fin_valid(inst_fin_valid),
-    //     .inst_fin_ready(inst_fin_ready),
-
-    //     .special_pc_o(special_pc_o),
-    //     // axi-lite
-    //     .arvalid(arvalid),
-    //     .araddr(araddr),
-    //     .arburst(arburst),
-    //     .arsize(arsize),
-    //     .arid(arid),
-    //     .arlen(arlen),
-    //     .arready(arready),
-
-    //     .rvalid(rvalid),
-    //     .rlast(rlast),
-    //     .rid(rid),
-    //     .rresp(rresp),
-    //     .rdata(rdata),
-    //     .rready(rready)
-    // );
 
 
 endmodule
