@@ -201,8 +201,15 @@ module ysyx_24080020_BTB(
             predict_pc <= pc + 32'd4;
         end
         else if(current_state == Done) begin
-            if(skip_once) begin
-                skip_once <= 'b0;
+            // if(skip_once) begin
+            //     skip_once <= 'b0;
+            //     out_valid <= 'b0;
+            // end
+            // else begin
+            //     out_valid <= 'b1;
+            // end
+
+            if((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) begin
                 out_valid <= 'b0;
             end
             else begin
@@ -291,7 +298,9 @@ module ysyx_24080020_BTB(
         end
         if(update_en) begin
             update_en <= 'b0;
-            in_valid <= 'b1;
+            if(!in_valid) begin
+                in_valid <= 'b1;
+            end
         end
         else if(update_pc && !update_en) begin
             update_en <= 'b1;
