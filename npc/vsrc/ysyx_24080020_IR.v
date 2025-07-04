@@ -34,7 +34,7 @@ module ysyx_24080020_IR(
 
 );
 
-
+  reg if_en_shake_hands;
 
   always @(posedge clk) begin
     if(!rst) begin
@@ -60,23 +60,33 @@ module ysyx_24080020_IR(
     else if(if_en_valid && if_en_ready) begin
         if_en_ready <= 'b0;
 
-        if(!lsu_busy) begin
-            araddr <= addr;
-            arvalid <= 'b1;
-            arsize <= 'b10;
-            arlen <= 'b0;
-            arburst <= 'b0;
-            arid <= 'b0;
+        if_en_shake_hands <= 'b1;
 
-            special_pc_o <= special_pc_i;
+        araddr <= addr;
+        arsize <= 'b10;
+        arlen <= 'b0;
+        arburst <= 'b0;
+        arid <= 'b0;
+        special_pc_o <= special_pc_i;
 
-        end
     end
     else if(if_en_valid) begin
-        if(!arvalid) begin
+        if(!arvalid && !lsu_busy) begin
             if_en_ready <= 'b1;
         end
     end
+  end
+
+  always @(posedge clk) begin
+      if(!rst) begin
+          if_en_shake_hands <= 'b0;
+      end
+      else if(if_en_shake_hands) begin
+          if(!lsu_busy) begin
+              arvalid <= 'b1;
+              if_en_shake_hands <= 'b0;
+          end
+      end
   end
 
   always @(posedge clk) begin

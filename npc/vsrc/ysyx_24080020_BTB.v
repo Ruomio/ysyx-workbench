@@ -267,7 +267,7 @@ module ysyx_24080020_BTB(
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
-            if(!is_dnpc) begin
+            if(!is_dnpc_tmp) begin
                 pc <= predict_pc;
                 out_special_pc <= 'b0;
             end
