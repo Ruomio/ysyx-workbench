@@ -274,7 +274,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             in_valid <= 'b0;
             update_en <= 'b0;
-            first <= 'b0;
+            first <= 'b1;
         end
         if(update_en) begin
             update_en <= 'b0;
