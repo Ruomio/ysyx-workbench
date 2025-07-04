@@ -70,7 +70,7 @@ module ysyx_24080020_BTB(
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first;
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp;
 
@@ -274,6 +274,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             in_valid <= 'b0;
             update_en <= 'b0;
+            first <= 'b0;
         end
         if(update_en) begin
             update_en <= 'b0;
@@ -282,6 +283,9 @@ module ysyx_24080020_BTB(
         else if(update_pc && !update_en) begin
             update_en <= 'b1;
         end
-
+        else if(first) begin
+            first <= 'b0;
+            update_en <= 'b1;
+        end
     end
 endmodule
