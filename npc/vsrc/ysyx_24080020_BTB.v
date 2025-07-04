@@ -199,7 +199,10 @@ module ysyx_24080020_BTB(
             predict_pc <= pc + 32'd4;
         end
         else if(current_state == Done) begin
-            if(!set_idle) begin
+            if(is_dnpc && !is_dnpc_next) begin
+                out_valid <= 'b0;
+            end
+            else begin
                 out_valid <= 'b1;
             end
         end
