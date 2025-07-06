@@ -353,7 +353,7 @@ module ysyx_24080020_NPC(
         .is_dnpc(is_dnpc_exu),
         .dnpc(dnpc_new_exu),
 
-        .pc(pc_btb),
+        .pc_tmp(pc_btb),
         .out_special_pc(special_pc_btb),
 
         .update_pc(arvalid_ifu && arready_ifu),
