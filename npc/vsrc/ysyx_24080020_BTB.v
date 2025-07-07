@@ -11,7 +11,7 @@ module ysyx_24080020_BTB(
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     output reg out_special_pc,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_tmp,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc,
 
     // bus
     output reg out_valid,
@@ -72,7 +72,7 @@ module ysyx_24080020_BTB(
     reg in_ready;
     reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once;
     reg [2:0] current_state;
-    reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc, predict_pc, dnpc_tmp;
+    reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp;
 
     logic has_hit;
     logic total_hits [0 : branch_way - 1];
@@ -233,9 +233,9 @@ module ysyx_24080020_BTB(
             in_valid <= 'b1;
 
             pc <= dnpc_tmp;
+            predict_pc <= dnpc_tmp + 32'd4;
             out_special_pc <= 'b1;
 
-            predict_pc <= dnpc_tmp + 32'd4;
 
             // write BTB
             fifo_index[branch_index_new] <= (fifo_index[branch_index_new] + 'b1) % branch_way;
