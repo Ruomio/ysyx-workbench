@@ -231,6 +231,7 @@ module ysyx_24080020_BTB(
             skip_once <= 'b1;
 
             in_valid <= 'b1;
+            out_valid <= 'b0;
 
             pc <= dnpc_tmp;
             predict_pc <= dnpc_tmp;
