@@ -10,9 +10,14 @@ int main(int argc, char *argv[]) {
     }
     auto bs = std::make_shared<BranchSim>();
     bs->Init(argv[1], argv[2]);
-    bs->RunPredict(ALWAYS_TAKEN);
-    bs->RunPredict(ALWAYS_NOT_TAKEN);
-    bs->RunPredict(BTFN);
+
+    // bs->RunPredict(ALWAYS_TAKEN);
+    // bs->RunPredict(ALWAYS_NOT_TAKEN);
+    // bs->RunPredict(BTFN);
+
+    bs->RunPredictWithBTB(ALWAYS_TAKEN);
+    bs->RunPredictWithBTB(ALWAYS_NOT_TAKEN);
+    bs->RunPredictWithBTB(BTFN);
 
     return 0;
 }
