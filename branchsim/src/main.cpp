@@ -10,9 +10,17 @@ int main(int argc, char *argv[]) {
     }
     auto bs = std::make_shared<BranchSim>();
     bs->Init(argv[1], argv[2]);
+
+    std::cout << "Running branch predictor simulations without BTB" << std::endl;
+
     bs->RunPredict(ALWAYS_TAKEN);
     bs->RunPredict(ALWAYS_NOT_TAKEN);
     bs->RunPredict(BTFN);
+
+    std::cout << "Running branch predictor simulations with BTB" << std::endl;
+    bs->RunPredictWithBTB(ALWAYS_TAKEN);
+    bs->RunPredictWithBTB(ALWAYS_NOT_TAKEN);
+    bs->RunPredictWithBTB(BTFN);
 
     return 0;
 }

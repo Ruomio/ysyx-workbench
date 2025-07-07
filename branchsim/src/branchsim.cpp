@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -5,10 +6,15 @@
 #include <regex>
 #include <string>
 #include <exception>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 
 #include "branchsim.h"
 
 BranchSim::BranchSim() {
+    btb_way = 0;
+    memset(btb_meta, 0, sizeof(btb_meta));
 
 }
 
@@ -124,6 +130,107 @@ void BranchSim::RunPredict(int flag) {
             // ++total;
         }
     }
+    switch (flag) {
+        case(ALWAYS_TAKEN):
+            std::cout << "ALWAYS_TAKEN" << std::endl;
+            std::cout << "Hit cnt:" << correct << std::endl;
+            std::cout << "Total:" << total << std::endl;
+            std::cout << "Accuracy: " << (double)correct*100 / total << "%" << std::endl;
+            break;
+        case(ALWAYS_NOT_TAKEN):
+            std::cout << "ALWAYS_NOT_TAKEN" << std::endl;
+            std::cout << "Hit cnt:" << correct << std::endl;
+            std::cout << "Total:" << total << std::endl;
+            std::cout << "Accuracy: " << (double)correct*100 / total << "%" << std::endl;
+            break;
+        case(BTFN):
+            std::cout << "BTFN" << std::endl;
+            std::cout << "Hit cnt:" << correct << std::endl;
+            std::cout << "Total:" << total << std::endl;
+            std::cout << "Accuracy: " << (double)correct*100 / total << "%" << std::endl;
+            break;
+        default:
+            std::cout << "BTFN" << std::endl;
+            std::cout << "Hit cnt:" << correct << std::endl;
+            std::cout << "Total:" << total << std::endl;
+            std::cout << "Accuracy: " << (double)correct*100 / total << "%" << std::endl;
+            break;
+    }
+    std::cout << std::endl;
+}
+
+
+void BranchSim::RunPredictWithBTB(int flag) {
+    int correct = 0;
+    int total = 0;
+
+    for (size_t i = 0; i < pc_stream.size() - 1; ++i) {
+        uint32_t current_pc = pc_stream[i];
+        uint32_t next_pc = pc_stream[i + 1];
+
+
+        auto it = branch_map.find(current_pc);
+        if(it != branch_map.end()) {
+            total++;
+
+            uint32_t predict_pc = 0;
+
+            int index = BITS(current_pc, branch_size_bits+branch_way_bits-1, branch_size_bits);
+
+            bool btb_hit = false;
+
+            BtbMeta tmp = btb_meta[index];
+
+            for(auto &i : tmp.branch_tag) {
+                if(i.valid && i.tag == current_pc) {
+                    switch(flag) {
+                        case ALWAYS_TAKEN: {
+                            predict_pc = i.target_pc[current_pc%BRANCH_SIZE];
+                            btb_hit = true;
+                            break;
+                        }
+                        case ALWAYS_NOT_TAKEN: {
+                            predict_pc = current_pc + 4;
+                            btb_hit = true;
+                            break;
+                        }
+                        case BTFN: {
+                            uint32_t tmp_pc = i.target_pc[current_pc%BRANCH_SIZE];
+                            predict_pc = tmp_pc < current_pc ? tmp_pc : current_pc + 4;
+                            btb_hit = true;
+                            break;
+                        }
+                        default: {
+                            // default btfn
+                            uint32_t tmp_pc = i.target_pc[current_pc%BRANCH_SIZE];
+                            predict_pc = tmp_pc < current_pc ? tmp_pc : current_pc + 4;
+                            btb_hit = true;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if(btb_hit) {
+                if(predict_pc != next_pc) {
+                    // predict fail
+                    // std::cout << "current_pc: " << std::hex << current_pc << ", next_pc: " << std::hex << next_pc << ", predict_pc: " << std::hex << predict_pc << std::endl;
+                }
+                else {
+                    correct++;
+                }
+            }
+            else {
+                btb_meta[index].branch_tag[btb_way].valid = true;
+                btb_meta[index].branch_tag[btb_way].tag = current_pc;
+                btb_meta[index].branch_tag[btb_way].target_pc[0] = next_pc;
+
+                btb_way = (btb_way + 1) % BRANCH_WAY;
+            }
+        }
+    }
+
     switch (flag) {
         case(ALWAYS_TAKEN):
             std::cout << "ALWAYS_TAKEN" << std::endl;
