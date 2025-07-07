@@ -293,7 +293,6 @@ module ysyx_24080020_BTB(
 
             if(out_special_pc) begin
                 out_special_pc <= 'b0;
-                pc <= pc_tmp;
             end
         end
     end
