@@ -232,10 +232,10 @@ module ysyx_24080020_BTB(
 
             in_valid <= 'b1;
 
-            // pc <= dnpc_tmp;
+            pc <= dnpc_tmp;
             out_special_pc <= 'b1;
 
-            predict_pc <= dnpc_tmp;
+            predict_pc <= dnpc_tmp + 32'd4;
 
             // write BTB
             fifo_index[branch_index_new] <= (fifo_index[branch_index_new] + 'b1) % branch_way;
