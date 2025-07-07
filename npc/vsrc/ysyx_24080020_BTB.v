@@ -289,9 +289,12 @@ module ysyx_24080020_BTB(
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
 
-            out_special_pc <= 'b0;
-
             pc <= predict_pc;
+
+            if(out_special_pc) begin
+                out_special_pc <= 'b0;
+                pc <= pc_tmp;
+            end
         end
     end
 
