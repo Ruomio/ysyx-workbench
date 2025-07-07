@@ -340,15 +340,42 @@ module ysyx_24080020_NPC(
   wire if_en_valid, if_en_ready;
   wire [`ysyx_24080020_WIDTH-1:0] addr_pc, inst_ir;
 
+  // BTB
+  wire special_pc_btb, valid_btb, ready_btb;
+  wire [`ysyx_24080020_WIDTH-1:0] pc_btb;
+
+
+    ysyx_24080020_BTB u_btb(
+        .clk(clk),
+        .rst(rst),
+
+        .pc_exu(pc_exu),
+        .is_dnpc(is_dnpc_exu),
+        .dnpc(dnpc_new_exu),
+
+        .pc(pc_btb),
+        .out_special_pc(special_pc_btb),
+
+        .update_pc(arvalid_ifu && arready_ifu),
+        // bus
+        .out_valid(valid_btb),
+        .out_ready(ready_btb)
+    );
+
     ysyx_24080020_PC u_pc(
         .clk(clk),
         .rst(rst),
 
-        // exu <-> pc
+        // btb <-> pc
+        .in_valid(valid_btb),
+        .in_ready(ready_btb),
+        .in_pc(pc_btb),
+        .in_special_pc(special_pc_btb),
+
         // .update_pc(inst_fin_valid && inst_fin_ready),
-        .update_pc(arvalid_ifu && arready_ifu),
-        .dnpc(dnpc_new_exu),
-        .is_dnpc(is_dnpc_exu),
+        // .update_pc(arvalid_ifu && arready_ifu),
+        // .dnpc(dnpc_new_exu),
+        // .is_dnpc(is_dnpc_exu),
 
         // pc <-> ir
         .special_pc(special_pc_pc),

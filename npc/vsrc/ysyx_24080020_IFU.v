@@ -36,7 +36,6 @@ module ysyx_24080020_IFU (
 
     wire if_en;
     wire if_en_ready;
-    wire special_pc;
 
 
     reg wb_ifu_shake_hands;

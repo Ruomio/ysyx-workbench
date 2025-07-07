@@ -26,6 +26,11 @@
 `define ysyx_24080020_CACHE_NUM 4
 `define ysyx_24080020_CACHE_WAY 4
 
+// branch
+`define ysyx_24080020_BRANCH_SIZE 4
+`define ysyx_24080020_BRANCH_NUM 4
+`define ysyx_24080020_BRANCH_WAY 4
+
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
 `define ysyx_24080020_MEM 10
