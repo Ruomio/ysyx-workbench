@@ -214,9 +214,8 @@ void BranchSim::RunPredictWithBTB(int flag) {
 
             if(btb_hit) {
                 if(predict_pc != next_pc) {
-                    std::cout << "current_pc: " << std::hex << current_pc << ", next_pc: " << std::hex << next_pc << ", predict_pc: " << std::hex << predict_pc << std::endl;
-                    std::cerr << "Fake BTB hit" << std::endl;
-                    exit(-1);
+                    // predict fail
+                    // std::cout << "current_pc: " << std::hex << current_pc << ", next_pc: " << std::hex << next_pc << ", predict_pc: " << std::hex << predict_pc << std::endl;
                 }
                 else {
                     correct++;
