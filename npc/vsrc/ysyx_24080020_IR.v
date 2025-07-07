@@ -71,7 +71,7 @@ module ysyx_24080020_IR(
 
     end
     else if(if_en_valid) begin
-        if(!arvalid && !lsu_busy) begin
+        if(!arvalid && !lsu_busy && !if_en_shake_hands) begin
             if_en_ready <= 'b1;
         end
     end
