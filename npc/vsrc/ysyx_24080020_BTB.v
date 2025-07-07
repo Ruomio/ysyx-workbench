@@ -233,7 +233,7 @@ module ysyx_24080020_BTB(
             in_valid <= 'b1;
 
             pc <= dnpc_tmp;
-            predict_pc <= dnpc_tmp + 32'd4;
+            // predict_pc <= dnpc_tmp + 32'd4;
             out_special_pc <= 'b1;
 
 
@@ -273,7 +273,6 @@ module ysyx_24080020_BTB(
             in_ready <= 'b0;
             pc_tmp <= pc;
 
-            pc <= predict_pc;
         end
         else if(in_valid && (current_state == IDLE)) begin
             in_ready <= 'b1;
@@ -284,17 +283,15 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             out_valid <= 'b0;
             pc <= `ysyx_24080020_MBASE;
-            predict_pc <= `ysyx_24080020_MBASE + 32'd4;
+            predict_pc <= 'b0;
+            // predict_pc <= `ysyx_24080020_MBASE + 32'd4;
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
 
             out_special_pc <= 'b0;
 
-            // if(!is_dnpc_tmp) begin
-            //     pc <= predict_pc;
-            //     out_special_pc <= 'b0;
-            // end
+            pc <= predict_pc;
         end
     end
 
