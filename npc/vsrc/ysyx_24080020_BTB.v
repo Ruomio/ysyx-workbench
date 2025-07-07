@@ -233,7 +233,7 @@ module ysyx_24080020_BTB(
             in_valid <= 'b1;
 
             pc <= dnpc_tmp;
-            // predict_pc <= dnpc_tmp + 32'd4;
+            predict_pc <= dnpc_tmp;
             out_special_pc <= 'b1;
 
 
