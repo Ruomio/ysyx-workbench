@@ -6,6 +6,7 @@ module ysyx_24080020_BTB(
 
     input update_pc,
 
+    input is_btype,
     input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
@@ -71,11 +72,12 @@ module ysyx_24080020_BTB(
 
 
     wire set_idle;
+    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
     reg [2:0] next_state;
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next;
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
@@ -103,7 +105,9 @@ module ysyx_24080020_BTB(
     assign shift_wtag = {{tag_complete_bits{1'b0}}, branch_tag_new} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
     assign tag_mask = {{tag_complete_bits{1'b0}}, ~{branch_tag_size{1'b0}}} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
 
-    assign set_idle = is_dnpc_tmp;
+    assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next);
+
+    assign n_dnpc = pc_exu + 32'd4;
 
     generate
       genvar j;
@@ -260,7 +264,7 @@ module ysyx_24080020_BTB(
             branch_valid[branch_index_new] <= branch_valid[branch_index_new] | (1 << fifo_index[branch_index_new]);
 
         end
-        else if(is_dnpc && !is_dnpc_next) begin
+        else if(is_dnpc && !is_dnpc_next && is_btype) begin
             if(btb_hit && (hit_pc == pc_exu)) begin
                 btb_hit <= 'b0;
                 if(dnpc != hit_target_pc) begin
@@ -285,6 +289,15 @@ module ysyx_24080020_BTB(
             statistics_btb_total();
             `endif
         end
+        else if(!is_dnpc && is_btype && !is_btype_next) begin
+            // b_type but not jump
+            predict_pc <= n_dnpc;
+            pc <= n_dnpc;
+
+            in_valid <= 'b1;
+            out_valid <= 'b0;
+            out_special_pc <= 'b1;
+        end
     end
 
     always @(posedge clk) begin
@@ -298,6 +311,17 @@ module ysyx_24080020_BTB(
             is_dnpc_next <= 'b0;
         end
     end
+    always @(posedge clk) begin
+         if(!rst) begin
+             is_btype_next <= 'b0;
+         end
+         else if(is_btype) begin
+             is_btype_next <= 'b1;
+         end
+         else begin
+             is_btype_next <= 'b0;
+         end
+     end
 
     always @(posedge clk) begin
         if(!rst) begin
