@@ -21,6 +21,7 @@ module ysyx_24080020_IFU (
     input special_pc_i,
 
     input need_flush_pipeline,
+    input btype_n_jump_btb,
 
     // ifu <-> ir
     input inst_fin_valid,
@@ -152,13 +153,17 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             btype_n_jump <= 'b0;
         end
-        else if(is_dnpc_exu && !control_adventure) begin
+        else if(need_flush_pipeline && !control_adventure) begin
             flush_pipeline <= 'b1;
+            btype_n_jump <= btype_n_jump_btb;
         end
-        else if(is_btype_exu &&!is_dnpc_exu && (pc_ifu > dnpc_exu) && !control_adventure) begin
-            flush_pipeline <= 'b1;
-            btype_n_jump <= 'b1;
-        end
+        // else if(is_dnpc_exu && !control_adventure) begin
+        //     flush_pipeline <= 'b1;
+        // end
+        // else if(is_btype_exu &&!is_dnpc_exu && (pc_ifu > dnpc_exu) && !control_adventure) begin
+        //     flush_pipeline <= 'b1;
+        //     btype_n_jump <= 'b1;
+        // end
     end
 
 

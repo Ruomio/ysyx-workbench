@@ -321,6 +321,7 @@ module ysyx_24080020_NPC(
   wire idu_exu_shake_hands;
   wire update_pc, flush_pipeline, need_flush_pipeline;
   wire dnpc_en, get_right_inst;
+  wire btype_n_jump_btb;
 
 
   // skip difftest ref
@@ -357,6 +358,7 @@ module ysyx_24080020_NPC(
         .pc(pc_btb),
         .out_special_pc(special_pc_btb),
         .flush_pipeline(need_flush_pipeline),
+        .btype_n_jump(btype_n_jump_btb),
 
         .update_pc(arvalid_ifu && arready_ifu),
         // bus
@@ -432,6 +434,7 @@ module ysyx_24080020_NPC(
         .raddr(raddr_ifu),
         .special_pc_i(special_pc_i),
         .need_flush_pipeline(need_flush_pipeline),
+        .btype_n_jump_btb(btype_n_jump_btb),
 
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),

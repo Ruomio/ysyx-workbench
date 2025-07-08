@@ -15,6 +15,7 @@ module ysyx_24080020_BTB(
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
 
     output reg flush_pipeline,
+    output reg btype_n_jump,
     // bus
     output reg out_valid,
     input out_ready
@@ -291,14 +292,15 @@ module ysyx_24080020_BTB(
         end
         else if(!is_dnpc && is_btype && !is_btype_next && (pc > dnpc)) begin
             // b_type but not jump
-            predict_pc <= dnpc;
-            pc <= dnpc;
+            predict_pc <= n_dnpc;
+            pc <= n_dnpc;
 
             in_valid <= 'b1;
             out_valid <= 'b0;
             out_special_pc <= 'b1;
 
             flush_pipeline <= 'b1;
+            btype_n_jump <= 'b1;
         end
     end
 
@@ -351,6 +353,7 @@ module ysyx_24080020_BTB(
             hit_target_pc <= 'b0;
             btb_hit <= 'b0;
             flush_pipeline <= 'b0;
+            btype_n_jump <= 'b0;
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
@@ -361,6 +364,7 @@ module ysyx_24080020_BTB(
             out_special_pc <= 'b0;
             btb_hit <= 'b0;
             flush_pipeline <= 'b0;
+            btype_n_jump <= 'b0;
         end
     end
 
