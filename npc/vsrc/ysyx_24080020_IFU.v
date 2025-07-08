@@ -148,7 +148,7 @@ module ysyx_24080020_IFU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            btype_n_jump <= 'b1;
+            btype_n_jump <= 'b0;
         end
         else if(is_dnpc_exu && !control_adventure) begin
             flush_pipeline <= 'b1;
