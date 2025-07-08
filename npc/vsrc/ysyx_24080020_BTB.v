@@ -334,7 +334,7 @@ module ysyx_24080020_BTB(
             pc_tmp <= pc;
 
         end
-        else if(in_valid && (current_state == IDLE)) begin
+        else if(in_valid && !is_dnpc_tmp && (current_state == IDLE)) begin
             in_ready <= 'b1;
         end
     end
@@ -367,7 +367,10 @@ module ysyx_24080020_BTB(
             update_en <= 'b0;
             first <= 'b1;
         end
-        if(update_en) begin
+        if(is_dnpc_tmp && in_valid) begin
+            in_valid <= 'b0;
+        end
+        else if(update_en) begin
             update_en <= 'b0;
             in_valid <= 'b1;
         end
