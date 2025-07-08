@@ -160,6 +160,7 @@ module ysyx_24080020_EXU
             exu_mem_valid <= 1'b0;
             is_dnpc_exu <= 'b0;
             waddr_exu <= 'b0;
+            is_btype_exu <= 'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif
