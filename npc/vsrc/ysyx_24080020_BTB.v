@@ -264,7 +264,7 @@ module ysyx_24080020_BTB(
             branch_valid[branch_index_new] <= branch_valid[branch_index_new] | (1 << fifo_index[branch_index_new]);
 
         end
-        else if(is_dnpc && !is_dnpc_next && is_btype) begin
+        else if(is_dnpc && !is_dnpc_next) begin
             if(btb_hit && (hit_pc == pc_exu)) begin
                 btb_hit <= 'b0;
                 if(dnpc != hit_target_pc) begin
