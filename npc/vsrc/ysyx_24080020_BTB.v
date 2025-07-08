@@ -19,8 +19,8 @@ module ysyx_24080020_BTB(
 );
 
     `ifdef CONFIG_DPIC
-    import "DPI-C" function void statistics_btb_total();
-    import "DPI-C" function void statistics_btb_hit();
+    // import "DPI-C" function void statistics_btb_total();
+    // import "DPI-C" function void statistics_btb_hit();
     `endif
 
     // BRANCH
