@@ -330,9 +330,10 @@ module ysyx_24080020_BTB(
 
             pc <= predict_pc;
 
-            if(out_special_pc) begin
-                out_special_pc <= 'b0;
-            end
+            // if(out_special_pc) begin
+            // end
+            out_special_pc <= 'b0;
+            btb_hit <= 'b0;
         end
     end
 
