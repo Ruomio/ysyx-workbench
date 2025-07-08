@@ -19,8 +19,8 @@ module ysyx_24080020_BTB(
 );
 
     `ifdef CONFIG_DPIC
-    // import "DPI-C" function void statistics_btb_total();
-    // import "DPI-C" function void statistics_btb_hit();
+    import "DPI-C" function void statistics_btb_total();
+    import "DPI-C" function void statistics_btb_hit();
     `endif
 
     // BRANCH
@@ -268,7 +268,11 @@ module ysyx_24080020_BTB(
                     pc_new <= pc_exu;
                     dnpc_tmp <= dnpc;
                     is_dnpc_tmp <= 'b1;
-
+                end
+                else begin
+                `ifdef CONFIG_DPIC
+                    statistics_btb_hit();
+                `endif
                 end
             end
             else begin
@@ -276,6 +280,10 @@ module ysyx_24080020_BTB(
                 dnpc_tmp <= dnpc;
                 is_dnpc_tmp <= 'b1;;
             end
+
+            `ifdef CONFIG_DPIC
+            statistics_btb_total();
+            `endif
         end
     end
 

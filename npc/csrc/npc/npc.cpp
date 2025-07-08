@@ -93,6 +93,8 @@ static uint64_t idu_load_type_cnt = 0;
 static uint64_t idu_store_type_cnt = 0;
 static uint64_t idu_csr_type_cnt = 0;
 static uint64_t idu_jump_type_cnt = 0;
+static uint64_t btb_total_cnt = 0;
+static uint64_t btb_hit_cnt = 0;
 
 enum idu_type{None=0, Calculate, Load, Store, CSR, Jump, Fetch, Icache_Hit, Icache_Miss};
 static int idu_type = None;
@@ -363,6 +365,11 @@ static void statistic() {
   Log("idu_store_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_store_type_cnt, idu_store_type_cnt * 100.0 / ifu_get_inst_cnt, idu_store_cycles / idu_store_type_cnt);
   Log("idu_csr_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_csr_type_cnt, idu_csr_type_cnt * 100.0 / ifu_get_inst_cnt, idu_csr_cycles / idu_csr_type_cnt);
   Log("idu_jump_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_jump_type_cnt, idu_jump_type_cnt * 100.0 / ifu_get_inst_cnt, idu_jump_cycles / idu_jump_type_cnt);
+
+  // BTB
+  if(btb_total_cnt == 0) return;
+  Log("btb_total_cnt = " NUMBERIC_FMT " Percentage: %.2f%%", btb_total_cnt, btb_total_cnt * 100.0 / ifu_get_inst_cnt);
+  Log("btb_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%", btb_hit_cnt, btb_hit_cnt * 100.0 / ifu_get_inst_cnt);
 }
 
 void exec_npc(uint64_t n) {
@@ -649,4 +656,12 @@ extern "C" void statistics_icache_miss() {
   // printf("ifu_icache_miss_cnt: %ld  pc: 0x%x \n", ifu_icache_miss_cnt, g_pc);
   idu_type = Icache_Miss;
   ifu_icache_miss_cnt ++;
+}
+
+extern "C" void statistics_btb_total() {
+    btb_total_cnt ++;
+}
+
+extern "C" void statistics_btb_hit() {
+    btb_hit_cnt ++;
 }
