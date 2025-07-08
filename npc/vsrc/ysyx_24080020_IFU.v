@@ -153,7 +153,7 @@ module ysyx_24080020_IFU (
         else if(is_dnpc_exu && !control_adventure) begin
             flush_pipeline <= 'b1;
         end
-        else if(is_btype_exu &&!is_dnpc_exu && !control_adventure) begin
+        else if(is_btype_exu &&!is_dnpc_exu && (pc_ifu > dnpc_exu) && !control_adventure) begin
             flush_pipeline <= 'b1;
             btype_n_jump <= 'b1;
         end
