@@ -20,6 +20,8 @@ module ysyx_24080020_IFU (
 
     input special_pc_i,
 
+    input need_flush_pipeline,
+
     // ifu <-> ir
     input inst_fin_valid,
     output reg inst_fin_ready,

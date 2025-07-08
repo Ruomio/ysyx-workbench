@@ -319,7 +319,7 @@ module ysyx_24080020_NPC(
   wire lsu_busy, lsu_busy_unused;
   wire exu_mem_shake_hands;
   wire idu_exu_shake_hands;
-  wire update_pc, flush_pipeline;
+  wire update_pc, flush_pipeline, need_flush_pipeline;
   wire dnpc_en, get_right_inst;
 
 
@@ -356,6 +356,7 @@ module ysyx_24080020_NPC(
 
         .pc(pc_btb),
         .out_special_pc(special_pc_btb),
+        .flush_pipeline(need_flush_pipeline),
 
         .update_pc(arvalid_ifu && arready_ifu),
         // bus
@@ -430,6 +431,8 @@ module ysyx_24080020_NPC(
         .flush_pipeline(flush_pipeline),
         .raddr(raddr_ifu),
         .special_pc_i(special_pc_i),
+        .need_flush_pipeline(need_flush_pipeline),
+
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
