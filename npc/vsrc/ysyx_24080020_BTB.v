@@ -18,6 +18,11 @@ module ysyx_24080020_BTB(
     input out_ready
 );
 
+    `ifdef CONFIG_DPIC
+    import "DPI-C" function void statistics_btb_total();
+    import "DPI-C" function void statistics_btb_hit();
+    `endif
+
     // BRANCH
     // branchway maybe not the 2^n
     localparam branch_way = `ysyx_24080020_BRANCH_WAY;
@@ -70,9 +75,9 @@ module ysyx_24080020_BTB(
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit;
     reg [2:0] current_state;
-    reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp;
+    reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
     logic has_hit;
     logic total_hits [0 : branch_way - 1];
@@ -148,7 +153,13 @@ module ysyx_24080020_BTB(
                 end
                 JUDGE: begin
                     if(is_hit) begin
-                        next_state = HIT;
+                        // avoid continuous hit
+                        if(!btb_hit) begin
+                            next_state = HIT;
+                        end
+                        else begin
+                            next_state = JUDGE;
+                        end
                     end else begin
                         next_state = MISS;
                     end
@@ -191,6 +202,10 @@ module ysyx_24080020_BTB(
             end
         end
         else if(current_state == HIT) begin
+            hit_pc <= pc_tmp;
+            hit_target_pc <= shift_rdata[31:0];
+            out_special_pc <= 'b1;
+            btb_hit <= 'b1;
             // BTFN
             predict_pc <= shift_rdata[31:0] < pc ? shift_rdata[31:0] : pc + 32'd4;
 
@@ -246,9 +261,21 @@ module ysyx_24080020_BTB(
 
         end
         else if(is_dnpc && !is_dnpc_next) begin
-            pc_new <= pc_exu;
-            is_dnpc_tmp <= is_dnpc;
-            dnpc_tmp <= dnpc;
+            if(btb_hit && (hit_pc == pc_exu)) begin
+                btb_hit <= 'b0;
+                if(dnpc != hit_target_pc) begin
+                    // error hit, need update pc
+                    pc_new <= pc_exu;
+                    dnpc_tmp <= dnpc;
+                    is_dnpc_tmp <= 'b1;
+
+                end
+            end
+            else begin
+                pc_new <= pc_exu;
+                dnpc_tmp <= dnpc;
+                is_dnpc_tmp <= 'b1;;
+            end
         end
     end
 
@@ -286,6 +313,9 @@ module ysyx_24080020_BTB(
             pc <= `ysyx_24080020_MBASE;
             predict_pc <= 'b0;
             // predict_pc <= `ysyx_24080020_MBASE + 32'd4;
+            hit_pc <= 'b0;
+            hit_target_pc <= 'b0;
+            btb_hit <= 'b0;
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
