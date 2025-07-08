@@ -210,11 +210,9 @@ module ysyx_24080020_BTB(
             hit_target_pc <= shift_rdata[31:0];
             out_special_pc <= 'b1;
             btb_hit <= 'b1;
-            // BTFN
-            predict_pc <= shift_rdata[31:0] < pc ? shift_rdata[31:0] : pc + 32'd4;
 
-            // ALWAYS TAKEN
-            // predict_pc <= shift_rdata[31:0];
+            predict_pc <= shift_rdata[31:0];
+
         end
         else if(current_state == MISS) begin
             predict_pc <= pc + 32'd4;
@@ -289,10 +287,10 @@ module ysyx_24080020_BTB(
             statistics_btb_total();
             `endif
         end
-        else if(!is_dnpc && is_btype && !is_btype_next) begin
+        else if(!is_dnpc && is_btype && !is_btype_next && (pc < dnpc)) begin
             // b_type but not jump
-            predict_pc <= n_dnpc;
-            pc <= n_dnpc;
+            predict_pc <= dnpc;
+            pc <= dnpc;
 
             in_valid <= 'b1;
             out_valid <= 'b0;
@@ -352,10 +350,9 @@ module ysyx_24080020_BTB(
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
 
-            pc <= predict_pc;
+            // BTFN
+            pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
 
-            // if(out_special_pc) begin
-            // end
             out_special_pc <= 'b0;
             btb_hit <= 'b0;
         end
