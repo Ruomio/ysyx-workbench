@@ -192,7 +192,7 @@ module ysyx_24080020_BTB(
             // init
             is_hit <= 'b0;
 
-            if(is_btype) begin
+            if(is_btype && !is_dnpc) begin
                 btb_hit <= 'b0;
             end
         end
