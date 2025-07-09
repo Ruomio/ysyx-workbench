@@ -192,9 +192,6 @@ module ysyx_24080020_BTB(
             // init
             is_hit <= 'b0;
 
-            if(is_btype && !is_dnpc) begin
-                btb_hit <= 'b0;
-            end
         end
         else if(current_state == JUDGE) begin
             if(has_hit) begin
@@ -318,7 +315,7 @@ module ysyx_24080020_BTB(
         end
         else if(is_dnpc && !is_dnpc_next && !is_btype) begin
             // jal or jalr
-            $display("jal or jalr");
+            // $display("jal or jalr");
 
             pc_new <= pc_exu;
             dnpc_tmp <= dnpc;
