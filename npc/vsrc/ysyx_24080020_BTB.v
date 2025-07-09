@@ -191,6 +191,10 @@ module ysyx_24080020_BTB(
         if(current_state == IDLE) begin
             // init
             is_hit <= 'b0;
+
+            if(is_btype) begin
+                btb_hit <= 'b0;
+            end
         end
         else if(current_state == JUDGE) begin
             if(has_hit) begin

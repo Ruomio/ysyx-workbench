@@ -369,7 +369,7 @@ static void statistic() {
   }
 
   // BTB
-  if(btb_total_cnt != 0) {
+  if(btb_total_cnt) {
     Log("btb_hit_cnt = " NUMBERIC_FMT " btb_total_cnt = " NUMBERIC_FMT " Percentage: %.2f%%", btb_hit_cnt, btb_total_cnt, btb_hit_cnt * 100.0 / btb_total_cnt);
   }
 }
