@@ -254,7 +254,7 @@ module ysyx_24080020_BTB(
         end
         else if(is_dnpc && !is_dnpc_next) begin
             if(btb_hit && (hit_pc == pc_exu)) begin
-                // btb_hit <= 'b0;
+                btb_hit <= 'b0;
                 if(dnpc != hit_target_pc) begin
                     // error hit, need update pc
                     pc_new <= pc_exu;
