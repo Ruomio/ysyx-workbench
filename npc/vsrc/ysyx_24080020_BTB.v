@@ -355,9 +355,8 @@ module ysyx_24080020_BTB(
             out_special_pc <= 'b0;
             flush_pipeline <= 'b0;
             btype_n_jump <= 'b0;
+            btb_hit <= 'b0;
             if(btb_hit) begin
-                btb_hit <= 'b0;
-
                 `ifdef CONFIG_DPIC
                     statistics_btb_hit();
                 `endif
