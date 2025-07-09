@@ -315,7 +315,6 @@ module ysyx_24080020_BTB(
         end
         else if(is_dnpc && !is_dnpc_next && !is_btype) begin
             // jal or jalr
-            // $display("jal or jalr");
 
             pc_new <= pc_exu;
             dnpc_tmp <= dnpc;
@@ -396,12 +395,6 @@ module ysyx_24080020_BTB(
             flush_pipeline <= 'b0;
             btype_n_jump <= 'b0;
 
-            // if(btb_hit) begin
-            //     btb_hit <= 'b0;
-            //     `ifdef CONFIG_DPIC
-            //         statistics_btb_hit();
-            //     `endif
-            // end
         end
     end
 
