@@ -350,9 +350,13 @@ module ysyx_24080020_BTB(
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
 
-            // BTFN
             if(!is_dnpc_tmp) begin
-                pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
+                // BTFN
+                // pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
+
+                // ALWAYS TAKEN
+                pc <= predict_pc;
+
                 out_special_pc <= 'b0;
             end
 
