@@ -349,26 +349,29 @@ static void statistic() {
   if(!idu_store_type_cnt) printf("idu_store_type_cnt is 0\n");
   if(!idu_load_type_cnt) printf("idu_load_type_cnt is 0\n");
   if(!idu_calculate_type_cnt) printf("idu_calculate_type_cnt is 0\n");
-  if(!ifu_get_inst_cnt || !idu_jump_type_cnt || !idu_csr_type_cnt || !idu_store_type_cnt || !idu_load_type_cnt || !idu_calculate_type_cnt ) return;
-  float access_time = ifu_icache_hit_cycles*1.0 / ifu_icache_hit_cnt;
-  float icache_hit_rate = ifu_icache_hit_cnt*1.0 / ifu_get_inst_cnt;
-  float miss_time = ifu_icache_miss_cycles*1.0 / ifu_icache_miss_cnt;
-  float icache_miss_rate =  1.0 - icache_hit_rate;
 
-  Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average: %ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
-  Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, TMT: %.2f", ifu_icache_hit_cnt, icache_hit_rate * 100.0, icache_hit_rate * access_time + icache_miss_rate * miss_time, miss_time );
-  Log("dcache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%% ", dcache_hit_cnt, dcache_hit_cnt * 100.0 / (ifu_get_inst_cnt) );
-  Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
-  Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
-  Log("idu_calcu_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_calculate_type_cnt, idu_calculate_type_cnt * 100.0 / ifu_get_inst_cnt, idu_calculate_cycles / idu_calculate_type_cnt);
-  Log("idu_load_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_load_type_cnt, idu_load_type_cnt * 100.0 / ifu_get_inst_cnt, idu_load_cycles / idu_load_type_cnt);
-  Log("idu_store_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_store_type_cnt, idu_store_type_cnt * 100.0 / ifu_get_inst_cnt, idu_store_cycles / idu_store_type_cnt);
-  Log("idu_csr_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_csr_type_cnt, idu_csr_type_cnt * 100.0 / ifu_get_inst_cnt, idu_csr_cycles / idu_csr_type_cnt);
-  Log("idu_jump_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_jump_type_cnt, idu_jump_type_cnt * 100.0 / ifu_get_inst_cnt, idu_jump_cycles / idu_jump_type_cnt);
+  if(ifu_get_inst_cnt && idu_jump_type_cnt && idu_csr_type_cnt && idu_store_type_cnt && idu_load_type_cnt && idu_calculate_type_cnt ) {
+    float access_time = ifu_icache_hit_cycles*1.0 / ifu_icache_hit_cnt;
+    float icache_hit_rate = ifu_icache_hit_cnt*1.0 / ifu_get_inst_cnt;
+    float miss_time = ifu_icache_miss_cycles*1.0 / ifu_icache_miss_cnt;
+    float icache_miss_rate =  1.0 - icache_hit_rate;
+
+    Log("ifu_get_inst_cnt = " NUMBERIC_FMT " Average: %ld", ifu_get_inst_cnt, ifu_get_inst_cycles / ifu_get_inst_cnt);
+    Log("ifu_icache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%%, AMAT: %.2lf, TMT: %.2f", ifu_icache_hit_cnt, icache_hit_rate * 100.0, icache_hit_rate * access_time + icache_miss_rate * miss_time, miss_time );
+    Log("dcache_hit_cnt = " NUMBERIC_FMT " Percentage: %.2f%% ", dcache_hit_cnt, dcache_hit_cnt * 100.0 / (ifu_get_inst_cnt) );
+    Log("lsu_get_data_cnt = " NUMBERIC_FMT, lsu_get_data_cnt);
+    Log("exu_complete_culca_cnt = " NUMBERIC_FMT, exu_complete_calcu_cnt);
+    Log("idu_calcu_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_calculate_type_cnt, idu_calculate_type_cnt * 100.0 / ifu_get_inst_cnt, idu_calculate_cycles / idu_calculate_type_cnt);
+    Log("idu_load_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_load_type_cnt, idu_load_type_cnt * 100.0 / ifu_get_inst_cnt, idu_load_cycles / idu_load_type_cnt);
+    Log("idu_store_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_store_type_cnt, idu_store_type_cnt * 100.0 / ifu_get_inst_cnt, idu_store_cycles / idu_store_type_cnt);
+    Log("idu_csr_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_csr_type_cnt, idu_csr_type_cnt * 100.0 / ifu_get_inst_cnt, idu_csr_cycles / idu_csr_type_cnt);
+    Log("idu_jump_type_cnt = " NUMBERIC_FMT " Percentage: %.2f%%  Average: %ld", idu_jump_type_cnt, idu_jump_type_cnt * 100.0 / ifu_get_inst_cnt, idu_jump_cycles / idu_jump_type_cnt);
+  }
 
   // BTB
-  if(btb_total_cnt == 0) return;
-  Log("btb_hit_cnt = " NUMBERIC_FMT " btb_total_cnt = " NUMBERIC_FMT " Percentage: %.2f%%", btb_hit_cnt, btb_total_cnt, btb_hit_cnt * 100.0 / btb_total_cnt);
+  if(btb_total_cnt != 0) {
+    Log("btb_hit_cnt = " NUMBERIC_FMT " btb_total_cnt = " NUMBERIC_FMT " Percentage: %.2f%%", btb_hit_cnt, btb_total_cnt, btb_hit_cnt * 100.0 / btb_total_cnt);
+  }
 }
 
 void exec_npc(uint64_t n) {
