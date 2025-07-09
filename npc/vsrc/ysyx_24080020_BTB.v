@@ -306,6 +306,11 @@ module ysyx_24080020_BTB(
                     statistics_btb_err_hit();
                 `endif
             end
+            else begin
+                `ifdef CONFIG_DPIC
+                    statistics_btb_hit();
+                `endif
+            end
 
         end
         else if(is_dnpc && !is_dnpc_next && !is_btype) begin
