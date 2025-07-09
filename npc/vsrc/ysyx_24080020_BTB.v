@@ -319,6 +319,12 @@ module ysyx_24080020_BTB(
         else if(is_dnpc && !is_dnpc_next && !is_btype) begin
             // jal or jalr
             $display("jal or jalr");
+
+            pc_new <= pc_exu;
+            dnpc_tmp <= dnpc;
+            is_dnpc_tmp <= 'b1;
+
+            flush_pipeline <= 'b1;
         end
     end
 
