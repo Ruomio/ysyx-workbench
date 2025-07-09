@@ -153,7 +153,7 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             btype_n_jump <= 'b0;
         end
-        else if(need_flush_pipeline || (control_adventure && !control_adventure_next)) begin
+        else if(need_flush_pipeline /* || (control_adventure && !control_adventure_next) */) begin
             flush_pipeline <= 'b1;
             btype_n_jump <= btype_n_jump_btb;
         end
