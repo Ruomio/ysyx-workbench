@@ -244,6 +244,8 @@ module ysyx_24080020_BTB(
             predict_pc <= dnpc_tmp;
             out_special_pc <= 'b1;
 
+            btb_hit <= 'b0;
+
 
             // write BTB
             fifo_index[branch_index_new] <= (fifo_index[branch_index_new] + 'b1) % branch_way;
