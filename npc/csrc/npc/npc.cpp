@@ -96,8 +96,9 @@ static uint64_t idu_jump_type_cnt = 0;
 static uint64_t btb_total_cnt = 0;
 static uint64_t btb_hit_cnt = 0;
 
-enum idu_type{None=0, Calculate, Load, Store, CSR, Jump, Fetch, Icache_Hit, Icache_Miss};
+enum statistics_type{None=0, Calculate, Load, Store, CSR, Jump, Fetch, Icache_Hit, Icache_Miss};
 static int idu_type = None;
+static int icache_type = None;
 static uint64_t idu_calculate_cycles = 0;
 static uint64_t idu_load_cycles = 0;
 static uint64_t idu_store_cycles = 0;
@@ -256,7 +257,13 @@ void exec_once_npc(uint32_t pc) {
         case Store: idu_store_cycles++; break;
         case CSR: idu_csr_cycles++; break;
         case Jump: idu_jump_cycles++; break;
-
+        default: break;
+      }
+      switch(icache_type) {
+        case None: {
+          ifu_get_inst_cycles++;
+          break;
+        }
         case Icache_Hit: {
           ifu_icache_hit_cycles++;
           ifu_get_inst_cycles++;
@@ -267,7 +274,7 @@ void exec_once_npc(uint32_t pc) {
           ifu_get_inst_cycles++;
           break;
         }
-        case Fetch: ifu_get_inst_cycles++; break;
+        case Fetch: break;
         default: break;
       }
     }
@@ -598,7 +605,7 @@ extern "C" void npc_difftest_skip_ref() {
 
 extern "C" void statistics_ifu_get_inst() {
   // printf("ifu_get_inst_cnt: %ld pc: 0x%x , total_guest_inst: 0x%ld\n", ifu_get_inst_cnt, g_pc, g_nr_guest_inst);
-  idu_type = Fetch;
+  icache_type = Fetch;
   ifu_get_inst_cnt ++;
 }
 
@@ -642,7 +649,7 @@ extern "C" void statistics_idu_jump_type() {
 
 extern "C" void statistics_icache_hit() {
   // printf("ifu_icache_hit_cnt: %ld  pc: 0x%x \n", ifu_icache_hit_cnt, g_pc);
-  idu_type = Icache_Hit;
+  icache_type = Icache_Hit;
   ifu_icache_hit_cnt ++;
 }
 
@@ -656,7 +663,7 @@ extern "C" void statistics_dcache_hit() {
 
 extern "C" void statistics_icache_miss() {
   // printf("ifu_icache_miss_cnt: %ld  pc: 0x%x \n", ifu_icache_miss_cnt, g_pc);
-  idu_type = Icache_Miss;
+  icache_type = Icache_Miss;
   ifu_icache_miss_cnt ++;
 }
 
