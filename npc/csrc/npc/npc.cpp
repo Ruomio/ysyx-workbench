@@ -386,7 +386,7 @@ void exec_npc(uint64_t n) {
 
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
-    int snapshot_interval_seconds = 20; // 快照间隔时间（ms）
+    int snapshot_interval_seconds = 30; // 快照间隔时间（ms）
 
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
