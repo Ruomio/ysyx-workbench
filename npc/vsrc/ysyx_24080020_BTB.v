@@ -341,7 +341,7 @@ module ysyx_24080020_BTB(
             pc_tmp <= pc;
 
         end
-        else if(in_valid && !is_dnpc_tmp && (current_state == IDLE)) begin
+        else if(in_valid && !is_dnpc_tmp && (current_state == IDLE) && !out_valid) begin
             in_ready <= 'b1;
         end
     end
