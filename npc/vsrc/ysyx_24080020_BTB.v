@@ -256,7 +256,6 @@ module ysyx_24080020_BTB(
             predict_pc <= dnpc_tmp;
             out_special_pc <= 'b1;
 
-            flush_pipeline <= 'b1;
 
             // write BTB
             fifo_index[branch_index_new] <= (fifo_index[branch_index_new] + 'b1) % branch_way;
@@ -273,6 +272,8 @@ module ysyx_24080020_BTB(
                     pc_new <= pc_exu;
                     dnpc_tmp <= dnpc;
                     is_dnpc_tmp <= 'b1;
+
+                    flush_pipeline <= 'b1;
                 end
                 else begin
                 `ifdef CONFIG_DPIC
@@ -284,6 +285,8 @@ module ysyx_24080020_BTB(
                 pc_new <= pc_exu;
                 dnpc_tmp <= dnpc;
                 is_dnpc_tmp <= 'b1;
+
+                flush_pipeline <= 'b1;
             end
 
             `ifdef CONFIG_DPIC
