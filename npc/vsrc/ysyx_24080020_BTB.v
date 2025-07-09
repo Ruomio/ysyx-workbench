@@ -249,7 +249,8 @@ module ysyx_24080020_BTB(
 
             skip_once <= 'b1;
 
-            in_valid <= 'b1;
+            // in_valid <= 'b1;
+            update_en <= 'b1;
             out_valid <= 'b0;
 
             pc <= dnpc_tmp;
