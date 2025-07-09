@@ -6,6 +6,7 @@ module ysyx_24080020_BTB(
 
     input update_pc,
 
+    input is_btype,
     input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
@@ -13,10 +14,18 @@ module ysyx_24080020_BTB(
     output reg out_special_pc,
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
 
+    output reg flush_pipeline,
+    output reg btype_n_jump,
     // bus
     output reg out_valid,
     input out_ready
 );
+
+    `ifdef CONFIG_DPIC
+    import "DPI-C" function void statistics_btb_total();
+    import "DPI-C" function void statistics_btb_hit();
+    import "DPI-C" function void statistics_btb_err_hit();
+    `endif
 
     // BRANCH
     // branchway maybe not the 2^n
@@ -66,13 +75,14 @@ module ysyx_24080020_BTB(
 
 
     wire set_idle;
+    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
     reg [2:0] next_state;
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next;
     reg [2:0] current_state;
-    reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp;
+    reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
     logic has_hit;
     logic total_hits [0 : branch_way - 1];
@@ -98,7 +108,9 @@ module ysyx_24080020_BTB(
     assign shift_wtag = {{tag_complete_bits{1'b0}}, branch_tag_new} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
     assign tag_mask = {{tag_complete_bits{1'b0}}, ~{branch_tag_size{1'b0}}} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
 
-    assign set_idle = is_dnpc_tmp;
+    assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit);
+
+    assign n_dnpc = pc_exu + 32'd4;
 
     generate
       genvar j;
@@ -147,8 +159,15 @@ module ysyx_24080020_BTB(
                     end
                 end
                 JUDGE: begin
-                    if(is_hit) begin
-                        next_state = HIT;
+                    if(has_hit) begin
+                        // next_state = HIT;
+                        // avoid continuous hit
+                        if(!btb_hit) begin
+                            next_state = HIT;
+                        end
+                        else begin
+                            next_state = JUDGE;
+                        end
                     end else begin
                         next_state = MISS;
                     end
@@ -160,13 +179,6 @@ module ysyx_24080020_BTB(
                     next_state = Done;
                 end
                 Done: begin
-                    // if(out_valid && out_ready) begin
-                    //     next_state = IDLE;
-                    // end
-                    // else begin
-                    //     next_state = Done;
-                    // end
-
                     next_state = IDLE;
                 end
                 default: begin
@@ -180,6 +192,7 @@ module ysyx_24080020_BTB(
         if(current_state == IDLE) begin
             // init
             is_hit <= 'b0;
+
         end
         else if(current_state == JUDGE) begin
             if(has_hit) begin
@@ -191,25 +204,21 @@ module ysyx_24080020_BTB(
             end
         end
         else if(current_state == HIT) begin
-            // BTFN
-            predict_pc <= shift_rdata[31:0] < pc ? shift_rdata[31:0] : pc + 32'd4;
 
-            // ALWAYS TAKEN
-            // predict_pc <= shift_rdata[31:0];
+            hit_pc <= pc_tmp;
+            hit_target_pc <= shift_rdata[31:0];
+            out_special_pc <= 'b1;
+            btb_hit <= 'b1;
+
+            predict_pc <= shift_rdata[31:0];
+
         end
         else if(current_state == MISS) begin
             predict_pc <= pc + 32'd4;
         end
         else if(current_state == Done) begin
-            // if(skip_once) begin
-            //     skip_once <= 'b0;
-            //     out_valid <= 'b0;
-            // end
-            // else begin
-            //     out_valid <= 'b1;
-            // end
 
-            if((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) begin
+            if(((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) && ((hit_pc != pc_exu) || (hit_target_pc != dnpc)) ) begin
                 out_valid <= 'b0;
             end
             else begin
@@ -230,12 +239,15 @@ module ysyx_24080020_BTB(
 
             skip_once <= 'b1;
 
-            in_valid <= 'b1;
+            // in_valid <= 'b1;
+            update_en <= 'b1;
             out_valid <= 'b0;
 
             pc <= dnpc_tmp;
             predict_pc <= dnpc_tmp;
             out_special_pc <= 'b1;
+
+            btb_hit <= 'b0;
 
 
             // write BTB
@@ -245,10 +257,74 @@ module ysyx_24080020_BTB(
             branch_valid[branch_index_new] <= branch_valid[branch_index_new] | (1 << fifo_index[branch_index_new]);
 
         end
-        else if(is_dnpc && !is_dnpc_next) begin
+        else if(is_dnpc && !is_dnpc_next && is_btype) begin
+            if(btb_hit) begin
+                btb_hit <= 'b0;
+                if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
+                    // error hit, need update pc
+                    pc_new <= pc_exu;
+                    dnpc_tmp <= dnpc;
+                    is_dnpc_tmp <= 'b1;
+
+                    flush_pipeline <= 'b1;
+                end
+                else if((hit_pc == pc_exu) && (dnpc == hit_target_pc)) begin
+                `ifdef CONFIG_DPIC
+                    statistics_btb_hit();
+                `endif
+                end
+            end
+            else begin
+                pc_new <= pc_exu;
+                dnpc_tmp <= dnpc;
+                is_dnpc_tmp <= 'b1;
+
+                flush_pipeline <= 'b1;
+            end
+
+            `ifdef CONFIG_DPIC
+            statistics_btb_total();
+            `endif
+
+        end
+        else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
+            if(btb_hit) begin
+                btb_hit <= 'b0;
+
+                // b_type but not jump, so need flush
+                predict_pc <= n_dnpc;
+                pc <= n_dnpc;
+
+                update_en <= 'b1;
+                out_valid <= 'b0;
+                out_special_pc <= 'b1;
+
+                flush_pipeline <= 'b1;
+                btype_n_jump <= 'b1;
+
+                `ifdef CONFIG_DPIC
+                    statistics_btb_err_hit();
+                `endif
+            end
+            else begin
+                `ifdef CONFIG_DPIC
+                    statistics_btb_hit();
+                `endif
+            end
+
+        end
+        else if(is_dnpc && !is_dnpc_next && !is_btype) begin
+            // jal or jalr
+
             pc_new <= pc_exu;
-            is_dnpc_tmp <= is_dnpc;
             dnpc_tmp <= dnpc;
+            is_dnpc_tmp <= 'b1;
+
+            flush_pipeline <= 'b1;
+
+            `ifdef CONFIG_DPIC
+            statistics_btb_total();
+            `endif
         end
     end
 
@@ -263,6 +339,17 @@ module ysyx_24080020_BTB(
             is_dnpc_next <= 'b0;
         end
     end
+    always @(posedge clk) begin
+         if(!rst) begin
+             is_btype_next <= 'b0;
+         end
+         else if(is_btype) begin
+             is_btype_next <= 'b1;
+         end
+         else begin
+             is_btype_next <= 'b0;
+         end
+     end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -275,7 +362,7 @@ module ysyx_24080020_BTB(
             pc_tmp <= pc;
 
         end
-        else if(in_valid && (current_state == IDLE)) begin
+        else if(in_valid && !is_dnpc_tmp && (current_state == IDLE) && !out_valid) begin
             in_ready <= 'b1;
         end
     end
@@ -286,15 +373,28 @@ module ysyx_24080020_BTB(
             pc <= `ysyx_24080020_MBASE;
             predict_pc <= 'b0;
             // predict_pc <= `ysyx_24080020_MBASE + 32'd4;
+            hit_pc <= 'b0;
+            hit_target_pc <= 'b0;
+            btb_hit <= 'b0;
+            flush_pipeline <= 'b0;
+            btype_n_jump <= 'b0;
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
 
-            pc <= predict_pc;
+            if(!is_dnpc_tmp) begin
+                // BTFN
+                // pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
 
-            if(out_special_pc) begin
+                // ALWAYS TAKEN
+                pc <= predict_pc;
+
                 out_special_pc <= 'b0;
             end
+
+            flush_pipeline <= 'b0;
+            btype_n_jump <= 'b0;
+
         end
     end
 
@@ -304,7 +404,10 @@ module ysyx_24080020_BTB(
             update_en <= 'b0;
             first <= 'b1;
         end
-        if(update_en) begin
+        if(is_dnpc_tmp && in_valid) begin
+            in_valid <= 'b0;
+        end
+        else if(update_en) begin
             update_en <= 'b0;
             in_valid <= 'b1;
         end

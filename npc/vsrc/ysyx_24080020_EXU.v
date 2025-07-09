@@ -16,6 +16,8 @@ module ysyx_24080020_EXU
     output reg is_ebreak_exu,
 
     // branch
+    input is_btype_idu,
+    input is_jal_idu,
     input is_jalr_idu,
     input is_dnpc_idu,
     // input is_btype_idu,
@@ -23,6 +25,9 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg is_dnpc_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    output reg is_jal_exu,
+    output reg is_btype_exu,
+
     input fencei_idu,
     output reg fencei_exu,
 
@@ -155,6 +160,7 @@ module ysyx_24080020_EXU
             exu_mem_valid <= 1'b0;
             is_dnpc_exu <= 'b0;
             waddr_exu <= 'b0;
+            is_btype_exu <= 'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif
@@ -190,6 +196,8 @@ module ysyx_24080020_EXU
                 pc_exu <= pc_idu;
                 dnpc_exu <= dnpc_idu;
                 is_jalr_exu <= is_jalr_idu;
+                is_jal_exu <= is_jal_idu;
+                is_btype_exu <= is_btype_idu;
 
                 wcsren_exu <= wcsren_idu;
                 wcsraddr_exu <= wcsraddr_idu;
@@ -255,6 +263,8 @@ module ysyx_24080020_EXU
             pc_exu <= 'b0;
             dnpc_exu <= 'b0;
             is_jalr_exu <= 'b0;
+            is_jal_exu <= 'b0;
+            is_btype_exu <= 'b0;
 
             wcsren_exu <= 'b0;
             wcsraddr_exu <= 'b0;

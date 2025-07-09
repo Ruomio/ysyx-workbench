@@ -28,7 +28,8 @@ module ysyx_24080020_IDU (
     output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
     output reg is_load_idu,
     output reg is_dnpc_idu,
-    // output reg is_jal_idu,
+    output reg is_jal_idu,
+    output reg is_btype_idu,
     output reg is_jalr_idu,
     // output reg [2:0] is_btype_idu,
     output reg is_csrtype_idu,
@@ -169,9 +170,9 @@ module ysyx_24080020_IDU (
         is_dnpc_idu = 1'b0;
         is_load_idu = 1'b0;
         is_csrtype_idu = 1'b0;
-        // is_jal_idu = 1'b0;
+        is_jal_idu = 1'b0;
         is_jalr_idu = 1'b0;
-        // is_btype_idu = 3'b0;
+        is_btype_idu = 1'b0;
         mren_idu = 1'b0;
         mwen_idu = 1'b0;
         wen_idu = 1'b0;
@@ -338,7 +339,7 @@ module ysyx_24080020_IDU (
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
                 // is_dnpc_idu = 1'b1;
-                // is_btype_idu = 1'b1;
+                is_btype_idu = 1'b1;
 
                 case(funct3)
                     `ysyx_24080020_BEQ: begin
@@ -534,6 +535,7 @@ module ysyx_24080020_IDU (
                 alu_src2_con_idu = 1'b0;
                 alu_op_idu = `ysyx_24080020_ALU_ADD;
 
+                is_jal_idu = 'b1;
 
                 `ifdef CONFIG_DPIC
                 update_ftrace_dpi();

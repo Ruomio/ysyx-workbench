@@ -80,7 +80,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
   wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem, dnpc_wb;
   wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, is_dnpc_wb;
-  wire is_jalr_idu;
+  wire is_jalr_idu, is_btype_idu, is_btype_exu, is_jal_idu, is_jal_exu;
 
   // inst
   wire [`ysyx_24080020_WIDTH-1:0] inst_ifu, inst_idu;
@@ -319,8 +319,9 @@ module ysyx_24080020_NPC(
   wire lsu_busy, lsu_busy_unused;
   wire exu_mem_shake_hands;
   wire idu_exu_shake_hands;
-  wire update_pc, flush_pipeline;
+  wire update_pc, flush_pipeline, need_flush_pipeline;
   wire dnpc_en, get_right_inst;
+  wire btype_n_jump_btb;
 
 
   // skip difftest ref
@@ -352,9 +353,12 @@ module ysyx_24080020_NPC(
         .pc_exu(pc_exu),
         .is_dnpc(is_dnpc_exu),
         .dnpc(dnpc_new_exu),
+        .is_btype(is_btype_exu),
 
         .pc(pc_btb),
         .out_special_pc(special_pc_btb),
+        .flush_pipeline(need_flush_pipeline),
+        .btype_n_jump(btype_n_jump_btb),
 
         .update_pc(arvalid_ifu && arready_ifu),
         // bus
@@ -372,10 +376,6 @@ module ysyx_24080020_NPC(
         .in_pc(pc_btb),
         .in_special_pc(special_pc_btb),
 
-        // .update_pc(inst_fin_valid && inst_fin_ready),
-        // .update_pc(arvalid_ifu && arready_ifu),
-        // .dnpc(dnpc_new_exu),
-        // .is_dnpc(is_dnpc_exu),
 
         // pc <-> ir
         .special_pc(special_pc_pc),
@@ -421,8 +421,11 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IFU ifu(
         .clk(clk),
         .rst(rst),
+
+        .pc_exu(pc_exu),
         .dnpc_exu(dnpc_new_exu),
         .is_dnpc_exu(is_dnpc_exu),
+        .is_btype_exu(is_btype_exu),
         .inst(inst_ir),
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
@@ -432,6 +435,9 @@ module ysyx_24080020_NPC(
         .flush_pipeline(flush_pipeline),
         .raddr(raddr_ifu),
         .special_pc_i(special_pc_i),
+        .need_flush_pipeline(need_flush_pipeline),
+        .btype_n_jump_btb(btype_n_jump_btb),
+
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
@@ -470,6 +476,8 @@ module ysyx_24080020_NPC(
         .is_load_idu(is_load_idu),
         .is_dnpc_idu(is_dnpc_idu),
         .is_jalr_idu(is_jalr_idu),
+        .is_btype_idu(is_btype_idu),
+        .is_jal_idu(is_jal_idu),
         .is_csrtype_idu(is_csrtype_idu),
         .dnpc_idu(dnpc_idu),
         .fencei_idu(fencei_idu),
@@ -560,11 +568,15 @@ module ysyx_24080020_NPC(
         .is_load_exu(is_load_exu),
         .pc_exu(pc_exu),
 
+        .is_btype_idu(is_btype_idu),
+        .is_jal_idu(is_jal_idu),
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
         .branch_src1_idu(branch_src1_idu),
         .dnpc_idu(dnpc_idu),
         .is_dnpc_exu(is_dnpc_exu),
+        .is_btype_exu(is_btype_exu),
+        .is_jal_exu(is_jal_exu),
         .dnpc_new_exu(dnpc_new_exu),
 
         .alu_src2_con_idu(alu_src2_con_idu),
