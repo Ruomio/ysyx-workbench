@@ -291,7 +291,7 @@ module ysyx_24080020_BTB(
             `endif
         end
         else if(!is_dnpc && is_btype && !is_btype_next && (pc > dnpc)) begin
-            // b_type but not jump
+            // b_type but not jump, so need flush
             predict_pc <= n_dnpc;
             pc <= n_dnpc;
 

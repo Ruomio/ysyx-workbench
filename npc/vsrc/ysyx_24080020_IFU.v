@@ -3,6 +3,7 @@ module ysyx_24080020_IFU (
     input clk,
     input rst,
 
+    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
     input is_dnpc_exu,
     input is_btype_exu,
@@ -49,7 +50,7 @@ module ysyx_24080020_IFU (
     reg state; // 0: idle  ;  1: wait_ready
 
     assign inst_fin = inst_fin_valid & inst_fin_ready;
-    assign n_dnpc = dnpc_exu + 32'd4;
+    assign n_dnpc = pc_exu + 32'd4;
 
     always @(posedge clk) begin
         if(!rst) begin
