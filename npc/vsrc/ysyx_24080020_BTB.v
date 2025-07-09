@@ -253,9 +253,9 @@ module ysyx_24080020_BTB(
 
         end
         else if(is_dnpc && !is_dnpc_next) begin
-            if(btb_hit && (hit_pc == pc_exu)) begin
+            if(btb_hit) begin
                 btb_hit <= 'b0;
-                if(dnpc != hit_target_pc) begin
+                if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
                     // error hit, need update pc
                     pc_new <= pc_exu;
                     dnpc_tmp <= dnpc;
@@ -263,7 +263,7 @@ module ysyx_24080020_BTB(
 
                     flush_pipeline <= 'b1;
                 end
-                else begin
+                else if((hit_pc == pc_exu) && (dnpc == hit_target_pc)) begin
                 `ifdef CONFIG_DPIC
                     statistics_btb_hit();
                 `endif
@@ -280,6 +280,7 @@ module ysyx_24080020_BTB(
             `ifdef CONFIG_DPIC
             statistics_btb_total();
             `endif
+
         end
         else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
             // b_type but not jump, so need flush
