@@ -206,14 +206,19 @@ module ysyx_24080020_BTB(
             end
         end
         else if(current_state == HIT) begin
-            if(is_btype || for_btb_hit) begin
-                for_btb_hit <= 'b0;
-                // not jal or jalr
-                hit_pc <= pc_tmp;
-                hit_target_pc <= shift_rdata[31:0];
-                out_special_pc <= 'b1;
-                btb_hit <= 'b1;
-            end
+            // if(is_btype || for_btb_hit) begin
+            //     for_btb_hit <= 'b0;
+            //     // not jal or jalr
+            //     hit_pc <= pc_tmp;
+            //     hit_target_pc <= shift_rdata[31:0];
+            //     out_special_pc <= 'b1;
+            //     btb_hit <= 'b1;
+            // end
+
+            hit_pc <= pc_tmp;
+            hit_target_pc <= shift_rdata[31:0];
+            out_special_pc <= 'b1;
+            btb_hit <= 'b1;
 
             predict_pc <= shift_rdata[31:0];
 
