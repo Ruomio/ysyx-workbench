@@ -263,11 +263,11 @@ module ysyx_24080020_BTB(
 
                     flush_pipeline <= 'b1;
                 end
-                // else begin
-                // `ifdef CONFIG_DPIC
-                //     statistics_btb_hit();
-                // `endif
-                // end
+                else begin
+                `ifdef CONFIG_DPIC
+                    statistics_btb_hit();
+                `endif
+                end
             end
             else begin
                 pc_new <= pc_exu;
@@ -352,18 +352,18 @@ module ysyx_24080020_BTB(
             // BTFN
             if(!is_dnpc_tmp) begin
                 pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
+                out_special_pc <= 'b0;
             end
 
-            out_special_pc <= 'b0;
             flush_pipeline <= 'b0;
             btype_n_jump <= 'b0;
 
-            if(btb_hit) begin
-                btb_hit <= 'b0;
-                `ifdef CONFIG_DPIC
-                    statistics_btb_hit();
-                `endif
-            end
+            // if(btb_hit) begin
+            //     btb_hit <= 'b0;
+            //     `ifdef CONFIG_DPIC
+            //         statistics_btb_hit();
+            //     `endif
+            // end
         end
     end
 
