@@ -353,7 +353,7 @@ module ysyx_24080020_BTB(
             pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
 
             out_special_pc <= 'b0;
-            btb_hit <= 'b0;
+            // btb_hit <= 'b0;
             flush_pipeline <= 'b0;
             btype_n_jump <= 'b0;
         end
