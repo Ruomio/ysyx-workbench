@@ -294,12 +294,12 @@ module ysyx_24080020_BTB(
             statistics_btb_total();
             `endif
         end
-        else if(!is_dnpc && is_btype && !is_btype_next /* && (pc > dnpc) */) begin
+        else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
             // b_type but not jump, so need flush
             predict_pc <= n_dnpc;
             pc <= n_dnpc;
 
-            in_valid <= 'b1;
+            update_en <= 'b1;
             out_valid <= 'b0;
             out_special_pc <= 'b1;
 
