@@ -667,3 +667,7 @@ extern "C" void statistics_btb_total() {
 extern "C" void statistics_btb_hit() {
     btb_hit_cnt ++;
 }
+
+extern "C" void statistics_btb_err_hit() {
+    btb_hit_cnt --;
+}
