@@ -159,14 +159,14 @@ module ysyx_24080020_BTB(
                 end
                 JUDGE: begin
                     if(has_hit) begin
-                        next_state = HIT;
+                        // next_state = HIT;
                         // avoid continuous hit
-                        // if(!btb_hit) begin
-                        //     next_state = HIT;
-                        // end
-                        // else begin
-                        //     next_state = JUDGE;
-                        // end
+                        if(!btb_hit) begin
+                            next_state = HIT;
+                        end
+                        else begin
+                            next_state = JUDGE;
+                        end
                     end else begin
                         next_state = MISS;
                     end
