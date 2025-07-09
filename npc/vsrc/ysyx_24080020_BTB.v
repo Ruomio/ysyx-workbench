@@ -269,7 +269,7 @@ module ysyx_24080020_BTB(
             branch_valid[branch_index_new] <= branch_valid[branch_index_new] | (1 << fifo_index[branch_index_new]);
 
         end
-        else if(is_dnpc && !is_dnpc_next) begin
+        else if(is_dnpc && !is_dnpc_next && is_btype) begin
             if(btb_hit) begin
                 btb_hit <= 'b0;
                 if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
@@ -315,6 +315,10 @@ module ysyx_24080020_BTB(
                 btype_n_jump <= 'b1;
             end
 
+        end
+        else if(is_dnpc && !is_dnpc_next && !is_btype) begin
+            // jal or jalr
+            $display("jal or jalr");
         end
     end
 
