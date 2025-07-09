@@ -79,7 +79,7 @@ module ysyx_24080020_BTB(
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next, for_btb_hit;
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
@@ -206,7 +206,8 @@ module ysyx_24080020_BTB(
             end
         end
         else if(current_state == HIT) begin
-            if(is_btype) begin
+            if(is_btype || for_btb_hit) begin
+                for_btb_hit <= 'b0;
                 // not jal or jalr
                 hit_pc <= pc_tmp;
                 hit_target_pc <= shift_rdata[31:0];
@@ -237,6 +238,7 @@ module ysyx_24080020_BTB(
             dnpc_tmp <= 'b0;
             is_dnpc_tmp <= 'b0;
             skip_once <= 'b0;
+            for_btb_hit <= 'b0;
         end
         else if(is_dnpc_tmp) begin
             is_dnpc_tmp <= 'b0;
@@ -252,6 +254,7 @@ module ysyx_24080020_BTB(
             out_special_pc <= 'b1;
 
             btb_hit <= 'b0;
+            for_btb_hit <= 'b1;
 
 
             // write BTB
