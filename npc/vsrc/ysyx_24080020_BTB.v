@@ -289,18 +289,21 @@ module ysyx_24080020_BTB(
 
         end
         else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
-            if(btb_hit) btb_hit <= 'b0;
+            if(btb_hit) begin
+                btb_hit <= 'b0;
 
-            // b_type but not jump, so need flush
-            predict_pc <= n_dnpc;
-            pc <= n_dnpc;
+                // b_type but not jump, so need flush
+                predict_pc <= n_dnpc;
+                pc <= n_dnpc;
 
-            update_en <= 'b1;
-            out_valid <= 'b0;
-            out_special_pc <= 'b1;
+                update_en <= 'b1;
+                out_valid <= 'b0;
+                out_special_pc <= 'b1;
 
-            flush_pipeline <= 'b1;
-            btype_n_jump <= 'b1;
+                flush_pipeline <= 'b1;
+                btype_n_jump <= 'b1;
+            end
+
         end
     end
 
