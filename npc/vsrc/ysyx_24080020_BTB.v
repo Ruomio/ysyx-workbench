@@ -228,7 +228,7 @@ module ysyx_24080020_BTB(
             //     out_valid <= 'b1;
             // end
 
-            if((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) begin
+            if(((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) && ((hit_pc != pc_exu) || (hit_target_pc != dnpc)) ) begin
                 out_valid <= 'b0;
             end
             else begin
