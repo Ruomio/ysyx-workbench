@@ -154,17 +154,11 @@ module ysyx_24080020_IFU (
         if(!rst) begin
             btype_n_jump <= 'b0;
         end
-        else if(need_flush_pipeline /* || (control_adventure && !control_adventure_next) */) begin
+        else if(need_flush_pipeline) begin
             flush_pipeline <= 'b1;
             btype_n_jump <= btype_n_jump_btb;
         end
-        // else if(is_dnpc_exu && !control_adventure) begin
-        //     flush_pipeline <= 'b1;
-        // end
-        // else if(is_btype_exu &&!is_dnpc_exu && (pc_ifu > dnpc_exu) && !control_adventure) begin
-        //     flush_pipeline <= 'b1;
-        //     btype_n_jump <= 'b1;
-        // end
+
     end
 
     reg control_adventure_next;

@@ -159,13 +159,14 @@ module ysyx_24080020_BTB(
                 end
                 JUDGE: begin
                     if(has_hit) begin
+                        next_state = HIT;
                         // avoid continuous hit
-                        if(!btb_hit || 'b1) begin
-                            next_state = HIT;
-                        end
-                        else begin
-                            next_state = JUDGE;
-                        end
+                        // if(!btb_hit) begin
+                        //     next_state = HIT;
+                        // end
+                        // else begin
+                        //     next_state = JUDGE;
+                        // end
                     end else begin
                         next_state = MISS;
                     end
@@ -177,13 +178,6 @@ module ysyx_24080020_BTB(
                     next_state = Done;
                 end
                 Done: begin
-                    // if(out_valid && out_ready) begin
-                    //     next_state = IDLE;
-                    // end
-                    // else begin
-                    //     next_state = Done;
-                    // end
-
                     next_state = IDLE;
                 end
                 default: begin
@@ -220,13 +214,6 @@ module ysyx_24080020_BTB(
             predict_pc <= pc + 32'd4;
         end
         else if(current_state == Done) begin
-            // if(skip_once) begin
-            //     skip_once <= 'b0;
-            //     out_valid <= 'b0;
-            // end
-            // else begin
-            //     out_valid <= 'b1;
-            // end
 
             if(((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) && ((hit_pc != pc_exu) || (hit_target_pc != dnpc)) ) begin
                 out_valid <= 'b0;
