@@ -207,8 +207,8 @@ module ysyx_24080020_BTB(
 
             hit_pc <= pc_tmp;
             hit_target_pc <= shift_rdata[31:0];
-            out_special_pc <= 'b1;
             btb_hit <= 'b1;
+            // out_special_pc <= 'b1;
 
             predict_pc <= shift_rdata[31:0];
 
