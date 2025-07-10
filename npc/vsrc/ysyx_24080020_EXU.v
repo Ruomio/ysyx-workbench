@@ -161,6 +161,7 @@ module ysyx_24080020_EXU
             is_dnpc_exu <= 'b0;
             waddr_exu <= 'b0;
             is_btype_exu <= 'b0;
+            fencei_exu <= 'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif

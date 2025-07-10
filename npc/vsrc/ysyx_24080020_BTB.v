@@ -16,6 +16,12 @@ module ysyx_24080020_BTB(
 
     output reg flush_pipeline,
     output reg btype_n_jump,
+
+    // fence.i
+    input fencei_mem,
+    input [`ysyx_24080020_WIDTH-1:0] pc_mem,
+    output reg fencei_type,
+
     // bus
     output reg out_valid,
     input out_ready
@@ -75,12 +81,12 @@ module ysyx_24080020_BTB(
 
 
     wire set_idle;
-    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
+    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc, fencei_npc;
     reg [2:0] next_state;
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next, fencei_mem_next;
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
@@ -108,9 +114,10 @@ module ysyx_24080020_BTB(
     assign shift_wtag = {{tag_complete_bits{1'b0}}, branch_tag_new} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
     assign tag_mask = {{tag_complete_bits{1'b0}}, ~{branch_tag_size{1'b0}}} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
 
-    assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit);
+    assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit) | (fencei_mem && !fencei_mem_next);
 
     assign n_dnpc = pc_exu + 32'd4;
+    assign fencei_npc = pc_mem + 32'd4;
 
     generate
       genvar j;
@@ -232,6 +239,21 @@ module ysyx_24080020_BTB(
             dnpc_tmp <= 'b0;
             is_dnpc_tmp <= 'b0;
             skip_once <= 'b0;
+            fencei_type <= 'b0;
+        end
+        else if(fencei_mem && !fencei_mem_next) begin
+            // need flush pipeline
+            btb_hit <= 'b0;
+
+            predict_pc <= fencei_npc;
+            pc <= fencei_npc;
+
+            update_en <= 'b1;
+            out_valid <= 'b0;
+            out_special_pc <= 'b1;
+
+            flush_pipeline <= 'b1;
+            fencei_type <= 'b1;
         end
         else if(is_dnpc_tmp) begin
             is_dnpc_tmp <= 'b0;
@@ -416,6 +438,18 @@ module ysyx_24080020_BTB(
         else if(first) begin
             first <= 'b0;
             update_en <= 'b1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            fencei_mem_next <= 'b0;
+        end
+        else if(fencei_mem) begin
+            fencei_mem_next <= 'b1;
+        end
+        else begin
+            fencei_mem_next <= 'b0;
         end
     end
 endmodule

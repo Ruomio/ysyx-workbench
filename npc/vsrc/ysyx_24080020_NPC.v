@@ -92,7 +92,7 @@ module ysyx_24080020_NPC(
   // wire reg_dst_con_idu, reg_dst_con_exu;
 
   // fence
-  wire fencei_idu, fencei_exu, fencei_mem;
+  wire fencei_idu, fencei_exu, fencei_mem, fencei_type;
 
   // reg
   wire wen_idu, wen_exu, wen_mem, wen_wb;
@@ -361,6 +361,11 @@ module ysyx_24080020_NPC(
         .btype_n_jump(btype_n_jump_btb),
 
         .update_pc(arvalid_ifu && arready_ifu),
+
+        // fence.i
+        .fencei_mem(fencei_exu),
+        .pc_mem(pc_exu),
+        .fencei_type(fencei_type),
         // bus
         .out_valid(valid_btb),
         .out_ready(ready_btb)
@@ -438,8 +443,11 @@ module ysyx_24080020_NPC(
         .need_flush_pipeline(need_flush_pipeline),
         .btype_n_jump_btb(btype_n_jump_btb),
 
+        .pc_btb(pc_btb),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
+
+        .fence(fencei_type),
 
         .wb_ifu_valid(1'b1),
         .idu_ifu_ready(idu_ifu_ready),
