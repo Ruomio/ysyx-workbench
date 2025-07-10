@@ -359,14 +359,14 @@ module ysyx_24080020_NPC(
         .correct_pc(correct_pc_btb),
         .out_special_pc(special_pc_btb),
         .flush_pipeline(need_flush_pipeline),
-        .btype_n_jump(btype_n_jump_btb),
+        // .btype_n_jump(btype_n_jump_btb),
 
         .update_pc(arvalid_ifu && arready_ifu),
 
         // fence.i
         .fencei_exu(fencei_exu),
         .fencei_mem(fencei_mem),
-        .pc_mem(pc_mem),
+        .pc_mem(pc_lsu),
         // bus
         .out_valid(valid_btb),
         .out_ready(ready_btb)
@@ -437,19 +437,19 @@ module ysyx_24080020_NPC(
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
 
-        .control_adventure(control_adventure),
+        // .control_adventure(control_adventure),
         .inst_fin(inst_fin),
         .flush_pipeline(flush_pipeline),
         .raddr(raddr_ifu),
         .special_pc_i(special_pc_i),
         .need_flush_pipeline(need_flush_pipeline),
-        .btype_n_jump_btb(btype_n_jump_btb),
+        // .btype_n_jump_btb(btype_n_jump_btb),
 
         .correct_pc_btb(correct_pc_btb),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
-        .fence(fencei_type),
+        // .fence(fencei_type),
 
         .wb_ifu_valid(1'b1),
         .idu_ifu_ready(idu_ifu_ready),

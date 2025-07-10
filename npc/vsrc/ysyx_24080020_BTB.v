@@ -19,6 +19,7 @@ module ysyx_24080020_BTB(
     // output reg btype_n_jump,
 
     // fence.i
+    input fencei_exu,
     input fencei_mem,
     input [`ysyx_24080020_WIDTH-1:0] pc_mem,
     // output reg fencei_type,
