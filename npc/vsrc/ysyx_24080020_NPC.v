@@ -360,8 +360,8 @@ module ysyx_24080020_NPC(
         .flush_pipeline(need_flush_pipeline),
         .btype_n_jump(btype_n_jump_btb),
 
-        // .update_pc(arvalid_ifu && arready_ifu),
-        .update_pc(rvalid_ifu && rready_ifu),
+        .update_pc(arvalid_ifu && arready_ifu),
+        // .update_pc(rvalid_ifu && rready_ifu),
         // bus
         .out_valid(valid_btb),
         .out_ready(ready_btb)
