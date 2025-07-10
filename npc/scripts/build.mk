@@ -193,7 +193,7 @@ perf: $(BIN)
 	fi
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
-		| grep "\\[.* statistic\\]" | tee -a .log/perf.log
+		| grep "\\[.* statistic\\]\\|^real\\|^user\\|^sys" | tee -a .log/perf.log
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
