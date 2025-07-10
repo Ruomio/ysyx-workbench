@@ -413,7 +413,6 @@ module ysyx_24080020_BTB(
             end
 
             flush_pipeline <= 'b0;
-            // btype_n_jump <= 'b0;
 
         end
     end

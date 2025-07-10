@@ -365,6 +365,7 @@ module ysyx_24080020_NPC(
         // fence.i
         .fencei_exu(fencei_exu),
         .fencei_mem(fencei_mem),
+
         // bus
         .out_valid(valid_btb),
         .out_ready(ready_btb)
