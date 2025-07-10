@@ -21,7 +21,6 @@ module ysyx_24080020_BTB(
     // fence.i
     input fencei_exu,
     input fencei_mem,
-    input [`ysyx_24080020_WIDTH-1:0] pc_mem,
     // output reg fencei_type,
 
     // bus
@@ -119,7 +118,7 @@ module ysyx_24080020_BTB(
     assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit) | (fencei_mem && !fencei_mem_next);
 
     assign n_dnpc = pc_exu + 32'd4;
-    assign fencei_npc = pc_mem + 32'd4;
+    // assign fencei_npc = pc_mem + 32'd4;
 
     generate
       genvar j;
@@ -247,9 +246,9 @@ module ysyx_24080020_BTB(
             // need flush pipeline
             btb_hit <= 'b0;
 
-            predict_pc <= fencei_npc;
-            pc <= fencei_npc;
-            correct_pc <= fencei_npc;
+            predict_pc <= n_dnpc;
+            pc <= n_dnpc;
+            correct_pc <= n_dnpc;
 
             update_en <= 'b1;
             out_valid <= 'b0;

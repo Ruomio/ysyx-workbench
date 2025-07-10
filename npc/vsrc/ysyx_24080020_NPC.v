@@ -366,7 +366,6 @@ module ysyx_24080020_NPC(
         // fence.i
         .fencei_exu(fencei_exu),
         .fencei_mem(fencei_mem),
-        .pc_mem(pc_lsu),
         // bus
         .out_valid(valid_btb),
         .out_ready(ready_btb)
@@ -1140,7 +1139,7 @@ module ysyx_24080020_NPC(
     ysyx_24080020_ICACHE u_icache(
       .clk(clk),
       .rst(rst),
-      .fencei_mem(fencei_mem),
+      .fencei_mem(fencei_exu),
       .in_flash_(in_flash),
       .busy(lsu_busy_unused),
       .busy_i(lsu_busy),
