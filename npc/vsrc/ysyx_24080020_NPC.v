@@ -92,7 +92,7 @@ module ysyx_24080020_NPC(
   // wire reg_dst_con_idu, reg_dst_con_exu;
 
   // fence
-  wire fencei_idu, fencei_exu, fencei_mem;
+  wire fencei_idu, fencei_exu, fencei_mem, fencei_type;
 
   // reg
   wire wen_idu, wen_exu, wen_mem, wen_wb;
@@ -343,7 +343,7 @@ module ysyx_24080020_NPC(
 
   // BTB
   wire special_pc_btb, valid_btb, ready_btb;
-  wire [`ysyx_24080020_WIDTH-1:0] pc_btb;
+  wire [`ysyx_24080020_WIDTH-1:0] pc_btb, correct_pc_btb;
 
 
     ysyx_24080020_BTB u_btb(
@@ -356,11 +356,16 @@ module ysyx_24080020_NPC(
         .is_btype(is_btype_exu),
 
         .pc(pc_btb),
+        .correct_pc(correct_pc_btb),
         .out_special_pc(special_pc_btb),
         .flush_pipeline(need_flush_pipeline),
-        .btype_n_jump(btype_n_jump_btb),
 
         .update_pc(arvalid_ifu && arready_ifu),
+
+        // fence.i
+        .fencei_exu(fencei_exu),
+        .fencei_mem(fencei_mem),
+
         // bus
         .out_valid(valid_btb),
         .out_ready(ready_btb)
@@ -422,22 +427,17 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .pc_exu(pc_exu),
-        .dnpc_exu(dnpc_new_exu),
-        .is_dnpc_exu(is_dnpc_exu),
-        .is_btype_exu(is_btype_exu),
         .inst(inst_ir),
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
 
-        .control_adventure(control_adventure),
         .inst_fin(inst_fin),
         .flush_pipeline(flush_pipeline),
         .raddr(raddr_ifu),
         .special_pc_i(special_pc_i),
         .need_flush_pipeline(need_flush_pipeline),
-        .btype_n_jump_btb(btype_n_jump_btb),
 
+        .correct_pc_btb(correct_pc_btb),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
@@ -1130,7 +1130,7 @@ module ysyx_24080020_NPC(
     ysyx_24080020_ICACHE u_icache(
       .clk(clk),
       .rst(rst),
-      .fencei_mem(fencei_mem),
+      .fencei_mem(fencei_exu),
       .in_flash_(in_flash),
       .busy(lsu_busy_unused),
       .busy_i(lsu_busy),

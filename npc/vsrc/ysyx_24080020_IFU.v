@@ -3,26 +3,20 @@ module ysyx_24080020_IFU (
     input clk,
     input rst,
 
-    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
-    input is_dnpc_exu,
-    input is_btype_exu,
-
     input [`ysyx_24080020_WIDTH-1:0] inst,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     output reg [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
-    input control_adventure,
     output reg flush_pipeline,
 
     output inst_fin,
 
     input special_pc_i,
 
+    input [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
     input need_flush_pipeline,
-    input btype_n_jump_btb,
 
     // ifu <-> ir
     input inst_fin_valid,
@@ -41,16 +35,15 @@ module ysyx_24080020_IFU (
 
     wire if_en;
     wire if_en_ready;
-    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
 
 
     reg wb_ifu_shake_hands;
     reg btype_n_jump;
 
     reg state; // 0: idle  ;  1: wait_ready
+    reg [`ysyx_24080020_WIDTH-1:0] correct_pc;
 
     assign inst_fin = inst_fin_valid & inst_fin_ready;
-    assign n_dnpc = pc_exu + 32'd4;
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -76,45 +69,21 @@ module ysyx_24080020_IFU (
             inst_fin_ready <= 'b0;
         end
         else if(inst_fin_valid) begin
-            if(!btype_n_jump) begin
-                if((raddr != dnpc_exu) && flush_pipeline) begin
-                    inst_fin_ready <= 'b1;
+            if((raddr != correct_pc) && flush_pipeline) begin
+                inst_fin_ready <= 'b1;
 
-                    `ifdef CONFIG_DPIC
-                    statistics_icache_miss_hit_cnt();
-                    `endif
-                end
-                else if(!ifu_idu_valid) begin
-                    inst_fin_ready <= 'b1;
-
-                    pc_ifu <= raddr;
-                    inst_ifu <= inst;
-                    ifu_idu_valid <= 1'b1;
-                    if((raddr == dnpc_exu) && flush_pipeline && special_pc_i) begin
-                        flush_pipeline <= 'b0;
-                    end
-
-                end
+                `ifdef CONFIG_DPIC
+                statistics_icache_miss_hit_cnt();
+                `endif
             end
-            else begin
-                if((raddr != n_dnpc) && flush_pipeline) begin
-                    inst_fin_ready <= 'b1;
+            else if(!ifu_idu_valid) begin
+                inst_fin_ready <= 'b1;
 
-                    `ifdef CONFIG_DPIC
-                    statistics_icache_miss_hit_cnt();
-                    `endif
-                end
-                else if(!ifu_idu_valid) begin
-                    inst_fin_ready <= 'b1;
-
-                    pc_ifu <= raddr;
-                    inst_ifu <= inst;
-                    ifu_idu_valid <= 1'b1;
-                    if((raddr == n_dnpc) && flush_pipeline && special_pc_i) begin
-                        flush_pipeline <= 'b0;
-                        btype_n_jump <= 'b0;
-                    end
-
+                pc_ifu <= raddr;
+                inst_ifu <= inst;
+                ifu_idu_valid <= 1'b1;
+                if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
+                    flush_pipeline <= 'b0;
                 end
             end
         end
@@ -156,22 +125,9 @@ module ysyx_24080020_IFU (
         end
         else if(need_flush_pipeline) begin
             flush_pipeline <= 'b1;
-            btype_n_jump <= btype_n_jump_btb;
+            correct_pc <= correct_pc_btb;
         end
 
-    end
-
-    reg control_adventure_next;
-    always @(posedge clk) begin
-        if(!rst) begin
-            control_adventure_next <= 'b0;
-        end
-        else if(control_adventure) begin
-            control_adventure_next <= 'b1;
-        end
-        else begin
-            control_adventure_next <= 'b0;
-        end
     end
 
 
