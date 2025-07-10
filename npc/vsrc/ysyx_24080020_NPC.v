@@ -359,7 +359,6 @@ module ysyx_24080020_NPC(
         .correct_pc(correct_pc_btb),
         .out_special_pc(special_pc_btb),
         .flush_pipeline(need_flush_pipeline),
-        // .btype_n_jump(btype_n_jump_btb),
 
         .update_pc(arvalid_ifu && arready_ifu),
 
@@ -427,28 +426,19 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        // .pc_exu(pc_exu),
-        // .dnpc_exu(dnpc_new_exu),
-        // .is_dnpc_exu(is_dnpc_exu),
-        // .is_btype_exu(is_btype_exu),
-
         .inst(inst_ir),
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
 
-        // .control_adventure(control_adventure),
         .inst_fin(inst_fin),
         .flush_pipeline(flush_pipeline),
         .raddr(raddr_ifu),
         .special_pc_i(special_pc_i),
         .need_flush_pipeline(need_flush_pipeline),
-        // .btype_n_jump_btb(btype_n_jump_btb),
 
         .correct_pc_btb(correct_pc_btb),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
-
-        // .fence(fencei_type),
 
         .wb_ifu_valid(1'b1),
         .idu_ifu_ready(idu_ifu_ready),

@@ -16,12 +16,10 @@ module ysyx_24080020_BTB(
     output reg [`ysyx_24080020_WIDTH-1:0] correct_pc,
 
     output reg flush_pipeline,
-    // output reg btype_n_jump,
 
     // fence.i
     input fencei_exu,
     input fencei_mem,
-    // output reg fencei_type,
 
     // bus
     output reg out_valid,
@@ -118,7 +116,6 @@ module ysyx_24080020_BTB(
     assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit) | (fencei_mem && !fencei_mem_next);
 
     assign n_dnpc = pc_exu + 32'd4;
-    // assign fencei_npc = pc_mem + 32'd4;
 
     generate
       genvar j;
@@ -168,7 +165,6 @@ module ysyx_24080020_BTB(
                 end
                 JUDGE: begin
                     if(has_hit) begin
-                        // next_state = HIT;
                         // avoid continuous hit
                         if(!btb_hit) begin
                             next_state = HIT;
@@ -240,7 +236,6 @@ module ysyx_24080020_BTB(
             dnpc_tmp <= 'b0;
             is_dnpc_tmp <= 'b0;
             skip_once <= 'b0;
-            // fencei_type <= 'b0;
         end
         else if(fencei_mem || fencei_exu) begin
             // need flush pipeline
@@ -255,7 +250,6 @@ module ysyx_24080020_BTB(
             out_special_pc <= 'b1;
 
             flush_pipeline <= 'b1;
-            // fencei_type <= 'b1;
         end
         else if(is_dnpc_tmp) begin
             is_dnpc_tmp <= 'b0;
@@ -328,7 +322,6 @@ module ysyx_24080020_BTB(
                 out_special_pc <= 'b1;
 
                 flush_pipeline <= 'b1;
-                // btype_n_jump <= 'b1;
 
                 `ifdef CONFIG_DPIC
                     statistics_btb_err_hit();
@@ -401,12 +394,10 @@ module ysyx_24080020_BTB(
             out_valid <= 'b0;
             pc <= `ysyx_24080020_MBASE;
             predict_pc <= 'b0;
-            // predict_pc <= `ysyx_24080020_MBASE + 32'd4;
             hit_pc <= 'b0;
             hit_target_pc <= 'b0;
             btb_hit <= 'b0;
             flush_pipeline <= 'b0;
-            // btype_n_jump <= 'b0;
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
@@ -449,15 +440,4 @@ module ysyx_24080020_BTB(
         end
     end
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         fencei_mem_next <= 'b0;
-    //     end
-    //     else if(fencei_mem) begin
-    //         fencei_mem_next <= 'b1;
-    //     end
-    //     else begin
-    //         fencei_mem_next <= 'b0;
-    //     end
-    // end
 endmodule
