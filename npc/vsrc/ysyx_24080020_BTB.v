@@ -13,6 +13,7 @@ module ysyx_24080020_BTB(
 
     output reg out_special_pc,
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
+    output reg [`ysyx_24080020_WIDTH-1:0] correct_pc,
 
     output reg flush_pipeline,
     output reg btype_n_jump,
@@ -247,6 +248,7 @@ module ysyx_24080020_BTB(
 
             predict_pc <= fencei_npc;
             pc <= fencei_npc;
+            correct_pc <= fencei_npc;
 
             update_en <= 'b1;
             out_valid <= 'b0;
@@ -266,6 +268,8 @@ module ysyx_24080020_BTB(
 
             pc <= dnpc_tmp;
             predict_pc <= dnpc_tmp;
+            correct_pc <= dnpc_tmp;
+
             out_special_pc <= 'b1;
 
             btb_hit <= 'b0;
@@ -286,6 +290,7 @@ module ysyx_24080020_BTB(
                     pc_new <= pc_exu;
                     dnpc_tmp <= dnpc;
                     is_dnpc_tmp <= 'b1;
+                    correct_pc <= dnpc;
 
                     flush_pipeline <= 'b1;
                 end
@@ -299,6 +304,7 @@ module ysyx_24080020_BTB(
                 pc_new <= pc_exu;
                 dnpc_tmp <= dnpc;
                 is_dnpc_tmp <= 'b1;
+                correct_pc <= dnpc;
 
                 flush_pipeline <= 'b1;
             end
@@ -315,6 +321,7 @@ module ysyx_24080020_BTB(
                 // b_type but not jump, so need flush
                 predict_pc <= n_dnpc;
                 pc <= n_dnpc;
+                correct_pc <= n_dnpc;
 
                 update_en <= 'b1;
                 out_valid <= 'b0;
@@ -340,6 +347,7 @@ module ysyx_24080020_BTB(
             pc_new <= pc_exu;
             dnpc_tmp <= dnpc;
             is_dnpc_tmp <= 'b1;
+            correct_pc <= dnpc;
 
             flush_pipeline <= 'b1;
 

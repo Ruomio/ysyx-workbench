@@ -343,7 +343,7 @@ module ysyx_24080020_NPC(
 
   // BTB
   wire special_pc_btb, valid_btb, ready_btb;
-  wire [`ysyx_24080020_WIDTH-1:0] pc_btb;
+  wire [`ysyx_24080020_WIDTH-1:0] pc_btb, correct_pc_btb;
 
 
     ysyx_24080020_BTB u_btb(
@@ -356,6 +356,7 @@ module ysyx_24080020_NPC(
         .is_btype(is_btype_exu),
 
         .pc(pc_btb),
+        .correct_pc(correct_pc_btb),
         .out_special_pc(special_pc_btb),
         .flush_pipeline(need_flush_pipeline),
         .btype_n_jump(btype_n_jump_btb),
@@ -443,7 +444,7 @@ module ysyx_24080020_NPC(
         .need_flush_pipeline(need_flush_pipeline),
         .btype_n_jump_btb(btype_n_jump_btb),
 
-        .pc_btb(pc_btb),
+        .correct_pc_btb(correct_pc_btb),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 

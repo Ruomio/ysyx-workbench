@@ -21,7 +21,7 @@ module ysyx_24080020_IFU (
 
     input special_pc_i,
 
-    input [`ysyx_24080020_WIDTH-1:0] pc_btb,
+    input [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
     input need_flush_pipeline,
     input btype_n_jump_btb,
 
@@ -202,7 +202,7 @@ module ysyx_24080020_IFU (
             flush_pipeline <= 'b1;
             // btype_n_jump <= btype_n_jump_btb;
             // fence <= fencei_type;
-            correct_pc <= pc_btb;
+            correct_pc <= correct_pc_btb;
         end
 
     end
