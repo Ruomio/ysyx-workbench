@@ -3,10 +3,10 @@ module ysyx_24080020_IFU (
     input clk,
     input rst,
 
-    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
-    input is_dnpc_exu,
-    input is_btype_exu,
+    // input [`ysyx_24080020_WIDTH-1:0] pc_exu,
+    // input [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
+    // input is_dnpc_exu,
+    // input is_btype_exu,
 
     input [`ysyx_24080020_WIDTH-1:0] inst,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_ifu,
@@ -14,7 +14,7 @@ module ysyx_24080020_IFU (
     input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
-    input control_adventure,
+    // input control_adventure,
     output reg flush_pipeline,
 
     output inst_fin,
@@ -23,9 +23,9 @@ module ysyx_24080020_IFU (
 
     input [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
     input need_flush_pipeline,
-    input btype_n_jump_btb,
+    // input btype_n_jump_btb,
 
-    input fence,
+    // input fence,
 
     // ifu <-> ir
     input inst_fin_valid,
@@ -44,7 +44,7 @@ module ysyx_24080020_IFU (
 
     wire if_en;
     wire if_en_ready;
-    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
+    // wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
 
 
     reg wb_ifu_shake_hands;
@@ -54,7 +54,7 @@ module ysyx_24080020_IFU (
     reg [`ysyx_24080020_WIDTH-1:0] correct_pc;
 
     assign inst_fin = inst_fin_valid & inst_fin_ready;
-    assign n_dnpc = pc_exu + 32'd4;
+    // assign n_dnpc = pc_exu + 32'd4;
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -207,18 +207,18 @@ module ysyx_24080020_IFU (
 
     end
 
-    reg control_adventure_next;
-    always @(posedge clk) begin
-        if(!rst) begin
-            control_adventure_next <= 'b0;
-        end
-        else if(control_adventure) begin
-            control_adventure_next <= 'b1;
-        end
-        else begin
-            control_adventure_next <= 'b0;
-        end
-    end
+    // reg control_adventure_next;
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         control_adventure_next <= 'b0;
+    //     end
+    //     else if(control_adventure) begin
+    //         control_adventure_next <= 'b1;
+    //     end
+    //     else begin
+    //         control_adventure_next <= 'b0;
+    //     end
+    // end
 
 
 endmodule

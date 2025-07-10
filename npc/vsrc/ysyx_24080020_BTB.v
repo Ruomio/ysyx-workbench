@@ -16,12 +16,12 @@ module ysyx_24080020_BTB(
     output reg [`ysyx_24080020_WIDTH-1:0] correct_pc,
 
     output reg flush_pipeline,
-    output reg btype_n_jump,
+    // output reg btype_n_jump,
 
     // fence.i
     input fencei_mem,
     input [`ysyx_24080020_WIDTH-1:0] pc_mem,
-    output reg fencei_type,
+    // output reg fencei_type,
 
     // bus
     output reg out_valid,
@@ -240,9 +240,9 @@ module ysyx_24080020_BTB(
             dnpc_tmp <= 'b0;
             is_dnpc_tmp <= 'b0;
             skip_once <= 'b0;
-            fencei_type <= 'b0;
+            // fencei_type <= 'b0;
         end
-        else if(fencei_mem && !fencei_mem_next) begin
+        else if(fencei_mem || fencei_exu) begin
             // need flush pipeline
             btb_hit <= 'b0;
 
@@ -255,7 +255,7 @@ module ysyx_24080020_BTB(
             out_special_pc <= 'b1;
 
             flush_pipeline <= 'b1;
-            fencei_type <= 'b1;
+            // fencei_type <= 'b1;
         end
         else if(is_dnpc_tmp) begin
             is_dnpc_tmp <= 'b0;
@@ -328,7 +328,7 @@ module ysyx_24080020_BTB(
                 out_special_pc <= 'b1;
 
                 flush_pipeline <= 'b1;
-                btype_n_jump <= 'b1;
+                // btype_n_jump <= 'b1;
 
                 `ifdef CONFIG_DPIC
                     statistics_btb_err_hit();
@@ -406,7 +406,7 @@ module ysyx_24080020_BTB(
             hit_target_pc <= 'b0;
             btb_hit <= 'b0;
             flush_pipeline <= 'b0;
-            btype_n_jump <= 'b0;
+            // btype_n_jump <= 'b0;
         end
         else if(out_valid && out_ready) begin
             out_valid <= 'b0;
@@ -422,7 +422,7 @@ module ysyx_24080020_BTB(
             end
 
             flush_pipeline <= 'b0;
-            btype_n_jump <= 'b0;
+            // btype_n_jump <= 'b0;
 
         end
     end
@@ -449,15 +449,15 @@ module ysyx_24080020_BTB(
         end
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            fencei_mem_next <= 'b0;
-        end
-        else if(fencei_mem) begin
-            fencei_mem_next <= 'b1;
-        end
-        else begin
-            fencei_mem_next <= 'b0;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         fencei_mem_next <= 'b0;
+    //     end
+    //     else if(fencei_mem) begin
+    //         fencei_mem_next <= 'b1;
+    //     end
+    //     else begin
+    //         fencei_mem_next <= 'b0;
+    //     end
+    // end
 endmodule

@@ -364,9 +364,9 @@ module ysyx_24080020_NPC(
         .update_pc(arvalid_ifu && arready_ifu),
 
         // fence.i
-        .fencei_mem(fencei_exu),
-        .pc_mem(pc_exu),
-        .fencei_type(fencei_type),
+        .fencei_exu(fencei_exu),
+        .fencei_mem(fencei_mem),
+        .pc_mem(pc_mem),
         // bus
         .out_valid(valid_btb),
         .out_ready(ready_btb)
@@ -428,10 +428,11 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .pc_exu(pc_exu),
-        .dnpc_exu(dnpc_new_exu),
-        .is_dnpc_exu(is_dnpc_exu),
-        .is_btype_exu(is_btype_exu),
+        // .pc_exu(pc_exu),
+        // .dnpc_exu(dnpc_new_exu),
+        // .is_dnpc_exu(is_dnpc_exu),
+        // .is_btype_exu(is_btype_exu),
+
         .inst(inst_ir),
         .pc_ifu(pc_ifu),
         .inst_ifu(inst_ifu),
