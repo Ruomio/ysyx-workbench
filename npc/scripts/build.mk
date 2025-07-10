@@ -194,7 +194,15 @@ perf: $(BIN)
 	fi
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
-		| grep "\\[.* statistic\\]\\|^real\\|^user\\|^sys" | tee -a .log/perf.log
+		| grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
+
+test:
+	@echo -e " [csrc/npc/npc.cpp:375 statistic] idu_jump_type_cnt = 103,750 Percentage: 16.51%  Average: 1102 \n \
+	[csrc/npc/npc.cpp:380 statistic] btb_hit_cnt = 69,445 btb_total_cnt = 103,749 Percentage: 66.94% \n \
+	\
+	real    7m16.550s \n \
+	user    7m11.362s \n \
+	sys     0m6.337s" | grep "\\[.*statistic\\]\\|real\\|user\\|sys" | tee /tmp/test.txt
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
