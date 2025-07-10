@@ -183,7 +183,8 @@ endif
 
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
-	@date | tee -a .log/perf.log ;
+	echo "" | tee -a .log/perf.log
+	@date | tee -a .log/perf.log
 	@if make -s -C $(AM_HOME)/../yosys-sta sta  > /dev/null ;then \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" | tee -a .log/perf.log ; \
 		echo "" | tee -a .log/perf.log ; \
