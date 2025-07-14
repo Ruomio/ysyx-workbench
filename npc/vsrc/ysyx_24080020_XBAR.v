@@ -206,8 +206,8 @@ module ysyx_24080020_XBAR(
      *   if clint: -> clint
      *   else: -> soc
     */
-    always @(awvalid_arbiter or arvalid_arbiter or rvalid_xbar or rready_arbiter or bvalid_xbar or bready_arbiter) begin
-        if(rvalid_xbar && rready_arbiter) begin
+    always @(awvalid_arbiter or arvalid_arbiter or rvalid_xbar or rready_arbiter or rlast_xbar or bvalid_xbar or bready_arbiter) begin
+        if(rvalid_xbar && rlast_xbar && rready_arbiter) begin
             device_addr = 3'd0;
         end
         else if(bvalid_xbar && bready_arbiter) begin
