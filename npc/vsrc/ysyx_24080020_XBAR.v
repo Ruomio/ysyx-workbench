@@ -206,15 +206,19 @@ module ysyx_24080020_XBAR(
      *   if clint: -> clint
      *   else: -> soc
     */
-    always @(awvalid_arbiter or arvalid_arbiter or rvalid_xbar or rready_arbiter or rlast_xbar or bvalid_xbar or bready_arbiter) begin
-        if(rvalid_xbar && rlast_xbar && rready_arbiter) begin
-            device_addr = 3'd0;
+    // always @(awvalid_arbiter or arvalid_arbiter or rvalid_xbar or rready_arbiter or rlast_xbar or bvalid_xbar or bready_arbiter) begin
+    always @(posedge clk) begin
+        if(!rst) begin
+            device_addr <= 'b0;
+        end
+        else if(rvalid_xbar && rlast_xbar && rready_arbiter) begin
+            device_addr <= 3'd0;
         end
         else if(bvalid_xbar && bready_arbiter) begin
-            device_addr = 3'd0;
+            device_addr <= 3'd0;
         end
         else if(awvalid_arbiter) begin
-            device_addr = (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR || awaddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
+            device_addr <= (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR || awaddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
                             `ifdef ysyx_24080020_NPC
                             (awaddr_arbiter >= `ysyx_24080020_MBASE && awaddr_arbiter < `ysyx_24080020_DEVICE_BASE) ? 3'd1 :
                             (awaddr_arbiter >= `ysyx_24080020_SERIAL_PORT && awaddr_arbiter < `ysyx_24080020_SERIAL_PORT + 32'h10) ? 3'd2 :
@@ -225,7 +229,7 @@ module ysyx_24080020_XBAR(
                             `endif
         end
         else if(arvalid_arbiter) begin
-            device_addr = (araddr_arbiter == `ysyx_24080020_CLINT_ADDR || araddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
+            device_addr <= (araddr_arbiter == `ysyx_24080020_CLINT_ADDR || araddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
                             `ifdef ysyx_24080020_NPC
                             (araddr_arbiter >= `ysyx_24080020_MBASE && araddr_arbiter < `ysyx_24080020_DEVICE_BASE) ? 3'd1 :
                             (araddr_arbiter >= `ysyx_24080020_SERIAL_PORT && araddr_arbiter < `ysyx_24080020_SERIAL_PORT + 32'h10) ? 3'd2 :
@@ -235,9 +239,9 @@ module ysyx_24080020_XBAR(
                             3'd4;
                             `endif
         end
-        else begin
-            device_addr = device_addr_next;
-        end
+        // else begin
+        //     device_addr = device_addr_next;
+        // end
     end
 
     always @(posedge clk) begin
