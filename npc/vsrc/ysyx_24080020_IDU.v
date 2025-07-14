@@ -186,7 +186,21 @@ module ysyx_24080020_IDU (
         is_ebreak = 'b0;
 
         waddr_idu = 'b0;
+        wdata_idu = 'b0;
 
+        rcsraddr = 'b0;
+        wcsraddr_idu = 'b0;
+        wcsrdata_idu = 'b0;
+        wcsraddr2_idu = 'b0;
+        wcsrdata2_idu = 'b0;
+
+        imm_idu = 'd0;
+
+
+        alu_src2_con_idu = 'b0;
+        alu_op_idu = 'b0;
+        src1_idu = 'b0;
+        src2_idu = 'b0;
 
         case(opcode)
             `ysyx_24080020_I_TYPE: begin
