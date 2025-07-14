@@ -256,10 +256,10 @@ module ysyx_24080020_XBAR(
         if(!rst) begin
 
         end
-        else if(arvalid_arbiter && arready_xbar) begin
+        else if(rvalid_xbar && rready_arbiter) begin
             ar_en <= 'b0;
         end
-        else if(awvalid_arbiter && awready_xbar) begin
+        else if(bvalid_xbar && bready_arbiter) begin
             aw_en <= 'b0;
         end
     end
