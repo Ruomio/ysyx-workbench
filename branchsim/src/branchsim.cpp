@@ -78,8 +78,11 @@ void BranchSim::RunPredict(int flag) {
         uint32_t current_pc = pc_stream[i];
         uint32_t next_pc = pc_stream[i + 1];
 
+        if(next_pc != current_pc + 0x4) total++;
+
         auto it = branch_map.find(current_pc);
         if (it != branch_map.end()) {
+            total--;
             switch(flag) {
                 case(ALWAYS_TAKEN): {
                     uint32_t branch_target = it->second.target;
