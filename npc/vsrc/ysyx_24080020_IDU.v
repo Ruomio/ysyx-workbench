@@ -175,12 +175,14 @@ module ysyx_24080020_IDU (
         is_jalr_idu = 1'b0;
         is_btype_idu = 1'b0;
         dnpc_idu = 'b0;
+        branch_src1_idu = 'b0;
 
         // mem
         mren_idu = 1'b0;
         mwen_idu = 1'b0;
         mren_idu = 'b0;
         mrlen_idu = 'b0;
+        mrtype_idu = 'b0;
         mwmask_idu = 'b0;
 
         // reg

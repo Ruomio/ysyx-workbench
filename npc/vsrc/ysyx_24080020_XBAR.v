@@ -200,9 +200,12 @@ module ysyx_24080020_XBAR(
      *   if clint: -> clint
      *   else: -> soc
     */
-    always @(awvalid_arbiter or arvalid_arbiter) begin
-        if(awvalid_arbiter) begin
-            device_addr = (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR || awaddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
+    always @(posedge clk) begin
+        if(!rst) begin
+            device_addr <= 'b0;
+        end
+        else if(awvalid_arbiter) begin
+            device_addr <= (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR || awaddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
                             `ifdef ysyx_24080020_NPC
                             (awaddr_arbiter >= `ysyx_24080020_MBASE && awaddr_arbiter < `ysyx_24080020_DEVICE_BASE) ? 3'd1 :
                             (awaddr_arbiter >= `ysyx_24080020_SERIAL_PORT && awaddr_arbiter < `ysyx_24080020_SERIAL_PORT + 32'h10) ? 3'd2 :
@@ -213,7 +216,7 @@ module ysyx_24080020_XBAR(
                             `endif
         end
         else if(arvalid_arbiter) begin
-            device_addr = (araddr_arbiter == `ysyx_24080020_CLINT_ADDR || araddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
+            device_addr <= (araddr_arbiter == `ysyx_24080020_CLINT_ADDR || araddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
                             `ifdef ysyx_24080020_NPC
                             (araddr_arbiter >= `ysyx_24080020_MBASE && araddr_arbiter < `ysyx_24080020_DEVICE_BASE) ? 3'd1 :
                             (araddr_arbiter >= `ysyx_24080020_SERIAL_PORT && araddr_arbiter < `ysyx_24080020_SERIAL_PORT + 32'h10) ? 3'd2 :
@@ -222,9 +225,6 @@ module ysyx_24080020_XBAR(
                             `ifdef ysyxSoCFull
                             3'd4;
                             `endif
-        end
-        else begin
-            device_addr = device_addr;
         end
     end
 
