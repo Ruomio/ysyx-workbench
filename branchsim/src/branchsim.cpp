@@ -48,12 +48,12 @@ void BranchSim::Init(std::string disasm_file_path, std::string pc_stream_file_pa
                 target = stoul(match[2], nullptr, 16);
                 branch_map[pc] = { true, target };
             }
-            // else if (regex_search(line, match, b_regex) && match.size() == 3) {
-            //     pc = stoul(match[1], nullptr, 16);
-            //     target = stoul(match[2], nullptr, 16);
-            //     branch_map[pc] = { true, target };
-            //     // std::cout << "b type: "<< std::hex << pc << std::endl;
-            // }
+            else if (regex_search(line, match, j_regex) && match.size() == 3) {
+                pc = stoul(match[1], nullptr, 16);
+                target = stoul(match[2], nullptr, 16);
+                branch_map[pc] = { true, target };
+                // std::cout << "b type: "<< std::hex << pc << std::endl;
+            }
         }
         catch(const std::exception &e) {
             std::cerr << "Error parsing disassembly file: " << e.what() << " " << match[1] << " " << match[2] << std::endl;
