@@ -85,7 +85,7 @@ module ysyx_24080020_REG
     import "DPI-C" function void npc_difftest_skip_ref();
 `endif
 
-    (* nosynth *) reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
+    (* keep *) reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec
     reg [`ysyx_24080020_WIDTH-1:0] csrs[7:0];
 
