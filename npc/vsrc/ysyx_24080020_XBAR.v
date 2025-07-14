@@ -282,7 +282,7 @@ module ysyx_24080020_XBAR(
     assign arid_xbar_sram = device_addr == 3'd1 ? arid_arbiter : 4'b0;
 
     assign araddr_xbar_uart = device_addr == 3'd2 ? araddr_arbiter : 32'b0;
-    assign arvalid_xbar_uart = device_addr == 3'd2 && ar_en ? arvalid_arbiter : 1'b0;
+    assign arvalid_xbar_uart = device_addr == 3'd2 && ar_en ? 'b1 : 1'b0;
     assign arburst_xbar_uart = device_addr == 3'd2 ? arburst_arbiter : 2'b0;
     assign arsize_xbar_uart = device_addr == 3'd2 ? arsize_arbiter : 3'b0;
     assign arlen_xbar_uart = device_addr == 3'd2 ? arlen_arbiter : 8'b0;
@@ -290,7 +290,7 @@ module ysyx_24080020_XBAR(
     `endif
 
     assign araddr_xbar_clint = device_addr == 3'd3 ? araddr_arbiter : 32'b0;
-    assign arvalid_xbar_clint = device_addr == 3'd3 && ar_en ? arvalid_arbiter : 1'b0;
+    assign arvalid_xbar_clint = device_addr == 3'd3 && ar_en ? 'b1 : 1'b0;
     assign arburst_xbar_clint = device_addr == 3'd3 ? arburst_arbiter : 2'b0;
     assign arsize_xbar_clint = device_addr == 3'd3 ? arsize_arbiter : 3'b0;
     assign arlen_xbar_clint = device_addr == 3'd3 ? arlen_arbiter : 8'b0;
@@ -298,7 +298,7 @@ module ysyx_24080020_XBAR(
 
     `ifdef ysyxSoCFull
     assign araddr_xbar_soc = device_addr == 3'd4 ? araddr_arbiter : 32'b0;
-    assign arvalid_xbar_soc = device_addr == 3'd4 && ar_en ? arvalid_arbiter : 1'b0;
+    assign arvalid_xbar_soc = device_addr == 3'd4 && ar_en ? 'b1 : 1'b0;
     assign arburst_xbar_soc = device_addr == 3'd4 ? arburst_arbiter : 2'b0;
     assign arsize_xbar_soc = device_addr == 3'd4 ? arsize_arbiter : 3'b0;
     assign arlen_xbar_soc = device_addr == 3'd4 ? arlen_arbiter : 8'b0;
@@ -381,14 +381,14 @@ module ysyx_24080020_XBAR(
     */
     `ifdef ysyx_24080020_NPC
     assign awaddr_xbar_sram = device_addr == 3'd1 ? awaddr_arbiter : 32'b0;
-    assign awvalid_xbar_sram = device_addr == 3'd1 && aw_en ? awvalid_arbiter : 1'b0;
+    assign awvalid_xbar_sram = device_addr == 3'd1 && aw_en ? 'b1 : 1'b0;
     assign awburst_xbar_sram = device_addr == 3'd1 ? awburst_arbiter : 2'b0;
     assign awsize_xbar_sram = device_addr == 3'd1 ? awsize_arbiter : 3'b0;
     assign awlen_xbar_sram = device_addr == 3'd1 ? awlen_arbiter : 8'b0;
     assign awid_xbar_sram = device_addr == 3'd1 ? awid_arbiter : 4'b0;
 
     assign awaddr_xbar_uart = device_addr == 3'd2 ? awaddr_arbiter : 32'b0;
-    assign awvalid_xbar_uart = device_addr == 3'd2 && aw_en ? awvalid_arbiter : 1'b0;
+    assign awvalid_xbar_uart = device_addr == 3'd2 && aw_en ? 'b1 : 1'b0;
     assign awburst_xbar_uart = device_addr == 3'd2 ? awburst_arbiter : 2'b0;
     assign awsize_xbar_uart = device_addr == 3'd2 ? awsize_arbiter : 3'b0;
     assign awlen_xbar_uart = device_addr == 3'd2 ? awlen_arbiter : 8'b0;
@@ -396,7 +396,7 @@ module ysyx_24080020_XBAR(
     `endif
 
     assign awaddr_xbar_clint = device_addr == 3'd3 ? awaddr_arbiter : 32'b0;
-    assign awvalid_xbar_clint = device_addr == 3'd3 && aw_en ? awvalid_arbiter : 1'b0;
+    assign awvalid_xbar_clint = device_addr == 3'd3 && aw_en ? 'b1 : 1'b0;
     assign awburst_xbar_clint = device_addr == 3'd3 ? awburst_arbiter : 2'b0;
     assign awsize_xbar_clint = device_addr == 3'd3 ? awsize_arbiter : 3'b0;
     assign awlen_xbar_clint = device_addr == 3'd3 ? awlen_arbiter : 8'b0;
@@ -404,7 +404,7 @@ module ysyx_24080020_XBAR(
 
     `ifdef ysyxSoCFull
     assign awaddr_xbar_soc = device_addr == 3'd4 ? awaddr_arbiter : 32'b0;
-    assign awvalid_xbar_soc = device_addr == 3'd4 && aw_en ? awvalid_arbiter : 1'b0;
+    assign awvalid_xbar_soc = device_addr == 3'd4 && aw_en ? 'b1 : 1'b0;
     assign awburst_xbar_soc = device_addr == 3'd4 ? awburst_arbiter : 2'b0;
     assign awsize_xbar_soc = device_addr == 3'd4 ? awsize_arbiter : 3'b0;
     assign awlen_xbar_soc = device_addr == 3'd4 ? awlen_arbiter : 8'b0;
