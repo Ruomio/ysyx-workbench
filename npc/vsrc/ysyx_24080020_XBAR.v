@@ -194,8 +194,10 @@ module ysyx_24080020_XBAR(
      * 3'd4: soc
      * ...
     */
+
+    wire arready_tmp, awready_tmp;
     reg ar_en, aw_en;
-    reg arvalid_tmp, awvalid_tmp, arready_tmp, awready_tmp;
+    reg arvalid_tmp, awvalid_tmp;
 
     reg [2:0] device_addr_next;
     reg [2:0] device_addr;
@@ -257,9 +259,7 @@ module ysyx_24080020_XBAR(
     always @(posedge clk) begin
         if(!rst) begin
             arvalid_tmp <= 'b0;
-            arready_tmp <= 'b0;
             awvalid_tmp <= 'b0;
-            awready_tmp <= 'b0;
         end
         else if(arvalid_tmp && arready_tmp) begin
             arvalid_tmp <= 'b0;
@@ -313,6 +313,8 @@ module ysyx_24080020_XBAR(
                           device_addr == 3'd4 ? arready_soc :
                           `endif
                           1'b0;
+
+    assign arready_tmp = arready_xbar;
 
 
     /* R:
@@ -419,6 +421,8 @@ module ysyx_24080020_XBAR(
                           device_addr == 3'd4 ? awready_soc :
                           `endif
                           1'b0;
+
+    assign awready_tmp = awready_xbar;
 
     /* W: Xbar  |-> SOC
                 |-> CLINT
