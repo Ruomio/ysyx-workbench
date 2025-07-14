@@ -83,7 +83,6 @@ void BranchSim::RunPredict(int flag) {
 
         auto it = branch_map.find(current_pc);
         if (it != branch_map.end()) {
-            total--;
             switch(flag) {
                 case(ALWAYS_TAKEN): {
                     uint32_t branch_target = it->second.target;
@@ -91,7 +90,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc =  branch_target;
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -99,7 +97,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc =  current_pc + 4;
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -110,7 +107,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc = predicted_taken ? branch_target : (current_pc + 4);
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -122,7 +118,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc = predicted_taken ? branch_target : (current_pc + 4);
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -172,10 +167,11 @@ void BranchSim::RunPredictWithBTB(int flag) {
         uint32_t current_pc = pc_stream[i];
         uint32_t next_pc = pc_stream[i + 1];
 
+        if(next_pc != current_pc + 0x4) total++;
 
         auto it = branch_map.find(current_pc);
         if(it != branch_map.end()) {
-            total++;
+            // total++;
 
             uint32_t predict_pc = 0;
 
