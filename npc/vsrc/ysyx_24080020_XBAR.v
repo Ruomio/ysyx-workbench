@@ -256,12 +256,18 @@ module ysyx_24080020_XBAR(
         if(!rst) begin
 
         end
-        else if(rvalid_xbar && rready_arbiter) begin
+        else if(arvalid_arbiter && arready_xbar) begin
             ar_en <= 'b0;
         end
-        else if(bvalid_xbar && bready_arbiter) begin
+        else if(awvalid_arbiter && awready_xbar) begin
             aw_en <= 'b0;
         end
+        // else if(rvalid_xbar && rready_arbiter) begin
+        //     ar_en <= 'b0;
+        // end
+        // else if(bvalid_xbar && bready_arbiter) begin
+        //     aw_en <= 'b0;
+        // end
     end
 
     /* AR: Xbar |-> SOC
@@ -269,7 +275,7 @@ module ysyx_24080020_XBAR(
     */
     `ifdef ysyx_24080020_NPC
     assign araddr_xbar_sram = device_addr == 3'd1 ? araddr_arbiter : 32'b0;
-    assign arvalid_xbar_sram = device_addr == 3'd1 && ar_en ? arvalid_arbiter : 1'b0;
+    assign arvalid_xbar_sram = device_addr == 3'd1 && ar_en ? 'b1 : 1'b0;
     assign arburst_xbar_sram = device_addr == 3'd1 ? arburst_arbiter : 2'b0;
     assign arsize_xbar_sram = device_addr == 3'd1 ? arsize_arbiter : 3'b0;
     assign arlen_xbar_sram = device_addr == 3'd1 ? arlen_arbiter : 8'b0;
