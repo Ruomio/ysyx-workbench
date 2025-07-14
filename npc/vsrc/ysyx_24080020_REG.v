@@ -42,38 +42,38 @@ module ysyx_24080020_REG
     // out csr
     output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_0,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_1,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_2,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_3,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_4,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_5,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_6,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_7,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_8,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_9,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_10,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_11,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_12,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_13,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_14,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_15,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_16,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_17,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_18,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_19,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_20,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_21,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_22,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_23,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_24,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_25,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_26,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_27,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_28,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_29,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_30,
-    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_31,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_0,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_1,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_2,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_3,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_4,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_5,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_6,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_7,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_8,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_9,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_10,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_11,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_12,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_13,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_14,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_15,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_16,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_17,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_18,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_19,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_20,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_21,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_22,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_23,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_24,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_25,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_26,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_27,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_28,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_29,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_30,
+    // output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp_31,
 
     input mem_wb_valid,
     input ifu_wb_ready,
@@ -115,38 +115,38 @@ module ysyx_24080020_REG
 
     // reg [`ysyx_24080020_WIDTH-1:0] result;
 
-    assign regs_tmp_0 = regs[0];
-    assign regs_tmp_1 = regs[1];
-    assign regs_tmp_2 = regs[2];
-    assign regs_tmp_3 = regs[3];
-    assign regs_tmp_4 = regs[4];
-    assign regs_tmp_5 = regs[5];
-    assign regs_tmp_6 = regs[6];
-    assign regs_tmp_7 = regs[7];
-    assign regs_tmp_8 = regs[8];
-    assign regs_tmp_9 = regs[9];
-    assign regs_tmp_10 = regs[10];
-    assign regs_tmp_11 = regs[11];
-    assign regs_tmp_12 = regs[12];
-    assign regs_tmp_13 = regs[13];
-    assign regs_tmp_14 = regs[14];
-    assign regs_tmp_15 = regs[15];
-    assign regs_tmp_16 = regs[16];
-    assign regs_tmp_17 = regs[17];
-    assign regs_tmp_18 = regs[18];
-    assign regs_tmp_19 = regs[19];
-    assign regs_tmp_20 = regs[20];
-    assign regs_tmp_21 = regs[21];
-    assign regs_tmp_22 = regs[22];
-    assign regs_tmp_23 = regs[23];
-    assign regs_tmp_24 = regs[24];
-    assign regs_tmp_25 = regs[25];
-    assign regs_tmp_26 = regs[26];
-    assign regs_tmp_27 = regs[27];
-    assign regs_tmp_28 = regs[28];
-    assign regs_tmp_29 = regs[29];
-    assign regs_tmp_30 = regs[30];
-    assign regs_tmp_31 = regs[31];
+    // assign regs_tmp_0 = regs[0];
+    // assign regs_tmp_1 = regs[1];
+    // assign regs_tmp_2 = regs[2];
+    // assign regs_tmp_3 = regs[3];
+    // assign regs_tmp_4 = regs[4];
+    // assign regs_tmp_5 = regs[5];
+    // assign regs_tmp_6 = regs[6];
+    // assign regs_tmp_7 = regs[7];
+    // assign regs_tmp_8 = regs[8];
+    // assign regs_tmp_9 = regs[9];
+    // assign regs_tmp_10 = regs[10];
+    // assign regs_tmp_11 = regs[11];
+    // assign regs_tmp_12 = regs[12];
+    // assign regs_tmp_13 = regs[13];
+    // assign regs_tmp_14 = regs[14];
+    // assign regs_tmp_15 = regs[15];
+    // assign regs_tmp_16 = regs[16];
+    // assign regs_tmp_17 = regs[17];
+    // assign regs_tmp_18 = regs[18];
+    // assign regs_tmp_19 = regs[19];
+    // assign regs_tmp_20 = regs[20];
+    // assign regs_tmp_21 = regs[21];
+    // assign regs_tmp_22 = regs[22];
+    // assign regs_tmp_23 = regs[23];
+    // assign regs_tmp_24 = regs[24];
+    // assign regs_tmp_25 = regs[25];
+    // assign regs_tmp_26 = regs[26];
+    // assign regs_tmp_27 = regs[27];
+    // assign regs_tmp_28 = regs[28];
+    // assign regs_tmp_29 = regs[29];
+    // assign regs_tmp_30 = regs[30];
+    // assign regs_tmp_31 = regs[31];
 
     assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
     // always @(mrdata_wb or alu_out_wb or is_load_wb) begin
