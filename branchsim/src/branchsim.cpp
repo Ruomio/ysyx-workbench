@@ -43,7 +43,7 @@ void BranchSim::Init(std::string disasm_file_path, std::string pc_stream_file_pa
         std::smatch match;
         uint32_t pc, target;
         try {
-            if (regex_search(line, match, j_regex) && match.size() == 3) {
+            if (regex_search(line, match, b_regex) && match.size() == 3) {
                 pc = stoul(match[1], nullptr, 16);
                 target = stoul(match[2], nullptr, 16);
                 branch_map[pc] = { true, target };
