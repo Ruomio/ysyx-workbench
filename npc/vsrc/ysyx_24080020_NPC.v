@@ -509,6 +509,7 @@ module ysyx_24080020_NPC(
         .idu_ifu_ready(idu_ifu_ready)
     );
 
+    wire [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
     ysyx_24080020_REG u_reg(
         .clk(clk),
         .rst(rst),
@@ -545,6 +546,8 @@ module ysyx_24080020_NPC(
         .val_raddr2(val_raddr2),
         .rcsraddr(rcsraddr),
         .rcsrdata(rcsrdata),
+
+        .regs_tmp(regs),
 
         .mem_wb_valid(mem_wb_valid),
         .ifu_wb_ready(1'b1),

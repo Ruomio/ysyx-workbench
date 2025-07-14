@@ -42,6 +42,8 @@ module ysyx_24080020_REG
     // out csr
     output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
+    output reg [`ysyx_24080020_WIDTH-1:0] regs_tmp[0:`ysyx_24080020_REG_NUM-1],
+
     input mem_wb_valid,
     input ifu_wb_ready,
     output reg wb_ifu_valid,
@@ -82,6 +84,7 @@ module ysyx_24080020_REG
 
     // reg [`ysyx_24080020_WIDTH-1:0] result;
 
+    assign regs_tmp = regs;
     assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
     // always @(mrdata_wb or alu_out_wb or is_load_wb) begin
     //     if(is_load_wb) begin
