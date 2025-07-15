@@ -541,7 +541,7 @@ module ysyx_24080020_NPC(
     wire [`ysyx_24080020_WIDTH-1:0] regs_29;
     wire [`ysyx_24080020_WIDTH-1:0] regs_30;
     wire [`ysyx_24080020_WIDTH-1:0] regs_31;
-    ysyx_24080020_REG u_reg(
+    (* keep *)ysyx_24080020_REG u_reg(
         .clk(clk),
         .rst(rst),
 
