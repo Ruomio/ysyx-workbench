@@ -1153,6 +1153,7 @@ module ysyx_24080020_ICACHE(
       rid_i <= 'b0;
       // rdata_araddr <= 'b0;
       special_pc_o <= 'b0;
+      raddr <= 'b0;
     end
     else if(rready_i && rvalid_i) begin
       rvalid_i <= 'b0;

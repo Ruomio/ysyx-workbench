@@ -511,39 +511,7 @@ module ysyx_24080020_NPC(
         .idu_ifu_ready(idu_ifu_ready)
     );
 
-    wire [`ysyx_24080020_WIDTH-1:0] regs_0;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_1;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_2;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_3;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_4;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_5;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_6;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_7;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_8;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_9;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_10;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_11;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_12;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_13;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_14;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_15;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_16;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_17;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_18;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_19;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_20;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_21;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_22;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_23;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_24;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_25;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_26;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_27;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_28;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_29;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_30;
-    wire [`ysyx_24080020_WIDTH-1:0] regs_31;
-    (* keep *)ysyx_24080020_REG u_reg(
+    ysyx_24080020_REG u_reg(
         .clk(clk),
         .rst(rst),
 
@@ -579,39 +547,6 @@ module ysyx_24080020_NPC(
         .val_raddr2(val_raddr2),
         .rcsraddr(rcsraddr),
         .rcsrdata(rcsrdata),
-
-        // .regs_tmp_0(regs_0),
-        // .regs_tmp_1(regs_1),
-        // .regs_tmp_2(regs_2),
-        // .regs_tmp_3(regs_3),
-        // .regs_tmp_4(regs_4),
-        // .regs_tmp_5(regs_5),
-        // .regs_tmp_6(regs_6),
-        // .regs_tmp_7(regs_7),
-        // .regs_tmp_8(regs_8),
-        // .regs_tmp_9(regs_9),
-        // .regs_tmp_10(regs_10),
-        // .regs_tmp_11(regs_11),
-        // .regs_tmp_12(regs_12),
-        // .regs_tmp_13(regs_13),
-        // .regs_tmp_14(regs_14),
-        // .regs_tmp_15(regs_15),
-        // .regs_tmp_16(regs_16),
-        // .regs_tmp_17(regs_17),
-        // .regs_tmp_18(regs_18),
-        // .regs_tmp_19(regs_19),
-        // .regs_tmp_20(regs_20),
-        // .regs_tmp_21(regs_21),
-        // .regs_tmp_22(regs_22),
-        // .regs_tmp_23(regs_23),
-        // .regs_tmp_24(regs_24),
-        // .regs_tmp_25(regs_25),
-        // .regs_tmp_26(regs_26),
-        // .regs_tmp_27(regs_27),
-        // .regs_tmp_28(regs_28),
-        // .regs_tmp_29(regs_29),
-        // .regs_tmp_30(regs_30),
-        // .regs_tmp_31(regs_31),
 
         .mem_wb_valid(mem_wb_valid),
         .ifu_wb_ready(1'b1),

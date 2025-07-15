@@ -56,6 +56,7 @@ module ysyx_24080020_IR(
   always @(posedge clk) begin
     if(!rst) begin
         if_en_ready <= 'b0;
+        special_pc_o <= 'b0;
     end
     else if(if_en_valid && if_en_ready) begin
         if_en_ready <= 'b0;

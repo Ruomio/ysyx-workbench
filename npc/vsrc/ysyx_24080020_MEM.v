@@ -247,6 +247,42 @@ module ysyx_24080020_MEM(
             mem_exu_ready <= 1'b0;
             next_inst <= 'b1;
             waddr_mem <= 'b0;
+
+            wen_mem <= 'b0;
+            waddr_mem <= 'b0;
+
+            is_load_mem <= 'b0;
+            is_dnpc_mem <= 'b0;
+            dnpc_mem <= 'b0;
+
+            mren_mem <= 'b0;
+            mrtype_mem <= 'b0;
+            mrlen_mem <= 'b0;
+            mraddr_mem <= 'b0;
+            mwen_mem <= 'b0;
+            mwmask_mem <= 'b0;
+            mwaddr_mem <= 'b0;
+            mwdata_mem <= 'b0;
+
+            alu_out_mem <= 'b0;
+
+            wcsren_mem <= 'b0;
+            wcsraddr_mem <= 'b0;
+            wcsrdata_mem <= 'b0;
+            wcsren2_mem <= 'b0;
+            wcsraddr2_mem <= 'b0;
+            wcsrdata2_mem <= 'b0;
+
+            fencei_mem <= 'b0;
+
+            pc_mem <= 'b0;
+
+            mem_wb_valid <= 'b0;
+
+            skip_ref_mem <= 'b0;
+
+            is_ebreak_lsu <= 'b0;
+
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
             mem_wb_valid <= 1'b0;
@@ -312,42 +348,9 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             exu_mem_shake_hands <= 1'b0;
-
-            wen_mem <= 'b0;
-            waddr_mem <= 'b0;
-
-            is_load_mem <= 'b0;
-            is_dnpc_mem <= 'b0;
-            dnpc_mem <= 'b0;
-
-            mren_mem <= 'b0;
-            mrtype_mem <= 'b0;
-            mrlen_mem <= 'b0;
-            mraddr_mem <= 'b0;
-            mwen_mem <= 'b0;
-            mwmask_mem <= 'b0;
-            mwaddr_mem <= 'b0;
-            mwdata_mem <= 'b0;
-
-            alu_out_mem <= 'b0;
-
-            wcsren_mem <= 'b0;
-            wcsraddr_mem <= 'b0;
-            wcsrdata_mem <= 'b0;
-            wcsren2_mem <= 'b0;
-            wcsraddr2_mem <= 'b0;
-            wcsrdata2_mem <= 'b0;
-
-            fencei_mem <= 'b0;
-
-            pc_mem <= 'b0;
-
             mem_wb_valid <= 'b0;
 
-            skip_ref_mem <= 'b0;
-
-            is_ebreak_lsu <= 'b0;
-
+            axi_busy <= 'b0;
         end
         else if(exu_mem_shake_hands) begin
             exu_mem_shake_hands <= 1'b0;
@@ -421,6 +424,7 @@ module ysyx_24080020_MEM(
             rready <= 1'b0;
             mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
+            mem_wb_valid <= 'b0;
         end
         else if(rvalid && rready) begin
             rready <= 1'b0;
@@ -476,6 +480,8 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             finish_read <= 1'b0;
+            mrdata_mem <= 'b0;
+            mem_wb_valid <= 'b0;
         end
         else if(finish_read) begin
             // finish all read
@@ -583,6 +589,8 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             wvalid <= 1'b0;
+            wdata <= 'b0;
+            wstrb <= 'b0;
         end
         else if(wvalid_reg && wready && wlast && !awlen[0]) begin
             // finish once
@@ -609,6 +617,7 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             bready <= 1'b0;
+            mem_wb_valid <= 'b0;
         end
         else if(bvalid && bready) begin
             bready <= 'b0;
