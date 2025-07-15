@@ -76,10 +76,14 @@ module ysyx_24080020(
     output [3:0] io_slave_bid
 
 );
+
+    wire [31:0] pc_ifu;
     // encapsulation to change pins' name
     ysyx_24080020_NPC u_npc(
         .clk(clock),
         .rst(!reset),
+
+        .pc_ifu_out(pc_ifu),
         // master
         // AR
         .io_master_arready(io_master_arready),
