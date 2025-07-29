@@ -187,7 +187,7 @@ classic: $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@echo $^
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
-	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+	@$(VERILATOR) $(VERILATOR_CFLAGS) --build \
 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
