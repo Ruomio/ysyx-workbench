@@ -3,7 +3,8 @@ module ysyx_24080020_NPC(
     input clk,
     input rst,
 
-    output reg [31:0] pc_ifu_out,
+    output [31:0] pc_ifu_out,
+    output [31:0] inst_out,
     // master
     // AR
     input io_master_arready,
@@ -76,7 +77,8 @@ module ysyx_24080020_NPC(
     output [1:0] io_slave_bresp,
     output [3:0] io_slave_bid
 );
-    assign pc_ifu_out = pc_ifu;
+    assign pc_ifu_out = pc_wbu;
+    assign inst_out = inst_ifu;
 
   // pc
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
@@ -549,9 +551,9 @@ module ysyx_24080020_NPC(
         .rcsrdata(rcsrdata),
 
         .mem_wb_valid(mem_wb_valid),
-        .ifu_wb_ready(1'b1),
-        .wb_mem_ready(wb_mem_ready),
-        .wb_ifu_valid(wb_ifu_valid)
+        // .ifu_wb_ready(1'b1),
+        // .wb_ifu_valid(wb_ifu_valid),
+        .wb_mem_ready(wb_mem_ready)
     );
 
     ysyx_24080020_EXU exu(

@@ -43,8 +43,8 @@ module ysyx_24080020_REG
     output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
     input mem_wb_valid,
-    input ifu_wb_ready,
-    output reg wb_ifu_valid,
+    // input ifu_wb_ready,
+    // output reg wb_ifu_valid,
     output reg wb_mem_ready
 );
 `ifdef CONFIG_DPIC
@@ -70,6 +70,7 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
 
     reg wen_wb;
+    reg cnt;
 
     reg skip_ref_wb;
 
@@ -95,16 +96,16 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             state <= 1'b0;
-            wb_ifu_valid <= 1'b1;   // first inst
+            // wb_ifu_valid <= 1'b1;   // first inst
         end
-        else if(!state) begin
-            if(wb_ifu_valid) state <= 1'b1;
-            else state <= 1'b0;
-        end
-        else begin
-            if(ifu_wb_ready) state <= 1'b0;
-            else state <= 1'b1;
-        end
+        // else if(!state) begin
+        //     if(wb_ifu_valid) state <= 1'b1;
+        //     else state <= 1'b0;
+        // end
+        // else begin
+        //     if(ifu_wb_ready) state <= 1'b0;
+        //     else state <= 1'b1;
+        // end
 
     end
 
@@ -124,13 +125,16 @@ module ysyx_24080020_REG
             is_load_wb <= 'b0;
             is_dnpc_wb <= 'b0;
             dnpc_wb <= 'b0;
-            wb_ifu_valid <= 'b0;
+            // wb_ifu_valid <= 'b0;
             skip_ref_wb <= 'b0;
             pc_wbu <= 'b0;
+            cnt <= 'b0;
         end
-        else if(wb_ifu_valid && ifu_wb_ready && state) begin
+        // else if(wb_ifu_valid && ifu_wb_ready && state) begin
+        else if(cnt && !wen_wb) begin
+            cnt <= 'b0;
             // shake hands successfully
-            wb_ifu_valid <= 1'b0;
+            // wb_ifu_valid <= 1'b0;
 
             // pc_wbu <= pc_lsu;
             waddr_wb <= 'b0;
@@ -167,22 +171,25 @@ module ysyx_24080020_REG
 
             skip_ref_wb <= skip_ref_mem;
 
+            cnt <= 'b1;
+
 
             // wb_ifu_valid <= 1'b1;
-            if(!wen_mem) begin
-                wb_ifu_valid <= 1'b1;
-            end
+            // if(!wen_mem) begin
+            //     wb_ifu_valid <= 1'b1;
+            // end
 
             `ifdef CONFIG_DPIC
             if(is_ebreak_lsu) ebreak();
             `endif
         end
         else if(mem_wb_valid) begin
-            if(wb_ifu_valid) wb_mem_ready <= 1'b0;
-            else begin
-                wb_mem_ready <= 1'b1;
+            wb_mem_ready <= 1'b1;
+            // if(wb_ifu_valid) wb_mem_ready <= 1'b0;
+            // else begin
+            //     wb_mem_ready <= 1'b1;
 
-            end
+            // end
         end
     end
 
@@ -196,7 +203,7 @@ module ysyx_24080020_REG
         end
         else if(wen_wb) begin
             regs[waddr_wb] <= result;
-            wb_ifu_valid <= 1'b1;
+            // wb_ifu_valid <= 1'b1;
             wen_wb <= 1'b0;
             regs[0] <= 32'b0;
         end
