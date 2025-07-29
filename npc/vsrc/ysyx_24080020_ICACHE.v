@@ -1,6 +1,6 @@
-`define USE_ICACHE
+// `define USE_ICACHE
 // `define USE_DCACHE
-`define ICACHE_PIPELINE
+// `define ICACHE_PIPELINE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -1211,6 +1211,13 @@ module ysyx_24080020_ICACHE(
 
 
 `ifndef USE_ICACHE
+
+  assign in_flash_ = 'b1;
+  assign busy = 'b0;
+
+  assign raddr = araddr_i;
+  assign special_pc_o = 'b1;
+
   // AR
   assign arvalid_o = arvalid_i;
   assign araddr_o = araddr_i;
