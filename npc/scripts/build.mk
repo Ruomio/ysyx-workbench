@@ -109,7 +109,7 @@ V_OBJS += $(V_CSRC:%.cpp=$(OBJ_DIR)/%.o)
 
 CFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
-LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
+# LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
 
 # VERILATOR_CFLAGS += --lint-only
 VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
