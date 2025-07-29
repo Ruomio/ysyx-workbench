@@ -182,6 +182,15 @@ link: $(OBJS) $(V_OBJS)
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 endif
 
+
+classic: $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
+	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+	@$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
 	@echo "" | tee -a .log/perf.log
