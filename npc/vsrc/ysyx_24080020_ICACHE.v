@@ -498,7 +498,7 @@ module ysyx_24080020_ICACHE(
   wire in_mrom;
   wire in_sdram;
 
-  integer  i;
+  // integer  i;
 
   // CACHE
   // cacheway maybe not the 2^n
@@ -780,7 +780,7 @@ module ysyx_24080020_ICACHE(
   always_comb begin
       tmp_tag_index = 0;
       has_hit = 0;
-      for (int i = 0; i < cache_way; i++) begin
+      for (integer i = 0; i < cache_way; i++) begin
           if (total_hits[i]) begin
               has_hit = 'b1;
               tmp_tag_index = i[cache_way-1:0];
@@ -857,7 +857,7 @@ module ysyx_24080020_ICACHE(
           current_state <= 'b0;
           tag_index <= 'b0;
           busy <= 'b0;
-          for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+          for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
               cache_valid[i]  <= 'b0;
