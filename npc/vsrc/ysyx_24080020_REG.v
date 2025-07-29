@@ -126,6 +126,7 @@ module ysyx_24080020_REG
             dnpc_wb <= 'b0;
             wb_ifu_valid <= 'b0;
             skip_ref_wb <= 'b0;
+            pc_wbu <= 'b0;
         end
         else if(wb_ifu_valid && ifu_wb_ready && state) begin
             // shake hands successfully
@@ -188,6 +189,7 @@ module ysyx_24080020_REG
     // regs write
     always @(posedge clk) begin
         if(!rst) begin
+            wen_wb <= 'b0;
             for(i = 0; i<`ysyx_24080020_REG_WIDTH; i = i+1 ) begin
                 regs[i] <= 32'b0;
             end

@@ -153,7 +153,6 @@ module ysyx_24080020_EXU
     // bus
     always @(posedge clk) begin
         if(!rst) begin
-            exu_mem_valid <= 'b0;
             exu_idu_ready <= 1'b0;
         end
         else if(mem_exu_ready && exu_mem_valid && state) begin
@@ -231,9 +230,9 @@ module ysyx_24080020_EXU
                 exu_idu_ready <= 1'b1;
             end
         end
-        else begin
-            // exu_mem_valid <= 1'b1;
-        end
+        // else begin
+        //     // exu_mem_valid <= 1'b1;
+        // end
     end
 
     always @(posedge clk) begin
@@ -312,13 +311,11 @@ module ysyx_24080020_EXU
     always @(posedge clk) begin
         if(!rst) begin
             cnt <= 1'b0;
+            exu_mem_valid <= 1'b0;
         end
         else if(cnt == 1'b1) begin
             exu_mem_valid <= 1'b1;
             cnt <= 1'b0;
-        end
-        else begin
-            // cnt <= cnt;
         end
     end
 
