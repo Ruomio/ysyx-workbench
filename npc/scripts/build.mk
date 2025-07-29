@@ -111,7 +111,7 @@ CFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
 
-VERILATOR_CFLAGS += --lint-only
+# VERILATOR_CFLAGS += --lint-only
 VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
 
 $(OBJ_DIR)/%.o: %.c
