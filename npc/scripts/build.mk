@@ -147,7 +147,7 @@ $(BIN): v_to_cpp
 # $(BIN): classic
 
 v_to_cpp: $(VSRC)
-	# @cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
+	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
 	@verilator $(VERILATOR_CFLAGS) --build --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
 	# @make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
 
