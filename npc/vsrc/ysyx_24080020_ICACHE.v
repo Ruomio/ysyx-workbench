@@ -725,7 +725,7 @@ module ysyx_24080020_ICACHE(
 
   reg [cache_tag_size-1:0]    cache_tag_s2;
   reg [cache_num_bits-1:0]    cache_index_s2;
-  reg [cache_size_bits-1:0]   cache_offset_s2;
+  wire [cache_size_bits-1:0]   cache_offset_s2;
 
   logic has_hit;
   logic total_hits [0 : cache_way - 1];
@@ -746,7 +746,7 @@ module ysyx_24080020_ICACHE(
 
   // assign cache_tag_s2 = araddr_s2[31 : cache_num_bits+cache_size_bits];
   // assign cache_index_s2 = araddr_s2[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-  // assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
+  assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
 
   assign shift_rdata = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
   assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
@@ -828,7 +828,7 @@ module ysyx_24080020_ICACHE(
 
       cache_tag_s2 <= cache_tag_s1;
       cache_index_s2 <= cache_index_s1;
-      cache_offset_s2 <= cache_offset_s1;
+      // cache_offset_s2 <= cache_offset_s1;
     end
     else if(s1_s2_shake_hands) begin
 
