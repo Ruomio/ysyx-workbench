@@ -1,6 +1,6 @@
-// `define USE_ICACHE
+`define USE_ICACHE
 // `define USE_DCACHE
-// `define ICACHE_PIPELINE
+`define ICACHE_PIPELINE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
@@ -703,16 +703,6 @@ module ysyx_24080020_ICACHE(
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s1_s2_valid <= 1'b0;
-      s1_s2_shake_hands <= 'b1;
-
-      araddr_s2 <= araddr_s1;
-      arlen_s2 <= arlen_s1;
-      arid_s2 <= arid_s1;
-      arburst_s2 <= arburst_s1;
-      arsize_s2 <= arsize_s1;
-
-      araddr_s2_base <= araddr_s1;
-      special_pc_s2_i <= special_pc_s1;
     end
     else if(s0_s1_shake_hands) begin
         s1_s2_valid <= 1'b1;
@@ -733,9 +723,9 @@ module ysyx_24080020_ICACHE(
   localparam AXIR = AXIAR + 1;
   localparam AXIDone = AXIR + 1;  // not use cache, such as sram
 
-  wire [cache_tag_size-1:0]    cache_tag_s2;
-  wire [cache_num_bits-1:0]    cache_index_s2;
-  wire [cache_size_bits-1:0]   cache_offset_s2;
+  reg [cache_tag_size-1:0]    cache_tag_s2;
+  reg [cache_num_bits-1:0]    cache_index_s2;
+  reg [cache_size_bits-1:0]   cache_offset_s2;
 
   logic has_hit;
   logic total_hits [0 : cache_way - 1];
@@ -754,9 +744,9 @@ module ysyx_24080020_ICACHE(
   reg [1:0] arburst_s2;
   reg [2:0] arsize_s2;
 
-  assign cache_tag_s2 = araddr_s2[31 : cache_num_bits+cache_size_bits];
-  assign cache_index_s2 = araddr_s2[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-  assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
+  // assign cache_tag_s2 = araddr_s2[31 : cache_num_bits+cache_size_bits];
+  // assign cache_index_s2 = araddr_s2[cache_num_bits+cache_size_bits-1 : cache_size_bits];
+  // assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
 
   assign shift_rdata = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
   assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
@@ -817,11 +807,28 @@ module ysyx_24080020_ICACHE(
       bubble <= 'b0;
       special_pc_s2_i <= 'b0;
       special_pc_s2_o <= 'b0;
+      s1_s2_shake_hands <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
       s1_s2_shake_hands <= 'b1;
       s1_s0_ready <= 'b1;
+
+
+      // s1_s2_shake_hands <= 'b1;
+
+      araddr_s2 <= araddr_s1;
+      arlen_s2 <= arlen_s1;
+      arid_s2 <= arid_s1;
+      arburst_s2 <= arburst_s1;
+      arsize_s2 <= arsize_s1;
+
+      araddr_s2_base <= araddr_s1;
+      special_pc_s2_i <= special_pc_s1;
+
+      cache_tag_s2 <= cache_tag_s1;
+      cache_index_s2 <= cache_index_s1;
+      cache_offset_s2 <= cache_offset_s1;
     end
     else if(s1_s2_shake_hands) begin
 
