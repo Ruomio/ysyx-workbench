@@ -141,15 +141,15 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-# $(BIN): v_to_cpp
-# 	@make link
+$(BIN): v_to_cpp
+	@make link
 
-$(BIN): classic
+# $(BIN): classic
 
 v_to_cpp: $(VSRC)
 	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
-	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
-	@make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
+	@verilator $(VERILATOR_CFLAGS) --build --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
+	# @make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
