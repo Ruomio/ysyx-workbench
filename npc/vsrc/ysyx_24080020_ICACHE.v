@@ -933,6 +933,7 @@ module ysyx_24080020_ICACHE(
 
     end
     else if(s2_s3_valid && s3_s2_ready) begin
+        s2_s3_valid <= 'b0;
         s2_s1_ready <= 'b1;
     end
   end
@@ -1294,6 +1295,7 @@ reg [cache_way-1:0] hit_tag_s3;
             hit_tag_s3 <= hit_tag_s2;
         end
         else if(s3_s4_valid && s4_s3_ready) begin
+            s3_s4_valid <= 'b0;
             s3_s2_ready <= 'b1;
         end
     end
@@ -1313,6 +1315,7 @@ reg [cache_way-1:0] hit_tag_s3;
             s3_s4_valid <= 'b0;
         end
         if(fin_r) begin
+            fin_r <= 'b0;
             inst_s3 <= shift_rdata_s3[31:0];
             fifo_index[cache_index_s3] <= (fifo_index[cache_index_s3] + 'b1) % cache_way;
 
