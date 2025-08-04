@@ -1164,7 +1164,7 @@ always @(posedge clk) begin
         s4_s3_ready <= 'b0;
         s3_s4_shake_hands <= 'b1;
 
-        raddr_s4 <= araddr_s3;
+        raddr_s4 <= araddr_s3_base;
         special_pc_s4 <= special_pc_s3;
 
         inst_s4 <= inst_s3;
