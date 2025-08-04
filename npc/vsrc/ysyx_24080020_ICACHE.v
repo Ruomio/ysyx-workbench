@@ -1020,6 +1020,8 @@ reg [cache_way-1:0] hit_tag_s3;
 
             is_hit_s3 <= 'b0;
             hit_tag_s3 <= 'b0;
+
+            inst_s3 <= 'b0;
         end
         else if(arvalid_o && arready_o) begin
             arvalid_o <= 'b0;
@@ -1060,6 +1062,7 @@ reg [cache_way-1:0] hit_tag_s3;
             cache_tag_s3 <= cache_tag_s2;
             cache_index_s3 <= cache_index_s2;
             // cache_offset_s3 <= cache_offset_s2;
+            inst_s3 <= inst_s2;
 
             is_hit_s3 <= is_hit_s2;
             hit_tag_s3 <= hit_tag_s2;
