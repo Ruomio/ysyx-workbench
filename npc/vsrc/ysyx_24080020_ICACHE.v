@@ -940,6 +940,9 @@ module ysyx_24080020_ICACHE(
         s2_s3_valid <= 'b0;
         s2_s1_ready <= 'b1;
     end
+    else if(has_hit_s1) begin
+        inst_s2 <= shift_rdata_s2[31:0];
+    end
   end
 
   // always @(posedge clk) begin
