@@ -839,7 +839,7 @@ module ysyx_24080020_ICACHE(
   // assign cache_index_s2 = araddr_s2[cache_num_bits+cache_size_bits-1 : cache_size_bits];
   // assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
 
-  assign shift_rdata_s2 = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, hit_tag_s2} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s1} << 3);
+  assign shift_rdata_s2 = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, hit_tag_s2} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
   // assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
   // assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
 
