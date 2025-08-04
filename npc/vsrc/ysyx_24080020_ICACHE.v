@@ -1231,7 +1231,7 @@ reg [cache_way-1:0] hit_tag_s3;
 
     always @(posedge clk) begin
         if(!rst) begin
-            s3_s2_ready <= 'b0;
+            s3_s2_ready <= 'b1;
             s2_s3_shake_hands <= 'b0;
 
             araddr_s3 <= 'b0;
