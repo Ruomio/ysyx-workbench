@@ -979,7 +979,7 @@ module ysyx_24080020_ICACHE(
     assign cache_offset_s3 = araddr_s3[cache_size_bits-1 : 0];
     assign cache_offset_s3_base = araddr_s3_base[cache_size_bits-1 : 0];
     assign shift_rdata_s3 = cache_data[cache_index_s3] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s3_base} << 3);
-    assign shift_rdata_s3_prev = cache_data[cache_index_s3] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, last_fifo_index_s3} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
+    assign shift_rdata_s3_prev = cache_data[cache_index_s3] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, last_fifo_index_s3} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s3_base} << 3);
 
     assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3));
     assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3));
