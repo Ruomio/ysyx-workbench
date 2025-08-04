@@ -996,7 +996,7 @@ reg [31:0] araddr_s3_base;
 reg special_pc_s3;
 reg [cache_tag_size-1:0] cache_tag_s3;
 reg [cache_num_bits-1:0] cache_index_s3;
-wire [cache_size_bits-1:0] cache_offset_s3;
+wire [cache_size_bits-1:0] cache_offset_s3, cache_offset_s3_base;
 reg is_hit_s3;
 reg [cache_way-1:0] hit_tag_s3;
 
@@ -1026,7 +1026,7 @@ reg [cache_way-1:0] hit_tag_s3;
         end
         else if(s2_s3_shake_hands) begin
             s2_s3_shake_hands <= 'b0;
-            if(is_hit_s3) begin
+            if(is_hit_s3 || has_hit_s1) begin
                 s3_s4_valid <= 'b1;
             end
             else if(!busy_i) begin
@@ -1102,7 +1102,7 @@ reg [cache_way-1:0] hit_tag_s3;
                 if(rlast_o) begin
                   busy <= 'b0;
                   fin_r <= 'b1;
-                  araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
+                  // araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
 
                   cache_tag[cache_index_s3] <= (cache_tag[cache_index_s3] & ~tag_mask) | shift_wtag;
                   cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
@@ -1127,7 +1127,8 @@ reg [cache_way-1:0] hit_tag_s3;
 
 
     assign cache_offset_s3 = araddr_s3[cache_size_bits-1 : 0];
-    assign shift_rdata_s3 = cache_data[cache_index_s3] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3);
+    assign cache_offset_s3_base = araddr_s3_base[cache_size_bits-1 : 0];
+    assign shift_rdata_s3 = cache_data[cache_index_s3] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s3_base} << 3);
 
     assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3));
     assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3));
