@@ -1002,6 +1002,9 @@ wire [cache_size_bits-1:0] cache_offset_s3, cache_offset_s3_base;
 reg is_hit_s3;
 reg [cache_way-1:0] hit_tag_s3;
 
+wire in_same_cache;
+assign in_same_cache = (araddr_o & ~(cache_size - 32'b1)) == (araddr_s3 & ~(cache_size - 32'b1));
+
     always @(posedge clk) begin
         if(!rst) begin
             s3_s2_ready <= 'b1;
@@ -1033,7 +1036,7 @@ reg [cache_way-1:0] hit_tag_s3;
             if(is_hit_s3 || has_hit_s1) begin
                 s3_s4_valid <= 'b1;
             end
-            else if(!busy_i) begin
+            else if(!busy_i && !in_same_cache) begin
                 busy <= 'b1;
                 arvalid_o <= 'b1;
 
