@@ -923,13 +923,14 @@ module ysyx_24080020_ICACHE(
       cache_index_s2 <= cache_index_s1;
       cache_offset_s2 <= cache_offset_s1;
 
+      inst_s2 <= shift_rdata_s2[31:0];
+
       is_hit_s2 <= is_hit_s1;
       hit_tag_s2 <= hit_tag_s1;
     end
     else if(s1_s2_shake_hands) begin
         s1_s2_shake_hands <= 'b0;
 
-        inst_s2 <= shift_rdata_s2[31:0];
         raddr_s2 <= araddr_s2;
 
         s2_s3_valid <= 'b1;
