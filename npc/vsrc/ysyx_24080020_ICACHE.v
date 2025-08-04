@@ -942,6 +942,9 @@ module ysyx_24080020_ICACHE(
         s2_s3_valid <= 'b0;
         s2_s1_ready <= 'b1;
     end
+    else if(fin_r) begin
+        hit_tag_s2 <= (hit_tag_s2 + 'b1) % cache_way;
+    end
 
   end
 
