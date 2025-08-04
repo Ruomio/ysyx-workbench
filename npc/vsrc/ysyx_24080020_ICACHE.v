@@ -986,24 +986,42 @@ module ysyx_24080020_ICACHE(
 
 
 // s3: axi read and get inst data
-wire [cache_data_ingroup_width-1 : 0] shift_rdata_s3;
-reg [31:0] inst_s3;
+    wire [cache_data_ingroup_width-1 : 0] shift_rdata_s3;
+    reg [31:0] inst_s3;
 
-reg [31:0] araddr_s3;
-reg [7:0] arlen_s3;
-reg [3:0] arid_s3;
-reg [1:0] arburst_s3;
-reg [2:0] arsize_s3;
-reg [31:0] araddr_s3_base;
-reg special_pc_s3;
-reg [cache_tag_size-1:0] cache_tag_s3;
-reg [cache_num_bits-1:0] cache_index_s3;
-wire [cache_size_bits-1:0] cache_offset_s3, cache_offset_s3_base;
-reg is_hit_s3;
-reg [cache_way-1:0] hit_tag_s3;
+    reg [31:0] araddr_s3;
+    reg [7:0] arlen_s3;
+    reg [3:0] arid_s3;
+    reg [1:0] arburst_s3;
+    reg [2:0] arsize_s3;
+    reg [31:0] araddr_s3_base;
+    reg special_pc_s3;
+    reg [cache_tag_size-1:0] cache_tag_s3;
+    reg [cache_num_bits-1:0] cache_index_s3;
+    wire [cache_size_bits-1:0] cache_offset_s3, cache_offset_s3_base;
+    reg is_hit_s3;
+    reg [cache_way-1:0] hit_tag_s3;
 
-wire in_same_cache;
-assign in_same_cache = (araddr_o & ~(cache_size - 32'b1)) == (araddr_s3 & ~(cache_size - 32'b1));
+    logic has_hit_s3;
+    logic total_hits_s3 [0 : cache_way - 1];
+
+
+    generate
+    genvar i;
+    for (i = 0; i < cache_way; i++) begin
+        assign total_hits_s3[i] = (cache_tag[cache_index_s3][(i+1)*cache_tag_width-1:i*cache_tag_width] == cache_tag_s3) && ((cache_valid[cache_index_s3] & ({ {(cache_way-1){1'b0}}, 1'b1} << i)) != 'b0);
+    end
+    endgenerate
+
+    always_comb begin
+        has_hit_s3 = 0;
+        for (integer i = 0; i < cache_way; i++) begin
+            if (total_hits_s3[i]) begin
+                has_hit_s3 = 'b1;
+            end
+        end
+    end
+
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -1032,11 +1050,11 @@ assign in_same_cache = (araddr_o & ~(cache_size - 32'b1)) == (araddr_s3 & ~(cach
             arvalid_o <= 'b0;
         end
         else if(s2_s3_shake_hands) begin
-            if(is_hit_s3 || has_hit_s1) begin
+            if(is_hit_s3 || has_hit_s3) begin
                 s3_s4_valid <= 'b1;
                 s2_s3_shake_hands <= 'b0;
             end
-            else if(!busy_i && !in_same_cache) begin
+            else if(!busy_i) begin
                 s2_s3_shake_hands <= 'b0;
 
                 busy <= 'b1;
@@ -1115,7 +1133,6 @@ assign in_same_cache = (araddr_o & ~(cache_size - 32'b1)) == (araddr_s3 & ~(cach
                 cache_data[cache_index_s3] <= (cache_data[cache_index_s3] & ~data_mask) | shift_wdata;
 
                 if(rlast_o) begin
-                  araddr_o <= 'b0;
                   busy <= 'b0;
                   fin_r <= 'b1;
                   // araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
