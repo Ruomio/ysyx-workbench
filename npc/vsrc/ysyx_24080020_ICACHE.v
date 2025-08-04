@@ -550,47 +550,69 @@ module ysyx_24080020_ICACHE(
   reg s1_s0_ready;
   reg s1_s2_valid;
   reg s2_s1_ready;
-  reg s2_s0_valid;
-  reg s0_s2_ready;
-  reg s0_s1_shake_hands, s1_s2_shake_hands, s2_s0_shake_hands;
+  reg s2_s3_valid;
+  reg s3_s2_ready;
+  reg s3_s4_valid;
+  reg s4_s3_ready;
+  reg s0_s1_shake_hands, s1_s2_shake_hands, s2_s3_shake_hands, s3_s4_shake_hands;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s0;
   // reg [`ysyx_24080020_WIDTH-1:0] rdata_araddr_s0;
 
-  reg special_pc_tmp;
+  // reg special_pc_tmp;
   reg special_pc_s0;
   reg special_pc_s0_o;
 
-  reg [7:0] arlen_tmp;
-  reg [3:0] arid_tmp;
-  reg [1:0] arburst_tmp;
-  reg [2:0] arsize_tmp;
+  // reg [7:0] arlen_tmp;
+  // reg [3:0] arid_tmp;
+  // reg [1:0] arburst_tmp;
+  // reg [2:0] arsize_tmp;
 
 // tmp <-> s0
 
-    reg tmp_s0_valid;
-    reg s0_tmp_ready;
-    reg tmp_s0_shake_hands;
+    // reg tmp_s0_valid;
+    // reg s0_tmp_ready;
+    // reg tmp_s0_shake_hands;
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            tmp_s0_valid <= 'b0;
-            s0_tmp_ready <= 'b1;
-            tmp_s0_shake_hands <= 'b0;
-        end
-        else if(tmp_s0_valid && s0_tmp_ready) begin
-            tmp_s0_valid <= 'b0;
-            s0_tmp_ready <= 'b0;
-            tmp_s0_shake_hands <= 'b1;
-            // arready_i <= 1'b1;
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         // tmp_s0_valid <= 'b0;
+    //         // s0_tmp_ready <= 'b1;
+    //         // tmp_s0_shake_hands <= 'b0;
 
-            araddr_s0 <= araddr_tmp;
-            arlen_s0 <= arlen_tmp;
-            arid_s0 <= arid_tmp;
-            arburst_s0 <= arburst_tmp;
-            arsize_s0 <= arsize_tmp;
-            special_pc_s0 <= special_pc_tmp;
-        end
-    end
+    //         araddr_s0 <= 'b0;
+    //         arlen_s0 <= 'b0;
+    //         arid_s0 <= 'b0;
+    //         arburst_s0 <= 'b0;
+    //         arsize_s0 <= 'b0;
+    //         special_pc_s0 <= 'b0;
+    //     end
+    //     else if(s0_s1_valid && s1_s0_ready) begin
+    //         s0_s1_valid <= 'b0;
+    //     end
+    //     else if(arvalid_i && arready_i) begin
+    //         araddr_s0 <= araddr_i;
+    //         arlen_s0 <= arlen_i;
+    //         arid_s0 <= arid_i;
+    //         arburst_s0 <= arburst_i;
+    //         arsize_s0 <= arsize_i;
+    //         special_pc_s0 <= special_pc_i;
+
+    //         s0_s1_valid <= 'b1;
+    //     end
+    //     // else if(tmp_s0_valid && s0_tmp_ready) begin
+    //     //     tmp_s0_valid <= 'b0;
+    //     //     s0_tmp_ready <= 'b0;
+    //     //     tmp_s0_shake_hands <= 'b1;
+    //     //     // arready_i <= 1'b1;
+
+    //     //     araddr_s0 <= araddr_tmp;
+    //     //     arlen_s0 <= arlen_tmp;
+    //     //     arid_s0 <= arid_tmp;
+    //     //     arburst_s0 <= arburst_tmp;
+    //     //     arsize_s0 <= arsize_tmp;
+    //     //     special_pc_s0 <= special_pc_tmp;
+    //     // end
+    // end
 
 
 // s0
@@ -603,7 +625,6 @@ module ysyx_24080020_ICACHE(
     always @(posedge clk) begin
         if(!rst) begin
             s0_s1_valid <= 'b0;
-            s0_s2_ready <= 'b1;
             inst_s0 <= 'b0;
             raddr_s0 <= 'b0;
             special_pc_s0 <= 'b0;
@@ -615,51 +636,64 @@ module ysyx_24080020_ICACHE(
             arburst_s0 <= 'b0;
             arsize_s0 <= 'b0;
         end
-        else if(s0_s1_valid && s1_s0_ready) begin
+        else if(s0_s1_valid && s1_s0_ready)begin
             s0_s1_valid <= 'b0;
-            s0_tmp_ready <= 'b1;
-            s0_s1_shake_hands <= 'b1;
-
-            // s1_s0_ready <= 1'b1; // s1 -> s2 hands
-            araddr_s1 <= araddr_s0;
-            arlen_s1 <= arlen_s0;
-            arid_s1 <= arid_s0;
-            arburst_s1 <= arburst_s0;
-            arsize_s1 <= arsize_s0;
-            special_pc_s1 <= special_pc_s0;
-
         end
-        else if(tmp_s0_shake_hands) begin
-            tmp_s0_shake_hands <= 'b0;
+        else if(arvalid_i && arready_i) begin
+            araddr_s0 <= araddr_i;
+            arlen_s0 <= arlen_i;
+            arid_s0 <= arid_i;
+            arburst_s0 <= arburst_i;
+            arsize_s0 <= arsize_i;
+            special_pc_s0 <= special_pc_i;
+
             s0_s1_valid <= 'b1;
         end
+        // else if(s0_s1_valid && s1_s0_ready) begin
+        //     s0_s1_valid <= 'b0;
+        //     s0_tmp_ready <= 'b1;
+        //     s0_s1_shake_hands <= 'b1;
+
+        //     // s1_s0_ready <= 1'b1; // s1 -> s2 hands
+        //     araddr_s1 <= araddr_s0;
+        //     arlen_s1 <= arlen_s0;
+        //     arid_s1 <= arid_s0;
+        //     arburst_s1 <= arburst_s0;
+        //     arsize_s1 <= arsize_s0;
+        //     special_pc_s1 <= special_pc_s0;
+
+        // end
+        // else if(tmp_s0_shake_hands) begin
+        //     tmp_s0_shake_hands <= 'b0;
+        //     s0_s1_valid <= 'b1;
+        // end
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            // rdata_araddr_s0 <= 'b0;
-        end
-        else if(s2_s0_valid && s0_s2_ready) begin
-            s0_s2_ready <= 'b0;
-            s2_s0_shake_hands <= 'b1;
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         // rdata_araddr_s0 <= 'b0;
+    //     end
+    //     else if(s3_s0_valid && s0_s3_ready) begin
+    //         s0_s3_ready <= 'b0;
+    //         s2_s0_shake_hands <= 'b1;
 
-            raddr_s0 <= raddr_s2;
-            special_pc_s0_o <= special_pc_s2_o;
+    //         raddr_s0 <= araddr_s3;
+    //         special_pc_s0_o <= special_pc_s3;
 
-            inst_s0 <= inst_s2;
-        end
-        else if(s2_s0_shake_hands) begin
-          s2_s0_shake_hands <= 'b0;
+    //         inst_s0 <= inst_s3;
+    //     end
+    //     else if(s3_s0_shake_hands) begin
+    //       s2_s0_shake_hands <= 'b0;
 
-          rvalid_i <= 'b1;
-          rdata_i <= inst_s0;
-          rlast_i <= 'b1;
-          rresp_i <= 'b0;
-          // rdata_araddr <= rdata_araddr_s0;
-        end
-    end
+    //       rvalid_i <= 'b1;
+    //       rdata_i <= inst_s0;
+    //       rlast_i <= 'b1;
+    //       rresp_i <= 'b0;
+    //       // rdata_araddr <= rdata_araddr_s0;
+    //     end
+    // end
 
-// s1
+// s1: calculate tag and judge is hit
   reg [cache_tag_size-1:0]    cache_tag_s1;
   reg [cache_num_bits-1:0]    cache_index_s1;
   reg [cache_size_bits-1:0]   cache_offset_s1;
@@ -671,6 +705,32 @@ module ysyx_24080020_ICACHE(
   reg [2:0] arsize_s1;
 
   reg special_pc_s1;
+
+  reg is_hit_s1;
+  reg [cache_way-1:0] hit_tag_s1;
+
+  logic has_hit_s1;
+  logic total_hits_s1 [0 : cache_way - 1];
+  logic [cache_way-1:0] tmp_tag_index_s1;
+
+
+  generate
+    genvar j;
+    for (j = 0; j < cache_way; j++) begin
+        assign total_hits_s1[j] = (cache_tag[cache_index_s1][(j+1)*cache_tag_width-1:j*cache_tag_width] == cache_tag_s1) && ((cache_valid[cache_index_s1] & ({ {(cache_way-1){1'b0}}, 1'b1} << j)) != 'b0);
+    end
+  endgenerate
+
+  always_comb begin
+      tmp_tag_index_s1 = 0;
+      has_hit_s1 = 0;
+      for (integer i = 0; i < cache_way; i++) begin
+          if (total_hits_s1[i]) begin
+              has_hit_s1 = 'b1;
+              tmp_tag_index_s1 = i[cache_way-1:0];
+          end
+      end
+  end
 
   always @(posedge clk) begin
     if(!rst) begin
@@ -687,53 +747,81 @@ module ysyx_24080020_ICACHE(
       cache_index_s1 <= 'b0;
       cache_offset_s1 <= 'b0;
       special_pc_s1 <= 'b0;
+
+      is_hit_s1 <= 'b0;
+      hit_tag_s1 <= 'b0;
     end
     else if(s0_s1_valid && s1_s0_ready) begin
         s1_s0_ready <= 'b0;
+
+        araddr_s1 <= araddr_s0;
+        arlen_s1 <= arlen_s0;
+        arid_s1 <= arid_s0;
+        arburst_s1 <= arburst_s0;
+        arsize_s1 <= arsize_s0;
+        special_pc_s1 <= special_pc_s0;
+
+        cache_tag_s1 <= araddr_s0[31 : cache_num_bits+cache_size_bits];
+        cache_index_s1 <= araddr_s0[cache_num_bits+cache_size_bits-1 : cache_size_bits];
+        cache_offset_s1 <= araddr_s0[cache_size_bits-1 : 0];
+
+        s0_s1_shake_hands <= 'b1;
     end
     else if(s0_s1_shake_hands) begin
         s0_s1_shake_hands <= 'b0;
 
-    end
-  end
+        is_hit_s1 <= has_hit_s1;
+        hit_tag_s1 <= tmp_tag_index_s1;
 
-  always @(posedge clk) begin
-    if(!rst) begin
-      s1_s2_valid <= 'b0;
+        s1_s2_valid <= 'b1;
+
     end
     else if(s1_s2_valid && s2_s1_ready) begin
-      s1_s2_valid <= 1'b0;
-    end
-    else if(s0_s1_shake_hands) begin
-        s1_s2_valid <= 1'b1;
-        cache_tag_s1 <= araddr_s1[31 : cache_num_bits+cache_size_bits];
-        cache_index_s1 <= araddr_s1[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-        cache_offset_s1 <= araddr_s1[cache_size_bits-1 : 0];
-
+        s1_s2_valid <= 'b0;
+        s1_s0_ready <= 'b1;
     end
   end
 
+  // always @(posedge clk) begin
+  //   if(!rst) begin
+  //     s1_s2_valid <= 'b0;
+  //   end
+  //   else if(s1_s2_valid && s2_s1_ready) begin
+  //     s1_s2_valid <= 1'b0;
+  //   end
+  //   else if(s0_s1_shake_hands) begin
+  //       s1_s2_valid <= 1'b1;
+  //       cache_tag_s1 <= araddr_s1[31 : cache_num_bits+cache_size_bits];
+  //       cache_index_s1 <= araddr_s1[cache_num_bits+cache_size_bits-1 : cache_size_bits];
+  //       cache_offset_s1 <= araddr_s1[cache_size_bits-1 : 0];
 
-// s2
-  localparam IDLE = 0;
-  localparam JUDGE = IDLE + 1;
-  localparam CHIT = JUDGE + 1;
-  localparam CMISS = CHIT + 1;
-  localparam AXIAR = CMISS + 1;
-  localparam AXIR = AXIAR + 1;
-  localparam AXIDone = AXIR + 1;  // not use cache, such as sram
+  //   end
+  // end
+
+
+// s2: pass the hit data
+  // localparam IDLE = 0;
+  // localparam JUDGE = IDLE + 1;
+  // localparam CHIT = JUDGE + 1;
+  // localparam CMISS = CHIT + 1;
+  // localparam AXIAR = CMISS + 1;
+  // localparam AXIR = AXIAR + 1;
+  // localparam AXIDone = AXIR + 1;  // not use cache, such as sram
 
   reg [cache_tag_size-1:0]    cache_tag_s2;
   reg [cache_num_bits-1:0]    cache_index_s2;
-  wire [cache_size_bits-1:0]   cache_offset_s2;
+  reg [cache_size_bits-1:0]   cache_offset_s2;
 
-  logic has_hit;
-  logic total_hits [0 : cache_way - 1];
-  logic [cache_way-1:0] tmp_tag_index;
+  reg [cache_way-1:0] hit_tag_s2;
+
+  // logic has_hit;
+  // logic total_hits [0 : cache_way - 1];
+  // logic [cache_way-1:0] tmp_tag_index;
 
   reg bubble;
   reg all_fin_ready;
-  reg special_pc_s2_i, special_pc_s2_o;
+  reg special_pc_s2;
+  reg is_hit_s2;
 
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
@@ -744,39 +832,42 @@ module ysyx_24080020_ICACHE(
   reg [1:0] arburst_s2;
   reg [2:0] arsize_s2;
 
+
+  wire [cache_data_ingroup_width-1 : 0] shift_rdata_s2;
+
   // assign cache_tag_s2 = araddr_s2[31 : cache_num_bits+cache_size_bits];
   // assign cache_index_s2 = araddr_s2[cache_num_bits+cache_size_bits-1 : cache_size_bits];
-  assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
+  // assign cache_offset_s2 = araddr_s2[cache_size_bits-1 : 0];
 
-  assign shift_rdata = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, tag_index} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
-  assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
-  assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
+  assign shift_rdata_s2 = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, hit_tag_s2} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
+  // assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
+  // assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3));
 
 
-  assign shift_rtag = (cache_tag[cache_index_s2] >> ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, tag_index} * cache_tag_width)) & ({ {tag_complete_bits{1'b0}}, {cache_tag_width{1'b1}} });
-  assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_s2} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]} * cache_tag_width);
-  assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]} * cache_tag_width);
+  // assign shift_rtag = (cache_tag[cache_index_s2] >> ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, hit_tag_s2} * cache_tag_width)) & ({ {tag_complete_bits{1'b0}}, {cache_tag_width{1'b1}} });
+  // assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_s2} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]} * cache_tag_width);
+  // assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s2]} * cache_tag_width);
 
-  assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_s2})
-                     && ((cache_valid[cache_index_s2] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
+  // assign cache_hit = ( shift_rtag == {{tag_complete_bits{1'b0}}, cache_tag_s2})
+  //                    && ((cache_valid[cache_index_s2] & ({ {(cache_way-1){1'b0}}, 1'b1} << tag_index)) != 'b0);
 
-  generate
-    genvar j;
-    for (j = 0; j < cache_way; j++) begin
-        assign total_hits[j] = (cache_tag[cache_index_s2][(j+1)*cache_tag_width-1:j*cache_tag_width] == cache_tag_s2) && ((cache_valid[cache_index_s2] & ({ {(cache_way-1){1'b0}}, 1'b1} << j)) != 'b0);
-    end
-  endgenerate
+  // generate
+  //   genvar j;
+  //   for (j = 0; j < cache_way; j++) begin
+  //       assign total_hits[j] = (cache_tag[cache_index_s2][(j+1)*cache_tag_width-1:j*cache_tag_width] == cache_tag_s2) && ((cache_valid[cache_index_s2] & ({ {(cache_way-1){1'b0}}, 1'b1} << j)) != 'b0);
+  //   end
+  // endgenerate
 
-  always_comb begin
-      tmp_tag_index = 0;
-      has_hit = 0;
-      for (integer i = 0; i < cache_way; i++) begin
-          if (total_hits[i]) begin
-              has_hit = 'b1;
-              tmp_tag_index = i[cache_way-1:0];
-          end
-      end
-  end
+  // always_comb begin
+  //     tmp_tag_index = 0;
+  //     has_hit = 0;
+  //     for (integer i = 0; i < cache_way; i++) begin
+  //         if (total_hits[i]) begin
+  //             has_hit = 'b1;
+  //             tmp_tag_index = i[cache_way-1:0];
+  //         end
+  //     end
+  // end
 
   assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
   assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
@@ -793,7 +884,7 @@ module ysyx_24080020_ICACHE(
   always @(posedge clk) begin
     if(!rst) begin
       s2_s1_ready <= 'b1;
-      s2_s0_valid <= 'b0;
+      s2_s3_valid <= 'b0;
 
       inst_s2 <= 'b0;
 
@@ -805,17 +896,16 @@ module ysyx_24080020_ICACHE(
       araddr_s2_base <= 'b0;
       raddr_s2 <= 'b0;
       bubble <= 'b0;
-      special_pc_s2_i <= 'b0;
-      special_pc_s2_o <= 'b0;
+      special_pc_s2 <= 'b0;
       s1_s2_shake_hands <= 'b0;
+
+      is_hit_s2 <= 'b0;
+      hit_tag_s2 <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
+
       s1_s2_shake_hands <= 'b1;
-      s1_s0_ready <= 'b1;
-
-
-      // s1_s2_shake_hands <= 'b1;
 
       araddr_s2 <= araddr_s1;
       arlen_s2 <= arlen_s1;
@@ -824,39 +914,51 @@ module ysyx_24080020_ICACHE(
       arsize_s2 <= arsize_s1;
 
       araddr_s2_base <= araddr_s1;
-      special_pc_s2_i <= special_pc_s1;
+      special_pc_s2 <= special_pc_s1;
 
       cache_tag_s2 <= cache_tag_s1;
       cache_index_s2 <= cache_index_s1;
-      // cache_offset_s2 <= cache_offset_s1;
+      cache_offset_s2 <= cache_offset_s1;
+
+      is_hit_s2 <= is_hit_s1;
+      hit_tag_s2 <= hit_tag_s1;
     end
     else if(s1_s2_shake_hands) begin
-
-    end
-  end
-
-  always @(posedge clk) begin
-    if(!rst) begin
-      s2_s0_valid <= 'b0;
-      all_fin_ready <= 'b0;
-    end
-    else if(s2_s0_valid && s0_s2_ready) begin
-      s2_s0_valid <= 1'b0;
-      s2_s1_ready <= 1'b1;
-    end
-    else if(all_fin && all_fin_ready) begin
-        all_fin_ready <= 'b0;
-        s2_s0_valid <= 1'b1;
-
-        inst_s2 <= rdata_tmp;
         s1_s2_shake_hands <= 'b0;
-        raddr_s2 <= araddr_s2_base;
-        special_pc_s2_o <= special_pc_s2_i;
+
+        inst_s2 <= shift_rdata_s2[31:0];
+        raddr_s2 <= araddr_s2;
+
+        s2_s3_valid <= 'b1;
+
     end
-    else if(all_fin) begin
-        all_fin_ready <= 'b1;
+    else if(s2_s3_valid && s3_s2_ready) begin
+        s2_s1_ready <= 'b1;
     end
   end
+
+  // always @(posedge clk) begin
+  //   if(!rst) begin
+  //     s2_s0_valid <= 'b0;
+  //     all_fin_ready <= 'b0;
+  //   end
+  //   else if(s2_s0_valid && s0_s2_ready) begin
+  //     s2_s0_valid <= 1'b0;
+  //     s2_s1_ready <= 1'b1;
+  //   end
+  //   else if(all_fin && all_fin_ready) begin
+  //       all_fin_ready <= 'b0;
+  //       s2_s0_valid <= 1'b1;
+
+  //       inst_s2 <= rdata_tmp;
+  //       s1_s2_shake_hands <= 'b0;
+  //       raddr_s2 <= araddr_s2_base;
+  //       special_pc_s2_o <= special_pc_s2_i;
+  //   end
+  //   else if(all_fin) begin
+  //       all_fin_ready <= 'b1;
+  //   end
+  // end
 
 
   always @(posedge clk) begin
@@ -876,240 +978,425 @@ module ysyx_24080020_ICACHE(
       end
   end
 
-  always @(posedge clk) begin
-      if(!rst) begin
-          cache_hit_next <= 'b0;
-      end
-      else if(current_state == CHIT) begin
-          cache_hit_next <= 'b1;
-      end
-      else begin
-          cache_hit_next <= 'b0;
-      end
-  end
+  // always @(posedge clk) begin
+  //     if(!rst) begin
+  //         cache_hit_next <= 'b0;
+  //     end
+  //     else if(current_state == CHIT) begin
+  //         cache_hit_next <= 'b1;
+  //     end
+  //     else begin
+  //         cache_hit_next <= 'b0;
+  //     end
+  // end
 
-  // next_state
-  always @(*) begin
-      case(current_state)
-          IDLE: begin
-              if(s1_s2_valid && s2_s1_ready) begin
-                  next_state = JUDGE;
-              end
-              else begin
-                  next_state = IDLE;
-              end
-          end
-          JUDGE: begin
-              if(flush_cache) begin
-                // wait flush cache
-                next_state = JUDGE;
-              end
-              else if(fin_judge) begin
-                  if(is_hit && use_icache) begin
-                      next_state = CHIT;
-                  end
-                  else begin
-                      next_state = CMISS;
-                  end
-              end
-              else
-                  next_state = JUDGE;
-          end
-          CHIT: begin
-              if(all_fin && all_fin_ready) begin
-                  next_state = IDLE;
-              end
-              else begin
-                  next_state = CHIT;
-              end
-          end
-          CMISS: begin
-              next_state = AXIAR;
-              `ifdef CONFIG_DPIC
-              if(in_flash)
-                  statistics_icache_miss();
-              `endif
-          end
-          AXIAR: begin
-              if(fin_ar) begin
-                  next_state = AXIR;
-              end
-              else begin
-                  next_state = AXIAR;
-              end
-          end
-          AXIR: begin
-              if(fin_r) begin
-                  if(use_icache) begin
-                      next_state = JUDGE;
-                  end
-                  else begin
-                      next_state = AXIDone;
-                  end
-              end
-              else begin
-                  next_state = AXIR;
-              end
-          end
-          AXIDone: begin
-              if(all_fin && all_fin_ready) begin
-                  next_state = IDLE;
-              end
-              else begin
-                  next_state = AXIDone;
-              end
-          end
-          default: begin
-              next_state = IDLE;
-          end
-      endcase
-  end
+  // // next_state
+  // always @(*) begin
+  //     case(current_state)
+  //         IDLE: begin
+  //             if(s1_s2_valid && s2_s1_ready) begin
+  //                 next_state = JUDGE;
+  //             end
+  //             else begin
+  //                 next_state = IDLE;
+  //             end
+  //         end
+  //         JUDGE: begin
+  //             if(flush_cache) begin
+  //               // wait flush cache
+  //               next_state = JUDGE;
+  //             end
+  //             else if(fin_judge) begin
+  //                 if(is_hit && use_icache) begin
+  //                     next_state = CHIT;
+  //                 end
+  //                 else begin
+  //                     next_state = CMISS;
+  //                 end
+  //             end
+  //             else
+  //                 next_state = JUDGE;
+  //         end
+  //         CHIT: begin
+  //             if(all_fin && all_fin_ready) begin
+  //                 next_state = IDLE;
+  //             end
+  //             else begin
+  //                 next_state = CHIT;
+  //             end
+  //         end
+  //         CMISS: begin
+  //             next_state = AXIAR;
+  //             `ifdef CONFIG_DPIC
+  //             if(in_flash)
+  //                 statistics_icache_miss();
+  //             `endif
+  //         end
+  //         AXIAR: begin
+  //             if(fin_ar) begin
+  //                 next_state = AXIR;
+  //             end
+  //             else begin
+  //                 next_state = AXIAR;
+  //             end
+  //         end
+  //         AXIR: begin
+  //             if(fin_r) begin
+  //                 if(use_icache) begin
+  //                     next_state = JUDGE;
+  //                 end
+  //                 else begin
+  //                     next_state = AXIDone;
+  //                 end
+  //             end
+  //             else begin
+  //                 next_state = AXIR;
+  //             end
+  //         end
+  //         AXIDone: begin
+  //             if(all_fin && all_fin_ready) begin
+  //                 next_state = IDLE;
+  //             end
+  //             else begin
+  //                 next_state = AXIDone;
+  //             end
+  //         end
+  //         default: begin
+  //             next_state = IDLE;
+  //         end
+  //     endcase
+  // end
 
-  always @(posedge clk) begin
-      case(current_state)
-          IDLE: begin
-              fin_ar <= 'b0;
-              fin_r <= 'b0;
-              all_fin <= 'b0;
+  // always @(posedge clk) begin
+  //     case(current_state)
+  //         IDLE: begin
+  //             fin_ar <= 'b0;
+  //             fin_r <= 'b0;
+  //             all_fin <= 'b0;
 
-              fin_judge <= 'b0;
-              is_hit <= 'b0;
-              update_fifo_index <= 'b0;
+  //             fin_judge <= 'b0;
+  //             is_hit <= 'b0;
+  //             update_fifo_index <= 'b0;
 
-              tag_index <= 'b0;
+  //             tag_index <= 'b0;
 
-              rready_o <= 'b0;
+  //             rready_o <= 'b0;
 
-              num_index <= 'b0;
-          end
-          JUDGE: begin
-              if(fin_judge) begin
-                  araddr_s2 <= {araddr_s2[31:2], 2'b0};
-                  fin_judge <= 'b0;
-              end
-              else if(has_hit) begin
-                  is_hit <= 'b1;
-                  tag_index <= tmp_tag_index;
-                  fin_judge <= 'b1;
-              end
-              else begin
-                  is_hit <= 'b0;
-                  fin_judge <= 'b1;
-              end
-              // if(fin_judge) begin
-              //   araddr_s2 <= {araddr_s2[31:2], 2'b0};
-              //   fin_judge <= 'b0;
-              // end
-              // else if(tag_index < cache_way) begin
-              //   if(cache_hit) begin
-              //     is_hit <= 'b1;
-              //     fin_judge <= 'b1;
-              //   end
-              //   else begin
-              //     tag_index <= tag_index + 'b1;
-              //   end
-              // end
-              // else begin
-              //   tag_index <= 'b0;
-              //   fin_judge <= 'b1;
-              // end
-          end
-          CHIT: begin
-              rdata_tmp <= shift_rdata[31:0];
+  //             num_index <= 'b0;
+  //         end
+  //         JUDGE: begin
+  //             if(fin_judge) begin
+  //                 araddr_s2 <= {araddr_s2[31:2], 2'b0};
+  //                 fin_judge <= 'b0;
+  //             end
+  //             else if(has_hit) begin
+  //                 is_hit <= 'b1;
+  //                 tag_index <= tmp_tag_index;
+  //                 fin_judge <= 'b1;
+  //             end
+  //             else begin
+  //                 is_hit <= 'b0;
+  //                 fin_judge <= 'b1;
+  //             end
+  //             // if(fin_judge) begin
+  //             //   araddr_s2 <= {araddr_s2[31:2], 2'b0};
+  //             //   fin_judge <= 'b0;
+  //             // end
+  //             // else if(tag_index < cache_way) begin
+  //             //   if(cache_hit) begin
+  //             //     is_hit <= 'b1;
+  //             //     fin_judge <= 'b1;
+  //             //   end
+  //             //   else begin
+  //             //     tag_index <= tag_index + 'b1;
+  //             //   end
+  //             // end
+  //             // else begin
+  //             //   tag_index <= 'b0;
+  //             //   fin_judge <= 'b1;
+  //             // end
+  //         end
+  //         CHIT: begin
+  //             rdata_tmp <= shift_rdata[31:0];
 
-              all_fin <= 'b1;
-              // if(!all_fin_ready)
-              //   all_fin <= 'b1;
+  //             all_fin <= 'b1;
+  //             // if(!all_fin_ready)
+  //             //   all_fin <= 'b1;
 
-              `ifdef CONFIG_DPIC
-              // hit cache and not by axi
-              if(!cache_hit_next) begin
-                if(!fin_r) begin
-                        if(in_flash)
-                        statistics_icache_hit();
-                        else if(in_sdram)
-                        statistics_dcache_hit();
-                        // $display("cache hit addr: 0x%x", araddr_o);
-                    end
-                end
-              else begin
-                // $display("cache miss addr: 0x%x", araddr_o);
-              end
-              `endif
-          end
-          CMISS: begin
-              // do nothing
-          end
-          AXIAR: begin
-            if(arready_o && arvalid_o) begin
-                arvalid_o <= 'b0;
-                fin_ar <= 'b1;
-                bubble <= 'b0;
+  //             `ifdef CONFIG_DPIC
+  //             // hit cache and not by axi
+  //             if(!cache_hit_next) begin
+  //               if(!fin_r) begin
+  //                       if(in_flash)
+  //                       statistics_icache_hit();
+  //                       else if(in_sdram)
+  //                       statistics_dcache_hit();
+  //                       // $display("cache hit addr: 0x%x", araddr_o);
+  //                   end
+  //               end
+  //             else begin
+  //               // $display("cache miss addr: 0x%x", araddr_o);
+  //             end
+  //             `endif
+  //         end
+  //         CMISS: begin
+  //             // do nothing
+  //         end
+  //         AXIAR: begin
+  //           if(arready_o && arvalid_o) begin
+  //               arvalid_o <= 'b0;
+  //               fin_ar <= 'b1;
+  //               bubble <= 'b0;
+  //           end
+  //           else if(!fin_ar && !busy_i) begin
+  //               busy <= 'b1;
+  //               arvalid_o <= 1'b1;
+  //               if(use_icache) begin
+  //                   // burst trans in sdram
+  //                   araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
+
+  //                   arsize_o <= 'b10;
+  //                   arid_o <= 'b0;
+  //                   arlen_o <= (cache_size >> 2) - 1;
+  //                   arburst_o <= 'b01;
+
+  //                   araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
+  //               end
+  //           end
+  //         end
+  //         AXIR: begin
+  //             if(rvalid_o && rready_o) begin
+  //                 rready_o <= 1'b0;
+  //                 if(rresp_o == 2'b00) begin // OKAY
+  //                     rdata_tmp <= rdata_o;
+  //                     if(use_icache) begin
+  //                         // update cache
+  //                         cache_data[cache_index_s2] <= (cache_data[cache_index_s2] & ~data_mask) | shift_wdata;
+  //                     end
+
+  //                     if(rlast_o) begin
+  //                       busy <= 'b0;
+  //                       fin_r <= 1'b1;
+  //                       araddr_s2 <= {araddr_s2_base[31 : 2], 2'b0};
+
+  //                       if(use_icache) begin
+  //                         fifo_index[cache_index_s2] <= (fifo_index[cache_index_s2] + 'b1) % cache_way;
+  //                         cache_tag[cache_index_s2] <= (cache_tag[cache_index_s2] & ~tag_mask) | shift_wtag;
+  //                         cache_valid[cache_index_s2] <= cache_valid[cache_index_s2] | (1 << (fifo_index[cache_index_s2]));
+  //                       end
+  //                     end
+  //                     else begin
+  //                       // update araddr to adapt burst transmit, it's for icache parameter
+  //                       araddr_s2 <= araddr_s2 + 2 ** arsize_o;
+  //                     end
+  //                 end
+  //                 else begin
+  //                     // error
+  //                     `ifdef CONFIG_DPIC
+  //                     $error("fetch inst error");
+  //                     `endif
+  //                 end
+  //             end
+  //             else if(rvalid_o) begin
+  //               rready_o <= 'b1;
+  //             end
+  //         end
+  //         AXIDone: begin
+  //             if(!all_fin_ready)
+  //               all_fin <= 1'b1;
+  //         end
+  //         default: begin
+  //             // do nothing
+  //         end
+  //     endcase
+  // end
+
+
+// s3: axi read and get inst data
+wire [cache_data_ingroup_width-1 : 0] shift_rdata_s3;
+reg [31:0] inst_s3;
+
+reg [31:0] araddr_s3;
+reg [7:0] arlen_s3;
+reg [3:0] arid_s3;
+reg [1:0] arburst_s3;
+reg [2:0] arsize_s3;
+reg [31:0] araddr_s3_base;
+reg special_pc_s3;
+reg [cache_tag_size-1:0] cache_tag_s3;
+reg [cache_num_bits-1:0] cache_index_s3;
+reg [cache_size_bits-1:0] cache_offset_s3;
+reg is_hit_s3;
+reg [cache_way-1:0] hit_tag_s3;
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            s3_s2_ready <= 'b0;
+            s2_s3_shake_hands <= 'b0;
+
+            araddr_s3 <= 'b0;
+            arlen_s3 <= 'b0;
+            arid_s3 <= 'b0;
+            arburst_s3 <= 'b0;
+            arsize_s3 <= 'b0;
+
+            araddr_s3_base <= 'b0;
+            special_pc_s3 <= 'b0;
+
+            cache_tag_s3 <= 'b0;
+            cache_index_s3 <= 'b0;
+            cache_offset_s3 <= 'b0;
+
+            is_hit_s3 <= 'b0;
+            hit_tag_s3 <= 'b0;
+        end
+        else if(arvalid_o && arready_o) begin
+            arvalid_o <= 'b0;
+        end
+        else if(s2_s3_shake_hands) begin
+            s2_s3_shake_hands <= 'b0;
+            if(is_hit_s3) begin
+                s3_s4_valid <= 'b1;
             end
-            else if(!fin_ar && !busy_i) begin
+            else if(!busy_i) begin
                 busy <= 'b1;
-                arvalid_o <= 1'b1;
-                if(use_icache) begin
-                    // burst trans in sdram
-                    araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
+                arvalid_o <= 'b1;
 
-                    arsize_o <= 'b10;
-                    arid_o <= 'b0;
-                    arlen_o <= (cache_size >> 2) - 1;
-                    arburst_o <= 'b01;
+                // burst trans in sdram
+                araddr_o <= araddr_s3 & ~(cache_size - 32'b1);
 
-                    araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
+                arsize_o <= 'b10;
+                arid_o <= 'b0;
+                arlen_o <= (cache_size >> 2) - 1;
+                arburst_o <= 'b01;
+
+                araddr_s3 <= araddr_s3 & ~(cache_size - 32'b1) ;
+            end
+        end
+        else if(s2_s3_valid && s3_s2_ready) begin
+            s3_s2_ready <= 'b0;
+            s2_s3_shake_hands <= 'b1;
+
+            araddr_s3 <= araddr_s2;
+            arlen_s3 <= arlen_s2;
+            arid_s3 <= arid_s2;
+            arburst_s3 <= arburst_s2;
+            arsize_s3 <= arsize_s2;
+
+            araddr_s3_base <= araddr_s2;
+            special_pc_s3 <= special_pc_s2;
+
+            cache_tag_s3 <= cache_tag_s2;
+            cache_index_s3 <= cache_index_s2;
+            cache_offset_s3 <= cache_offset_s2;
+
+            is_hit_s3 <= is_hit_s2;
+            hit_tag_s3 <= hit_tag_s2;
+        end
+        else if(s3_s4_valid && s4_s3_ready) begin
+            s3_s2_ready <= 'b1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            rready_o <= 'b0;
+            fin_r <= 'b0;
+            busy <= 'b0;
+            araddr_s3 <= 'b0;
+
+            s3_s4_valid <= 'b0;
+            inst_s3 <= 'b0;
+
+        end
+        else if(s3_s4_valid && s4_s3_ready) begin
+            s3_s4_valid <= 'b0;
+        end
+        if(fin_r) begin
+            inst_s3 <= shift_rdata_s3[31:0];
+            fifo_index[cache_index_s3] <= (fifo_index[cache_index_s3] + 'b1) % cache_way;
+
+            s3_s4_valid <= 'b1;
+        end
+        else if(rvalid_o && rready_o) begin
+            rready_o <= 'b0;
+            if(rresp_o == 2'b00) begin // OKAY
+                // rdata_s3 <= rdata_o;
+
+                // update cache
+                cache_data[cache_index_s3] <= (cache_data[cache_index_s3] & ~data_mask) | shift_wdata;
+
+                if(rlast_o) begin
+                  busy <= 'b0;
+                  fin_r <= 'b1;
+                  araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
+
+                  cache_tag[cache_index_s3] <= (cache_tag[cache_index_s3] & ~tag_mask) | shift_wtag;
+                  cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
+                end
+                else begin
+                  // update araddr to adapt burst transmit, it's for icache parameter
+                  araddr_s3 <= araddr_s3 + 2 ** arsize_o;
                 end
             end
-          end
-          AXIR: begin
-              if(rvalid_o && rready_o) begin
-                  rready_o <= 1'b0;
-                  if(rresp_o == 2'b00) begin // OKAY
-                      rdata_tmp <= rdata_o;
-                      if(use_icache) begin
-                          // update cache
-                          cache_data[cache_index_s2] <= (cache_data[cache_index_s2] & ~data_mask) | shift_wdata;
-                      end
+            else begin
+                // error
+                `ifdef CONFIG_DPIC
+                $error("fetch inst error");
+                `endif
+            end
+        end
+        else if(rvalid_o) begin
+            rready_o <= 'b1;
 
-                      if(rlast_o) begin
-                        busy <= 'b0;
-                        fin_r <= 1'b1;
-                        araddr_s2 <= {araddr_s2_base[31 : 2], 2'b0};
+        end
+    end
 
-                        if(use_icache) begin
-                          fifo_index[cache_index_s2] <= (fifo_index[cache_index_s2] + 'b1) % cache_way;
-                          cache_tag[cache_index_s2] <= (cache_tag[cache_index_s2] & ~tag_mask) | shift_wtag;
-                          cache_valid[cache_index_s2] <= cache_valid[cache_index_s2] | (1 << (fifo_index[cache_index_s2]));
-                        end
-                      end
-                      else begin
-                        // update araddr to adapt burst transmit, it's for icache parameter
-                        araddr_s2 <= araddr_s2 + 2 ** arsize_o;
-                      end
-                  end
-                  else begin
-                      // error
-                      `ifdef CONFIG_DPIC
-                      $error("fetch inst error");
-                      `endif
-                  end
-              end
-              else if(rvalid_o) begin
-                rready_o <= 'b1;
-              end
-          end
-          AXIDone: begin
-              if(!all_fin_ready)
-                all_fin <= 1'b1;
-          end
-          default: begin
-              // do nothing
-          end
-      endcase
-  end
+    assign shift_rdata_s3 = cache_data[cache_index_s3] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3);
+
+    assign shift_wdata = ({{data_complete_bits{1'b0}}, rdata_o} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3));
+    assign data_mask = ({{data_complete_bits{1'b0}}, ~32'b0} << (({{(cache_data_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]}) << cache_size_shift) << ({{(32-cache_size_bits){1'b0}}, cache_offset_s3} << 3));
+
+    assign shift_wtag = {{tag_complete_bits{1'b0}}, cache_tag_s3} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]} * cache_tag_width);
+    assign tag_mask = {{tag_complete_bits{1'b0}}, ~{cache_tag_size{1'b0}}} << ({ {(cache_tag_ingroup_width-cache_way){1'b0}}, fifo_index[cache_index_s3]} * cache_tag_width);
 
 
+// s4: return inst data from axi
+reg [31:0] inst_s4;
+reg special_pc_s4;
+reg [31:0] raddr_s4;
+
+always @(posedge clk) begin
+    if(!rst) begin
+        // rdata_araddr_s0 <= 'b0;
+        rvalid_i <= 'b0;
+        rdata_i <= 'b0;
+        rlast_i <= 'b0;
+        rresp_i <= 'b0;
+        s4_s3_ready <= 'b1;
+    end
+    else if(s3_s4_shake_hands) begin
+      s3_s4_shake_hands <= 'b0;
+
+      rvalid_i <= 'b1;
+      rdata_i <= inst_s4;
+      rlast_i <= 'b1;
+      rresp_i <= 'b0;
+      // rdata_araddr <= rdata_araddr_s0;
+    end
+    else if(s3_s4_valid && s4_s3_ready) begin
+        s4_s3_ready <= 'b0;
+        s3_s4_shake_hands <= 'b1;
+
+        raddr_s4 <= araddr_s3;
+        special_pc_s4 <= special_pc_s3;
+
+        inst_s4 <= inst_s3;
+    end
+    else if(rvalid_i && rready_i) begin
+        s4_s3_ready <= 'b1;
+    end
+end
 
 // axi
   // AR
@@ -1118,37 +1405,40 @@ module ysyx_24080020_ICACHE(
       r_en <= 'b0;
       arready_i <= 'b0;
 
-      arvalid_o <= 'b0;
-      arid_o <= 'b0;
-      arlen_o <= 'b0;
-      arburst_o <= 'b0;
-      arsize_o <= 'b0;
-      araddr_o <= 'b0;
+      // arvalid_o <= 'b0;
+      // arid_o <= 'b0;
+      // arlen_o <= 'b0;
+      // arburst_o <= 'b0;
+      // arsize_o <= 'b0;
+      // araddr_o <= 'b0;
 
-      arlen_tmp <= 'b0;
-      arid_tmp <= 'b0;
-      arburst_tmp <= 'b0;
-      arsize_tmp <= 'b0;
+      // arlen_tmp <= 'b0;
+      // arid_tmp <= 'b0;
+      // arburst_tmp <= 'b0;
+      // arsize_tmp <= 'b0;
 
-      special_pc_tmp <= 'b0;
+      // special_pc_tmp <= 'b0;
     end
     else if(arvalid_i && arready_i) begin
       arready_i <= 'b0;
       // busy <= 'b0;
     end
-    else if(arvalid_i && s0_tmp_ready) begin
-      arlen_tmp <= arlen_i;
-      arid_tmp <= arid_i;
-      arburst_tmp <= arburst_i;
-      arsize_tmp <= arsize_i;
-
-      // busy <= 'b1;
-
-      arready_i <= 1'b1;
-      araddr_tmp <= araddr_i;
-      special_pc_tmp <= special_pc_i;
-      tmp_s0_valid <= 'b1;
+    else if(s0_s1_valid && s1_s0_ready) begin
+        arready_i <= 'b1;
     end
+    // else if(arvalid_i && s0_tmp_ready) begin
+    //   arlen_tmp <= arlen_i;
+    //   arid_tmp <= arid_i;
+    //   arburst_tmp <= arburst_i;
+    //   arsize_tmp <= arsize_i;
+
+    //   // busy <= 'b1;
+
+    //   arready_i <= 1'b1;
+    //   araddr_tmp <= araddr_i;
+    //   special_pc_tmp <= special_pc_i;
+    //   tmp_s0_valid <= 'b1;
+    // end
   end
   // R
   always @(posedge clk) begin
@@ -1166,10 +1456,9 @@ module ysyx_24080020_ICACHE(
       rvalid_i <= 'b0;
       rresp_i <= 'b0;
       rlast_i <= 'b0;
-      raddr <= raddr_s0;
-      special_pc_o <= special_pc_s0_o;
+      raddr <= raddr_s4;
+      special_pc_o <= special_pc_s4;
       // busy <= 'b0;
-      s0_s2_ready <= 'b1;
     end
   end
 
