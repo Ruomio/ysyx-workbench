@@ -816,7 +816,7 @@ module ysyx_24080020_ICACHE(
     reg is_hit_s3;
     reg [cache_way-1:0] hit_tag_s3;
 
-    wire [cache_way-1:0] last_fifo_index_s3 = (fifo_index[cache_index_s3] + (cache_way - 'b1)) % cache_way;
+    wire [cache_way-1:0] last_fifo_index_s3;
 
     logic has_hit_s3;
     logic total_hits_s3 [0 : cache_way - 1];
@@ -975,6 +975,9 @@ module ysyx_24080020_ICACHE(
         end
     end
 
+
+
+    assign last_fifo_index_s3 = (fifo_index[cache_index_s2] + (cache_way - 'b1)) % cache_way;
 
     assign cache_offset_s3 = araddr_s3[cache_size_bits-1 : 0];
     assign cache_offset_s3_base = araddr_s3_base[cache_size_bits-1 : 0];
