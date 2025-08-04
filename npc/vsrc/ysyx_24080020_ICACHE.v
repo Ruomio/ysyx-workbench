@@ -913,7 +913,7 @@ module ysyx_24080020_ICACHE(
             end
 
             // is_hit_s3 <= is_hit_s2;
-            is_hit_s3 <= hit_tag_s2 == last_fifo_index_s3 ? 'b0 : 'b1;
+            is_hit_s3 <= hit_tag_s2 == last_fifo_index_s3 ? 'b0 : is_hit_s2;
             hit_tag_s3 <= hit_tag_s2;
         end
         else if(s3_s4_valid && s4_s3_ready) begin
