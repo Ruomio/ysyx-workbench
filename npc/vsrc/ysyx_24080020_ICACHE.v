@@ -923,7 +923,6 @@ module ysyx_24080020_ICACHE(
       cache_index_s2 <= cache_index_s1;
       cache_offset_s2 <= cache_offset_s1;
 
-      inst_s2 <= shift_rdata_s2[31:0];
 
       is_hit_s2 <= is_hit_s1;
       hit_tag_s2 <= hit_tag_s1;
@@ -932,6 +931,7 @@ module ysyx_24080020_ICACHE(
         s1_s2_shake_hands <= 'b0;
 
         raddr_s2 <= araddr_s2;
+        inst_s2 <= shift_rdata_s2[31:0];
 
         s2_s3_valid <= 'b1;
 
@@ -940,9 +940,7 @@ module ysyx_24080020_ICACHE(
         s2_s3_valid <= 'b0;
         s2_s1_ready <= 'b1;
     end
-    else if(has_hit_s1) begin
-        inst_s2 <= shift_rdata_s2[31:0];
-    end
+
   end
 
   // always @(posedge clk) begin
@@ -1066,7 +1064,12 @@ reg [cache_way-1:0] hit_tag_s3;
             cache_tag_s3 <= cache_tag_s2;
             cache_index_s3 <= cache_index_s2;
             // cache_offset_s3 <= cache_offset_s2;
-            inst_s3 <= inst_s2;
+            if(has_hit_s1) begin
+                inst_s3 <= shift_rdata_s2[31:0];
+            end
+            else begin
+                inst_s3 <= inst_s2;
+            end
 
             is_hit_s3 <= is_hit_s2;
             hit_tag_s3 <= hit_tag_s2;
