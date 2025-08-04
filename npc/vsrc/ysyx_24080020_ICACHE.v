@@ -815,6 +815,7 @@ module ysyx_24080020_ICACHE(
     wire [cache_size_bits-1:0] cache_offset_s3, cache_offset_s3_base;
     reg is_hit_s3;
     reg [cache_way-1:0] hit_tag_s3;
+    reg update_inst;
 
     wire [cache_way-1:0] last_fifo_index_s3;
 
@@ -861,6 +862,7 @@ module ysyx_24080020_ICACHE(
             hit_tag_s3 <= 'b0;
 
             inst_s3 <= 'b0;
+            update_inst <= 'b0;
         end
         else if(arvalid_o && arready_o) begin
             arvalid_o <= 'b0;
@@ -887,9 +889,17 @@ module ysyx_24080020_ICACHE(
                 araddr_s3 <= araddr_s3 & ~(cache_size - 32'b1) ;
             end
         end
+        else if(update_inst) begin
+            update_inst <= 'b1;
+            s2_s3_shake_hands <= 'b1;
+
+            if(!is_hit_s3 && has_hit_s3) begin
+                inst_s3 <= shift_rdata_s3_prev[31:0];
+            end
+        end
         else if(s2_s3_valid && s3_s2_ready) begin
             s3_s2_ready <= 'b0;
-            s2_s3_shake_hands <= 'b1;
+            // s2_s3_shake_hands <= 'b1;
 
             araddr_s3 <= araddr_s2;
             arlen_s3 <= arlen_s2;
@@ -903,17 +913,11 @@ module ysyx_24080020_ICACHE(
             cache_tag_s3 <= cache_tag_s2;
             cache_index_s3 <= cache_index_s2;
             // cache_offset_s3 <= cache_offset_s2;
-            // inst_s3 <= inst_s2;
+            inst_s3 <= inst_s2;
             // inst_s3 <= shift_rdata_s3_prev[31:0];
-            if(is_hit_s2) begin
-                inst_s3 <= inst_s2;
-            end
-            else if(has_hit_s3) begin
-                inst_s3 <= shift_rdata_s3_prev[31:0];
-            end
 
-            // is_hit_s3 <= is_hit_s2;
-            is_hit_s3 <= hit_tag_s2 == last_fifo_index_s3 ? 'b0 : 'b1;;
+            is_hit_s3 <= is_hit_s2;
+            // is_hit_s3 <= hit_tag_s2 == last_fifo_index_s3 ? 'b0 : 'b1;;
             hit_tag_s3 <= hit_tag_s2;
         end
         else if(s3_s4_valid && s4_s3_ready) begin
