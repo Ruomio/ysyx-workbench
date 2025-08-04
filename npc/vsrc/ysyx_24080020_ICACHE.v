@@ -1115,6 +1115,7 @@ assign in_same_cache = (araddr_o & ~(cache_size - 32'b1)) == (araddr_s3 & ~(cach
                 cache_data[cache_index_s3] <= (cache_data[cache_index_s3] & ~data_mask) | shift_wdata;
 
                 if(rlast_o) begin
+                  araddr_o <= 'b0;
                   busy <= 'b0;
                   fin_r <= 'b1;
                   // araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
