@@ -1090,7 +1090,7 @@ module ysyx_24080020_ICACHE(
             cache_index_s3 <= cache_index_s2;
             // cache_offset_s3 <= cache_offset_s2;
             if(has_hit_s3) begin
-                inst_s3 <= shift_rdata_s2_next[31:0];
+                inst_s3 <= shift_rdata_s2[31:0];
             end
             else begin
                 inst_s3 <= inst_s2;
