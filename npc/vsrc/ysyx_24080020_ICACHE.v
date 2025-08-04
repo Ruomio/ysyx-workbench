@@ -903,13 +903,14 @@ module ysyx_24080020_ICACHE(
             cache_tag_s3 <= cache_tag_s2;
             cache_index_s3 <= cache_index_s2;
             // cache_offset_s3 <= cache_offset_s2;
-            inst_s3 <= inst_s2;
-            if(is_hit_s2) begin
-                inst_s3 <= inst_s2;
-            end
-            else if(has_hit_s3) begin
-                inst_s3 <= shift_rdata_s3_prev[31:0];
-            end
+            // inst_s3 <= inst_s2;
+            inst_s3 <= shift_rdata_s3_prev[31:0];
+            // if(is_hit_s2) begin
+            //     inst_s3 <= inst_s2;
+            // end
+            // else if(has_hit_s3) begin
+            //     inst_s3 <= shift_rdata_s3_prev[31:0];
+            // end
 
             is_hit_s3 <= is_hit_s2;
             hit_tag_s3 <= hit_tag_s2;
