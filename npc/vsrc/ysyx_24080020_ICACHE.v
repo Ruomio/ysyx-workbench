@@ -494,9 +494,9 @@ module ysyx_24080020_ICACHE(
   reg cache_hit_next;
 
   wire use_icache;
-  wire in_flash;
-  wire in_mrom;
-  wire in_sdram;
+  // wire in_flash;
+  // wire in_mrom;
+  // wire in_sdram;
 
   // integer  i;
 
@@ -869,17 +869,20 @@ module ysyx_24080020_ICACHE(
   //     end
   // end
 
-  assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
-  assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
-  assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
-  assign in_flash_ = in_flash;
+  // assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
+  // assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
+  // assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
+  // assign in_flash_ = in_flash;
 
-  `ifdef USE_DCACHE
-  assign use_icache = in_flash | in_mrom | in_sdram;
-  `endif
-  `ifndef USE_DCACHE
-  assign use_icache = in_flash | in_mrom;
-  `endif
+  // `ifdef USE_DCACHE
+  // assign use_icache = in_flash | in_mrom | in_sdram;
+  // `endif
+  // `ifndef USE_DCACHE
+  // assign use_icache = in_flash | in_mrom;
+  // `endif
+
+
+  assign in_flash_ = 'b1;
 
   always @(posedge clk) begin
     if(!rst) begin
@@ -978,239 +981,6 @@ module ysyx_24080020_ICACHE(
           current_state <= next_state;
       end
   end
-
-  // always @(posedge clk) begin
-  //     if(!rst) begin
-  //         cache_hit_next <= 'b0;
-  //     end
-  //     else if(current_state == CHIT) begin
-  //         cache_hit_next <= 'b1;
-  //     end
-  //     else begin
-  //         cache_hit_next <= 'b0;
-  //     end
-  // end
-
-  // // next_state
-  // always @(*) begin
-  //     case(current_state)
-  //         IDLE: begin
-  //             if(s1_s2_valid && s2_s1_ready) begin
-  //                 next_state = JUDGE;
-  //             end
-  //             else begin
-  //                 next_state = IDLE;
-  //             end
-  //         end
-  //         JUDGE: begin
-  //             if(flush_cache) begin
-  //               // wait flush cache
-  //               next_state = JUDGE;
-  //             end
-  //             else if(fin_judge) begin
-  //                 if(is_hit && use_icache) begin
-  //                     next_state = CHIT;
-  //                 end
-  //                 else begin
-  //                     next_state = CMISS;
-  //                 end
-  //             end
-  //             else
-  //                 next_state = JUDGE;
-  //         end
-  //         CHIT: begin
-  //             if(all_fin && all_fin_ready) begin
-  //                 next_state = IDLE;
-  //             end
-  //             else begin
-  //                 next_state = CHIT;
-  //             end
-  //         end
-  //         CMISS: begin
-  //             next_state = AXIAR;
-  //             `ifdef CONFIG_DPIC
-  //             if(in_flash)
-  //                 statistics_icache_miss();
-  //             `endif
-  //         end
-  //         AXIAR: begin
-  //             if(fin_ar) begin
-  //                 next_state = AXIR;
-  //             end
-  //             else begin
-  //                 next_state = AXIAR;
-  //             end
-  //         end
-  //         AXIR: begin
-  //             if(fin_r) begin
-  //                 if(use_icache) begin
-  //                     next_state = JUDGE;
-  //                 end
-  //                 else begin
-  //                     next_state = AXIDone;
-  //                 end
-  //             end
-  //             else begin
-  //                 next_state = AXIR;
-  //             end
-  //         end
-  //         AXIDone: begin
-  //             if(all_fin && all_fin_ready) begin
-  //                 next_state = IDLE;
-  //             end
-  //             else begin
-  //                 next_state = AXIDone;
-  //             end
-  //         end
-  //         default: begin
-  //             next_state = IDLE;
-  //         end
-  //     endcase
-  // end
-
-  // always @(posedge clk) begin
-  //     case(current_state)
-  //         IDLE: begin
-  //             fin_ar <= 'b0;
-  //             fin_r <= 'b0;
-  //             all_fin <= 'b0;
-
-  //             fin_judge <= 'b0;
-  //             is_hit <= 'b0;
-  //             update_fifo_index <= 'b0;
-
-  //             tag_index <= 'b0;
-
-  //             rready_o <= 'b0;
-
-  //             num_index <= 'b0;
-  //         end
-  //         JUDGE: begin
-  //             if(fin_judge) begin
-  //                 araddr_s2 <= {araddr_s2[31:2], 2'b0};
-  //                 fin_judge <= 'b0;
-  //             end
-  //             else if(has_hit) begin
-  //                 is_hit <= 'b1;
-  //                 tag_index <= tmp_tag_index;
-  //                 fin_judge <= 'b1;
-  //             end
-  //             else begin
-  //                 is_hit <= 'b0;
-  //                 fin_judge <= 'b1;
-  //             end
-  //             // if(fin_judge) begin
-  //             //   araddr_s2 <= {araddr_s2[31:2], 2'b0};
-  //             //   fin_judge <= 'b0;
-  //             // end
-  //             // else if(tag_index < cache_way) begin
-  //             //   if(cache_hit) begin
-  //             //     is_hit <= 'b1;
-  //             //     fin_judge <= 'b1;
-  //             //   end
-  //             //   else begin
-  //             //     tag_index <= tag_index + 'b1;
-  //             //   end
-  //             // end
-  //             // else begin
-  //             //   tag_index <= 'b0;
-  //             //   fin_judge <= 'b1;
-  //             // end
-  //         end
-  //         CHIT: begin
-  //             rdata_tmp <= shift_rdata[31:0];
-
-  //             all_fin <= 'b1;
-  //             // if(!all_fin_ready)
-  //             //   all_fin <= 'b1;
-
-  //             `ifdef CONFIG_DPIC
-  //             // hit cache and not by axi
-  //             if(!cache_hit_next) begin
-  //               if(!fin_r) begin
-  //                       if(in_flash)
-  //                       statistics_icache_hit();
-  //                       else if(in_sdram)
-  //                       statistics_dcache_hit();
-  //                       // $display("cache hit addr: 0x%x", araddr_o);
-  //                   end
-  //               end
-  //             else begin
-  //               // $display("cache miss addr: 0x%x", araddr_o);
-  //             end
-  //             `endif
-  //         end
-  //         CMISS: begin
-  //             // do nothing
-  //         end
-  //         AXIAR: begin
-  //           if(arready_o && arvalid_o) begin
-  //               arvalid_o <= 'b0;
-  //               fin_ar <= 'b1;
-  //               bubble <= 'b0;
-  //           end
-  //           else if(!fin_ar && !busy_i) begin
-  //               busy <= 'b1;
-  //               arvalid_o <= 1'b1;
-  //               if(use_icache) begin
-  //                   // burst trans in sdram
-  //                   araddr_o <= araddr_s2 & ~(cache_size - 32'b1);
-
-  //                   arsize_o <= 'b10;
-  //                   arid_o <= 'b0;
-  //                   arlen_o <= (cache_size >> 2) - 1;
-  //                   arburst_o <= 'b01;
-
-  //                   araddr_s2 <= araddr_s2 & ~(cache_size - 32'b1) ;
-  //               end
-  //           end
-  //         end
-  //         AXIR: begin
-  //             if(rvalid_o && rready_o) begin
-  //                 rready_o <= 1'b0;
-  //                 if(rresp_o == 2'b00) begin // OKAY
-  //                     rdata_tmp <= rdata_o;
-  //                     if(use_icache) begin
-  //                         // update cache
-  //                         cache_data[cache_index_s2] <= (cache_data[cache_index_s2] & ~data_mask) | shift_wdata;
-  //                     end
-
-  //                     if(rlast_o) begin
-  //                       busy <= 'b0;
-  //                       fin_r <= 1'b1;
-  //                       araddr_s2 <= {araddr_s2_base[31 : 2], 2'b0};
-
-  //                       if(use_icache) begin
-  //                         fifo_index[cache_index_s2] <= (fifo_index[cache_index_s2] + 'b1) % cache_way;
-  //                         cache_tag[cache_index_s2] <= (cache_tag[cache_index_s2] & ~tag_mask) | shift_wtag;
-  //                         cache_valid[cache_index_s2] <= cache_valid[cache_index_s2] | (1 << (fifo_index[cache_index_s2]));
-  //                       end
-  //                     end
-  //                     else begin
-  //                       // update araddr to adapt burst transmit, it's for icache parameter
-  //                       araddr_s2 <= araddr_s2 + 2 ** arsize_o;
-  //                     end
-  //                 end
-  //                 else begin
-  //                     // error
-  //                     `ifdef CONFIG_DPIC
-  //                     $error("fetch inst error");
-  //                     `endif
-  //                 end
-  //             end
-  //             else if(rvalid_o) begin
-  //               rready_o <= 'b1;
-  //             end
-  //         end
-  //         AXIDone: begin
-  //             if(!all_fin_ready)
-  //               all_fin <= 1'b1;
-  //         end
-  //         default: begin
-  //             // do nothing
-  //         end
-  //     endcase
-  // end
 
 
 // s3: axi read and get inst data
