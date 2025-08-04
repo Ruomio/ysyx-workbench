@@ -903,7 +903,8 @@ module ysyx_24080020_ICACHE(
             cache_tag_s3 <= cache_tag_s2;
             cache_index_s3 <= cache_index_s2;
             // cache_offset_s3 <= cache_offset_s2;
-            if(is_hit_s3) begin
+            inst_s3 <= inst_s2;
+            if(is_hit_s2) begin
                 inst_s3 <= inst_s2;
             end
             else if(has_hit_s3) begin
