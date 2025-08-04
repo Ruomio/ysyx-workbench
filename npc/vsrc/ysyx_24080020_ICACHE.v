@@ -1403,7 +1403,7 @@ end
   always @(posedge clk) begin
     if(!rst)begin
       r_en <= 'b0;
-      arready_i <= 'b0;
+      arready_i <= 'b1;
 
       // arvalid_o <= 'b0;
       // arid_o <= 'b0;
