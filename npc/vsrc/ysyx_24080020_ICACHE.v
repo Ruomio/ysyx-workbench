@@ -1032,11 +1032,13 @@ assign in_same_cache = (araddr_o & ~(cache_size - 32'b1)) == (araddr_s3 & ~(cach
             arvalid_o <= 'b0;
         end
         else if(s2_s3_shake_hands) begin
-            s2_s3_shake_hands <= 'b0;
             if(is_hit_s3 || has_hit_s1) begin
                 s3_s4_valid <= 'b1;
+                s2_s3_shake_hands <= 'b0;
             end
             else if(!busy_i && !in_same_cache) begin
+                s2_s3_shake_hands <= 'b0;
+
                 busy <= 'b1;
                 arvalid_o <= 'b1;
 
