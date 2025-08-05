@@ -3,7 +3,7 @@ module ysyx_24080020_NPC(
     input clk,
     input rst,
 
-    output reg [31:0] pc_ifu_out,
+    output [31:0] pc_ifu_out,
     // master
     // AR
     input io_master_arready,
@@ -549,9 +549,9 @@ module ysyx_24080020_NPC(
         .rcsrdata(rcsrdata),
 
         .mem_wb_valid(mem_wb_valid),
-        .ifu_wb_ready(1'b1),
-        .wb_mem_ready(wb_mem_ready),
-        .wb_ifu_valid(wb_ifu_valid)
+        // .ifu_wb_ready(1'b1),
+        // .wb_ifu_valid(wb_ifu_valid),
+        .wb_mem_ready(wb_mem_ready)
     );
 
     ysyx_24080020_EXU exu(
