@@ -141,10 +141,10 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-# $(BIN): v_to_cpp
-# 	@make link
+$(BIN): v_to_cpp
+	@make link
 
-$(BIN): classic
+# $(BIN): classic
 
 v_to_cpp: $(VSRC)
 	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
