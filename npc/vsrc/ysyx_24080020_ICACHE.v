@@ -905,7 +905,7 @@ module ysyx_24080020_ICACHE(
             // cache_offset_s3 <= cache_offset_s2;
             // inst_s3 <= inst_s2;
             // inst_s3 <= shift_rdata_s3_prev[31:0];
-            if(is_hit_s2 && ((hit_tag_s2 + 'b1) % cache_way != last_fifo_index_s3)) begin
+            if(is_hit_s2) begin
                 inst_s3 <= inst_s2;
             end
             else if(has_hit_s3) begin
