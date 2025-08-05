@@ -677,7 +677,8 @@ module ysyx_24080020_ICACHE(
     else if(s0_s1_shake_hands) begin
         s0_s1_shake_hands <= 'b0;
 
-        is_hit_s1 <= has_hit_s1;
+        // is_hit_s1 <= has_hit_s1;
+        is_hit_s1 <= (cache_index_s1 == cache_index_s2 && fifo_index[cache_index_s2] == tmp_tag_index_s1) ? 'b0 : has_hit_s1;
         hit_tag_s1 <= tmp_tag_index_s1;
 
         s1_s2_valid <= 'b1;
