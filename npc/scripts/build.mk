@@ -109,8 +109,9 @@ V_OBJS += $(V_CSRC:%.cpp=$(OBJ_DIR)/%.o)
 
 CFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
-LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
+# LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
 
+# VERILATOR_CFLAGS += --lint-only
 VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
 
 $(OBJ_DIR)/%.o: %.c
@@ -142,6 +143,8 @@ all: $(BIN)
 
 $(BIN): v_to_cpp
 	@make link
+
+# $(BIN): classic
 
 v_to_cpp: $(VSRC)
 	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
@@ -181,9 +184,19 @@ link: $(OBJS) $(V_OBJS)
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 endif
 
+
+classic: $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
+	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+	@$(VERILATOR) $(VERILATOR_CFLAGS) --build \
+		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
-	@date | tee -a .log/perf.log ;
+	@echo "" | tee -a .log/perf.log
+	@date | tee -a .log/perf.log
 	@if make -s -C $(AM_HOME)/../yosys-sta sta  > /dev/null ;then \
 		cat $(AM_HOME)/../yosys-sta/result/ysyx_24080020-500MHz/sta.log | grep -B 1 -A 8 "Endpoint" | tee -a .log/perf.log ; \
 		echo "" | tee -a .log/perf.log ; \
@@ -193,7 +206,7 @@ perf: $(BIN)
 	fi
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
-		| grep "\\[.* statistic\\]" | tee -a .log/perf.log
+		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
