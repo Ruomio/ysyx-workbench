@@ -684,7 +684,7 @@ module ysyx_24080020_ICACHE(
 
         `ifdef CONFIG_DPIC
         if(has_hit_s1) begin
-            statistics_dcache_hit();
+            statistics_icache_hit();
         end
         `endif
 
