@@ -979,6 +979,9 @@ module ysyx_24080020_ICACHE(
             if((cache_index_s2 == cache_index_s3) && (hit_tag_s2 == fifo_index[cache_index_s3]) && is_hit_s2) begin
                 fifo_index[cache_index_s3] = (fifo_index[cache_index_s3] + 'b1) % cache_way;
             end
+            else if((cache_index_s1 == cache_index_s3) && (hit_tag_s1 == fifo_index[cache_index_s3]) && is_hit_s1) begin
+                fifo_index[cache_index_s3] = (fifo_index[cache_index_s3] + 'b1) % cache_way;
+            end
         end
     end
 
