@@ -149,7 +149,6 @@ $(BIN): v_to_cpp
 v_to_cpp: $(VSRC)
 	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
 	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
-	# @make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
