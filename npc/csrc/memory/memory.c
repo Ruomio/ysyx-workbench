@@ -145,11 +145,11 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   out_of_bound(addr);
 }
 
-int read_memory(int addr, int len) {
+extern "C" int read_memory(int addr, int len) {
   return paddr_read(addr, len);
 }
 
-void write_memory(int addr, int len, int data) {
+ extern "C" void write_memory(int addr, int len, int data) {
   paddr_write(addr, len, data);
 }
 
