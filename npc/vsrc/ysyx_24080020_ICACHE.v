@@ -1005,41 +1005,42 @@ module ysyx_24080020_ICACHE(
 
 
 // s4: return inst data from axi
-reg [31:0] inst_s4;
-reg special_pc_s4;
-reg [31:0] raddr_s4;
+    reg [31:0] inst_s4;
+    reg special_pc_s4;
+    reg [31:0] raddr_s4;
 
-always @(posedge clk) begin
-    if(!rst) begin
-        // rdata_araddr_s0 <= 'b0;
-        rvalid_i <= 'b0;
-        rdata_i <= 'b0;
-        rlast_i <= 'b0;
+    always @(posedge clk) begin
+        if(!rst) begin
+            // rdata_araddr_s0 <= 'b0;
+            rvalid_i <= 'b0;
+            rdata_i <= 'b0;
+            rlast_i <= 'b0;
+            rresp_i <= 'b0;
+            s4_s3_ready <= 'b1;
+            raddr_s4 <= 'b0;
+        end
+        else if(s3_s4_shake_hands) begin
+        s3_s4_shake_hands <= 'b0;
+
+        rvalid_i <= 'b1;
+        rdata_i <= inst_s4;
+        rlast_i <= 'b1;
         rresp_i <= 'b0;
-        s4_s3_ready <= 'b1;
-    end
-    else if(s3_s4_shake_hands) begin
-      s3_s4_shake_hands <= 'b0;
+        // rdata_araddr <= rdata_araddr_s0;
+        end
+        else if(s3_s4_valid && s4_s3_ready) begin
+            s4_s3_ready <= 'b0;
+            s3_s4_shake_hands <= 'b1;
 
-      rvalid_i <= 'b1;
-      rdata_i <= inst_s4;
-      rlast_i <= 'b1;
-      rresp_i <= 'b0;
-      // rdata_araddr <= rdata_araddr_s0;
-    end
-    else if(s3_s4_valid && s4_s3_ready) begin
-        s4_s3_ready <= 'b0;
-        s3_s4_shake_hands <= 'b1;
+            raddr_s4 <= araddr_s3_base;
+            special_pc_s4 <= special_pc_s3;
 
-        raddr_s4 <= araddr_s3_base;
-        special_pc_s4 <= special_pc_s3;
-
-        inst_s4 <= inst_s3;
+            inst_s4 <= inst_s3;
+        end
+        else if(rvalid_i && rready_i) begin
+            s4_s3_ready <= 'b1;
+        end
     end
-    else if(rvalid_i && rready_i) begin
-        s4_s3_ready <= 'b1;
-    end
-end
 
 // axi
   // AR
@@ -1060,7 +1061,6 @@ end
   always @(posedge clk) begin
     if(!rst) begin
       rvalid_i <= 'b0;
-      rdata_i <= 'b0;
       rlast_i <= 'b0;
       rresp_i <= 'b0;
       rid_i <= 'b0;
