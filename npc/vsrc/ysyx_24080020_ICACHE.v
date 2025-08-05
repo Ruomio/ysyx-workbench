@@ -682,6 +682,12 @@ module ysyx_24080020_ICACHE(
 
         s1_s2_valid <= 'b1;
 
+        `ifdef CONFIG_DPIC
+        if(has_hit_s1) begin
+            statistics_dcache_hit();
+        end
+        `endif
+
     end
     else if(s1_s2_valid && s2_s1_ready) begin
         s1_s2_valid <= 'b0;
