@@ -564,7 +564,7 @@ module ysyx_24080020_ICACHE(
 
 
 // s0
-    reg [`ysyx_24080020_WIDTH-1:0] araddr_s0, raddr_s0;
+    reg [`ysyx_24080020_WIDTH-1:0] araddr_s0;
     reg [7:0] arlen_s0;
     reg [3:0] arid_s0;
     reg [1:0] arburst_s0;
@@ -574,7 +574,6 @@ module ysyx_24080020_ICACHE(
         if(!rst) begin
             s0_s1_valid <= 'b0;
             inst_s0 <= 'b0;
-            raddr_s0 <= 'b0;
             special_pc_s0 <= 'b0;
             special_pc_s0_o <= 'b0;
 
@@ -709,7 +708,7 @@ module ysyx_24080020_ICACHE(
 
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
-  reg [`ysyx_24080020_WIDTH-1:0] inst_s2, raddr_s2;
+  reg [`ysyx_24080020_WIDTH-1:0] inst_s2;
 
   reg [7:0] arlen_s2;
   reg [3:0] arid_s2;
@@ -735,7 +734,6 @@ module ysyx_24080020_ICACHE(
       arburst_s2 <= 'b0;
       arsize_s2 <= 'b0;
       araddr_s2_base <= 'b0;
-      raddr_s2 <= 'b0;
       bubble <= 'b0;
       special_pc_s2 <= 'b0;
       s1_s2_shake_hands <= 'b0;
@@ -768,7 +766,6 @@ module ysyx_24080020_ICACHE(
     else if(s1_s2_shake_hands) begin
         s1_s2_shake_hands <= 'b0;
 
-        raddr_s2 <= araddr_s2;
         inst_s2 <= shift_rdata_s2[31:0];
 
         s2_s3_valid <= 'b1;
