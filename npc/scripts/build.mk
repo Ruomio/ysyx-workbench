@@ -93,6 +93,13 @@ VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
 CSRC += $(shell find csrc -name "*.c" -or -name "*.cpp")
 V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
+
+# verilator system files
+VERILATOR_SYS_FILES := verilated.cpp verilated_threads.cpp verilated_vcd_c.cpp
+VERILATOR_SYS_TARGETS := $(addprefix $(OBJ_DIR)/,$(VERILATOR_SYS_FILES))
+
+
+
 #
 # # parameters
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
@@ -146,9 +153,13 @@ $(BIN): v_to_cpp
 
 # $(BIN): classic
 
-v_to_cpp: $(VSRC)
-	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
-	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
+
+$(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
+	@echo "[COPY] $< -> $@"
+	@cp $< $@
+
+v_to_cpp: $(VSRC) $(VERILATOR_SYS_TARGETS)
+	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $(VSRC)  -Mdir $(OBJ_DIR)
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
