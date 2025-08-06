@@ -104,7 +104,8 @@ module ysyx_24080020_MEM(
 `endif
 
     reg arvalid, awvalid, wvalid;
-    assign arvalid_reg = arvalid && !structural_adventure;
+    assign arvalid_reg = arvalid;
+    // assign arvalid_reg = arvalid && !structural_adventure;
     // assign awvalid_reg = awvalid && !structural_adventure;
     // assign wvalid_reg = wvalid && !structural_adventure;
     assign awvalid_reg = awvalid;
