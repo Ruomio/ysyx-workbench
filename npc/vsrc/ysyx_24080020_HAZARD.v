@@ -31,7 +31,7 @@ module ysyx_24080020_HAZARD(
         else if(/* in_flash && */ inst_fin) begin
             structural_adventure <= 'b0;
         end
-        else if(in_flash && arvalid_AND_arready) begin
+        else if(/* in_flash && */ arvalid_AND_arready) begin
             structural_adventure <= 'b1;
         end
     end
