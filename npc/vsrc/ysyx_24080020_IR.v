@@ -2,7 +2,7 @@
 module ysyx_24080020_IR(
     input clk,
     input rst,
-    input lsu_busy,
+    // input lsu_busy,
 
     // pc <-> ir
     input special_pc_i,
@@ -72,7 +72,7 @@ module ysyx_24080020_IR(
 
     end
     else if(if_en_valid) begin
-        if(!arvalid && !lsu_busy && !if_en_shake_hands) begin
+        if(!arvalid && !if_en_shake_hands) begin
             if_en_ready <= 'b1;
         end
     end
@@ -83,10 +83,8 @@ module ysyx_24080020_IR(
           if_en_shake_hands <= 'b0;
       end
       else if(if_en_shake_hands) begin
-          if(!lsu_busy) begin
-              arvalid <= 'b1;
-              if_en_shake_hands <= 'b0;
-          end
+            arvalid <= 'b1;
+            if_en_shake_hands <= 'b0;
       end
   end
 

@@ -394,7 +394,7 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IR u_ir(
         .clk(clk),
         .rst(rst),
-        .lsu_busy(lsu_busy),
+        // .lsu_busy(lsu_busy),
 
         // pc <-> ir
         .special_pc_i(special_pc_pc),
@@ -645,7 +645,7 @@ module ysyx_24080020_NPC(
         .is_ebreak_exu(is_ebreak_exu),
         .is_ebreak_lsu(is_ebreak_lsu),
 
-        .axi_busy(lsu_busy),
+        // .axi_busy(lsu_busy),
 
         .structural_adventure(structural_adventure),
         .mren_exu(mren_exu),
@@ -1133,9 +1133,9 @@ module ysyx_24080020_NPC(
       .clk(clk),
       .rst(rst),
       .fencei_mem(fencei_exu),
-      .in_flash_(in_flash),
-      .busy(lsu_busy_unused),
-      .busy_i(lsu_busy),
+      // .in_flash_(in_flash),
+      // .busy(lsu_busy_unused),
+      // .busy_i(lsu_busy),
 
       .raddr(raddr_ifu),
       .special_pc_i(special_pc_o),

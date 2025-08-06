@@ -20,7 +20,7 @@ module ysyx_24080020_MEM(
 
     input skip_ref_exu,
     output reg skip_ref_mem,
-    output reg axi_busy,
+    // output reg axi_busy,
 
     input is_ebreak_exu,
     output reg is_ebreak_lsu,
@@ -351,7 +351,7 @@ module ysyx_24080020_MEM(
             exu_mem_shake_hands <= 1'b0;
             mem_wb_valid <= 'b0;
 
-            axi_busy <= 'b0;
+            // axi_busy <= 'b0;
         end
         else if(exu_mem_shake_hands) begin
             exu_mem_shake_hands <= 1'b0;
@@ -360,9 +360,9 @@ module ysyx_24080020_MEM(
             if(!mwen_exu && !mren_exu) begin
                 mem_wb_valid <= 1'b1;
             end
-            if(mren_exu && !structural_adventure) begin
-                axi_busy <= 'b1;
-            end
+            // if(mren_exu && !structural_adventure) begin
+            //     axi_busy <= 'b1;
+            // end
         end
         else begin
           fencei_mem <= 'b0;
@@ -378,14 +378,14 @@ module ysyx_24080020_MEM(
             arlen <= 'b0;
             arburst <= 'b0;
             arid <= 'b0;
-            axi_busy <= 'b0;
+            // axi_busy <= 'b0;
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
         end
         else if(mren_mem) begin
             if(!structural_adventure) begin
-                axi_busy <= 'b1;
+                // axi_busy <= 'b1;
                 arvalid <= 1'b1;
                 arid <= 4'b0;
                 arlen <= {{7{1'b0}},get_arlen};
@@ -432,7 +432,7 @@ module ysyx_24080020_MEM(
         end
         else if(rvalid && rlast) begin
             // finish all read
-            axi_busy <= 'b0;
+            // axi_busy <= 'b0;
             rready <= 1'b1;
             finish_read <= 1'b1;
             if(rresp != 2'b0) begin

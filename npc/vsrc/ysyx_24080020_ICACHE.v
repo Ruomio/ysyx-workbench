@@ -7,11 +7,11 @@ module ysyx_24080020_ICACHE(
   input rst,
   input fencei_mem,
 
-  output in_flash_,
-  input busy_i,
-  output reg busy,
+  // output in_flash_,
+  // input busy_i,
+  // output reg busy,
 
-  output [`ysyx_24080020_WIDTH-1:0] raddr,
+  output reg [`ysyx_24080020_WIDTH-1:0] raddr,
 
   input special_pc_i,
   output reg special_pc_o,
@@ -140,7 +140,7 @@ module ysyx_24080020_ICACHE(
   assign in_flash = (araddr_tmp >= 32'h30000000 && araddr_tmp < 32'h40000000) ? 1'b1 : 1'b0;
   assign in_mrom = (araddr_tmp >= 32'h20000000 && araddr_tmp < 32'h20001000) ? 1'b1 : 1'b0;
   assign in_sdram = (araddr_tmp >= 32'ha0000000 && araddr_tmp < 32'hc0000000) ? 1'b1 : 1'b0;
-  assign in_flash_ = in_flash;
+  // assign in_flash_ = in_flash;
 
   `ifdef USE_DCACHE
   assign use_icache = in_flash | in_mrom | in_sdram;
@@ -154,7 +154,7 @@ module ysyx_24080020_ICACHE(
           current_state <= 'b0;
           tag_index <= 'b0;
           toggle <= 'b0;
-          busy <= 'b0;
+          // busy <= 'b0;
           for (i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
@@ -401,7 +401,8 @@ module ysyx_24080020_ICACHE(
       araddr_icache_o <= 'b0;
 
     end
-    else if(arvalid_xbar_i && !busy) begin
+    else if(arvalid_xbar_i) begin
+    // else if(arvalid_xbar_i && !busy) begin
       araddr_icache_o <= araddr_xbar_i;
       arlen_icache_o <= arlen_xbar_i;
       arid_icache_o <= arid_xbar_i;
@@ -413,7 +414,7 @@ module ysyx_24080020_ICACHE(
       araddr_tmp <= araddr_xbar_i;
 
       r_en <= 'b1;
-      busy <= 'b1;
+      // busy <= 'b1;
     end
     else begin
       arready_icache_o <= 1'b0;
@@ -434,7 +435,7 @@ module ysyx_24080020_ICACHE(
       rvalid_icache_o <= 'b0;
       rresp_icache_o <= 'b0;
       rlast_icache_o <= 'b0;
-      busy <= 'b0;
+      // busy <= 'b0;
     end
     else if(all_fin) begin
       rvalid_icache_o <= 'b1;
@@ -725,7 +726,7 @@ module ysyx_24080020_ICACHE(
   wire [cache_data_ingroup_width-1 : 0] shift_rdata_s2;
   assign shift_rdata_s2 = cache_data[cache_index_s2] >> ({ {(cache_data_ingroup_width-cache_way){1'b0}}, hit_tag_s2} << (cache_size_shift) ) >> ({{(32-cache_size_bits){1'b0}}, cache_offset_s2} << 3);
 
-  assign in_flash_ = 'b1;
+  // assign in_flash_ = 'b1;
 
   always @(posedge clk) begin
     if(!rst) begin
@@ -788,7 +789,7 @@ module ysyx_24080020_ICACHE(
       if(!rst) begin
           current_state <= 'b0;
           tag_index <= 'b0;
-          busy <= 'b0;
+          // busy <= 'b0;
           for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
               cache_tag[i]    <= 'b0;
@@ -875,10 +876,11 @@ module ysyx_24080020_ICACHE(
                 s3_s4_valid <= 'b1;
                 s2_s3_shake_hands <= 'b0;
             end
-            else if(!busy_i) begin
+            // else if(!busy_i) begin
+            else begin
                 s2_s3_shake_hands <= 'b0;
 
-                busy <= 'b1;
+                // busy <= 'b1;
                 arvalid_o <= 'b1;
 
                 // burst trans in sdram
@@ -931,7 +933,7 @@ module ysyx_24080020_ICACHE(
         if(!rst) begin
             rready_o <= 'b0;
             fin_r <= 'b0;
-            busy <= 'b0;
+            // busy <= 'b0;
             araddr_s3 <= 'b0;
 
             s3_s4_valid <= 'b0;
@@ -957,7 +959,7 @@ module ysyx_24080020_ICACHE(
                 cache_data[cache_index_s3] <= (cache_data[cache_index_s3] & ~data_mask) | shift_wdata;
 
                 if(rlast_o) begin
-                  busy <= 'b0;
+                  // busy <= 'b0;
                   fin_r <= 'b1;
                   // araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
 
@@ -1110,8 +1112,8 @@ module ysyx_24080020_ICACHE(
 
 `ifndef USE_ICACHE
 
-  assign in_flash_ = 'b1;
-  assign busy = 'b0;
+  // assign in_flash_ = 'b1;
+  // assign busy = 'b0;
 
   assign raddr = araddr_i;
   assign special_pc_o = 'b1;
