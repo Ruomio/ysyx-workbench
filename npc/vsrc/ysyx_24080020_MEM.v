@@ -135,11 +135,10 @@ module ysyx_24080020_MEM(
     wire [3:0] wstrb_1, wstrb_2;
     wire [31:0] wdata_1, wdata_2;
 
-    assign arsize = 'b10;
-    // assign arsize = mrlen_mem == 'b0001 ? 3'b000 :
-    //                 mrlen_mem == 'b0010 ? 3'b001 :
-    //                 mrlen_mem == 'b0100 ? 3'b010 :
-    //                 3'b000;
+    assign arsize = mrlen_mem == 'b0001 ? 3'b000 :
+                    mrlen_mem == 'b0010 ? 3'b001 :
+                    mrlen_mem == 'b0100 ? 3'b010 :
+                    3'b000;
     assign araddr = mraddr_mem;
     assign arburst = 2'b1;
     assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;

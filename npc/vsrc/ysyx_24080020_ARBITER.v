@@ -129,13 +129,13 @@ module ysyx_24080020_ARBITER (
       ifu_or_mem   <= 1'b1;
 
       mem_wait_cnt <= 3'b0;
-    end else if (arvalid_ifu && !arvalid_mem && !busy) begin
+    end else if (arvalid_ifu && !arvalid_mem && !busy && arready_ifu) begin
       ifu_or_mem   <= 1'b0;
 
       ifu_wait_cnt <= 3'b0;
       busy <= 'b1;
       // mem_wait_cnt <= mem_wait_cnt + 3'b1;
-    end else if (arvalid_mem && !arvalid_ifu && !busy) begin
+    end else if (arvalid_mem && !arvalid_ifu && !busy && arready_mem) begin
       ifu_or_mem   <= 1'b1;
 
       mem_wait_cnt <= 3'b0;
