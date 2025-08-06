@@ -2,7 +2,7 @@
 module ysyx_24080020_MEM(
     input clk,
     input rst,
-    input structural_adventure,
+    // input structural_adventure,
     // memory
     input mren_exu,
     input mrtype_exu,
@@ -384,39 +384,39 @@ module ysyx_24080020_MEM(
             arvalid <= 1'b0;
         end
         else if(mren_mem) begin
-            if(!structural_adventure) begin
-                // axi_busy <= 'b1;
-                arvalid <= 1'b1;
-                arid <= 4'b0;
-                arlen <= {{7{1'b0}},get_arlen};
-                `ifdef ysyxSoCFull
-                if(araddr >= 32'h10000000 && araddr < 32'h10001000
-                    || araddr >= 32'h10011000 && araddr < 32'h10011008
-                    || araddr >= 32'h21000000 && araddr < 32'h21200000
-                    || araddr >= 32'h02000000 && araddr < 32'h02000008
-                    || araddr >= 32'hc0000000 && araddr < 32'hffffffff
-                    ) begin
-                    // skip uart keyboard etc.
-                    skip_ref_mem <= 'b1;
-                    // `ifdef CONFIG_DPIC
-                    // npc_difftest_skip_ref();
-                    // `endif
-                end
-                `endif
-                `ifdef ysyx_24080020_NPC
-                if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
-                    || araddr >= 32'ha0000048 && araddr < 32'ha0000050
-                    ) begin
-                    // skip uart keyboard etc.
-                    skip_ref_mem <= 'b1;
-                    // `ifdef CONFIG_DPIC
-                    // npc_difftest_skip_ref();
-                    // `endif
-                end
-                `endif
-
-                mren_mem <= 1'b0;
+            // if(!structural_adventure) begin
+            // axi_busy <= 'b1;
+            arvalid <= 1'b1;
+            arid <= 4'b0;
+            arlen <= {{7{1'b0}},get_arlen};
+            `ifdef ysyxSoCFull
+            if(araddr >= 32'h10000000 && araddr < 32'h10001000
+                || araddr >= 32'h10011000 && araddr < 32'h10011008
+                || araddr >= 32'h21000000 && araddr < 32'h21200000
+                || araddr >= 32'h02000000 && araddr < 32'h02000008
+                || araddr >= 32'hc0000000 && araddr < 32'hffffffff
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
             end
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
+                || araddr >= 32'ha0000048 && araddr < 32'ha0000050
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
+            end
+            `endif
+
+            mren_mem <= 1'b0;
+            // end
         end
     end
 
