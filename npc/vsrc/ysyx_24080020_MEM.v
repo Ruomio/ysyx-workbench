@@ -622,12 +622,12 @@ module ysyx_24080020_MEM(
         end
         else if(bvalid && bready) begin
             bready <= 'b0;
+            mem_wb_valid <= 1'b1;
         end
         else if(bvalid) begin
             bready <= 1'b1;
 
             // b_fin <= 1'b1;
-            mem_wb_valid <= 1'b1;
             if(bresp != 2'b0) begin
                 `ifdef CONFIG_DPIC
                 $error("the bresp are not 2'b0");
