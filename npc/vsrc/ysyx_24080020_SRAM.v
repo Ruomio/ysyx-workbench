@@ -105,6 +105,7 @@ module ysyx_24080020_SRAM(
                 if(rlast) begin
                     r_cnt <= 'b0;
                     read_en <= 1'b0;
+                    arlen_cnt <= 'b0;
                 end
                 else begin
                     arlen_cnt <= arlen_cnt + 'b1;
