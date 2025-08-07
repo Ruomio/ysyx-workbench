@@ -47,10 +47,12 @@ module ysyx_24080020_SRAM(
     reg [`ysyx_24080020_WIDTH-1:0] paddr;
     reg [`ysyx_24080020_WIDTH-1:0] write_data;
     reg read_en, write_en, b_en;
-    reg read_before_write;
+    // reg read_before_write;
 
     reg [5:0] ar_cnt, aw_cnt, w_cnt;
     reg [5:0] r_cnt, b_cnt;
+
+    reg [7:0] arlen_cnt;
 
     wire [31:0] rdata_shift;
 
@@ -91,33 +93,41 @@ module ysyx_24080020_SRAM(
             rvalid <= 1'b0;
             rresp <= 2'b0;
             rdata <= 32'b0;
+            arlen_cnt <= 'b0;
         end
         else if(read_en) begin
             if(r_cnt < lfsr) begin
                 r_cnt <= r_cnt + 6'b1;
             end
-            else begin
+            else if(rready && rvalid) begin
+                rvalid <= 1'b0;
+                rresp <= 2'b0;
+                if(rlast) begin
+                    r_cnt <= 'b0;
+                    read_en <= 1'b0;
+                end
+                else begin
+                    arlen_cnt <= arlen_cnt + 'b1;
+                    if(arburst == 'b00) begin
+                        paddr <= paddr;
+                    end
+                    else if(arburst == 'b01) begin
+                        paddr <= paddr + 'd4;
+                    end
+                end
+            end
+            else if(arlen_cnt <= arlen) begin
                 `ifdef CONFIG_DPIC
                 // printf_info();
                 rdata <= read_memory(paddr, 32'd4);
                 `endif
-                if(wvalid) begin
-                    read_before_write <= 1'b1;
-                    rvalid <= 1'b0;
-                    rresp <= 2'b0;
-                end
-                else begin
-                    rvalid <= 1'b1;
-                    rresp <= 2'b0;
-                    read_en <= 1'b0;
+
+                rvalid <= 1'b1;
+                rresp <= 2'b0;
+                if(arlen_cnt == arlen) begin
                     rlast <= 1'b1;
                 end
-                r_cnt <= 6'b0;
             end
-        end
-        else if(rready && rvalid) begin
-            rvalid <= 1'b0;
-            rresp <= 2'b0;
         end
     end
 
@@ -125,6 +135,9 @@ module ysyx_24080020_SRAM(
     // AW
     always @(posedge clk) begin
         if(!rst) begin
+            awready <= 1'b0;
+        end
+        else if(awvalid && awready) begin
             awready <= 1'b0;
         end
         else if(awvalid) begin
@@ -138,9 +151,6 @@ module ysyx_24080020_SRAM(
                 aw_cnt <= 6'b0;
             end
         end
-        else begin
-            awready <= 1'b0;
-        end
     end
 
     // W
@@ -148,20 +158,25 @@ module ysyx_24080020_SRAM(
         if(!rst) begin
             w_cnt <= 6'b0;
             wready <= 1'b0;
-            read_before_write <= 1'b0;
+            write_en <= 1'b0;
+        end
+        else if(wvalid && wready) begin
+            wready <= 'b0;
+            w_cnt <= 6'b0;
             write_en <= 1'b0;
         end
         else if(wvalid) begin
             if(w_cnt < lfsr) begin
                 w_cnt <= w_cnt + 6'b1;
+                if(w_cnt == lfsr - 'b1) begin
+                    `ifdef CONFIG_DPIC
+                    // printf_info();
+                    rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
+                    `endif
+                end
             end
             else begin
-                if(!read_before_write) begin
-                    read_en <= 1'b1;
-                end
-                else if(!write_en) begin
-                    read_en <= 1'b0;
-
+                if(!write_en) begin
                     write_data <= wdata & wstrb_full | (rdata & ~wstrb_full);
                     write_en <= 1'b1;
                 end
@@ -173,17 +188,7 @@ module ysyx_24080020_SRAM(
 
                     wready <= 1'b1;
                 end
-                else begin
-
-                    w_cnt <= 6'b0;
-                    write_en <= 1'b0;
-                    read_before_write <= 1'b0;
-                end
-
             end
-        end
-        else begin
-            wready <= 1'b0;
         end
     end
 
