@@ -677,8 +677,9 @@ module ysyx_24080020_ICACHE(
     else if(s0_s1_shake_hands) begin
         s0_s1_shake_hands <= 'b0;
 
-        is_hit_s1 <= has_hit_s1;
-        // is_hit_s1 <= (cache_index_s1 == cache_index_s2 && fifo_index[cache_index_s2] == tmp_tag_index_s1) ? 'b0 : has_hit_s1;
+        // is_hit_s1 <= dirty_data ? 'b0 : has_hit_s1;
+        // is_hit_s1 <= has_hit_s1;
+        is_hit_s1 <= ((cache_index_s1 == cache_index_s3) && (fifo_index[cache_index_s3] == tmp_tag_index_s1) && !is_hit_s3) ? 'b0 : has_hit_s1;
         hit_tag_s1 <= tmp_tag_index_s1;
 
         s1_s2_valid <= 'b1;
@@ -714,7 +715,6 @@ module ysyx_24080020_ICACHE(
   reg is_hit_s2;
 
   reg [`ysyx_24080020_WIDTH-1:0] araddr_s2;
-  reg [`ysyx_24080020_WIDTH-1:0] araddr_s2_base;
   reg [`ysyx_24080020_WIDTH-1:0] inst_s2;
 
   reg [7:0] arlen_s2;
@@ -740,7 +740,6 @@ module ysyx_24080020_ICACHE(
       arid_s2 <= 'b0;
       arburst_s2 <= 'b0;
       arsize_s2 <= 'b0;
-      araddr_s2_base <= 'b0;
       bubble <= 'b0;
       special_pc_s2 <= 'b0;
       s1_s2_shake_hands <= 'b0;
@@ -759,7 +758,6 @@ module ysyx_24080020_ICACHE(
       arburst_s2 <= arburst_s1;
       arsize_s2 <= arsize_s1;
 
-      araddr_s2_base <= araddr_s1;
       special_pc_s2 <= special_pc_s1;
 
       cache_tag_s2 <= cache_tag_s1;
@@ -767,7 +765,8 @@ module ysyx_24080020_ICACHE(
       cache_offset_s2 <= cache_offset_s1;
 
 
-      is_hit_s2 <= is_hit_s1;
+      // is_hit_s2 <= is_hit_s1;
+      is_hit_s2 <= ((cache_index_s1 == cache_index_s3) && (fifo_index[cache_index_s3] == hit_tag_s1) && !is_hit_s3) ? 'b0 : is_hit_s1;
       hit_tag_s2 <= hit_tag_s1;
     end
     else if(s1_s2_shake_hands) begin
