@@ -44,7 +44,7 @@ module ysyx_24080020_SRAM(
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
 `endif
 
-    reg [`ysyx_24080020_WIDTH-1:0] paddr;
+    reg [`ysyx_24080020_WIDTH-1:0] paddr_r, paddr_w;
     reg [`ysyx_24080020_WIDTH-1:0] write_data;
     reg read_en, write_en, b_en;
     // reg read_before_write;
@@ -69,6 +69,7 @@ module ysyx_24080020_SRAM(
             arready <= 1'b0;
             read_en <= 1'b0;
             ar_cnt <= 6'b0;
+            paddr_r <= 'b0;
         end
         else if(arvalid && arready) begin
             arready <= 'b0;
@@ -78,7 +79,7 @@ module ysyx_24080020_SRAM(
                 ar_cnt <= ar_cnt + 6'b1;
             end
             else begin
-                paddr <= {araddr[31:2],2'b0};
+                paddr_r <= {araddr[31:2],2'b0};
                 read_en <= 1'b1;
                 arready <= 1'b1;
 
@@ -94,6 +95,7 @@ module ysyx_24080020_SRAM(
             rresp <= 2'b0;
             rdata <= 32'b0;
             arlen_cnt <= 'b0;
+            paddr_r <= 'b0;
         end
         else if(read_en) begin
             if(r_cnt < lfsr) begin
@@ -111,17 +113,17 @@ module ysyx_24080020_SRAM(
                 else begin
                     arlen_cnt <= arlen_cnt + 'b1;
                     if(arburst == 'b00) begin
-                        paddr <= paddr;
+                        paddr_r <= paddr_r;
                     end
                     else if(arburst == 'b01) begin
-                        paddr <= paddr + 'd4;
+                        paddr_r <= paddr_r + 'd4;
                     end
                 end
             end
             else if(arlen_cnt <= arlen) begin
                 `ifdef CONFIG_DPIC
                 // printf_info();
-                rdata <= read_memory(paddr, 32'd4);
+                rdata <= read_memory(paddr_r, 32'd4);
                 `endif
 
                 rvalid <= 1'b1;
@@ -138,6 +140,7 @@ module ysyx_24080020_SRAM(
     always @(posedge clk) begin
         if(!rst) begin
             awready <= 1'b0;
+            paddr_w <= 'b0;
         end
         else if(awvalid && awready) begin
             awready <= 1'b0;
@@ -147,7 +150,7 @@ module ysyx_24080020_SRAM(
                 aw_cnt <= aw_cnt + 6'b1;
             end
             else begin
-                paddr <= {awaddr[31:2], 2'b0};
+                paddr_w <= {awaddr[31:2], 2'b0};
                 awready <= 1'b1;
 
                 aw_cnt <= 6'b0;
@@ -185,7 +188,7 @@ module ysyx_24080020_SRAM(
                 end
                 else if(!wready) begin
                     `ifdef CONFIG_DPIC
-                    write_memory(paddr, 32'd4, write_data);
+                    write_memory(paddr_w, 32'd4, write_data);
                     `endif
                     b_en <= 1'b1;
 
