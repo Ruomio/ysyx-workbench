@@ -315,7 +315,6 @@ module ysyx_24080020_NPC(
   `endif
 
   // pipeline hazard
-  wire in_flash;
   wire structural_adventure, data_adventure, control_adventure;
   wire inst_fin;
   wire lsu_busy, lsu_busy_unused;
@@ -394,7 +393,6 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IR u_ir(
         .clk(clk),
         .rst(rst),
-        // .lsu_busy(lsu_busy),
 
         // pc <-> ir
         .special_pc_i(special_pc_pc),
@@ -645,9 +643,7 @@ module ysyx_24080020_NPC(
         .is_ebreak_exu(is_ebreak_exu),
         .is_ebreak_lsu(is_ebreak_lsu),
 
-        // .axi_busy(lsu_busy),
 
-        // .structural_adventure(structural_adventure),
         .mren_exu(mren_exu),
         .mrtype_exu(mrtype_exu),
         .mrlen_exu(mrlen_exu),
@@ -1133,9 +1129,6 @@ module ysyx_24080020_NPC(
       .clk(clk),
       .rst(rst),
       .fencei_mem(fencei_exu),
-      // .in_flash_(in_flash),
-      // .busy(lsu_busy_unused),
-      // .busy_i(lsu_busy),
 
       .raddr(raddr_ifu),
       .special_pc_i(special_pc_o),
@@ -1180,7 +1173,6 @@ module ysyx_24080020_NPC(
         .rst(rst),
 
         // Structural adventures, between ifu and lsu
-        .in_flash(in_flash),
         .arvalid_AND_arready(arvalid_icache & arready_icache),
         .inst_fin(rvalid_icache && rready_icache && rlast_icache),
         .structural_adventure(structural_adventure),

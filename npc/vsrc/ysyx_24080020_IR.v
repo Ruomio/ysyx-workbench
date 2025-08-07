@@ -2,7 +2,6 @@
 module ysyx_24080020_IR(
     input clk,
     input rst,
-    // input lsu_busy,
 
     // pc <-> ir
     input special_pc_i,
