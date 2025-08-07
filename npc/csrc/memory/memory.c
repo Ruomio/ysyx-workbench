@@ -150,7 +150,6 @@ extern "C" int read_memory(int addr, int len) {
 }
 
  extern "C" void write_memory(int addr, int len, int data) {
-  printf("write_memory: addr: %x, len: %d, data: %x\n", addr, len, data);
   paddr_write(addr, len, data);
 }
 
