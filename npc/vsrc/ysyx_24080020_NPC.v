@@ -315,7 +315,6 @@ module ysyx_24080020_NPC(
   `endif
 
   // pipeline hazard
-  wire in_flash;
   wire structural_adventure, data_adventure, control_adventure;
   wire inst_fin;
   wire lsu_busy, lsu_busy_unused;
@@ -1174,7 +1173,6 @@ module ysyx_24080020_NPC(
         .rst(rst),
 
         // Structural adventures, between ifu and lsu
-        .in_flash(in_flash),
         .arvalid_AND_arready(arvalid_icache & arready_icache),
         .inst_fin(rvalid_icache && rready_icache && rlast_icache),
         .structural_adventure(structural_adventure),
