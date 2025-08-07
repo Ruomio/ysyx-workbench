@@ -53,8 +53,8 @@ module ysyx_24080020_SRAM(
     reg [5:0] r_cnt, b_cnt;
 
     reg [7:0] arlen_cnt;
+    reg [31:0] w_rdata;
 
-    wire [31:0] rdata_shift;
 
 
     wire [`ysyx_24080020_WIDTH-1:0] wstrb_full;
@@ -161,6 +161,7 @@ module ysyx_24080020_SRAM(
             w_cnt <= 6'b0;
             wready <= 1'b0;
             write_en <= 1'b0;
+            w_rdata <= 'b0;
         end
         else if(wvalid && wready) begin
             wready <= 'b0;
@@ -173,13 +174,13 @@ module ysyx_24080020_SRAM(
                 if(w_cnt == lfsr - 'b1) begin
                     `ifdef CONFIG_DPIC
                     // printf_info();
-                    rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
+                    w_rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
                     `endif
                 end
             end
             else begin
                 if(!write_en) begin
-                    write_data <= wdata & wstrb_full | (rdata & ~wstrb_full);
+                    write_data <= wdata & wstrb_full | (w_rdata & ~wstrb_full);
                     write_en <= 1'b1;
                 end
                 else if(!wready) begin
