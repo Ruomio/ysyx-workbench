@@ -214,15 +214,10 @@ module ysyx_24080020_SRAM(
                 b_cnt <= 6'b0;
             end
         end
-        else if(bready) begin
+        else if(bready && bvalid) begin
             bvalid <= 1'b0;
             bresp <= 2'b0;
         end
-        else begin
-            bvalid <= 1'b0;
-            bresp <= bresp;
-        end
-
     end
 
 endmodule
