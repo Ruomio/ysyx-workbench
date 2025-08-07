@@ -106,10 +106,10 @@ module ysyx_24080020_ARBITER (
       if(!rst) begin
           busy <= 'b0;
       end
-      else if(rvalid_ifu && rready_ifu) begin
+      else if(rvalid_ifu && rready_ifu && rlast_ifu) begin
           busy <= 'b0;
       end
-      else if(rvalid_mem && rready_mem) begin
+      else if(rvalid_mem && rready_mem && rlast_mem) begin
           busy <= 'b0;
       end
   end
