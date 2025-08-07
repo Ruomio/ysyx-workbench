@@ -519,7 +519,7 @@ uint32_t g_get_reg(int i) {
 #if defined (ysyxSoCFull)
   return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__csrs[i];
+  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i];
 #else
   return 0;
 #endif
