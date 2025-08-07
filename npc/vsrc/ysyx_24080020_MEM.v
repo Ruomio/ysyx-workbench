@@ -2,7 +2,6 @@
 module ysyx_24080020_MEM(
     input clk,
     input rst,
-    input structural_adventure,
     // memory
     input mren_exu,
     input mrtype_exu,
@@ -20,7 +19,6 @@ module ysyx_24080020_MEM(
 
     input skip_ref_exu,
     output reg skip_ref_mem,
-    output reg axi_busy,
 
     input is_ebreak_exu,
     output reg is_ebreak_lsu,
@@ -104,9 +102,7 @@ module ysyx_24080020_MEM(
 `endif
 
     reg arvalid, awvalid, wvalid;
-    assign arvalid_reg = arvalid && !structural_adventure;
-    // assign awvalid_reg = awvalid && !structural_adventure;
-    // assign wvalid_reg = wvalid && !structural_adventure;
+    assign arvalid_reg = arvalid;
     assign awvalid_reg = awvalid;
     assign wvalid_reg = wvalid;
 
@@ -350,7 +346,6 @@ module ysyx_24080020_MEM(
             exu_mem_shake_hands <= 1'b0;
             mem_wb_valid <= 'b0;
 
-            axi_busy <= 'b0;
         end
         else if(exu_mem_shake_hands) begin
             exu_mem_shake_hands <= 1'b0;
@@ -358,9 +353,6 @@ module ysyx_24080020_MEM(
             // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin
                 mem_wb_valid <= 1'b1;
-            end
-            if(mren_exu && !structural_adventure) begin
-                axi_busy <= 'b1;
             end
         end
         else begin
@@ -377,45 +369,36 @@ module ysyx_24080020_MEM(
             arlen <= 'b0;
             arburst <= 'b0;
             arid <= 'b0;
-            axi_busy <= 'b0;
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
         end
         else if(mren_mem) begin
-            if(!structural_adventure) begin
-                axi_busy <= 'b1;
-                arvalid <= 1'b1;
-                arid <= 4'b0;
-                arlen <= {{7{1'b0}},get_arlen};
-                `ifdef ysyxSoCFull
-                if(araddr >= 32'h10000000 && araddr < 32'h10001000
-                    || araddr >= 32'h10011000 && araddr < 32'h10011008
-                    || araddr >= 32'h21000000 && araddr < 32'h21200000
-                    || araddr >= 32'h02000000 && araddr < 32'h02000008
-                    || araddr >= 32'hc0000000 && araddr < 32'hffffffff
-                    ) begin
-                    // skip uart keyboard etc.
-                    skip_ref_mem <= 'b1;
-                    // `ifdef CONFIG_DPIC
-                    // npc_difftest_skip_ref();
-                    // `endif
-                end
-                `endif
-                `ifdef ysyx_24080020_NPC
-                if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
-                    || araddr >= 32'ha0000048 && araddr < 32'ha0000050
-                    ) begin
-                    // skip uart keyboard etc.
-                    skip_ref_mem <= 'b1;
-                    // `ifdef CONFIG_DPIC
-                    // npc_difftest_skip_ref();
-                    // `endif
-                end
-                `endif
-
-                mren_mem <= 1'b0;
+            arvalid <= 1'b1;
+            arid <= 4'b0;
+            arlen <= {{7{1'b0}},get_arlen};
+            `ifdef ysyxSoCFull
+            if(araddr >= 32'h10000000 && araddr < 32'h10001000
+                || araddr >= 32'h10011000 && araddr < 32'h10011008
+                || araddr >= 32'h21000000 && araddr < 32'h21200000
+                || araddr >= 32'h02000000 && araddr < 32'h02000008
+                || araddr >= 32'hc0000000 && araddr < 32'hffffffff
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
             end
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
+                || araddr >= 32'ha0000048 && araddr < 32'ha0000050
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+            end
+            `endif
+
+            mren_mem <= 1'b0;
+            // end
         end
     end
 
@@ -431,7 +414,6 @@ module ysyx_24080020_MEM(
         end
         else if(rvalid && rlast) begin
             // finish all read
-            axi_busy <= 'b0;
             rready <= 1'b1;
             finish_read <= 1'b1;
             if(rresp != 2'b0) begin
@@ -621,21 +603,18 @@ module ysyx_24080020_MEM(
         end
         else if(bvalid && bready) begin
             bready <= 'b0;
+            mem_wb_valid <= 1'b1;
         end
         else if(bvalid) begin
             bready <= 1'b1;
 
             // b_fin <= 1'b1;
-            mem_wb_valid <= 1'b1;
             if(bresp != 2'b0) begin
                 `ifdef CONFIG_DPIC
                 $error("the bresp are not 2'b0");
                 `endif
             end
         end
-        // else begin
-        //     bready <= 1'b0;
-        // end
     end
 
 endmodule
