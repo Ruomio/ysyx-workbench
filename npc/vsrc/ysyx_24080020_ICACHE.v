@@ -677,9 +677,8 @@ module ysyx_24080020_ICACHE(
     else if(s0_s1_shake_hands) begin
         s0_s1_shake_hands <= 'b0;
 
-        // is_hit_s1 <= dirty_data ? 'b0 : has_hit_s1;
-        // is_hit_s1 <= has_hit_s1;
-        is_hit_s1 <= ((cache_index_s1 == cache_index_s3) && (fifo_index[cache_index_s3] == tmp_tag_index_s1) && !is_hit_s3) ? 'b0 : has_hit_s1;
+        is_hit_s1 <= has_hit_s1;
+        // is_hit_s1 <= ((cache_index_s1 == cache_index_s3) && (fifo_index[cache_index_s3] == tmp_tag_index_s1) && !is_hit_s3) ? 'b0 : has_hit_s1;
         hit_tag_s1 <= tmp_tag_index_s1;
 
         s1_s2_valid <= 'b1;
@@ -765,8 +764,8 @@ module ysyx_24080020_ICACHE(
       cache_offset_s2 <= cache_offset_s1;
 
 
-      // is_hit_s2 <= is_hit_s1;
-      is_hit_s2 <= ((cache_index_s1 == cache_index_s3) && (fifo_index[cache_index_s3] == hit_tag_s1) && !is_hit_s3) ? 'b0 : is_hit_s1;
+      is_hit_s2 <= is_hit_s1;
+      // is_hit_s2 <= ((cache_index_s1 == cache_index_s3) && (fifo_index[cache_index_s3] == hit_tag_s1) && !is_hit_s3) ? 'b0 : is_hit_s1;
       hit_tag_s2 <= hit_tag_s1;
     end
     else if(s1_s2_shake_hands) begin
