@@ -439,4 +439,16 @@ module ysyx_24080020_BTB(
         end
     end
 
+    always @(posedge clk) begin
+        if(!rst) begin
+            fencei_mem_next <= 'b0;
+        end
+        else if(fencei_mem) begin
+            fencei_mem_next <= 'b1;
+        end
+        else begin
+            fencei_mem_next <= 'b0;
+        end
+    end
+
 endmodule
