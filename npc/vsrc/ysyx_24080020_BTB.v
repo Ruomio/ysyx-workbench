@@ -389,7 +389,7 @@ module ysyx_24080020_BTB(
 
                     pc <= predict_pc;
                 end
-                else begin
+                else if(!out_valid) begin
                     out_valid <= 'b1;
                 end
             end
