@@ -275,10 +275,7 @@ module ysyx_24080020_BTB(
             if(btb_hit) begin
                 btb_hit <= 'b0;
                 if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
-                    // error hit, need update pc, do not update btb
-                    `ifdef CONFIG_DPIC
-                        $error("Should not be here");
-                    `endif
+                    // lack hit before this hit, need update btb
                     pc_new <= pc_exu;
                     dnpc_tmp <= dnpc;
                     is_dnpc_tmp <= 'b1;
@@ -306,6 +303,46 @@ module ysyx_24080020_BTB(
             `endif
 
         end
+        else if(is_dnpc && !is_dnpc_next && !is_btype) begin
+            // jal or jalr
+
+            if(btb_hit) begin
+                btb_hit <= 'b0;
+
+                if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
+                    // ret diff pc, so need update btb
+                    pc_new <= pc_exu;
+                    dnpc_tmp <= dnpc;
+                    is_dnpc_tmp <= 'b1;
+                    correct_pc <= dnpc;
+
+                    flush_pipeline <= 'b1;
+
+                end
+                `ifdef CONFIG_DPIC
+                else if((hit_pc == pc_exu) && (dnpc == hit_target_pc)) begin
+                    statistics_btb_hit();
+                end
+                `endif
+
+                `ifdef CONFIG_DPIC
+                statistics_btb_total();
+                `endif
+
+            end
+            else begin
+                pc_new <= pc_exu;
+                dnpc_tmp <= dnpc;
+                is_dnpc_tmp <= 'b1;
+                correct_pc <= dnpc;
+
+                flush_pipeline <= 'b1;
+
+                `ifdef CONFIG_DPIC
+                statistics_btb_total();
+                `endif
+            end
+        end
         else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
             // error hit: should not jump, but jump 
             if(btb_hit) begin
@@ -332,20 +369,6 @@ module ysyx_24080020_BTB(
                 `endif
             end
 
-        end
-        else if(is_dnpc && !is_dnpc_next && !is_btype) begin
-            // jal or jalr
-
-            pc_new <= pc_exu;
-            dnpc_tmp <= dnpc;
-            is_dnpc_tmp <= 'b1;
-            correct_pc <= dnpc;
-
-            flush_pipeline <= 'b1;
-
-            `ifdef CONFIG_DPIC
-            statistics_btb_total();
-            `endif
         end
 
         // state-machine
