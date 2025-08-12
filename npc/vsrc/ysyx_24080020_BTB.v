@@ -216,6 +216,10 @@ module ysyx_24080020_BTB(
             btb_hit <= 'b0;
             flush_pipeline <= 'b0;
 
+            correct_pc <= 'b0;
+            dnpc_tmp <= 'b0;
+            is_dnpc_tmp <= 'b0;
+
             // state-machine
             fin_judge <= 'b0;
             fin_hit <= 'b0;
