@@ -661,7 +661,7 @@ module ysyx_24080020_BTB(
         else if(is_dnpc_tmp) begin
             update_en <= 'b1;
         end
-        else if(!is_dnpc && is_btype && !is_btype_next && btb_hit) begin
+        else if(!is_dnpc && is_btype && btb_hit) begin
             update_en <= 'b1;
         end
         else if(fencei_mem || fencei_exu) begin
