@@ -643,14 +643,16 @@ module ysyx_24080020_BTB(
     always @(posedge clk) begin
         if(!rst) begin
             in_valid <= 'b0;
-            update_en <= 'b1;
         end
-        if(in_valid && in_ready) begin
+        else if(in_valid && in_ready) begin
             in_valid <= 'b0;
         end
-        // else if(is_dnpc_tmp && in_valid) begin
-        //     in_valid <= 'b0;
-        // end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            update_en <= 'b1;
+        end
         else if(update_en) begin
             update_en <= 'b0;
             in_valid <= 'b1;
@@ -661,7 +663,7 @@ module ysyx_24080020_BTB(
         else if(is_dnpc_tmp) begin
             update_en <= 'b1;
         end
-        else if(!is_dnpc && is_btype && btb_hit) begin
+        else if(!is_dnpc && is_btype && !is_btype_next && btb_hit) begin
             update_en <= 'b1;
         end
         else if(fencei_mem || fencei_exu) begin
