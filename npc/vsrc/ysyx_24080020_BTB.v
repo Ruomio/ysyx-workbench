@@ -83,7 +83,7 @@ module ysyx_24080020_BTB(
     wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
     reg [2:0] next_state;
 
-    reg fin_judge, fin_hit, fin_miss, fin_done;
+    reg fin_judge, fin_hit, fin_miss, fin_done, out_en;
 
     reg in_valid;
     reg in_ready;
@@ -226,6 +226,8 @@ module ysyx_24080020_BTB(
             fin_miss <= 'b0;
             fin_done <= 'b0;
 
+            out_en <= 'b0;
+
         end
         // flush btb
         else if(fencei_mem || fencei_exu) begin
@@ -357,6 +359,7 @@ module ysyx_24080020_BTB(
                 fin_hit <= 'b0;
                 fin_done <= 'b0;
 
+                out_en <= 'b0;
 
             end
             else if(current_state == JUDGE) begin
@@ -390,7 +393,8 @@ module ysyx_24080020_BTB(
 
                     pc <= predict_pc;
                 end
-                else if(!out_valid) begin
+                else if(!out_en) begin
+                    out_en <= 'b1;
                     out_valid <= 'b1;
                 end
             end
