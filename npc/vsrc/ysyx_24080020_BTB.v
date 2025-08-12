@@ -390,6 +390,7 @@ module ysyx_24080020_BTB(
                 if(out_valid && out_ready) begin
                     fin_done <= 'b1;
                     out_valid <= 'b0;
+                    flush_pipeline <= 'b0;
 
                     pc <= predict_pc;
                 end
