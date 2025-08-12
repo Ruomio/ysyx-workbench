@@ -357,7 +357,6 @@ module ysyx_24080020_BTB(
                 fin_hit <= 'b0;
                 fin_done <= 'b0;
 
-                out_valid <= 'b0;
 
             end
             else if(current_state == JUDGE) begin
