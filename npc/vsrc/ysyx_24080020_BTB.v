@@ -600,52 +600,15 @@ module ysyx_24080020_BTB(
         // end
     end
 
-    // update pc when btb -> pc module shake hands
-    // always @(posedge clk)begin
-    //     if(!rst) begin
-    //         // out_valid <= 'b0;
-    //         pc <= `ysyx_24080020_MBASE;
-    //         predict_pc <= 'b0;
-    //         // hit_pc <= 'b0;
-    //         hit_target_pc <= 'b0;
-    //         btb_hit <= 'b0;
-    //         // flush_pipeline <= 'b0;
-    //     end
-    //     else if(fencei_mem || fencei_exu) begin
-    //         pc <= n_dnpc;
-    //     end
-    //     else if(is_dnpc_tmp) begin
-    //         pc <= dnpc_tmp;
-    //     end
-    //     else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
-    //         if(btb_hit) begin
-    //             pc <= n_dnpc;
-    //         end
-    //     end
-    //     else if(out_valid && out_ready) begin
-    //         // out_valid <= 'b0;
-
-    //         if(!is_dnpc_tmp) begin
-    //             // BTFN
-    //             // pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
-
-    //             // ALWAYS TAKEN
-    //             pc <= predict_pc;
-
-    //             // out_special_pc <= 'b0;
-    //         end
-
-    //         // flush_pipeline <= 'b0;
-
-    //     end
-    // end
-
     always @(posedge clk) begin
         if(!rst) begin
             in_valid <= 'b0;
         end
         else if(in_valid && in_ready) begin
             in_valid <= 'b0;
+        end
+        else if(update_en) begin
+            in_valid <= 'b1;
         end
     end
 
@@ -655,7 +618,6 @@ module ysyx_24080020_BTB(
         end
         else if(update_en) begin
             update_en <= 'b0;
-            in_valid <= 'b1;
         end
         else if(update_pc) begin
             update_en <= 'b1;
@@ -683,33 +645,5 @@ module ysyx_24080020_BTB(
         end
     end
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         out_valid <= 'b0;
-    //     end
-    //     else if(fencei_mem || fencei_exu) begin
-    //         out_valid  <= 'b0;
-    //     end
-    //     else if(is_dnpc_tmp) begin
-    //         out_valid  <= 'b0;
-    //     end
-    //     else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
-    //         if(btb_hit) begin
-    //             out_valid  <= 'b0;
-    //         end
-    //     end
-    //     else if(out_valid && out_ready) begin
-    //         out_valid <= 'b0;
-    //     end
-    //     else if(current_state == Done) begin
-
-    //         if(((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) && ((hit_pc != pc_exu) || (hit_target_pc != dnpc)) ) begin
-    //             out_valid <= 'b0;
-    //         end
-    //         else begin
-    //             out_valid <= 'b1;
-    //         end
-    //     end
-    // end
 
 endmodule
