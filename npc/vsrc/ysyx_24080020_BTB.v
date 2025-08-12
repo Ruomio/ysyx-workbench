@@ -414,6 +414,7 @@ module ysyx_24080020_BTB(
                     fin_done <= 'b1;
                     out_valid <= 'b0;
                     flush_pipeline <= 'b0;
+                    out_special_pc <= 'b0;
 
                     pc <= predict_pc;
                 end
