@@ -350,7 +350,7 @@ module ysyx_24080020_BTB(
             if(btb_hit) begin
                 btb_hit <= 'b0;
 
-                if(hit_pc == pc_exu) begin
+                if(/* (hit_pc == pc_exu)*/ 'b1) begin
                     // b_type but not jump, so need flush
                     predict_pc <= n_dnpc;
                     // pc <= n_dnpc;
@@ -402,12 +402,14 @@ module ysyx_24080020_BTB(
             end
             else if(current_state == HIT) begin
                 fin_hit <= 'b1;
+                if(!next_special_pc) begin
 
-                hit_pc <= pc_tmp;
-                hit_target_pc <= shift_rdata[31:0];
-                btb_hit <= 'b1;
+                    hit_pc <= pc_tmp;
+                    hit_target_pc <= shift_rdata[31:0];
+                    btb_hit <= 'b1;
 
-                predict_pc <= shift_rdata[31:0];
+                    predict_pc <= shift_rdata[31:0];
+                end
 
             end
             else if(current_state == MISS) begin
