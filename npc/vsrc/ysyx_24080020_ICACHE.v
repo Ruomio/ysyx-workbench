@@ -1062,7 +1062,7 @@ module ysyx_24080020_ICACHE(
       rlast_i <= 'b0;
       // raddr <= raddr_s4;
       // special_pc_o <= special_pc_s4;
-      special_pc_o <= 'b0;
+      // special_pc_o <= 'b0;
     end
   end
 
