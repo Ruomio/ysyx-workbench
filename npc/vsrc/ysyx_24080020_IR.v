@@ -44,16 +44,12 @@ module ysyx_24080020_IR(
   always @(posedge clk) begin
     if(!rst) begin
       arvalid <= 'b0;
-      araddr <= 'b0;
-      arid <= 'b0;
-      arsize <= 'b0;
-      arlen <= 'b0;
-      arburst <= 'b0;
     end
     else if(arready && arvalid) begin
       arvalid <= 'b0;
     end
-    else begin
+    else if(if_en_shake_hands) begin
+        arvalid <= 'b1;
     end
 
   end
@@ -62,11 +58,16 @@ module ysyx_24080020_IR(
     if(!rst) begin
         if_en_ready <= 'b0;
         special_pc_o <= 'b0;
+        araddr <= 'b0;
+        arid <= 'b0;
+        arsize <= 'b0;
+        arlen <= 'b0;
+        arburst <= 'b0;
     end
     else if(if_en_valid && if_en_ready) begin
         if_en_ready <= 'b0;
 
-        if_en_shake_hands <= 'b1;
+        // if_en_shake_hands <= 'b1;
 
         araddr <= addr;
         arsize <= 'b10;
@@ -88,9 +89,12 @@ module ysyx_24080020_IR(
           if_en_shake_hands <= 'b0;
       end
       else if(if_en_shake_hands) begin
-            arvalid <= 'b1;
+            // arvalid <= 'b1;
             if_en_shake_hands <= 'b0;
       end
+    else if(if_en_valid && if_en_ready) begin
+        if_en_shake_hands <= 'b1;
+    end
   end
 
   always @(posedge clk) begin
@@ -104,7 +108,7 @@ module ysyx_24080020_IR(
       rready <= 'b0;
       if(rresp == 'b0) begin
         inst <= rdata;
-        inst_fin_valid <= 'b1;
+        // inst_fin_valid <= 'b1;
         raddr_ir <= raddr_icache;
         special_pc_ir <= special_pc_icache;
       end
@@ -126,6 +130,11 @@ module ysyx_24080020_IR(
       else if(inst_fin_valid && inst_fin_ready) begin
         inst_fin_valid <= 'b0;
       end
+    else if(rvalid && rready) begin
+      if(rresp == 'b0) begin
+        inst_fin_valid <= 'b1;
+      end
+    end
   end
 
 endmodule
