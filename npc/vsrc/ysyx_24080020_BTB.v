@@ -367,6 +367,10 @@ module ysyx_24080020_BTB(
                 `ifdef CONFIG_DPIC
                     statistics_btb_hit();
                 `endif
+                if(out_valid && out_ready) begin
+                    out_valid <= 'b0;
+                    fin_done <= 'b1;
+                end
             end
 
         end
