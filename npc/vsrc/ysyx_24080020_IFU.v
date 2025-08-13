@@ -84,9 +84,9 @@ module ysyx_24080020_IFU (
                 pc_ifu <= raddr;
                 inst_ifu <= inst;
                 ifu_idu_valid <= 1'b1;
-                if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
-                    flush_pipeline <= 'b0;
-                end
+                // if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
+                //     flush_pipeline <= 'b0;
+                // end
             end
         end
         else begin
@@ -128,6 +128,11 @@ module ysyx_24080020_IFU (
         else if(need_flush_pipeline) begin
             flush_pipeline <= 'b1;
             correct_pc <= correct_pc_btb;
+        end
+        else if(!ifu_idu_valid) begin
+            if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
+                flush_pipeline <= 'b0;
+            end
         end
 
     end
