@@ -14,6 +14,12 @@ module ysyx_24080020_IR(
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
     input inst_fin_ready,
 
+    // icache -> ir
+    input special_pc_icache,
+    input [`ysyx_24080020_WIDTH-1:0] raddr_icache,
+    output reg [`ysyx_24080020_WIDTH-1:0] raddr_ir,
+    output reg special_pc_ir,
+
     output reg special_pc_o,
     // axi-full
     output reg arvalid,
@@ -91,12 +97,16 @@ module ysyx_24080020_IR(
     if(!rst) begin
       rready <= 'b0;
       inst <= 'b0;
+      raddr_ir <= 'b0;
+      special_pc_ir <= 'b0;
     end
     else if(rvalid && rready) begin
       rready <= 'b0;
       if(rresp == 'b0) begin
         inst <= rdata;
         inst_fin_valid <= 'b1;
+        raddr_ir <= raddr_icache;
+        special_pc_ir <= special_pc_icache;
       end
       else begin
         `ifdef CONFIG_DPIC
