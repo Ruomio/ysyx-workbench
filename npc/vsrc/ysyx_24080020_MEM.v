@@ -339,6 +339,9 @@ module ysyx_24080020_MEM(
 
             end
         end
+        else if(mren_mem) begin
+            mren_mem <= 'b0;
+        end
     end
 
     always @(posedge clk) begin
@@ -397,7 +400,7 @@ module ysyx_24080020_MEM(
             end
             `endif
 
-            mren_mem <= 1'b0;
+            // mren_mem <= 1'b0;
             // end
         end
     end
