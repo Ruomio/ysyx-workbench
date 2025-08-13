@@ -350,7 +350,7 @@ module ysyx_24080020_BTB(
 
                 // b_type but not jump, so need flush
                 predict_pc <= n_dnpc;
-                // pc <= n_dnpc;
+                pc <= n_dnpc;
                 correct_pc <= n_dnpc;
 
                 // update_en <= 'b1;
