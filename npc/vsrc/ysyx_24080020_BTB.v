@@ -252,7 +252,7 @@ module ysyx_24080020_BTB(
 
             // in_valid <= 'b1;
             // update_en <= 'b1;
-            out_valid <= 'b0;
+            // out_valid <= 'b0;
 
             pc <= dnpc_tmp;
             predict_pc <= dnpc_tmp;
@@ -354,7 +354,7 @@ module ysyx_24080020_BTB(
                 correct_pc <= n_dnpc;
 
                 // update_en <= 'b1;
-                out_valid <= 'b0;
+                // out_valid <= 'b0;
                 out_special_pc <= 'b1;
 
                 flush_pipeline <= 'b1;
@@ -367,10 +367,6 @@ module ysyx_24080020_BTB(
                 `ifdef CONFIG_DPIC
                     statistics_btb_hit();
                 `endif
-                if(out_valid && out_ready) begin
-                    out_valid <= 'b0;
-                    fin_done <= 'b1;
-                end
             end
 
         end
@@ -427,6 +423,16 @@ module ysyx_24080020_BTB(
                     out_valid <= 'b1;
                 end
             end
+        end
+
+        // make sure out_valid out_ready correct
+        if(out_valid && out_ready) begin
+            fin_done <= 'b1;
+            out_valid <= 'b0;
+            flush_pipeline <= 'b0;
+            out_special_pc <= 'b0;
+
+            pc <= predict_pc;
         end
     end
 
