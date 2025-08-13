@@ -424,16 +424,6 @@ module ysyx_24080020_BTB(
                 end
             end
         end
-
-        // make sure out_valid out_ready correct
-        if(out_valid && out_ready) begin
-            fin_done <= 'b1;
-            out_valid <= 'b0;
-            flush_pipeline <= 'b0;
-            out_special_pc <= 'b0;
-
-            pc <= predict_pc;
-        end
     end
 
     // update BTB
