@@ -616,7 +616,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             update_en <= 'b1;
         end
-        else if(update_en && in_valid) begin
+        else if(update_en) begin
             update_en <= 'b0;
         end
         else if(update_pc) begin
