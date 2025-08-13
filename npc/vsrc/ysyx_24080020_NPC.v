@@ -157,7 +157,7 @@ module ysyx_24080020_NPC(
   wire [1:0] rresp_ifu;
   wire rlast_ifu;
   wire [3:0] rid_ifu;
-  wire [`ysyx_24080020_WIDTH-1:0] rdata_ifu, raddr_ifu;
+  wire [`ysyx_24080020_WIDTH-1:0] rdata_ifu, raddr_ifu, raddr_ir, raddr_icache;
 
   wire arvalid_icache, arready_icache;
   wire [1:0] arburst_icache;
@@ -222,7 +222,7 @@ module ysyx_24080020_NPC(
   wire [3:0] bid_xbar;
   wire [1:0] bresp_xbar;
 
-  wire special_pc_pc, special_pc_i, special_pc_o;
+  wire special_pc_pc, special_pc_i, special_pc_ir_o, special_pc_ir, special_pc_icache;
 
   // Xbar
   wire arvalid_xbar_sram, arready_sram,
@@ -405,7 +405,13 @@ module ysyx_24080020_NPC(
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
-        .special_pc_o(special_pc_o),
+        // icache -> ir
+        .raddr_icache(raddr_icache),
+        .special_pc_icache(special_pc_icache),
+        .raddr_ir(raddr_ir),
+        .special_pc_ir(special_pc_ir),
+
+        .special_pc_o(special_pc_ir_o),
         // axi-lite
         .arvalid(arvalid_ifu),
         .araddr(araddr_ifu),
@@ -433,8 +439,8 @@ module ysyx_24080020_NPC(
 
         .inst_fin(inst_fin),
         .flush_pipeline(flush_pipeline),
-        .raddr(raddr_ifu),
-        .special_pc_i(special_pc_i),
+        .raddr(raddr_ir),
+        .special_pc_i(special_pc_ir),
         .need_flush_pipeline(need_flush_pipeline),
 
         .correct_pc_btb(correct_pc_btb),
@@ -1130,9 +1136,9 @@ module ysyx_24080020_NPC(
       .rst(rst),
       .fencei_mem(fencei_exu),
 
-      .raddr(raddr_ifu),
-      .special_pc_i(special_pc_o),
-      .special_pc_o(special_pc_i),
+      .raddr(raddr_icache),
+      .special_pc_i(special_pc_ir_o),
+      .special_pc_o(special_pc_icache),
       // axi from lsu
       .arvalid_i(arvalid_ifu),
       .araddr_i(araddr_ifu),
