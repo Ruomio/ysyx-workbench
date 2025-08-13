@@ -280,9 +280,6 @@ module ysyx_24080020_EXU
                 exu_idu_ready <= 1'b1;
             end
         end
-        // else begin
-        //     // exu_mem_valid <= 1'b1;
-        // end
     end
 
     always @(posedge clk) begin
