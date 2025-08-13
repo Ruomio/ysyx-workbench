@@ -154,6 +154,52 @@ module ysyx_24080020_EXU
     always @(posedge clk) begin
         if(!rst) begin
             exu_idu_ready <= 1'b0;
+
+            idu_exu_shake_hand <= 1'b0;
+
+            wen_exu <= 'b0;
+            waddr_exu <= 'b0;
+            wdata_exu <= 'b0;
+
+            mwen_exu <= 'b0;
+            mwmask_exu <= 'b0;
+            mren_exu <= 'b0;
+            mrtype_exu <= 'b0;
+            mrlen_exu <= 'b0;
+
+            is_load_exu <= 'b0;
+            is_dnpc_exu <= 'b0;
+            branch_src1_exu <= 'b0;
+
+            alu_op_exu <= 'b0;
+            alu_src2_con_exu <= 'b0;
+            // reg_dst_con_exu <= 'b0;
+            imm_exu <= 'b0;
+
+            src1_exu <= 'b0;
+            src2_exu <= 'b0;
+            pc_exu <= 'b0;
+            dnpc_exu <= 'b0;
+            is_jalr_exu <= 'b0;
+            is_jal_exu <= 'b0;
+            is_btype_exu <= 'b0;
+
+            wcsren_exu <= 'b0;
+            wcsraddr_exu <= 'b0;
+            wcsrdata_exu <= 'b0;
+            wcsren2_exu <= 'b0;
+            wcsraddr2_exu <= 'b0;
+            wcsrdata2_exu <= 'b0;
+
+            is_csrtype_exu <= 'b0;
+
+
+            fencei_exu <= 'b0;
+
+
+            skip_ref_exu <= 'b0;
+            is_ebreak_exu <= 'b0;
+
         end
         else if(mem_exu_ready && exu_mem_valid && state) begin
             exu_mem_valid <= 1'b0;
@@ -164,6 +210,10 @@ module ysyx_24080020_EXU
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
             `endif
+        end
+        else if(idu_exu_shake_hand) begin
+            idu_exu_shake_hand <= 1'b0;
+
         end
         else if(idu_exu_valid) begin
             if(exu_mem_valid) exu_idu_ready <=  1'b0;
@@ -237,62 +287,6 @@ module ysyx_24080020_EXU
 
     always @(posedge clk) begin
         if(!rst) begin
-            idu_exu_shake_hand <= 1'b0;
-
-            wen_exu <= 'b0;
-            waddr_exu <= 'b0;
-            wdata_exu <= 'b0;
-
-            mwen_exu <= 'b0;
-            mwmask_exu <= 'b0;
-            mren_exu <= 'b0;
-            mrtype_exu <= 'b0;
-            mrlen_exu <= 'b0;
-
-            is_load_exu <= 'b0;
-            is_dnpc_exu <= 'b0;
-            branch_src1_exu <= 'b0;
-
-            alu_op_exu <= 'b0;
-            alu_src2_con_exu <= 'b0;
-            // reg_dst_con_exu <= 'b0;
-            imm_exu <= 'b0;
-
-            src1_exu <= 'b0;
-            src2_exu <= 'b0;
-            pc_exu <= 'b0;
-            dnpc_exu <= 'b0;
-            is_jalr_exu <= 'b0;
-            is_jal_exu <= 'b0;
-            is_btype_exu <= 'b0;
-
-            wcsren_exu <= 'b0;
-            wcsraddr_exu <= 'b0;
-            wcsrdata_exu <= 'b0;
-            wcsren2_exu <= 'b0;
-            wcsraddr2_exu <= 'b0;
-            wcsrdata2_exu <= 'b0;
-
-            is_csrtype_exu <= 'b0;
-
-            cnt <= 'b0;
-
-            fencei_exu <= 'b0;
-
-
-            skip_ref_exu <= 'b0;
-            is_ebreak_exu <= 'b0;
-
-        end
-        else if(idu_exu_shake_hand) begin
-            idu_exu_shake_hand <= 1'b0;
-
-            cnt <= 1'b1;
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
             state <= 1'b0;
         end
         if(!state) begin
@@ -316,6 +310,9 @@ module ysyx_24080020_EXU
         else if(cnt == 1'b1) begin
             exu_mem_valid <= 1'b1;
             cnt <= 1'b0;
+        end
+        else if(idu_exu_shake_hand) begin
+            cnt <= 1'b1;
         end
     end
 
