@@ -419,25 +419,30 @@ module ysyx_24080020_BTB(
                 end
             end
             else if(current_state == Done) begin
-                if(out_valid && out_ready) begin
-                    fin_done <= 'b1;
-                    out_valid <= 'b0;
-                    flush_pipeline <= 'b0;
 
-                    pc <= predict_pc;
-                    if(next_special_pc) begin
-                        next_special_pc <= 'b0;
-                        out_special_pc <= 'b1;
-                    end
-                    else if(out_special_pc) begin
-                        out_special_pc <= 'b0;
-                    end
+            end
+        end
+
+        if(current_state == Done) begin
+            if(out_valid && out_ready) begin
+                fin_done <= 'b1;
+                out_valid <= 'b0;
+                flush_pipeline <= 'b0;
+
+                pc <= predict_pc;
+                if(next_special_pc) begin
+                    next_special_pc <= 'b0;
+                    out_special_pc <= 'b1;
                 end
-                else if(!out_en && !fin_done) begin
-                    out_en <= 'b1;
-                    out_valid <= 'b1;
+                else if(out_special_pc) begin
+                    out_special_pc <= 'b0;
                 end
             end
+            else if(!out_en && !fin_done) begin
+                out_en <= 'b1;
+                out_valid <= 'b1;
+            end
+
         end
     end
 
