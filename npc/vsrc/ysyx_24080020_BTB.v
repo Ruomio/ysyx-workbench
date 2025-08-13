@@ -1,5 +1,4 @@
 `include "ysyx_24080020_DEFINE.v"
-
 module ysyx_24080020_BTB(
     input clk,
     input rst,
@@ -59,7 +58,7 @@ module ysyx_24080020_BTB(
     wire [branch_data_ingroup_width-1 : 0] shift_wdata;
     wire [branch_data_ingroup_width-1 : 0] data_mask;
 
-    wire [branch_tag_ingroup_width-1 : 0]  shift_rtag;
+    // wire [branch_tag_ingroup_width-1 : 0]  shift_rtag;
     wire [branch_tag_ingroup_width-1 : 0]  shift_wtag;
     wire [branch_tag_ingroup_width-1 : 0]  tag_mask;
 
@@ -79,9 +78,11 @@ module ysyx_24080020_BTB(
     reg [branch_way - 1 : 0]                 tag_index;
 
 
-    wire set_idle;
-    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc, fencei_npc;
+    wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
     reg [2:0] next_state;
+
+    reg fin_judge, fin_hit, fin_miss, fin_done, out_en;
+    reg next_special_pc;
 
     reg in_valid;
     reg in_ready;
@@ -113,7 +114,6 @@ module ysyx_24080020_BTB(
     assign shift_wtag = {{tag_complete_bits{1'b0}}, branch_tag_new} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
     assign tag_mask = {{tag_complete_bits{1'b0}}, ~{branch_tag_size{1'b0}}} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
 
-    assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit) | (fencei_mem && !fencei_mem_next);
 
     assign n_dnpc = pc_exu + 32'd4;
 
@@ -151,19 +151,17 @@ module ysyx_24080020_BTB(
     end
 
     always @(*) begin
-        if(set_idle) begin
-            next_state = IDLE;
-        end
-        else begin
-            case(current_state)
-                IDLE: begin
-                    if(in_valid && in_ready) begin
-                        next_state = JUDGE;
-                    end else begin
-                        next_state = IDLE;
-                    end
+        case(current_state)
+            IDLE: begin
+                if(in_valid && in_ready) begin
+                    next_state = JUDGE;
+                end else begin
+                    next_state = IDLE;
                 end
-                JUDGE: begin
+            end
+            JUDGE: begin
+                if(fin_judge) begin
+
                     if(has_hit) begin
                         // avoid continuous hit
                         if(!btb_hit) begin
@@ -176,95 +174,85 @@ module ysyx_24080020_BTB(
                         next_state = MISS;
                     end
                 end
-                HIT: begin
+                else begin
+                    next_state = JUDGE;
+                end
+            end
+            HIT: begin
+                if(fin_hit)
                     next_state = Done;
-                end
-                MISS: begin
+                else next_state = HIT;
+            end
+            MISS: begin
+                if(fin_miss)
                     next_state = Done;
-                end
-                Done: begin
+                else next_state = MISS;
+            end
+            Done: begin
+                if(fin_done)
                     next_state = IDLE;
-                end
-                default: begin
-                    next_state = IDLE;
-                end
-            endcase
-        end
+                else next_state = Done;
+            end
+            default: begin
+                next_state = IDLE;
+            end
+        endcase
     end
 
-    always @(posedge clk) begin
-        if(current_state == IDLE) begin
-            // init
-            is_hit <= 'b0;
-
-        end
-        else if(current_state == JUDGE) begin
-            if(has_hit) begin
-                is_hit <= 'b1;
-                tag_index <= tmp_tag_index;
-            end
-            else begin
-                is_hit <= 'b0;
-            end
-        end
-        else if(current_state == HIT) begin
-
-            hit_pc <= pc_tmp;
-            hit_target_pc <= shift_rdata[31:0];
-            btb_hit <= 'b1;
-
-            predict_pc <= shift_rdata[31:0];
-
-        end
-        else if(current_state == MISS) begin
-            predict_pc <= pc + 32'd4;
-        end
-        else if(current_state == Done) begin
-
-            if(((is_dnpc && !is_dnpc_next) || is_dnpc_tmp) && ((hit_pc != pc_exu) || (hit_target_pc != dnpc)) ) begin
-                out_valid <= 'b0;
-            end
-            else begin
-                out_valid <= 'b1;
-            end
-        end
-    end
-
-    // update BTB
     always @(posedge clk) begin
         if(!rst) begin
+            out_valid <= 'b0;
+            pc <= `ysyx_24080020_MBASE;
+            predict_pc <= 'b0;
+            hit_pc <= 'b0;
+            hit_target_pc <= 'b0;
+            btb_hit <= 'b0;
+            flush_pipeline <= 'b0;
+
+            correct_pc <= 'b0;
             dnpc_tmp <= 'b0;
             is_dnpc_tmp <= 'b0;
-            skip_once <= 'b0;
+
+            // state-machine
+            fin_judge <= 'b0;
+            fin_hit <= 'b0;
+            fin_miss <= 'b0;
+            fin_done <= 'b0;
+
+            out_en <= 'b0;
+            next_special_pc <= 'b0;
+
         end
+        // flush btb
         else if(fencei_mem || fencei_exu) begin
             // need flush pipeline
             btb_hit <= 'b0;
 
             predict_pc <= n_dnpc;
-            pc <= n_dnpc;
+            // pc <= n_dnpc;
             correct_pc <= n_dnpc;
 
-            update_en <= 'b1;
-            out_valid <= 'b0;
-            out_special_pc <= 'b1;
+            // update_en <= 'b1;
+            // out_valid <= 'b0;
+            next_special_pc <= 'b1;
 
             flush_pipeline <= 'b1;
         end
+        // update btb
         else if(is_dnpc_tmp) begin
             is_dnpc_tmp <= 'b0;
 
-            skip_once <= 'b1;
+            // skip_once <= 'b1;
 
             // in_valid <= 'b1;
-            update_en <= 'b1;
-            out_valid <= 'b0;
+            // update_en <= 'b1;
+            // out_valid <= 'b0;
 
-            pc <= dnpc_tmp;
+            // pc <= dnpc_tmp;
             predict_pc <= dnpc_tmp;
             correct_pc <= dnpc_tmp;
 
-            out_special_pc <= 'b1;
+            next_special_pc <= 'b1;
 
             btb_hit <= 'b0;
 
@@ -277,10 +265,11 @@ module ysyx_24080020_BTB(
 
         end
         else if(is_dnpc && !is_dnpc_next && is_btype) begin
+            // btytpe
             if(btb_hit) begin
                 btb_hit <= 'b0;
                 if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
-                    // error hit, need update pc
+                    // lack hit before this hit, need update btb
                     pc_new <= pc_exu;
                     dnpc_tmp <= dnpc;
                     is_dnpc_tmp <= 'b1;
@@ -308,24 +297,67 @@ module ysyx_24080020_BTB(
             `endif
 
         end
-        else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
+        else if(is_dnpc && !is_dnpc_next && !is_btype) begin
+            // jal or jalr
+
             if(btb_hit) begin
                 btb_hit <= 'b0;
 
-                // b_type but not jump, so need flush
-                predict_pc <= n_dnpc;
-                pc <= n_dnpc;
-                correct_pc <= n_dnpc;
+                if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
+                    // ret diff pc, so need update btb
+                    pc_new <= pc_exu;
+                    dnpc_tmp <= dnpc;
+                    is_dnpc_tmp <= 'b1;
+                    correct_pc <= dnpc;
 
-                update_en <= 'b1;
-                out_valid <= 'b0;
-                out_special_pc <= 'b1;
+                    flush_pipeline <= 'b1;
+
+                end
+                `ifdef CONFIG_DPIC
+                else if((hit_pc == pc_exu) && (dnpc == hit_target_pc)) begin
+                    statistics_btb_hit();
+                end
+                `endif
+
+                `ifdef CONFIG_DPIC
+                statistics_btb_total();
+                `endif
+
+            end
+            else begin
+                pc_new <= pc_exu;
+                dnpc_tmp <= dnpc;
+                is_dnpc_tmp <= 'b1;
+                correct_pc <= dnpc;
 
                 flush_pipeline <= 'b1;
 
                 `ifdef CONFIG_DPIC
-                    statistics_btb_err_hit();
+                statistics_btb_total();
                 `endif
+            end
+        end
+        else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
+            // error hit: should not jump, but jump 
+            if(btb_hit) begin
+                btb_hit <= 'b0;
+
+                if(/* (hit_pc == pc_exu)*/ 'b1) begin
+                    // b_type but not jump, so need flush
+                    predict_pc <= n_dnpc;
+                    // pc <= n_dnpc;
+                    correct_pc <= n_dnpc;
+
+                    // update_en <= 'b1;
+                    // out_valid <= 'b0;
+                    next_special_pc <= 'b1;
+
+                    flush_pipeline <= 'b1;
+
+                    `ifdef CONFIG_DPIC
+                        statistics_btb_err_hit();
+                    `endif
+                end
             end
             else begin
                 `ifdef CONFIG_DPIC
@@ -334,21 +366,80 @@ module ysyx_24080020_BTB(
             end
 
         end
-        else if(is_dnpc && !is_dnpc_next && !is_btype) begin
-            // jal or jalr
 
-            pc_new <= pc_exu;
-            dnpc_tmp <= dnpc;
-            is_dnpc_tmp <= 'b1;
-            correct_pc <= dnpc;
+        // state-machine
+        else begin
+            if(current_state == IDLE) begin
+                // init
+                is_hit <= 'b0;
 
-            flush_pipeline <= 'b1;
+                fin_judge <= 'b0;
+                fin_miss <= 'b0;
+                fin_hit <= 'b0;
+                fin_done <= 'b0;
 
-            `ifdef CONFIG_DPIC
-            statistics_btb_total();
-            `endif
+                out_en <= 'b0;
+                out_valid <= 'b0;
+
+            end
+            else if(current_state == JUDGE) begin
+                fin_judge <= 'b1;
+                if(has_hit) begin
+                    is_hit <= 'b1;
+                    tag_index <= tmp_tag_index;
+                end
+                else begin
+                    is_hit <= 'b0;
+                end
+            end
+            else if(current_state == HIT) begin
+                fin_hit <= 'b1;
+                if(!next_special_pc) begin
+
+                    hit_pc <= pc_tmp;
+                    hit_target_pc <= shift_rdata[31:0];
+                    btb_hit <= 'b1;
+
+                    predict_pc <= shift_rdata[31:0];
+                end
+
+            end
+            else if(current_state == MISS) begin
+                fin_miss <= 'b1;
+                if(!next_special_pc) begin
+                    predict_pc <= pc + 32'd4;
+                end
+            end
+            else if(current_state == Done) begin
+
+            end
+        end
+
+        if(current_state == Done) begin
+            if(out_valid && out_ready) begin
+                fin_done <= 'b1;
+                out_valid <= 'b0;
+
+                pc <= predict_pc;
+                if(next_special_pc) begin
+                    next_special_pc <= 'b0;
+                    out_special_pc <= 'b1;
+                end
+                else if(out_special_pc) begin
+                    out_special_pc <= 'b0;
+                end
+                if(flush_pipeline) begin
+                    flush_pipeline <= 'b0;
+                end
+            end
+            else if(!out_en && !fin_done) begin
+                out_en <= 'b1;
+                out_valid <= 'b1;
+            end
+
         end
     end
+
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -379,64 +470,62 @@ module ysyx_24080020_BTB(
             in_ready <= 'b0;
         end
         else if(in_valid && in_ready) begin
-            in_valid <= 'b0;
             in_ready <= 'b0;
             pc_tmp <= pc;
 
         end
-        else if(in_valid && !is_dnpc_tmp && (current_state == IDLE) && !out_valid) begin
+        else if(current_state == IDLE) begin
             in_ready <= 'b1;
-        end
-    end
-
-    always @(posedge clk)begin
-        if(!rst) begin
-            out_valid <= 'b0;
-            pc <= `ysyx_24080020_MBASE;
-            predict_pc <= 'b0;
-            hit_pc <= 'b0;
-            hit_target_pc <= 'b0;
-            btb_hit <= 'b0;
-            flush_pipeline <= 'b0;
-        end
-        else if(out_valid && out_ready) begin
-            out_valid <= 'b0;
-
-            if(!is_dnpc_tmp) begin
-                // BTFN
-                // pc <= predict_pc < pc ? predict_pc : pc + 32'd4;
-
-                // ALWAYS TAKEN
-                pc <= predict_pc;
-
-                out_special_pc <= 'b0;
-            end
-
-            flush_pipeline <= 'b0;
-
         end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
             in_valid <= 'b0;
-            update_en <= 'b0;
-            first <= 'b1;
         end
-        if(is_dnpc_tmp && in_valid) begin
+        else if(in_valid && in_ready) begin
             in_valid <= 'b0;
         end
         else if(update_en) begin
-            update_en <= 'b0;
             in_valid <= 'b1;
         end
-        else if(update_pc && !update_en) begin
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
             update_en <= 'b1;
         end
-        else if(first) begin
-            first <= 'b0;
+        else if(update_en) begin
+            update_en <= 'b0;
+        end
+        else if(update_pc) begin
+            update_en <= 'b1;
+        end
+        else if(is_dnpc_tmp) begin
+            update_en <= 'b1;
+        end
+        else if(!is_dnpc && is_btype && !is_btype_next && btb_hit) begin
+            update_en <= 'b1;
+        end
+        else if(is_dnpc && is_dnpc_next && !is_btype) begin
+            update_en <= 'b1;
+        end
+        else if(fencei_mem || fencei_exu) begin
             update_en <= 'b1;
         end
     end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            fencei_mem_next <= 'b0;
+        end
+        else if(fencei_mem) begin
+            fencei_mem_next <= 'b1;
+        end
+        else begin
+            fencei_mem_next <= 'b0;
+        end
+    end
+
 
 endmodule
