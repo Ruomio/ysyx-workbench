@@ -112,6 +112,13 @@ module ysyx_24080020_ARBITER (
       else if(rvalid_mem && rready_mem && rlast_mem) begin
           busy <= 'b0;
       end
+      else if (arvalid_ifu && !arvalid_mem && !busy) begin
+        busy <= 'b1;
+      end else if (arvalid_mem && !arvalid_ifu && !busy) begin
+        busy <= 'b1;
+      end else if(arvalid_ifu && arvalid_mem && !busy) begin
+        busy <= 'b1;
+      end
   end
 
 
@@ -120,7 +127,6 @@ module ysyx_24080020_ARBITER (
       ifu_or_mem   <= 1'b0;
       ifu_wait_cnt <= 3'b0;
       mem_wait_cnt <= 3'b0;
-      busy <= 'b0;
     end else if (ifu_wait_cnt == max_cnt) begin
       ifu_or_mem   <= 1'b0;
 
@@ -133,20 +139,14 @@ module ysyx_24080020_ARBITER (
       ifu_or_mem   <= 1'b0;
 
       ifu_wait_cnt <= 3'b0;
-      busy <= 'b1;
       // mem_wait_cnt <= mem_wait_cnt + 3'b1;
     end else if (arvalid_mem && !arvalid_ifu && !busy) begin
       ifu_or_mem   <= 1'b1;
 
       mem_wait_cnt <= 3'b0;
-      busy <= 'b1;
       // ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
-    end else if (!arvalid_ifu && !arvalid_mem) begin
-      // shake hands success and set arvalid low
-      ifu_or_mem <= ifu_or_mem;
     end else if(arvalid_ifu && arvalid_mem && !busy) begin
       // both high level
-      busy <= 'b1;
       ifu_or_mem <= ifu_or_mem;
       if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;
       else ifu_wait_cnt <= ifu_wait_cnt + 3'b1;

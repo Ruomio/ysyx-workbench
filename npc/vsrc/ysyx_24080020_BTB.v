@@ -1,5 +1,4 @@
 `include "ysyx_24080020_DEFINE.v"
-
 module ysyx_24080020_BTB(
     input clk,
     input rst,
@@ -79,7 +78,6 @@ module ysyx_24080020_BTB(
     reg [branch_way - 1 : 0]                 tag_index;
 
 
-    wire set_idle;
     wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
     reg [2:0] next_state;
 
@@ -116,8 +114,6 @@ module ysyx_24080020_BTB(
     assign shift_wtag = {{tag_complete_bits{1'b0}}, branch_tag_new} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
     assign tag_mask = {{tag_complete_bits{1'b0}}, ~{branch_tag_size{1'b0}}} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
 
-    // assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit) | (is_dnpc && !is_dnpc_next && !is_btype) | (fencei_mem && !fencei_mem_next);
-    assign set_idle = 'b0;
 
     assign n_dnpc = pc_exu + 32'd4;
 
@@ -155,57 +151,52 @@ module ysyx_24080020_BTB(
     end
 
     always @(*) begin
-        if(set_idle) begin
-            next_state = IDLE;
-        end
-        else begin
-            case(current_state)
-                IDLE: begin
-                    if(in_valid && in_ready) begin
-                        next_state = JUDGE;
-                    end else begin
-                        next_state = IDLE;
-                    end
-                end
-                JUDGE: begin
-                    if(fin_judge) begin
-
-                        if(has_hit) begin
-                            // avoid continuous hit
-                            if(!btb_hit) begin
-                                next_state = HIT;
-                            end
-                            else begin
-                                next_state = JUDGE;
-                            end
-                        end else begin
-                            next_state = MISS;
-                        end
-                    end
-                    else begin
-                        next_state = JUDGE;
-                    end
-                end
-                HIT: begin
-                    if(fin_hit)
-                        next_state = Done;
-                    else next_state = HIT;
-                end
-                MISS: begin
-                    if(fin_miss)
-                        next_state = Done;
-                    else next_state = MISS;
-                end
-                Done: begin
-                    if(fin_done)
-                        next_state = IDLE;
-                    else next_state = Done;
-                end
-                default: begin
+        case(current_state)
+            IDLE: begin
+                if(in_valid && in_ready) begin
+                    next_state = JUDGE;
+                end else begin
                     next_state = IDLE;
                 end
-            endcase
-        end
+            end
+            JUDGE: begin
+                if(fin_judge) begin
+
+                    if(has_hit) begin
+                        // avoid continuous hit
+                        if(!btb_hit) begin
+                            next_state = HIT;
+                        end
+                        else begin
+                            next_state = JUDGE;
+                        end
+                    end else begin
+                        next_state = MISS;
+                    end
+                end
+                else begin
+                    next_state = JUDGE;
+                end
+            end
+            HIT: begin
+                if(fin_hit)
+                    next_state = Done;
+                else next_state = HIT;
+            end
+            MISS: begin
+                if(fin_miss)
+                    next_state = Done;
+                else next_state = MISS;
+            end
+            Done: begin
+                if(fin_done)
+                    next_state = IDLE;
+                else next_state = Done;
+            end
+            default: begin
+                next_state = IDLE;
+            end
+        endcase
     end
 
     always @(posedge clk) begin
@@ -479,7 +470,6 @@ module ysyx_24080020_BTB(
             in_ready <= 'b0;
         end
         else if(in_valid && in_ready) begin
-            // in_valid <= 'b0;
             in_ready <= 'b0;
             pc_tmp <= pc;
 
@@ -487,9 +477,6 @@ module ysyx_24080020_BTB(
         else if(current_state == IDLE) begin
             in_ready <= 'b1;
         end
-        // else if(in_valid && !is_dnpc_tmp && (current_state == IDLE) && !out_valid) begin
-        //     in_ready <= 'b1;
-        // end
     end
 
     always @(posedge clk) begin
