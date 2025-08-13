@@ -408,7 +408,9 @@ module ysyx_24080020_BTB(
             end
             else if(current_state == MISS) begin
                 fin_miss <= 'b1;
-                predict_pc <= pc + 32'd4;
+                if(!out_special_pc) begin
+                    predict_pc <= pc + 32'd4;
+                end
             end
             else if(current_state == Done) begin
                 if(out_valid && out_ready) begin
