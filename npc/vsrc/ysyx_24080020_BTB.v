@@ -422,13 +422,7 @@ module ysyx_24080020_BTB(
                 if(next_inst) begin
                     fin_done <= 'b1;
                     pc <= predict_pc;
-                    if(next_special_pc) begin
-                        next_special_pc <= 'b0;
-                        out_special_pc <= 'b1;
-                    end
-                    else if(out_special_pc) begin
-                        out_special_pc <= 'b0;
-                    end
+                    next_special_pc <= 'b0;
                 end
                 else if(!out_en && !fin_done) begin
                     out_en <= 'b1;
@@ -441,6 +435,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             out_valid <= 'b0;
             next_inst <= 'b0;
+            out_special_pc <= 'b0;
         end
         else if(fin_done) begin
             next_inst <= 'b0;
@@ -449,6 +444,13 @@ module ysyx_24080020_BTB(
             out_valid <= 'b0;
             flush_pipeline <= 'b0;
             next_inst <= 'b1;
+
+            if(next_special_pc) begin
+                out_special_pc <= 'b1;
+            end
+            else if(out_special_pc) begin
+                out_special_pc <= 'b0;
+            end
         end
         else if(out_en && !fin_done) begin
             out_valid <= 'b1;
