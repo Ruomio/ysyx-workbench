@@ -383,6 +383,7 @@ module ysyx_24080020_BTB(
                 fin_done <= 'b0;
 
                 out_en <= 'b0;
+                out_valid <= 'b0;
 
             end
             else if(current_state == JUDGE) begin
@@ -418,7 +419,7 @@ module ysyx_24080020_BTB(
 
                     pc <= predict_pc;
                 end
-                else if(!out_en) begin
+                else if(!out_en && !fin_done) begin
                     out_en <= 'b1;
                     out_valid <= 'b1;
                 end
