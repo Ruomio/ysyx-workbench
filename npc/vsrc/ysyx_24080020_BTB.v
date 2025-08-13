@@ -84,6 +84,7 @@ module ysyx_24080020_BTB(
     reg [2:0] next_state;
 
     reg fin_judge, fin_hit, fin_miss, fin_done, out_en;
+    reg next_special_pc;
 
     reg in_valid;
     reg in_ready;
@@ -227,6 +228,7 @@ module ysyx_24080020_BTB(
             fin_done <= 'b0;
 
             out_en <= 'b0;
+            next_special_pc <= 'b0;
 
         end
         // flush btb
@@ -240,7 +242,7 @@ module ysyx_24080020_BTB(
 
             // update_en <= 'b1;
             // out_valid <= 'b0;
-            out_special_pc <= 'b1;
+            next_special_pc <= 'b1;
 
             flush_pipeline <= 'b1;
         end
@@ -258,7 +260,7 @@ module ysyx_24080020_BTB(
             predict_pc <= dnpc_tmp;
             correct_pc <= dnpc_tmp;
 
-            out_special_pc <= 'b1;
+            next_special_pc <= 'b1;
 
             btb_hit <= 'b0;
 
@@ -355,7 +357,7 @@ module ysyx_24080020_BTB(
 
                 // update_en <= 'b1;
                 // out_valid <= 'b0;
-                out_special_pc <= 'b1;
+                next_special_pc <= 'b1;
 
                 flush_pipeline <= 'b1;
 
@@ -408,7 +410,7 @@ module ysyx_24080020_BTB(
             end
             else if(current_state == MISS) begin
                 fin_miss <= 'b1;
-                if(!out_special_pc) begin
+                if(!next_special_pc) begin
                     predict_pc <= pc + 32'd4;
                 end
             end
@@ -417,9 +419,15 @@ module ysyx_24080020_BTB(
                     fin_done <= 'b1;
                     out_valid <= 'b0;
                     flush_pipeline <= 'b0;
-                    out_special_pc <= 'b0;
 
                     pc <= predict_pc;
+                    if(next_special_pc) begin
+                        next_special_pc <= 'b0;
+                        out_special_pc <= 'b1;
+                    end
+                    else if(out_special_pc) begin
+                        out_special_pc <= 'b0;
+                    end
                 end
                 else if(!out_en && !fin_done) begin
                     out_en <= 'b1;

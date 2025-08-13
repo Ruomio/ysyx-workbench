@@ -37,6 +37,7 @@ module ysyx_24080020_IFU (
     wire if_en_ready;
 
 
+    reg special_pc;
     reg wb_ifu_shake_hands;
     reg btype_n_jump;
 
@@ -69,6 +70,7 @@ module ysyx_24080020_IFU (
             inst_fin_ready <= 'b0;
         end
         else if(inst_fin_valid) begin
+            special_pc <= special_pc_i;
             if((raddr != correct_pc) && flush_pipeline) begin
                 inst_fin_ready <= 'b1;
 
