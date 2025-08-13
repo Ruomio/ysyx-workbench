@@ -83,7 +83,7 @@ module ysyx_24080020_BTB(
     wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
     reg [2:0] next_state;
 
-    reg fin_judge, fin_hit, fin_miss, fin_done, out_en;
+    reg fin_judge, fin_hit, fin_miss, fin_done, out_en, out_en_next;
     reg next_special_pc, next_inst;
 
     reg in_valid;
@@ -422,7 +422,9 @@ module ysyx_24080020_BTB(
                 if(next_inst) begin
                     fin_done <= 'b1;
                     pc <= predict_pc;
-                    next_special_pc <= 'b0;
+                    if(out_special_pc) begin
+                        next_special_pc <= 'b0;
+                    end
                 end
                 else if(!out_en && !fin_done) begin
                     out_en <= 'b1;
@@ -452,9 +454,33 @@ module ysyx_24080020_BTB(
                 out_special_pc <= 'b0;
             end
         end
-        else if(out_en && !fin_done) begin
+        else if(out_en && !out_en_next && !fin_done) begin
             out_valid <= 'b1;
 
+        end
+    end
+
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         out_special_pc <= 'b0;
+    //     end
+    //     else if(out_en) begin
+    //         out_en_next <= 'b1;
+    //     end
+    //     else begin
+    //         out_en_next <= 'b0;
+    //     end
+    // end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            out_en_next <= 'b0;
+        end
+        else if(out_en) begin
+            out_en_next <= 'b1;
+        end
+        else begin
+            out_en_next <= 'b0;
         end
     end
 
