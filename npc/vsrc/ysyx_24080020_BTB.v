@@ -427,7 +427,6 @@ module ysyx_24080020_BTB(
             if(out_valid && out_ready) begin
                 fin_done <= 'b1;
                 out_valid <= 'b0;
-                flush_pipeline <= 'b0;
 
                 pc <= predict_pc;
                 if(next_special_pc) begin
@@ -436,6 +435,9 @@ module ysyx_24080020_BTB(
                 end
                 else if(out_special_pc) begin
                     out_special_pc <= 'b0;
+                end
+                if(flush_pipeline) begin
+                    flush_pipeline <= 'b0;
                 end
             end
             else if(!out_en && !fin_done) begin
