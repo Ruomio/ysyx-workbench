@@ -115,7 +115,7 @@ module ysyx_24080020_BTB(
     assign shift_wtag = {{tag_complete_bits{1'b0}}, branch_tag_new} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
     assign tag_mask = {{tag_complete_bits{1'b0}}, ~{branch_tag_size{1'b0}}} << ({ {(branch_tag_ingroup_width-branch_way){1'b0}}, fifo_index[branch_index_new]} * branch_tag_width);
 
-    assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next) | (is_dnpc && !is_dnpc_next && !is_btype) | (fencei_mem && !fencei_mem_next);
+    assign set_idle = is_dnpc_tmp | (!is_dnpc && is_btype && !is_btype_next && btb_hit) | (is_dnpc && !is_dnpc_next && !is_btype) | (fencei_mem && !fencei_mem_next);
 
     assign n_dnpc = pc_exu + 32'd4;
 
