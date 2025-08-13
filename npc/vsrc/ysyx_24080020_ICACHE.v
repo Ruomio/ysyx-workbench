@@ -1010,6 +1010,8 @@ module ysyx_24080020_ICACHE(
         rdata_i <= inst_s4;
         rlast_i <= 'b1;
         rresp_i <= 'b0;
+        raddr <= raddr_s4;
+        special_pc_o <= special_pc_s4;
         // rdata_araddr <= rdata_araddr_s0;
         end
         else if(s3_s4_valid && s4_s3_ready) begin
@@ -1056,8 +1058,7 @@ module ysyx_24080020_ICACHE(
       rvalid_i <= 'b0;
       rresp_i <= 'b0;
       rlast_i <= 'b0;
-      raddr <= raddr_s4;
-      special_pc_o <= special_pc_s4;
+      special_pc_o <= 'b0;
     end
   end
 
