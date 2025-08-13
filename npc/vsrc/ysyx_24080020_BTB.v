@@ -239,7 +239,7 @@ module ysyx_24080020_BTB(
             correct_pc <= n_dnpc;
 
             // update_en <= 'b1;
-            // out_valid <= 'b0;
+            out_valid <= 'b0;
             out_special_pc <= 'b1;
 
             flush_pipeline <= 'b1;
@@ -252,7 +252,7 @@ module ysyx_24080020_BTB(
 
             // in_valid <= 'b1;
             // update_en <= 'b1;
-            // out_valid <= 'b0;
+            out_valid <= 'b0;
 
             pc <= dnpc_tmp;
             predict_pc <= dnpc_tmp;
@@ -354,7 +354,7 @@ module ysyx_24080020_BTB(
                 correct_pc <= n_dnpc;
 
                 // update_en <= 'b1;
-                // out_valid <= 'b0;
+                out_valid <= 'b0;
                 out_special_pc <= 'b1;
 
                 flush_pipeline <= 'b1;
@@ -616,7 +616,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             update_en <= 'b1;
         end
-        else if(update_en) begin
+        else if(update_en && in_valid) begin
             update_en <= 'b0;
         end
         else if(update_pc) begin
