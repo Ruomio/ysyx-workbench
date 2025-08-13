@@ -348,31 +348,20 @@ module ysyx_24080020_BTB(
             if(btb_hit) begin
                 btb_hit <= 'b0;
 
-                if((hit_pc != pc_exu)) begin
-                    // lack hit befor this hit, need update btb
-                    pc_new <= pc_exu;
-                    dnpc_tmp <= dnpc;
-                    is_dnpc_tmp <= 'b1;
-                    correct_pc <= dnpc;
+                // b_type but not jump, so need flush
+                predict_pc <= n_dnpc;
+                // pc <= n_dnpc;
+                correct_pc <= n_dnpc;
 
-                    flush_pipeline <= 'b1;
-                end
-                else begin
-                    // b_type but not jump, so need flush
-                    predict_pc <= n_dnpc;
-                    pc <= n_dnpc;
-                    correct_pc <= n_dnpc;
+                // update_en <= 'b1;
+                // out_valid <= 'b0;
+                out_special_pc <= 'b1;
 
-                    // update_en <= 'b1;
-                    // out_valid <= 'b0;
-                    out_special_pc <= 'b1;
+                flush_pipeline <= 'b1;
 
-                    flush_pipeline <= 'b1;
-
-                    `ifdef CONFIG_DPIC
-                        statistics_btb_err_hit();
-                    `endif
-                end
+                `ifdef CONFIG_DPIC
+                    statistics_btb_err_hit();
+                `endif
             end
             else begin
                 `ifdef CONFIG_DPIC
