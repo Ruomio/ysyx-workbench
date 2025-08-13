@@ -83,8 +83,8 @@ module ysyx_24080020_BTB(
     wire [`ysyx_24080020_WIDTH-1:0] n_dnpc;
     reg [2:0] next_state;
 
-    reg fin_judge, fin_hit, fin_miss, fin_done, out_en, out_en_next;
-    reg next_special_pc, next_inst;
+    reg fin_judge, fin_hit, fin_miss, fin_done, out_en;
+    reg next_special_pc;
 
     reg in_valid;
     reg in_ready;
@@ -419,68 +419,25 @@ module ysyx_24080020_BTB(
                 end
             end
             else if(current_state == Done) begin
-                if(next_inst) begin
+                if(out_valid && out_ready) begin
                     fin_done <= 'b1;
+                    out_valid <= 'b0;
+                    flush_pipeline <= 'b0;
+
                     pc <= predict_pc;
-                    if(out_special_pc) begin
+                    if(next_special_pc) begin
                         next_special_pc <= 'b0;
+                        out_special_pc <= 'b1;
+                    end
+                    else if(out_special_pc) begin
+                        out_special_pc <= 'b0;
                     end
                 end
                 else if(!out_en && !fin_done) begin
                     out_en <= 'b1;
+                    out_valid <= 'b1;
                 end
             end
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            out_valid <= 'b0;
-            next_inst <= 'b0;
-            out_special_pc <= 'b0;
-        end
-        else if(fin_done) begin
-            next_inst <= 'b0;
-        end
-        else if(out_valid && out_ready) begin
-            out_valid <= 'b0;
-            flush_pipeline <= 'b0;
-            next_inst <= 'b1;
-
-            if(next_special_pc) begin
-                out_special_pc <= 'b1;
-            end
-            else if(out_special_pc) begin
-                out_special_pc <= 'b0;
-            end
-        end
-        else if(out_en && !out_en_next && !fin_done) begin
-            out_valid <= 'b1;
-
-        end
-    end
-
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         out_special_pc <= 'b0;
-    //     end
-    //     else if(out_en) begin
-    //         out_en_next <= 'b1;
-    //     end
-    //     else begin
-    //         out_en_next <= 'b0;
-    //     end
-    // end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            out_en_next <= 'b0;
-        end
-        else if(out_en) begin
-            out_en_next <= 'b1;
-        end
-        else begin
-            out_en_next <= 'b0;
         end
     end
 
