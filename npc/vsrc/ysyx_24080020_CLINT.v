@@ -80,6 +80,7 @@ module ysyx_24080020_CLINT(
             rresp <= 2'b0;
             rvalid <= 'b0;
             rid <= 'b0;
+            rlast <= 'b0;
         end
         else if(ren && rvalid == 1'b0) begin
             rdata <= l_or_h == 1'b0 ? timel : timeh;
