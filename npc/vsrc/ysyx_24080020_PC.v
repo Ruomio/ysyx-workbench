@@ -37,7 +37,7 @@ module ysyx_24080020_PC (
         end
         else if(if_en_valid && if_en_ready) begin
             if_en_valid <= 'b0;
-            special_pc <= 'b0;
+            // special_pc <= 'b0;
         end
     end
 
