@@ -102,7 +102,7 @@ module ysyx_24080020_ICACHE(
   reg [cache_way - 1 : 0]                 cache_valid [0 : cache_num - 1];
 
   reg [cache_way - 1 : 0]                 fifo_index [0 : cache_num - 1];
-  reg [cache_way - 1 : 0]                 tag_index;
+  // reg [cache_way - 1 : 0]                 tag_index;
 
 
   assign cache_tag_tmp = araddr_tmp[31 : cache_num_bits+cache_size_bits];
@@ -346,21 +346,21 @@ module ysyx_24080020_ICACHE(
   end
 
 
-  always @(posedge clk) begin
-      if(!rst) begin
-          // current_state <= 'b0;
-          tag_index <= 'b0;
-          for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
-              cache_data[i]   <= 'b0;
-              cache_tag[i]    <= 'b0;
-              cache_valid[i]  <= 'b0;
-              fifo_index[i]   <= 'b0;
-          end
-      end
-      else begin
-          // current_state <= next_state;
-      end
-  end
+  // always @(posedge clk) begin
+  //     if(!rst) begin
+  //         // current_state <= 'b0;
+  //         // tag_index <= 'b0;
+  //         for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+  //             cache_data[i]   <= 'b0;
+  //             cache_tag[i]    <= 'b0;
+  //             cache_valid[i]  <= 'b0;
+  //             fifo_index[i]   <= 'b0;
+  //         end
+  //     end
+  //     else begin
+  //         // current_state <= next_state;
+  //     end
+  // end
 
 
 // s3: axi read and get inst data
@@ -495,6 +495,12 @@ module ysyx_24080020_ICACHE(
             s3_s4_valid <= 'b0;
             inst_s3 <= 'b0;
 
+            for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+                cache_data[i]   <= 'b0;
+                cache_tag[i]    <= 'b0;
+                // cache_valid[i]  <= 'b0;
+                fifo_index[i]   <= 'b0;
+            end
         end
         else if(s3_s4_valid && s4_s3_ready) begin
             s3_s4_valid <= 'b0;
@@ -522,7 +528,7 @@ module ysyx_24080020_ICACHE(
                   // araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
 
                   cache_tag[cache_index_s3] <= (cache_tag[cache_index_s3] & ~tag_mask) | shift_wtag;
-                  cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
+                  // cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
                 end
                 else begin
                   // update araddr to adapt burst transmit, it's for icache parameter
@@ -637,6 +643,10 @@ module ysyx_24080020_ICACHE(
     if(!rst) begin
       flush_cache <= 'b0;
       num_index <= 'b0;
+
+      for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+          cache_valid[i]  <= 'b0;
+      end
     end
     else if({{(32-cache_num){1'b0}}, num_index} == cache_num - 'b1) begin
       flush_cache <= 'b0;
@@ -648,6 +658,9 @@ module ysyx_24080020_ICACHE(
     else if(fencei_mem && !flush_cache) begin
       flush_cache <= 'b1;
       num_index <= 'b0;
+    end
+    else if(rvalid_o && rready_o && (rready_o == 'b00)) begin
+        cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
     end
   end
 
