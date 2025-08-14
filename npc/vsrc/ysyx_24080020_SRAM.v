@@ -44,7 +44,7 @@ module ysyx_24080020_SRAM(
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
 `endif
 
-    reg [`ysyx_24080020_WIDTH-1:0] paddr_r, paddr_w;
+    reg [`ysyx_24080020_WIDTH-1:0] paddr_r_base, paddr_r, paddr_w;
     reg [`ysyx_24080020_WIDTH-1:0] write_data;
     reg read_en, write_en, b_en;
     // reg read_before_write;
