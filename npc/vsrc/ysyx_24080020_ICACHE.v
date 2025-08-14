@@ -859,7 +859,7 @@ module ysyx_24080020_ICACHE(
         end
         else if(s2_s3_shake_hands) begin
             if(is_hit_s3 || has_hit_s3) begin
-                s3_s4_valid <= 'b1;
+                // s3_s4_valid <= 'b1;
                 s2_s3_shake_hands <= 'b0;
             end
             else begin
