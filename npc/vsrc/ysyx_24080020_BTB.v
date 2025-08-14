@@ -139,12 +139,6 @@ module ysyx_24080020_BTB(
         if (!rst) begin
             current_state <= 'b0;
 
-            for (integer i = 'b0; i < `ysyx_24080020_BRANCH_NUM; i = i + 'b1 ) begin
-                branch_data[i]   <= 'b0;
-                branch_tag[i]    <= 'b0;
-                branch_valid[i]  <= 'b0;
-                fifo_index[i]   <= 'b0;
-            end
         end else begin
             current_state <= next_state;
         end
@@ -208,6 +202,9 @@ module ysyx_24080020_BTB(
             hit_target_pc <= 'b0;
             btb_hit <= 'b0;
             flush_pipeline <= 'b0;
+            pc_new <= 'b0;
+            is_hit <= 'b0;
+            tag_index <= 'b0;
 
             correct_pc <= 'b0;
             dnpc_tmp <= 'b0;
@@ -221,7 +218,14 @@ module ysyx_24080020_BTB(
 
             out_en <= 'b0;
             next_special_pc <= 'b0;
+            out_special_pc <= 'b0;
 
+            for (integer i = 'b0; i < `ysyx_24080020_BRANCH_NUM; i = i + 'b1 ) begin
+                branch_data[i]   <= 'b0;
+                branch_tag[i]    <= 'b0;
+                branch_valid[i]  <= 'b0;
+                fifo_index[i]   <= 'b0;
+            end
         end
         // flush btb
         else if(fencei_mem || fencei_exu) begin
