@@ -280,7 +280,6 @@ module ysyx_24080020_MEM(
 
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
-            // mem_wb_valid <= 1'b0;
 
             waddr_mem <= 'b0;
             is_load_mem <= 'b0;
@@ -328,7 +327,6 @@ module ysyx_24080020_MEM(
 
                 pc_mem <= pc_exu;
 
-                // skip_ref_mem <= skip_ref_exu;
 
                 is_ebreak_lsu <= is_ebreak_exu;
 
@@ -351,7 +349,6 @@ module ysyx_24080020_MEM(
 
     always @(posedge clk) begin
         if(!rst) begin
-            // exu_mem_shake_hands <= 1'b0;
             mem_wb_valid <= 'b0;
 
         end
@@ -359,9 +356,7 @@ module ysyx_24080020_MEM(
             mem_wb_valid <= 1'b0;
         end
         else if(exu_mem_shake_hands) begin
-            // exu_mem_shake_hands <= 1'b0;
 
-            // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin
                 mem_wb_valid <= 1'b1;
             end
@@ -417,13 +412,11 @@ module ysyx_24080020_MEM(
             end
             `endif
 
-            // mren_mem <= 1'b0;
             // end
         end
         else if(awvalid_reg && awready) begin
             awvalid <= 1'b0;
 
-            // mwen_mem <= 1'b0;
         end
         else if(mwen_mem) begin
             awvalid <= 1'b1;
@@ -440,9 +433,6 @@ module ysyx_24080020_MEM(
                 ) begin
                 // skip uart keyboard etc.
                 skip_ref_mem <= 'b1;
-                // `ifdef CONFIG_DPIC
-                // npc_difftest_skip_ref();
-                // `endif
             end
             `endif
             `ifdef ysyx_24080020_NPC
@@ -451,9 +441,6 @@ module ysyx_24080020_MEM(
                 ) begin
                 // skip uart keyboard etc.
                 skip_ref_mem <= 'b1;
-                // `ifdef CONFIG_DPIC
-                // npc_difftest_skip_ref();
-                // `endif
             end
 
 
@@ -477,7 +464,6 @@ module ysyx_24080020_MEM(
         else if(rvalid && rlast) begin
             // finish all read
             rready <= 1'b1;
-            // finish_read <= 1'b1;
             if(rresp != 2'b0) begin
                 // rresp fault;
                 `ifdef CONFIG_DPIC
@@ -512,8 +498,6 @@ module ysyx_24080020_MEM(
             end
             else begin
                 // read error
-                // mrdata_mem <= 32'hffffffff;
-                // mem_wb_valid <= 1'b1;
                 `ifdef CONFIG_DPIC
                 $error("rresp not be 0b00, ERROR");
                 `endif
@@ -557,53 +541,6 @@ module ysyx_24080020_MEM(
 
     end
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         awvalid <= 1'b0;
-    //         awlen <= 'b0;
-    //         awid <= 'b0;
-    //     end
-    //     else if(awvalid_reg && awready) begin
-    //         awvalid <= 1'b0;
-
-    //         // mwen_mem <= 1'b0;
-    //     end
-    //     else if(mwen_mem) begin
-    //         awvalid <= 1'b1;
-    //         awid <= 4'b0;
-    //         awlen <= {{7{1'b0}}, get_awlen};
-
-    //         // mwen_mem <= 1'b0;
-    //         `ifdef ysyxSoCFull
-    //         if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
-    //             || awaddr >= 32'h10011000 && awaddr < 32'h10011008
-    //             || awaddr >= 32'h21000000 && awaddr < 32'h21200000
-    //             || awaddr >= 32'h02000000 && awaddr < 32'h02000008
-    //             || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
-    //             ) begin
-    //             // skip uart keyboard etc.
-    //             skip_ref_mem <= 'b1;
-    //             // `ifdef CONFIG_DPIC
-    //             // npc_difftest_skip_ref();
-    //             // `endif
-    //         end
-    //         `endif
-    //         `ifdef ysyx_24080020_NPC
-    //         if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
-    //             || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
-    //             ) begin
-    //             // skip uart keyboard etc.
-    //             skip_ref_mem <= 'b1;
-    //             // `ifdef CONFIG_DPIC
-    //             // npc_difftest_skip_ref();
-    //             // `endif
-    //         end
-
-
-    //         `endif
-
-    //     end
-    // end
 
     always @(posedge clk) begin
         if(!rst) begin
