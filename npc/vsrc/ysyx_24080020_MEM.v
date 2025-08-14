@@ -275,7 +275,6 @@ module ysyx_24080020_MEM(
 
             mem_wb_valid <= 'b0;
 
-            skip_ref_mem <= 'b0;
 
             is_ebreak_lsu <= 'b0;
 
@@ -326,7 +325,7 @@ module ysyx_24080020_MEM(
 
                 pc_mem <= pc_exu;
 
-                skip_ref_mem <= skip_ref_exu;
+                // skip_ref_mem <= skip_ref_exu;
 
                 is_ebreak_lsu <= is_ebreak_exu;
 
@@ -361,9 +360,6 @@ module ysyx_24080020_MEM(
                 mem_wb_valid <= 1'b1;
             end
         end
-        else begin
-          fencei_mem <= 'b0;
-        end
     end
 
 
@@ -375,6 +371,12 @@ module ysyx_24080020_MEM(
             arlen <= 'b0;
             arburst <= 'b0;
             arid <= 'b0;
+
+            awvalid <= 1'b0;
+            awlen <= 'b0;
+            awid <= 'b0;
+
+            skip_ref_mem <= 'b0;
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
@@ -405,6 +407,49 @@ module ysyx_24080020_MEM(
 
             // mren_mem <= 1'b0;
             // end
+        end
+        else if(awvalid_reg && awready) begin
+            awvalid <= 1'b0;
+
+            // mwen_mem <= 1'b0;
+        end
+        else if(mwen_mem) begin
+            awvalid <= 1'b1;
+            awid <= 4'b0;
+            awlen <= {{7{1'b0}}, get_awlen};
+
+            // mwen_mem <= 1'b0;
+            `ifdef ysyxSoCFull
+            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
+                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
+                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
+                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
+                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
+            end
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
+                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+                // `ifdef CONFIG_DPIC
+                // npc_difftest_skip_ref();
+                // `endif
+            end
+
+
+            `endif
+
+        end
+        else if(exu_mem_valid && mem_exu_ready) begin
+            skip_ref_mem <= skip_ref_exu;
         end
     end
 
@@ -498,55 +543,53 @@ module ysyx_24080020_MEM(
 
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            awvalid <= 1'b0;
-            awlen <= 'b0;
-        end
-        else if(awvalid_reg && awready) begin
-            awvalid <= 1'b0;
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         awvalid <= 1'b0;
+    //         awlen <= 'b0;
+    //         awid <= 'b0;
+    //     end
+    //     else if(awvalid_reg && awready) begin
+    //         awvalid <= 1'b0;
 
-            // mwen_mem <= 1'b0;
-        end
-        else if(mwen_mem) begin
-            awvalid <= 1'b1;
-            awid <= 4'b0;
-            awlen <= {{7{1'b0}}, get_awlen};
+    //         // mwen_mem <= 1'b0;
+    //     end
+    //     else if(mwen_mem) begin
+    //         awvalid <= 1'b1;
+    //         awid <= 4'b0;
+    //         awlen <= {{7{1'b0}}, get_awlen};
 
-            // mwen_mem <= 1'b0;
-            `ifdef ysyxSoCFull
-            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
-                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
-                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
-                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
-                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-                // `ifdef CONFIG_DPIC
-                // npc_difftest_skip_ref();
-                // `endif
-            end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
-                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-                // `ifdef CONFIG_DPIC
-                // npc_difftest_skip_ref();
-                // `endif
-            end
+    //         // mwen_mem <= 1'b0;
+    //         `ifdef ysyxSoCFull
+    //         if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
+    //             || awaddr >= 32'h10011000 && awaddr < 32'h10011008
+    //             || awaddr >= 32'h21000000 && awaddr < 32'h21200000
+    //             || awaddr >= 32'h02000000 && awaddr < 32'h02000008
+    //             || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
+    //             ) begin
+    //             // skip uart keyboard etc.
+    //             skip_ref_mem <= 'b1;
+    //             // `ifdef CONFIG_DPIC
+    //             // npc_difftest_skip_ref();
+    //             // `endif
+    //         end
+    //         `endif
+    //         `ifdef ysyx_24080020_NPC
+    //         if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
+    //             || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
+    //             ) begin
+    //             // skip uart keyboard etc.
+    //             skip_ref_mem <= 'b1;
+    //             // `ifdef CONFIG_DPIC
+    //             // npc_difftest_skip_ref();
+    //             // `endif
+    //         end
 
 
-            `endif
+    //         `endif
 
-        end
-        else begin
-            awvalid <= awvalid;
-        end
-    end
+    //     end
+    // end
 
     always @(posedge clk) begin
         if(!rst) begin
