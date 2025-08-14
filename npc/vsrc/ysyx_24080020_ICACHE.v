@@ -51,7 +51,7 @@ module ysyx_24080020_ICACHE(
 `ifdef USE_ICACHE
 `ifdef ICACHE_PIPELINE
 
-  reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
+  reg fin_r, fin_ar, all_fin, fin_judge, is_hit, update_fifo_index;
   // reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
 
@@ -223,6 +223,7 @@ module ysyx_24080020_ICACHE(
 
       is_hit_s1 <= 'b0;
       hit_tag_s1 <= 'b0;
+      s0_s1_shake_hands <= 'b0;
     end
     else if(s0_s1_valid && s1_s0_ready) begin
         s1_s0_ready <= 'b0;
@@ -309,6 +310,9 @@ module ysyx_24080020_ICACHE(
 
       is_hit_s2 <= 'b0;
       hit_tag_s2 <= 'b0;
+      cache_index_s2 <= 'b0;
+      cache_offset_s2 <= 'b0;
+      cache_tag_s2 <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
@@ -345,22 +349,6 @@ module ysyx_24080020_ICACHE(
     end
   end
 
-
-  // always @(posedge clk) begin
-  //     if(!rst) begin
-  //         // current_state <= 'b0;
-  //         // tag_index <= 'b0;
-  //         for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
-  //             cache_data[i]   <= 'b0;
-  //             cache_tag[i]    <= 'b0;
-  //             cache_valid[i]  <= 'b0;
-  //             fifo_index[i]   <= 'b0;
-  //         end
-  //     end
-  //     else begin
-  //         // current_state <= next_state;
-  //     end
-  // end
 
 
 // s3: axi read and get inst data
@@ -426,6 +414,12 @@ module ysyx_24080020_ICACHE(
             hit_tag_s3 <= 'b0;
 
             inst_s3 <= 'b0;
+            arvalid_o <= 'b0;
+            araddr_o <= 'b0;
+            arsize_o <= 'b0;
+            arid_o <= 'b0;
+            arlen_o <= 'b0;
+            arburst_o <= 'b0;
         end
         else if(arvalid_o && arready_o) begin
             arvalid_o <= 'b0;
@@ -589,6 +583,9 @@ module ysyx_24080020_ICACHE(
             s4_s3_ready <= 'b1;
             raddr_s4 <= 'b0;
             special_pc_o <= 'b0;
+            s3_s4_shake_hands <= 'b0;
+            special_pc_s4 <= 'b0;
+            inst_s4 <= 'b0;
         end
         else if(s3_s4_shake_hands) begin
             s3_s4_shake_hands <= 'b0;
@@ -615,7 +612,6 @@ module ysyx_24080020_ICACHE(
   // AR
   always @(posedge clk) begin
     if(!rst)begin
-      r_en <= 'b0;
       arready_i <= 'b1;
     end
     else if(arvalid_i && arready_i) begin
