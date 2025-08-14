@@ -280,7 +280,7 @@ module ysyx_24080020_MEM(
 
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
-            mem_wb_valid <= 1'b0;
+            // mem_wb_valid <= 1'b0;
 
             waddr_mem <= 'b0;
             is_load_mem <= 'b0;
@@ -288,6 +288,9 @@ module ysyx_24080020_MEM(
 
             next_inst <= 'b1;
 
+        end
+        else if(exu_mem_shake_hands) begin
+            exu_mem_shake_hands <= 1'b0;
         end
         else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
@@ -348,17 +351,26 @@ module ysyx_24080020_MEM(
 
     always @(posedge clk) begin
         if(!rst) begin
-            exu_mem_shake_hands <= 1'b0;
+            // exu_mem_shake_hands <= 1'b0;
             mem_wb_valid <= 'b0;
 
         end
+        else if(mem_wb_valid && wb_mem_ready && state) begin
+            mem_wb_valid <= 1'b0;
+        end
         else if(exu_mem_shake_hands) begin
-            exu_mem_shake_hands <= 1'b0;
+            // exu_mem_shake_hands <= 1'b0;
 
             // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin
                 mem_wb_valid <= 1'b1;
             end
+        end
+        else if(finish_read) begin
+            mem_wb_valid <= 1'b1;
+        end
+        else if(bvalid && bready) begin
+            mem_wb_valid <= 1'b1;
         end
     end
 
@@ -458,7 +470,7 @@ module ysyx_24080020_MEM(
             rready <= 1'b0;
             mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
         end
         else if(rvalid && rready) begin
             rready <= 1'b0;
@@ -502,9 +514,9 @@ module ysyx_24080020_MEM(
             else begin
                 // read error
                 mrdata_mem <= 32'hffffffff;
-                mem_wb_valid <= 1'b1;
+                // mem_wb_valid <= 1'b1;
                 `ifdef CONFIG_DPIC
-                $display("rresp not be 0b00, ERROR");
+                $error("rresp not be 0b00, ERROR");
                 `endif
             end
         end
@@ -514,7 +526,7 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             finish_read <= 1'b0;
             mrdata_mem <= 'b0;
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
         end
         else if(finish_read) begin
             // finish all read
@@ -537,7 +549,7 @@ module ysyx_24080020_MEM(
                 endcase
             end
 
-            mem_wb_valid <= 1'b1;
+            // mem_wb_valid <= 1'b1;
             finish_read <= 1'b0;
         end
 
@@ -648,11 +660,11 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             bready <= 1'b0;
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
         end
         else if(bvalid && bready) begin
             bready <= 'b0;
-            mem_wb_valid <= 1'b1;
+            // mem_wb_valid <= 1'b1;
         end
         else if(bvalid) begin
             bready <= 1'b1;
