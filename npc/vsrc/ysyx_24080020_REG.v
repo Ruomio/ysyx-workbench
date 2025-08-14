@@ -112,7 +112,6 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             wb_mem_ready <= 'b0;
-            // wen_wb <= 'b0;
             waddr_wb <= 'b0;
             mrdata_wb <= 'b0;
             wcsren_wb <= 'b0;
@@ -150,7 +149,6 @@ module ysyx_24080020_REG
             wb_mem_ready <= 'b0;
 
             // shake hands successfully
-            // wen_wb <= wen_mem;
             waddr_wb <= waddr_mem;
             mrdata_wb <= mrdata_mem;
 
