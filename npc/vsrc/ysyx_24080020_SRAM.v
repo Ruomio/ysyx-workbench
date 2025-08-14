@@ -44,7 +44,7 @@ module ysyx_24080020_SRAM(
     import "DPI-C" function void write_memory(input int addr, input int len, input int data);
 `endif
 
-    reg [`ysyx_24080020_WIDTH-1:0] paddr_r, paddr_w;
+    reg [`ysyx_24080020_WIDTH-1:0] paddr_r_base, paddr_r, paddr_w;
     reg [`ysyx_24080020_WIDTH-1:0] write_data;
     reg read_en, write_en, b_en;
     // reg read_before_write;
@@ -69,7 +69,10 @@ module ysyx_24080020_SRAM(
             arready <= 1'b0;
             read_en <= 1'b0;
             ar_cnt <= 6'b0;
-            paddr_r <= 'b0;
+            paddr_r_base <= 'b0;
+        end
+        else if(rready && rvalid && rlast) begin
+            read_en <= 1'b0;
         end
         else if(arvalid && arready) begin
             arready <= 'b0;
@@ -79,7 +82,7 @@ module ysyx_24080020_SRAM(
                 ar_cnt <= ar_cnt + 6'b1;
             end
             else begin
-                paddr_r <= {araddr[31:2],2'b0};
+                paddr_r_base <= {araddr[31:2],2'b0};
                 read_en <= 1'b1;
                 arready <= 1'b1;
 
@@ -97,6 +100,9 @@ module ysyx_24080020_SRAM(
             arlen_cnt <= 'b0;
             paddr_r <= 'b0;
         end
+        else if(arvalid && arready) begin
+            paddr_r <= paddr_r_base;
+        end
         else if(read_en) begin
             if(r_cnt < lfsr) begin
                 r_cnt <= r_cnt + 6'b1;
@@ -106,7 +112,6 @@ module ysyx_24080020_SRAM(
                 rresp <= 2'b0;
                 if(rlast) begin
                     r_cnt <= 'b0;
-                    read_en <= 1'b0;
                     arlen_cnt <= 'b0;
                     rlast <= 'b0;
                 end
@@ -165,6 +170,11 @@ module ysyx_24080020_SRAM(
             wready <= 1'b0;
             write_en <= 1'b0;
             w_rdata <= 'b0;
+
+            b_en <= 1'b0;
+        end
+        else if(b_en && b_cnt >= lfsr) begin
+            b_en <= 'b0;
         end
         else if(wvalid && wready) begin
             wready <= 'b0;
@@ -203,7 +213,6 @@ module ysyx_24080020_SRAM(
         if(!rst) begin
             bvalid <= 1'b0;
             bresp <= 2'b0;
-            b_en <= 1'b0;
             w_cnt <= 6'b0;
         end
         else if(b_en) begin
@@ -214,7 +223,6 @@ module ysyx_24080020_SRAM(
                 bvalid <= 1'b1;
                 bresp <= 2'b0;
 
-                b_en <= 1'b0;
                 b_cnt <= 6'b0;
             end
         end
