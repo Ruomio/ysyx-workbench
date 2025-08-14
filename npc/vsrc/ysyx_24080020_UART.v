@@ -107,6 +107,7 @@ module ysyx_24080020_UART(
         end
         else if(wvalid && wready) begin
             $write("%c", wdata[7:0]);
+            if(wfin) wfin <= 'b0;
         end
         else if(wvalid) begin
             wready <= 1'b1;
@@ -127,7 +128,7 @@ module ysyx_24080020_UART(
             bresp <= 2'b0;
             bvalid <= 1'b1;
 
-            wfin <= 1'b0;
+            // wfin <= 1'b0;
         end
         else if(bready) begin
             bresp <= 2'b0;
