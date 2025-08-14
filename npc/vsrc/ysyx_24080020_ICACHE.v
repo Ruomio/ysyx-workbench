@@ -998,10 +998,10 @@ module ysyx_24080020_ICACHE(
     always @(posedge clk) begin
         if(!rst) begin
             // rdata_araddr_s0 <= 'b0;
-            rvalid_i <= 'b0;
+            // rvalid_i <= 'b0;
             rdata_i <= 'b0;
-            rlast_i <= 'b0;
-            rresp_i <= 'b0;
+            // rlast_i <= 'b0;
+            // rresp_i <= 'b0;
             raddr <= 'b0;
             s4_s3_ready <= 'b1;
             raddr_s4 <= 'b0;
@@ -1010,10 +1010,10 @@ module ysyx_24080020_ICACHE(
         else if(s3_s4_shake_hands) begin
             s3_s4_shake_hands <= 'b0;
 
-            rvalid_i <= 'b1;
+            // rvalid_i <= 'b1;
+            // rlast_i <= 'b1;
+            // rresp_i <= 'b0;
             rdata_i <= inst_s4;
-            rlast_i <= 'b1;
-            rresp_i <= 'b0;
             raddr <= raddr_s4;
             special_pc_o <= special_pc_s4;
             // rdata_araddr <= rdata_araddr_s0;
@@ -1055,26 +1055,21 @@ module ysyx_24080020_ICACHE(
       rresp_i <= 'b0;
       rid_i <= 'b0;
       // rdata_araddr <= 'b0;
-      special_pc_o <= 'b0;
-      raddr <= 'b0;
+      // special_pc_o <= 'b0;
+      // raddr <= 'b0;
     end
     else if(rready_i && rvalid_i) begin
       rvalid_i <= 'b0;
       rresp_i <= 'b0;
       rlast_i <= 'b0;
-      // raddr <= raddr_s4;
-      // special_pc_o <= special_pc_s4;
-      // special_pc_o <= 'b0;
     end
     else if(s3_s4_shake_hands) begin
-        s3_s4_shake_hands <= 'b0;
-
         rvalid_i <= 'b1;
-        rdata_i <= inst_s4;
         rlast_i <= 'b1;
         rresp_i <= 'b0;
-        raddr <= raddr_s4;
-        special_pc_o <= special_pc_s4;
+        // rdata_i <= inst_s4;
+        // raddr <= raddr_s4;
+        // special_pc_o <= special_pc_s4;
         // rdata_araddr <= rdata_araddr_s0;
     end
   end
