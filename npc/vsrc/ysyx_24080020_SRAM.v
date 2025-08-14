@@ -171,6 +171,11 @@ module ysyx_24080020_SRAM(
             wready <= 1'b0;
             write_en <= 1'b0;
             w_rdata <= 'b0;
+
+            b_en <= 1'b0;
+        end
+        else if(b_en && b_cnt >= lfsr) begin
+            b_en <= 'b0;
         end
         else if(wvalid && wready) begin
             wready <= 'b0;
@@ -209,7 +214,7 @@ module ysyx_24080020_SRAM(
         if(!rst) begin
             bvalid <= 1'b0;
             bresp <= 2'b0;
-            b_en <= 1'b0;
+            // b_en <= 1'b0;
             w_cnt <= 6'b0;
         end
         else if(b_en) begin
@@ -220,7 +225,7 @@ module ysyx_24080020_SRAM(
                 bvalid <= 1'b1;
                 bresp <= 2'b0;
 
-                b_en <= 1'b0;
+                // b_en <= 1'b0;
                 b_cnt <= 6'b0;
             end
         end
