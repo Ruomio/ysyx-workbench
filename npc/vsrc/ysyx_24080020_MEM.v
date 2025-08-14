@@ -468,7 +468,6 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             rready <= 1'b0;
-            mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
             // mem_wb_valid <= 'b0;
         end
@@ -513,7 +512,7 @@ module ysyx_24080020_MEM(
             end
             else begin
                 // read error
-                mrdata_mem <= 32'hffffffff;
+                // mrdata_mem <= 32'hffffffff;
                 // mem_wb_valid <= 1'b1;
                 `ifdef CONFIG_DPIC
                 $error("rresp not be 0b00, ERROR");
