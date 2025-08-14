@@ -51,7 +51,7 @@ module ysyx_24080020_ICACHE(
 `ifdef USE_ICACHE
 `ifdef ICACHE_PIPELINE
 
-  reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
+  reg fin_r, fin_ar, all_fin, fin_judge, is_hit, update_fifo_index;
   // reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
 
@@ -102,7 +102,7 @@ module ysyx_24080020_ICACHE(
   reg [cache_way - 1 : 0]                 cache_valid [0 : cache_num - 1];
 
   reg [cache_way - 1 : 0]                 fifo_index [0 : cache_num - 1];
-  reg [cache_way - 1 : 0]                 tag_index;
+  // reg [cache_way - 1 : 0]                 tag_index;
 
 
   assign cache_tag_tmp = araddr_tmp[31 : cache_num_bits+cache_size_bits];
@@ -223,6 +223,7 @@ module ysyx_24080020_ICACHE(
 
       is_hit_s1 <= 'b0;
       hit_tag_s1 <= 'b0;
+      s0_s1_shake_hands <= 'b0;
     end
     else if(s0_s1_valid && s1_s0_ready) begin
         s1_s0_ready <= 'b0;
@@ -309,6 +310,9 @@ module ysyx_24080020_ICACHE(
 
       is_hit_s2 <= 'b0;
       hit_tag_s2 <= 'b0;
+      cache_index_s2 <= 'b0;
+      cache_offset_s2 <= 'b0;
+      cache_tag_s2 <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
@@ -346,29 +350,13 @@ module ysyx_24080020_ICACHE(
   end
 
 
-  always @(posedge clk) begin
-      if(!rst) begin
-          // current_state <= 'b0;
-          tag_index <= 'b0;
-          for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
-              cache_data[i]   <= 'b0;
-              cache_tag[i]    <= 'b0;
-              cache_valid[i]  <= 'b0;
-              fifo_index[i]   <= 'b0;
-          end
-      end
-      else begin
-          // current_state <= next_state;
-      end
-  end
-
 
 // s3: axi read and get inst data
     wire [cache_data_ingroup_width-1 : 0] shift_rdata_s3;
     wire [cache_data_ingroup_width-1 : 0] shift_rdata_s3_prev;
     reg [31:0] inst_s3;
 
-    reg [31:0] araddr_s3;
+    reg [31:0] araddr_s3, araddr_s3_tmp;
     reg [7:0] arlen_s3;
     reg [3:0] arid_s3;
     reg [1:0] arburst_s3;
@@ -409,7 +397,7 @@ module ysyx_24080020_ICACHE(
             s3_s2_ready <= 'b1;
             s2_s3_shake_hands <= 'b0;
 
-            araddr_s3 <= 'b0;
+            // araddr_s3 <= 'b0;
             arlen_s3 <= 'b0;
             arid_s3 <= 'b0;
             arburst_s3 <= 'b0;
@@ -426,6 +414,12 @@ module ysyx_24080020_ICACHE(
             hit_tag_s3 <= 'b0;
 
             inst_s3 <= 'b0;
+            arvalid_o <= 'b0;
+            araddr_o <= 'b0;
+            arsize_o <= 'b0;
+            arid_o <= 'b0;
+            arlen_o <= 'b0;
+            arburst_o <= 'b0;
         end
         else if(arvalid_o && arready_o) begin
             arvalid_o <= 'b0;
@@ -442,21 +436,21 @@ module ysyx_24080020_ICACHE(
                 arvalid_o <= 'b1;
 
                 // burst trans in sdram
-                araddr_o <= araddr_s3 & ~(cache_size - 32'b1);
+                araddr_o <= araddr_s3_base & ~(cache_size - 32'b1);
 
                 arsize_o <= 'b10;
                 arid_o <= 'b0;
                 arlen_o <= (cache_size >> 2) - 1;
                 arburst_o <= 'b01;
 
-                araddr_s3 <= araddr_s3 & ~(cache_size - 32'b1) ;
+                // araddr_s3 <= araddr_s3 & ~(cache_size - 32'b1) ;
             end
         end
         else if(s2_s3_valid && s3_s2_ready) begin
             s3_s2_ready <= 'b0;
             s2_s3_shake_hands <= 'b1;
 
-            araddr_s3 <= araddr_s2;
+            // araddr_s3 <= araddr_s2 & ~(cache_size - 32'b1);
             arlen_s3 <= arlen_s2;
             arid_s3 <= arid_s2;
             arburst_s3 <= arburst_s2;
@@ -484,6 +478,10 @@ module ysyx_24080020_ICACHE(
         else if(s3_s4_valid && s4_s3_ready) begin
             s3_s2_ready <= 'b1;
         end
+
+        if(fin_r) begin
+            inst_s3 <= shift_rdata_s3[31:0];
+        end
     end
 
     always @(posedge clk) begin
@@ -493,8 +491,14 @@ module ysyx_24080020_ICACHE(
             araddr_s3 <= 'b0;
 
             s3_s4_valid <= 'b0;
-            inst_s3 <= 'b0;
+            // inst_s3 <= 'b0;
 
+            for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+                cache_data[i]   <= 'b0;
+                cache_tag[i]    <= 'b0;
+                // cache_valid[i]  <= 'b0;
+                fifo_index[i]   <= 'b0;
+            end
         end
         else if(s3_s4_valid && s4_s3_ready) begin
             s3_s4_valid <= 'b0;
@@ -504,7 +508,7 @@ module ysyx_24080020_ICACHE(
         end
         else if(fin_r) begin
             fin_r <= 'b0;
-            inst_s3 <= shift_rdata_s3[31:0];
+            // inst_s3 <= shift_rdata_s3[31:0];
             fifo_index[cache_index_s3] <= (fifo_index[cache_index_s3] + 'b1) % cache_way;
 
             s3_s4_valid <= 'b1;
@@ -522,7 +526,7 @@ module ysyx_24080020_ICACHE(
                   // araddr_s3 <= {araddr_s3_base[31 : 2], 2'b0};
 
                   cache_tag[cache_index_s3] <= (cache_tag[cache_index_s3] & ~tag_mask) | shift_wtag;
-                  cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
+                  // cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
                 end
                 else begin
                   // update araddr to adapt burst transmit, it's for icache parameter
@@ -545,6 +549,9 @@ module ysyx_24080020_ICACHE(
             else if((cache_index_s1 == cache_index_s3) && (hit_tag_s1 == fifo_index[cache_index_s3]) && is_hit_s1) begin
                 fifo_index[cache_index_s3] = (fifo_index[cache_index_s3] + 'b1) % cache_way;
             end
+        end
+        else if(s2_s3_valid && s3_s2_ready) begin
+            araddr_s3 <= araddr_s2 & ~(cache_size - 32'b1);
         end
     end
 
@@ -576,6 +583,9 @@ module ysyx_24080020_ICACHE(
             s4_s3_ready <= 'b1;
             raddr_s4 <= 'b0;
             special_pc_o <= 'b0;
+            s3_s4_shake_hands <= 'b0;
+            special_pc_s4 <= 'b0;
+            inst_s4 <= 'b0;
         end
         else if(s3_s4_shake_hands) begin
             s3_s4_shake_hands <= 'b0;
@@ -602,7 +612,6 @@ module ysyx_24080020_ICACHE(
   // AR
   always @(posedge clk) begin
     if(!rst)begin
-      r_en <= 'b0;
       arready_i <= 'b1;
     end
     else if(arvalid_i && arready_i) begin
@@ -637,6 +646,10 @@ module ysyx_24080020_ICACHE(
     if(!rst) begin
       flush_cache <= 'b0;
       num_index <= 'b0;
+
+      for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
+          cache_valid[i]  <= 'b0;
+      end
     end
     else if({{(32-cache_num){1'b0}}, num_index} == cache_num - 'b1) begin
       flush_cache <= 'b0;
@@ -648,6 +661,9 @@ module ysyx_24080020_ICACHE(
     else if(fencei_mem && !flush_cache) begin
       flush_cache <= 'b1;
       num_index <= 'b0;
+    end
+    else if(rvalid_o && rready_o && (rready_o == 'b00)) begin
+        cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
     end
   end
 
