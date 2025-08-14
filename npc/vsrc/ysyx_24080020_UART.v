@@ -44,31 +44,34 @@ module ysyx_24080020_UART(
     always @(posedge clk) begin
         if(!rst) begin
             arready <= 1'b0;
+            ren <= 1'b0;
         end
-        else begin
-            if(arvalid) begin
-                `ifdef CONFIG_DPIC
-                $display("UART should not be read, NOW!");
-                `endif
-                arready <= 1'b1;
-                ren <= 1'b1;
-            end
-            else begin
-                arready <= 1'b0;
-            end
+        else if(ren) begin
+            ren <= 1'b0;
+        end
+        else if(arvalid && arready) begin
+            arready <= 1'b0;
+        end
+        else if(arvalid) begin
+            `ifdef CONFIG_DPIC
+            $display("UART should not be read, NOW!");
+            `endif
+            arready <= 1'b1;
+            ren <= 1'b1;
         end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
-            ren <= 1'b0;
+            rdata <= 32'b0;
+            rresp <= 2'd1;
+            rvalid <= 1'b1;
         end
         else if(ren) begin
             rdata <= 32'b0;
             rresp <= 2'd1;
             rvalid <= 1'b1;
 
-            ren <= 1'b0;
         end
         else if(rready) begin
             rvalid <= 1'b0;
@@ -104,6 +107,7 @@ module ysyx_24080020_UART(
         end
         else if(wvalid && wready) begin
             $write("%c", wdata[7:0]);
+            if(wfin) wfin <= 'b0;
         end
         else if(wvalid) begin
             wready <= 1'b1;
@@ -124,7 +128,7 @@ module ysyx_24080020_UART(
             bresp <= 2'b0;
             bvalid <= 1'b1;
 
-            wfin <= 1'b0;
+            // wfin <= 1'b0;
         end
         else if(bready) begin
             bresp <= 2'b0;
