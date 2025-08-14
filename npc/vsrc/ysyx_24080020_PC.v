@@ -24,7 +24,6 @@ module ysyx_24080020_PC (
             in_ready <= 'b0;
             special_pc <= in_special_pc;
             addr <= in_pc;
-            if_en_valid <= 'b1;
         end
         else if(in_valid && !if_en_valid) begin
             in_ready <= 'b1;
@@ -37,7 +36,9 @@ module ysyx_24080020_PC (
         end
         else if(if_en_valid && if_en_ready) begin
             if_en_valid <= 'b0;
-            special_pc <= 'b0;
+        end
+        else if(in_valid && in_ready) begin
+            if_en_valid <= 'b1;
         end
     end
 
