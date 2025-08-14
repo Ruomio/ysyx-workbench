@@ -478,7 +478,7 @@ module ysyx_24080020_ICACHE(
 `ifdef ICACHE_PIPELINE
 
   reg fin_r, fin_ar, r_en, all_fin, fin_judge, is_hit, update_fifo_index;
-  reg [2:0] current_state, next_state;
+  // reg [2:0] current_state, next_state;
   reg [31:0] rdata_tmp, araddr_tmp;
 
   reg flush_cache;
@@ -774,7 +774,7 @@ module ysyx_24080020_ICACHE(
 
   always @(posedge clk) begin
       if(!rst) begin
-          current_state <= 'b0;
+          // current_state <= 'b0;
           tag_index <= 'b0;
           for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
               cache_data[i]   <= 'b0;
@@ -784,7 +784,7 @@ module ysyx_24080020_ICACHE(
           end
       end
       else begin
-          current_state <= next_state;
+          // current_state <= next_state;
       end
   end
 
