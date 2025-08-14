@@ -100,6 +100,9 @@ module ysyx_24080020_SRAM(
             arlen_cnt <= 'b0;
             paddr_r <= 'b0;
         end
+        else if(arvalid && arready) begin
+            paddr_r <= paddr_r_base;
+        end
         else if(read_en) begin
             if(r_cnt < lfsr) begin
                 r_cnt <= r_cnt + 6'b1;
@@ -135,9 +138,6 @@ module ysyx_24080020_SRAM(
                     rlast <= 1'b1;
                 end
             end
-        end
-        else if(arvalid && arready) begin
-            paddr_r <= paddr_r_base;
         end
     end
 
