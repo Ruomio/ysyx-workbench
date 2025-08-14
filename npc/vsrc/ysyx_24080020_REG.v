@@ -112,7 +112,6 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             wb_mem_ready <= 'b0;
-            wen_wb <= 'b0;
             waddr_wb <= 'b0;
             mrdata_wb <= 'b0;
             wcsren_wb <= 'b0;
@@ -150,7 +149,6 @@ module ysyx_24080020_REG
             wb_mem_ready <= 'b0;
 
             // shake hands successfully
-            wen_wb <= wen_mem;
             waddr_wb <= waddr_mem;
             mrdata_wb <= mrdata_mem;
 
@@ -174,10 +172,6 @@ module ysyx_24080020_REG
             cnt <= 'b1;
 
 
-            // wb_ifu_valid <= 1'b1;
-            // if(!wen_mem) begin
-            //     wb_ifu_valid <= 1'b1;
-            // end
 
             `ifdef CONFIG_DPIC
             if(is_ebreak_lsu) ebreak();
@@ -185,11 +179,6 @@ module ysyx_24080020_REG
         end
         else if(mem_wb_valid) begin
             wb_mem_ready <= 1'b1;
-            // if(wb_ifu_valid) wb_mem_ready <= 1'b0;
-            // else begin
-            //     wb_mem_ready <= 1'b1;
-
-            // end
         end
     end
 
@@ -203,9 +192,11 @@ module ysyx_24080020_REG
         end
         else if(wen_wb) begin
             regs[waddr_wb] <= result;
-            // wb_ifu_valid <= 1'b1;
             wen_wb <= 1'b0;
             regs[0] <= 32'b0;
+        end
+        else if(mem_wb_valid && wb_mem_ready) begin
+            wen_wb <= wen_mem;
         end
         else begin
             regs[0] <= 32'b0;
