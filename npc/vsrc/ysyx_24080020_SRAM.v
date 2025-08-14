@@ -63,12 +63,18 @@ module ysyx_24080020_SRAM(
     assign wstrb_full = {{8{wstrb[3]}}, {8{wstrb[2]}}, {8{wstrb[1]}}, {8{wstrb[0]}}};
     assign lfsr = 6'd32;
 
-    // AR
+    // AR + R
     always @(posedge clk) begin
         if(!rst) begin
             arready <= 1'b0;
             read_en <= 1'b0;
             ar_cnt <= 6'b0;
+            paddr_r <= 'b0;
+
+            rvalid <= 1'b0;
+            rresp <= 2'b0;
+            rdata <= 32'b0;
+            arlen_cnt <= 'b0;
             paddr_r <= 'b0;
         end
         else if(arvalid && arready) begin
@@ -86,16 +92,8 @@ module ysyx_24080020_SRAM(
                 ar_cnt <= 6'b0;
             end
         end
-    end
-
-    // R
-    always @(posedge clk) begin
-        if(!rst) begin
-            rvalid <= 1'b0;
-            rresp <= 2'b0;
-            rdata <= 32'b0;
-            arlen_cnt <= 'b0;
-            paddr_r <= 'b0;
+        else if(rready && rvalid && rlast) begin
+            read_en <= 1'b0;
         end
         else if(read_en) begin
             if(r_cnt < lfsr) begin
@@ -106,7 +104,7 @@ module ysyx_24080020_SRAM(
                 rresp <= 2'b0;
                 if(rlast) begin
                     r_cnt <= 'b0;
-                    read_en <= 1'b0;
+                    // read_en <= 1'b0;
                     arlen_cnt <= 'b0;
                     rlast <= 'b0;
                 end
@@ -134,6 +132,53 @@ module ysyx_24080020_SRAM(
             end
         end
     end
+
+    // R
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         rvalid <= 1'b0;
+    //         rresp <= 2'b0;
+    //         rdata <= 32'b0;
+    //         arlen_cnt <= 'b0;
+    //         paddr_r <= 'b0;
+    //     end
+    //     else if(read_en) begin
+    //         if(r_cnt < lfsr) begin
+    //             r_cnt <= r_cnt + 6'b1;
+    //         end
+    //         else if(rready && rvalid) begin
+    //             rvalid <= 1'b0;
+    //             rresp <= 2'b0;
+    //             if(rlast) begin
+    //                 r_cnt <= 'b0;
+    //                 // read_en <= 1'b0;
+    //                 arlen_cnt <= 'b0;
+    //                 rlast <= 'b0;
+    //             end
+    //             else begin
+    //                 arlen_cnt <= arlen_cnt + 'b1;
+    //                 if(arburst == 'b00) begin
+    //                     paddr_r <= paddr_r;
+    //                 end
+    //                 else if(arburst == 'b01) begin
+    //                     paddr_r <= paddr_r + 'd4;
+    //                 end
+    //             end
+    //         end
+    //         else if(arlen_cnt <= arlen) begin
+    //             `ifdef CONFIG_DPIC
+    //             // printf_info();
+    //             rdata <= read_memory(paddr_r, 32'd4);
+    //             `endif
+
+    //             rvalid <= 1'b1;
+    //             rresp <= 2'b0;
+    //             if(arlen_cnt == arlen) begin
+    //                 rlast <= 1'b1;
+    //             end
+    //         end
+    //     end
+    // end
 
 
     // AW
