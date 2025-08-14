@@ -1,5 +1,4 @@
 `define USE_ICACHE
-// `define USE_DCACHE
 `define ICACHE_PIPELINE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
@@ -651,19 +650,6 @@ module ysyx_24080020_ICACHE(
       num_index <= 'b0;
     end
   end
-
-  // always @(posedge clk) begin
-  //   if(!rst) begin
-  //     num_index <= 'b0;
-  //   end
-  //   else if({{(32-cache_num){1'b0}}, num_index} == cache_num - 'b1) begin
-  //     flush_cache <= 'b0;
-  //   end
-  //   else if(flush_cache) begin
-  //     cache_valid[num_index[cache_num_bits-1:0]] <= {cache_way{1'b0}};
-  //     num_index <= num_index + 'b1;
-  //   end
-  // end
 
 
 `endif // `ifdef ICACHE_PIPELINE
