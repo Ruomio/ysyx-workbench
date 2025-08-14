@@ -650,34 +650,6 @@ module ysyx_24080020_MEM(
     end
 
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         wvalid <= 1'b0;
-    //         wdata <= 'b0;
-    //         wstrb <= 'b0;
-    //     end
-    //     else if(wvalid_reg && wready && wlast && !awlen[0]) begin
-    //         // finish once
-    //         wvalid <= 1'b0;
-    //     end
-    //     else if(wvalid_reg && wready && wlast && awlen[0]) begin
-    //         // finish all
-    //         wvalid <= 1'b0;
-    //         // wlast <= 1'b0;
-    //         awlen_cnt <= 1'b0;
-    //     end
-    //     else if(wvalid_reg && wready && awlen_cnt && awlen[0]) begin
-    //         // next W
-    //         // muti write, the second write
-    //         wlast <= 1'b1;
-    //         wvalid <= 1'b1;
-    //         wdata <= wdata_2;
-    //         wstrb <= wstrb_2;
-    //         // $display("second write");
-    //     end
-    // end
-
-
     always @(posedge clk) begin
         if(!rst) begin
             bready <= 1'b0;
