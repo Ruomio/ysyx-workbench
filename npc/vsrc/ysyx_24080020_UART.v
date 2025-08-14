@@ -44,31 +44,34 @@ module ysyx_24080020_UART(
     always @(posedge clk) begin
         if(!rst) begin
             arready <= 1'b0;
+            ren <= 1'b0;
         end
-        else begin
-            if(arvalid) begin
-                `ifdef CONFIG_DPIC
-                $display("UART should not be read, NOW!");
-                `endif
-                arready <= 1'b1;
-                ren <= 1'b1;
-            end
-            else begin
-                arready <= 1'b0;
-            end
+        else if(ren) begin
+            ren <= 1'b0;
+        end
+        else if(arvalid && arready) begin
+            arready <= 1'b0;
+        end
+        else if(arvalid) begin
+            `ifdef CONFIG_DPIC
+            $display("UART should not be read, NOW!");
+            `endif
+            arready <= 1'b1;
+            ren <= 1'b1;
         end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
-            ren <= 1'b0;
+            rdata <= 32'b0;
+            rresp <= 2'd1;
+            rvalid <= 1'b1;
         end
         else if(ren) begin
             rdata <= 32'b0;
             rresp <= 2'd1;
             rvalid <= 1'b1;
 
-            ren <= 1'b0;
         end
         else if(rready) begin
             rvalid <= 1'b0;
