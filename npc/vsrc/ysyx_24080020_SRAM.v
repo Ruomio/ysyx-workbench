@@ -69,7 +69,7 @@ module ysyx_24080020_SRAM(
             arready <= 1'b0;
             read_en <= 1'b0;
             ar_cnt <= 6'b0;
-            paddr_r <= 'b0;
+            paddr_r_base <= 'b0;
         end
         else if(arvalid && arready) begin
             arready <= 'b0;
@@ -79,7 +79,7 @@ module ysyx_24080020_SRAM(
                 ar_cnt <= ar_cnt + 6'b1;
             end
             else begin
-                paddr_r <= {araddr[31:2],2'b0};
+                paddr_r_base <= {araddr[31:2],2'b0};
                 read_en <= 1'b1;
                 arready <= 1'b1;
 
@@ -135,6 +135,9 @@ module ysyx_24080020_SRAM(
                     rlast <= 1'b1;
                 end
             end
+        end
+        else if(arvalid && arready) begin
+            paddr_r <= paddr_r_base;
         end
     end
 
