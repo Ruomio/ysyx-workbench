@@ -125,7 +125,7 @@ module ysyx_24080020_UART(
             bvalid <= 1'b0;
         end
         else if(wfin) begin
-            bresp <= 2'b1;
+            bresp <= 2'b0;
             bvalid <= 1'b1;
 
             // wfin <= 1'b0;
