@@ -213,7 +213,6 @@ module ysyx_24080020_SRAM(
         if(!rst) begin
             bvalid <= 1'b0;
             bresp <= 2'b0;
-            w_cnt <= 6'b0;
         end
         else if(b_en) begin
             if(b_cnt < lfsr) begin

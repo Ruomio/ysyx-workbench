@@ -484,6 +484,10 @@ module ysyx_24080020_ICACHE(
         else if(s3_s4_valid && s4_s3_ready) begin
             s3_s2_ready <= 'b1;
         end
+
+        if(fin_r) begin
+            inst_s3 <= shift_rdata_s3[31:0];
+        end
     end
 
     always @(posedge clk) begin
@@ -493,7 +497,7 @@ module ysyx_24080020_ICACHE(
             araddr_s3 <= 'b0;
 
             s3_s4_valid <= 'b0;
-            inst_s3 <= 'b0;
+            // inst_s3 <= 'b0;
 
             for (integer i = 'b0; i < `ysyx_24080020_CACHE_NUM; i = i + 'b1 ) begin
                 cache_data[i]   <= 'b0;
@@ -510,7 +514,7 @@ module ysyx_24080020_ICACHE(
         end
         else if(fin_r) begin
             fin_r <= 'b0;
-            inst_s3 <= shift_rdata_s3[31:0];
+            // inst_s3 <= shift_rdata_s3[31:0];
             fifo_index[cache_index_s3] <= (fifo_index[cache_index_s3] + 'b1) % cache_way;
 
             s3_s4_valid <= 'b1;
