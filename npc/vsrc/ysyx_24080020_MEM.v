@@ -275,13 +275,11 @@ module ysyx_24080020_MEM(
 
             mem_wb_valid <= 'b0;
 
-            skip_ref_mem <= 'b0;
 
             is_ebreak_lsu <= 'b0;
 
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
-            mem_wb_valid <= 1'b0;
 
             waddr_mem <= 'b0;
             is_load_mem <= 'b0;
@@ -289,6 +287,9 @@ module ysyx_24080020_MEM(
 
             next_inst <= 'b1;
 
+        end
+        else if(exu_mem_shake_hands) begin
+            exu_mem_shake_hands <= 1'b0;
         end
         else if(exu_mem_valid) begin
             if(mem_wb_valid) mem_exu_ready <= 1'b0;
@@ -326,7 +327,6 @@ module ysyx_24080020_MEM(
 
                 pc_mem <= pc_exu;
 
-                skip_ref_mem <= skip_ref_exu;
 
                 is_ebreak_lsu <= is_ebreak_exu;
 
@@ -339,24 +339,33 @@ module ysyx_24080020_MEM(
 
             end
         end
+        else if(mren_mem) begin
+            mren_mem <= 'b0;
+        end
+        else if(mwen_mem) begin
+            mwen_mem <= 'b0;
+        end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
-            exu_mem_shake_hands <= 1'b0;
             mem_wb_valid <= 'b0;
 
         end
+        else if(mem_wb_valid && wb_mem_ready && state) begin
+            mem_wb_valid <= 1'b0;
+        end
         else if(exu_mem_shake_hands) begin
-            exu_mem_shake_hands <= 1'b0;
 
-            // mem_wb_valid <= 1'b1;
             if(!mwen_exu && !mren_exu) begin
                 mem_wb_valid <= 1'b1;
             end
         end
-        else begin
-          fencei_mem <= 'b0;
+        else if(finish_read) begin
+            mem_wb_valid <= 1'b1;
+        end
+        else if(bvalid && bready) begin
+            mem_wb_valid <= 1'b1;
         end
     end
 
@@ -369,6 +378,12 @@ module ysyx_24080020_MEM(
             arlen <= 'b0;
             arburst <= 'b0;
             arid <= 'b0;
+
+            awvalid <= 1'b0;
+            awlen <= 'b0;
+            awid <= 'b0;
+
+            skip_ref_mem <= 'b0;
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
@@ -397,17 +412,51 @@ module ysyx_24080020_MEM(
             end
             `endif
 
-            mren_mem <= 1'b0;
             // end
+        end
+        else if(awvalid_reg && awready) begin
+            awvalid <= 1'b0;
+
+        end
+        else if(mwen_mem) begin
+            awvalid <= 1'b1;
+            awid <= 4'b0;
+            awlen <= {{7{1'b0}}, get_awlen};
+
+            // mwen_mem <= 1'b0;
+            `ifdef ysyxSoCFull
+            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
+                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
+                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
+                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
+                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+            end
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
+                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+            end
+
+
+            `endif
+
+        end
+        else if(exu_mem_valid && mem_exu_ready) begin
+            skip_ref_mem <= skip_ref_exu;
         end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
             rready <= 1'b0;
-            mrdata_mem <= 32'b0;
             arlen_cnt <= 1'b0;
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
         end
         else if(rvalid && rready) begin
             rready <= 1'b0;
@@ -415,7 +464,6 @@ module ysyx_24080020_MEM(
         else if(rvalid && rlast) begin
             // finish all read
             rready <= 1'b1;
-            finish_read <= 1'b1;
             if(rresp != 2'b0) begin
                 // rresp fault;
                 `ifdef CONFIG_DPIC
@@ -450,10 +498,8 @@ module ysyx_24080020_MEM(
             end
             else begin
                 // read error
-                mrdata_mem <= 32'hffffffff;
-                mem_wb_valid <= 1'b1;
                 `ifdef CONFIG_DPIC
-                $display("rresp not be 0b00, ERROR");
+                $error("rresp not be 0b00, ERROR");
                 `endif
             end
         end
@@ -463,7 +509,7 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             finish_read <= 1'b0;
             mrdata_mem <= 'b0;
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
         end
         else if(finish_read) begin
             // finish all read
@@ -486,61 +532,15 @@ module ysyx_24080020_MEM(
                 endcase
             end
 
-            mem_wb_valid <= 1'b1;
+            // mem_wb_valid <= 1'b1;
             finish_read <= 1'b0;
         end
+        else if(rvalid && rlast) begin
+            finish_read <= 1'b1;
+        end
 
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            awvalid <= 1'b0;
-            awlen <= 'b0;
-        end
-        else if(awvalid_reg && awready) begin
-            awvalid <= 1'b0;
-
-            // mwen_mem <= 1'b0;
-        end
-        else if(mwen_mem) begin
-            awvalid <= 1'b1;
-            awid <= 4'b0;
-            awlen <= {{7{1'b0}}, get_awlen};
-
-            mwen_mem <= 1'b0;
-            `ifdef ysyxSoCFull
-            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
-                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
-                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
-                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
-                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-                // `ifdef CONFIG_DPIC
-                // npc_difftest_skip_ref();
-                // `endif
-            end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
-                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-                // `ifdef CONFIG_DPIC
-                // npc_difftest_skip_ref();
-                // `endif
-            end
-
-
-            `endif
-
-        end
-        else begin
-            awvalid <= awvalid;
-        end
-    end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -564,15 +564,6 @@ module ysyx_24080020_MEM(
             wstrb <= wstrb_1;
             wlast <= 1'b0;
             // $display("first write");
-        end
-    end
-
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            wvalid <= 1'b0;
-            wdata <= 'b0;
-            wstrb <= 'b0;
         end
         else if(wvalid_reg && wready && wlast && !awlen[0]) begin
             // finish once
@@ -599,11 +590,11 @@ module ysyx_24080020_MEM(
     always @(posedge clk) begin
         if(!rst) begin
             bready <= 1'b0;
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
         end
         else if(bvalid && bready) begin
             bready <= 'b0;
-            mem_wb_valid <= 1'b1;
+            // mem_wb_valid <= 1'b1;
         end
         else if(bvalid) begin
             bready <= 1'b1;
