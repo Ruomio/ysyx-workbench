@@ -65,6 +65,8 @@ module ysyx_24080020_IFU (
             ifu_idu_valid <= 1'b0;
             pc_ifu <= 'b0;
             inst_fin_ready<= 'b0;
+            special_pc <= 'b0;
+            inst_ifu <= 'b0;
         end
         else if(inst_fin_valid && inst_fin_ready) begin
             inst_fin_ready <= 'b0;
@@ -89,18 +91,18 @@ module ysyx_24080020_IFU (
                 // end
             end
         end
-        else begin
-            inst_fin_ready <= 'b0;
+        else if(ifu_idu_valid && idu_ifu_ready && state) begin
+            ifu_idu_valid <= 1'b0;
         end
-
     end
 
     always @(posedge clk) begin
         if(!rst) begin
             ifu_wb_ready <= 1'b0;
+            wb_ifu_shake_hands <= 'b0;
         end
         else if(ifu_idu_valid && idu_ifu_ready && state) begin
-            ifu_idu_valid <= 1'b0;
+            // ifu_idu_valid <= 1'b0;
             `ifdef CONFIG_DPIC
             statistics_ifu_get_inst();
             `endif
@@ -124,6 +126,8 @@ module ysyx_24080020_IFU (
     always @(posedge clk) begin
         if(!rst) begin
             btype_n_jump <= 'b0;
+            correct_pc <= 'b0;
+            flush_pipeline <= 'b0;
         end
         else if(need_flush_pipeline) begin
             flush_pipeline <= 'b1;

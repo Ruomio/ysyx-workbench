@@ -199,6 +199,7 @@ module ysyx_24080020_EXU
 
             skip_ref_exu <= 'b0;
             is_ebreak_exu <= 'b0;
+            exu_mem_valid <= 'b0;
 
         end
         else if(mem_exu_ready && exu_mem_valid && state) begin
