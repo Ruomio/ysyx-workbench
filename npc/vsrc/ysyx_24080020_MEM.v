@@ -551,6 +551,9 @@ module ysyx_24080020_MEM(
             // mem_wb_valid <= 1'b1;
             finish_read <= 1'b0;
         end
+        else if(rvalid && rlast) begin
+            finish_read <= 1'b1;
+        end
 
     end
 
