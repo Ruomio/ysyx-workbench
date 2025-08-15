@@ -495,10 +495,8 @@ void check_trap(npc_state u_npc_state) {
 
 uint32_t g_get_pc() {
 #if defined (ysyxSoCFull)
-  // g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
   g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu;
 #elif defined (ysyx_24080020_NPC)
-  // g_pc =  top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr;
   g_pc = top->rootp->ysyx_24080020_NPC__DOT__pc_wbu;
 #endif
   return g_pc;
@@ -507,10 +505,8 @@ uint32_t g_get_pc() {
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 #if defined (ysyxSoCFull)
-  // top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
   top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu = pc;
 #elif defined (ysyx_24080020_NPC)
-  // top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr = pc;
   top->rootp->ysyx_24080020_NPC__DOT__pc_wbu = pc;
 #endif
 }
@@ -585,7 +581,6 @@ void update_npc_cpu() {
 
 void update_dut() {
   for(int i=0; i<32; i++) {
-    // top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #if defined (ysyxSoCFull)
     top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #elif defined (ysyx_24080020_NPC)
