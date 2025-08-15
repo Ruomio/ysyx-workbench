@@ -277,6 +277,7 @@ module ysyx_24080020_MEM(
 
 
             is_ebreak_lsu <= 'b0;
+            exu_mem_shake_hands <= 1'b0;
 
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
@@ -456,6 +457,8 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             rready <= 1'b0;
             arlen_cnt <= 1'b0;
+            rdata1 <= 'b0;
+            rdata2 <= 'b0;
             // mem_wb_valid <= 'b0;
         end
         else if(rvalid && rready) begin
@@ -548,6 +551,7 @@ module ysyx_24080020_MEM(
             wlast <= 1'b0;
             wstrb <= 'b0;
             wdata <= 'b0;
+            wvalid <= 'b0;
         end
         else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0 && mwen_mem) begin
             // just once write
