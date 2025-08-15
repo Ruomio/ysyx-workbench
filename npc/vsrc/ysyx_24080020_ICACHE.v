@@ -665,7 +665,7 @@ module ysyx_24080020_ICACHE(
       flush_cache <= 'b1;
       num_index <= 'b0;
     end
-    else if(rvalid_o && rready_o && rlast_o && (rresp_o == 'b00)) begin
+    else if(rvalid_o && rready_o && rlast_o) begin
         cache_valid[cache_index_s3] <= cache_valid[cache_index_s3] | (1 << (fifo_index[cache_index_s3]));
     end
   end
