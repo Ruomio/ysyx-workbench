@@ -19,6 +19,9 @@ module ysyx_24080020_PC (
 
     always @(posedge clk) begin
         if(!rst) begin
+            addr <= 'b0;
+            in_ready <= 'b0;
+            special_pc <= 'b0;
         end
         else if(in_valid && in_ready) begin
             in_ready <= 'b0;
