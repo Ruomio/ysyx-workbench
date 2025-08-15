@@ -223,7 +223,7 @@ void exec_once_npc(uint32_t pc) {
     if(is_clk_high) {
       g_get_pc();
       total_cycles++;
-      if(wait_cycles++ > 80000) {
+      if(wait_cycles++ > 90000) {
         printf("wait too many cycles, maybe dead loop\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
