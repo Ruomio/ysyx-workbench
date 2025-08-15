@@ -58,7 +58,7 @@ module ysyx_24080020_REG
 
     reg state; // 0:idle;    1:wait_ready
 
-    integer  i;
+    integer  i,j;
 
     reg is_load_wb;
 
@@ -206,7 +206,7 @@ module ysyx_24080020_REG
     // csrs write
     always @(posedge clk) begin
         if(!rst) begin
-            for(i = 0; i<=3'd7; i = i+1) csrs[i] <= 32'b0;
+            for(j = 0; j<=3'd7; j = j+1) csrs[j] <= 32'b0;
             csrs[1] <= 32'h1800;
             csrs[4] <= 32'h79737978;
             csrs[5] <= 32'h16f6e94;
