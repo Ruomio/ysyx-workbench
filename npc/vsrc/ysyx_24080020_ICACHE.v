@@ -253,6 +253,9 @@ module ysyx_24080020_ICACHE(
         if(has_hit_s1) begin
             statistics_icache_hit();
         end
+        else begin
+            statistics_icache_miss();
+        end
         `endif
 
     end

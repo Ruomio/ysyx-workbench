@@ -76,9 +76,9 @@ module ysyx_24080020_IFU (
             if((raddr != correct_pc) && flush_pipeline) begin
                 inst_fin_ready <= 'b1;
 
-                `ifdef CONFIG_DPIC
-                statistics_icache_miss_hit_cnt();
-                `endif
+                // `ifdef CONFIG_DPIC
+                // statistics_icache_miss_hit_cnt();
+                // `endif
             end
             else if(!ifu_idu_valid) begin
                 inst_fin_ready <= 'b1;
