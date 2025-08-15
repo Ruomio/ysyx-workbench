@@ -68,6 +68,9 @@ module ysyx_24080020_IFU (
             special_pc <= 'b0;
             inst_ifu <= 'b0;
         end
+        else if(ifu_idu_valid && idu_ifu_ready && state) begin
+            ifu_idu_valid <= 1'b0;
+        end
         else if(inst_fin_valid && inst_fin_ready) begin
             inst_fin_ready <= 'b0;
         end
@@ -90,9 +93,6 @@ module ysyx_24080020_IFU (
                 //     flush_pipeline <= 'b0;
                 // end
             end
-        end
-        else if(ifu_idu_valid && idu_ifu_ready && state) begin
-            ifu_idu_valid <= 1'b0;
         end
     end
 
