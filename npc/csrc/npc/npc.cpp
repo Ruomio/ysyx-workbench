@@ -469,9 +469,14 @@ void update_ftrace_dpi() {
 }
 
 void ebreak() {
-  printf("ebreak, npc\n");
+  #ifdef ysyx_24080020_NPC
+  int ra = top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[10];
+  #endif
+  #ifdef ysyxSoCFull
+  int ra = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[10];
+  #endif
   u_npc_state.state = NPC_END;
-  u_npc_state.ret = false;
+  u_npc_state.ret = ra ? true : false;
   u_npc_state.pc = g_pc;
 }
 
