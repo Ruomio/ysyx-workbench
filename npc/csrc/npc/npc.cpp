@@ -469,6 +469,7 @@ void update_ftrace_dpi() {
 }
 
 void ebreak() {
+  printf("ebreak, npc\n");
   u_npc_state.state = NPC_END;
   u_npc_state.ret = false;
   u_npc_state.pc = g_pc;
