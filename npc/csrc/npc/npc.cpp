@@ -475,7 +475,7 @@ void ebreak() {
   #ifdef ysyxSoCFull
   int ra = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[10];
   #endif
-  u_npc_state.state = NPC_END;
+  u_npc_state.state = ra ? NPC_ABORT : NPC_END;
   u_npc_state.ret = ra ? true : false;
   u_npc_state.pc = g_pc;
 }
