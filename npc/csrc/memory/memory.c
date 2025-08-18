@@ -146,7 +146,7 @@ void paddr_write(paddr_t addr, int len, word_t data) {
 }
 
 extern "C" int read_memory(int addr, int len) {
-  printf("read_mem: addr: 0x%x, len: %d, data: 0x%x\n", addr, len, paddr_read(addr,len));
+  // printf("read_mem: addr: 0x%x, len: %d, data: 0x%x\n", addr, len, paddr_read(addr,len));
   return paddr_read(addr, len);
 }
 
