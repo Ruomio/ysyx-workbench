@@ -87,7 +87,7 @@ module ysyx_24080020_IDU (
 
     reg state; // 0: idle;    1: wait_ready
 
-    reg cnt;
+    reg [1:0] cnt;
 
 
     reg idu_exu_valid;
@@ -131,7 +131,7 @@ module ysyx_24080020_IDU (
             idu_exu_valid <= 1'b0;
             inst_idu <= 'b0;
         end
-        else if(cnt == 1'b1) begin
+        else if(cnt == 'd2) begin
             if(!flush_pipeline) begin
                 idu_exu_valid <= 1'b1;
             end
@@ -158,13 +158,16 @@ module ysyx_24080020_IDU (
 
     always @(posedge clk) begin
         if(!rst) begin
-            cnt <= 1'b0;
+            cnt <= 'b0;
         end
-        else if(cnt) begin
-            cnt <= 1'b0;
+        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline) begin
+            cnt <= 'b0;
+        end
+        else if(cnt == 'b1) begin
+            cnt <= 'd2;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
-            cnt <= 1'b1;
+            cnt <= 'b1;
         end
     end
 
@@ -221,7 +224,7 @@ module ysyx_24080020_IDU (
             skip_ref_idu <= 1'b0;
             imm_idu <= 'd0;
         end
-        else if(cnt) begin
+        else if(cnt == 'b1) begin
             // initial
 
             // pc
@@ -267,6 +270,12 @@ module ysyx_24080020_IDU (
             fencei_idu <= 'b0;
             skip_ref_idu <= 1'b0;
             imm_idu <= 'd0;
+
+            // step 1 assignment for B-type
+            src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+            src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+        end
+        else if(cnt == 'd2) begin
 
             case(opcode)
                 `ysyx_24080020_I_TYPE: begin
