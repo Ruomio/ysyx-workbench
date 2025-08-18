@@ -127,7 +127,7 @@ module ysyx_24080020_IDU (
             idu_ifu_ready <= 'b0;
             pc_idu <= 'b0;
         end
-        else if(idu_exu_valid_reg && exu_idu_ready && state &&!cnt) begin
+        else if(idu_exu_valid_reg && exu_idu_ready && state /* &&!cnt */) begin
             idu_exu_valid <= 1'b0;
             inst_idu <= 'b0;
         end
@@ -160,7 +160,7 @@ module ysyx_24080020_IDU (
         if(!rst) begin
             cnt <= 1'b0;
         end
-        else if(cnt == 1'b1) begin
+        else if(idu_exu_valid_reg && exu_idu_ready) begin
             cnt <= 1'b0;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
