@@ -480,9 +480,9 @@ void invalid_inst() {
   printf("Unknown inst.\n");
 }
 
-void halt() {
-  ebreak();
-}
+// void halt() {
+//   ebreak();
+// }
 
 void check_trap(npc_state u_npc_state) {
   if(u_npc_state.ret) {
