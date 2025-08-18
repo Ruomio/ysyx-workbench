@@ -48,6 +48,7 @@ extern uint32_t last_pc, g_pc;
 
 extern void update_npc_cpu();
 extern uint32_t g_get_reg(int i);
+extern uint32_t g_get_csrs(int i);
 
 // this is used to let ref skip instructions which
 // can not produce consistent behavior with NEMU
@@ -121,12 +122,24 @@ const char *regs_name[] = {
   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
+
+const char *csrs_name[] = {
+    "mepc", "mstatus", "mcause", "mtvec"
+};
+
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   bool flag = true;
   if(g_pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, g_pc); flag = false;}
   for(int i=0; i<sizeof(ref_r->gpr)/sizeof(ref_r->gpr[0]); i++) {
     if(ref_r->gpr[i] != g_get_reg(i)) {
       printf("The %s reg is diff, shoud be %#x  but get %#x.\n", regs_name[i], ref_r->gpr[i], g_get_reg(i));
+      flag = false;
+      // break;
+    }
+  }
+  for(int i=0; i<sizeof(ref_r->csrs)/sizeof(ref_r->csrs[0]); i++) {
+    if(ref_r->csrs[i] != g_get_csrs(i)) {
+      printf("The %s reg is diff, shoud be %#x  but get %#x.\n", csrs_name[i], ref_r->csrs[i], g_get_csrs(i));
       flag = false;
       // break;
     }
