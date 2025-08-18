@@ -272,6 +272,39 @@ module ysyx_24080020_IDU (
             // step 1 assignment for B-type
             src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
             src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+
+
+            // step 1 assignment for CSR-type
+            if(opcode == `ysyx_24080020_CSR_TYPE) begin
+                rcsraddr <= imm_idu[11:0];
+                case(funct3)
+                    `ysyx_24080020_ECALL_EBREAK: begin
+                        if(imm_idu == 32'b0) begin
+                            // ecall
+                            // csrs[mcause] <= R[a5];
+                            wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
+                            wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+
+                            // dnpc <= csrs[mtvec];
+                            rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
+                        end
+                        else if(imm_idu == 32'b1100000010) begin
+                            // mret
+                            rcsraddr <= `ysyx_24080020_MEPC_ADDR;
+                        end
+                    end
+
+                    `ysyx_24080020_CSRRW: begin
+                        rcsraddr <= imm_idu[11:0];
+                    end
+                    `ysyx_24080020_CSRRS: begin
+                        rcsraddr <= imm_idu[11:0];
+                    end
+                    default: begin
+                        is_csrtype_idu <= 1'b0;
+                    end
+                endcase
+            end
         end
         else if(cnt == 'd2) begin
 
