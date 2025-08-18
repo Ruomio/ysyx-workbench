@@ -175,6 +175,7 @@ module ysyx_24080020_IDU (
     always @(posedge clk) begin
         if(!rst) begin
             // initial
+            imm_idu <= 'b0;
 
             // pc
             is_dnpc_idu <= 1'b0;
@@ -221,6 +222,52 @@ module ysyx_24080020_IDU (
             imm_idu <= 'd0;
         end
         else if(cnt) begin
+            // initial
+
+            // pc
+            is_dnpc_idu <= 1'b0;
+            is_load_idu <= 1'b0;
+            is_jal_idu <= 1'b0;
+            is_jalr_idu <= 1'b0;
+            is_btype_idu <= 1'b0;
+            dnpc_idu <= 'b0;
+            branch_src1_idu <= 'b0;
+
+            // mem
+            mren_idu <= 1'b0;
+            mwen_idu <= 1'b0;
+            mren_idu <= 'b0;
+            mrlen_idu <= 'b0;
+            mrtype_idu <= 'b0;
+            mwmask_idu <= 'b0;
+
+            // reg
+            wen_idu <= 1'b0;
+            waddr_idu <= 'b0;
+            wdata_idu <= 'b0;
+
+            // csr
+            is_csrtype_idu <= 1'b0;
+            wcsren_idu <= 1'b0;
+            wcsren2_idu <= 1'b0;
+            rcsraddr <= 'b0;
+            wcsraddr_idu <= 'b0;
+            wcsrdata_idu <= 'b0;
+            wcsraddr2_idu <= 'b0;
+            wcsrdata2_idu <= 'b0;
+            is_ebreak <= 'b0;
+
+            // alu
+            alu_src2_con_idu <= 'b0;
+            alu_op_idu <= 'b0;
+            src1_idu <= 'b0;
+            src2_idu <= 'b0;
+
+            // other
+            fencei_idu <= 'b0;
+            skip_ref_idu <= 1'b0;
+            imm_idu <= 'd0;
+
             case(opcode)
                 `ysyx_24080020_I_TYPE: begin
                     imm_idu <= {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
@@ -635,10 +682,6 @@ module ysyx_24080020_IDU (
                 7'b0000000 : begin
                     imm_idu <= 32'b0;
                 end
-                /* `ysyx_24080020_EBREAK: begin
-                    imm <= 32'b0;
-                    ebreak();
-                end */
 
                 default: begin
                     imm_idu <= 32'b0;
