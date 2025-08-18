@@ -143,6 +143,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
       flag = false;
       // break;
     }
+    printf("test csrs diff\n");
   }
   return flag;
 }
