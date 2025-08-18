@@ -160,7 +160,7 @@ module ysyx_24080020_IDU (
         if(!rst) begin
             cnt <= 1'b0;
         end
-        else if(idu_exu_valid_reg && exu_idu_ready) begin
+        else if(cnt) begin
             cnt <= 1'b0;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
