@@ -172,9 +172,7 @@ module ysyx_24080020_IDU (
     end
 
 
-    // always @(*) begin
     // always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2 or ifu_idu_valid or rd_data1_forward or rd_data2_forward) begin
-    // always_comb begin
     always @(posedge clk) begin
         if(!rst) begin
             // initial
