@@ -106,8 +106,10 @@ module ysyx_24080020_UART(
             wready <= 1'b0;
         end
         else if(wvalid && wready) begin
+            `ifdef CONFIG_DPIC
             $write("%c", wdata[7:0]);
             $fflush();
+            `endif
             if(wfin) wfin <= 'b0;
         end
         else if(wvalid) begin
