@@ -583,9 +583,14 @@ module ysyx_24080020_IDU (
                             end
                             else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
                                 // mret
-                                rcsraddr <= `ysyx_24080020_MEPC_ADDR;
+                                // rcsraddr <= `ysyx_24080020_MEPC_ADDR;
                                 dnpc_idu <= rcsrdata;
                                 is_dnpc_idu <= 1'b1;
+
+                                // CSRS[mstatus] = 1800
+                                wcsraddr_idu <= `ysyx_24080020_MSTATUS_ADDR;
+                                wcsrdata_idu <= 'h1800;
+                                wcsren_idu <= 'b1;
 
                                 // skip_ref_idu <= 1'b1;
                                 // `ifdef CONFIG_DPIC
