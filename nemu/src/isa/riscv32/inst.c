@@ -71,10 +71,10 @@ static void mret(Decode *s) {
   s->dnpc = CSR(MEPC_ADDR);
   uint32_t tmp_mstatus = CSR(MSTATUS_ADDR);
   // 保留 MPP bit[12:11]
-  // tmp_mstatus |= tmp_mstatus & (3 << 11); 
+  tmp_mstatus |= tmp_mstatus & (3 << 11);
 
   // MIE = MPIE; MPIE = 1;   MIE: bit[3],  MPIE: bit[7]
-  bool flag = (tmp_mstatus & 0x80) == 0x80 ? 1 : 0; 
+  bool flag = (tmp_mstatus & 0x80) == 0x80 ? 1 : 0;
   tmp_mstatus |= flag << 3;
   tmp_mstatus |= 0x80;
 
@@ -159,7 +159,7 @@ static int decode_exec(Decode *s) {
 
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, mret(s); IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); );
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ecall(s); IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref()); );
-  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)); IFDEF(CONFIG_FTRACE_COND, close_ftrace())); 
+  INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , I, NEMUTRAP(s->pc, R(10)); IFDEF(CONFIG_FTRACE_COND, close_ftrace()));
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm()); CSR(imm()) = src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ );
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm()); CSR(imm()) = CSR(imm()) | src1; /*IFDEF(CONFIG_DIFFTEST ,difftest_skip_ref());*/ );
   INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrc  , I, assert(0));
