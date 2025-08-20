@@ -2,7 +2,7 @@
 module ysyx_24080020_IDU (
     input clk,
     input rst,
-    input data_adventure,
+    // input data_adventure,
     input need_stall,
     input rs1_conflict,
     input rs2_conflict,

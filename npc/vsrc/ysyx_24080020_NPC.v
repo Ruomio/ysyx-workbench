@@ -462,7 +462,7 @@ module ysyx_24080020_NPC(
         .rs2_conflict(rs2_conflict),
         .rd_data1_forward(rd_data1_forward),
         .rd_data2_forward(rd_data2_forward),
-        .data_adventure(data_adventure),
+        // .data_adventure(data_adventure),
         .flush_pipeline(flush_pipeline),
 
         .skip_ref_idu(skip_ref_idu),
@@ -1174,29 +1174,29 @@ module ysyx_24080020_NPC(
     );
 
 
-    ysyx_24080020_HAZARD u_hazard(
-        .clk(clk),
-        .rst(rst),
+    // ysyx_24080020_HAZARD u_hazard(
+    //     .clk(clk),
+    //     .rst(rst),
 
-        // Structural adventures, between ifu and lsu
-        .arvalid_AND_arready(arvalid_icache & arready_icache),
-        .inst_fin(rvalid_icache && rready_icache && rlast_icache),
-        .structural_adventure(structural_adventure),
+    //     // Structural adventures, between ifu and lsu
+    //     .arvalid_AND_arready(arvalid_icache & arready_icache),
+    //     .inst_fin(rvalid_icache && rready_icache && rlast_icache),
+    //     .structural_adventure(structural_adventure),
 
-        // Data adventures, between ifu and {idu, exu, wbu}
-        .rs1_idu(rs1),
-        .rs2_idu(rs2),
-        .rd_exu(waddr_exu),
-        .rd_lsu(waddr_mem),
-        .rd_wbu(waddr_wb),
-        .data_adventure(data_adventure),
+    //     // Data adventures, between ifu and {idu, exu, wbu}
+    //     .rs1_idu(rs1),
+    //     .rs2_idu(rs2),
+    //     .rd_exu(waddr_exu),
+    //     .rd_lsu(waddr_mem),
+    //     .rd_wbu(waddr_wb),
+    //     .data_adventure(data_adventure),
 
-        // control adventures, between ifu and exu
-        .is_dnpc(is_dnpc_exu),
-        .exu_lsu_shake_hands(exu_mem_shake_hands),
-        .control_adventure(control_adventure)
+    //     // control adventures, between ifu and exu
+    //     .is_dnpc(is_dnpc_exu),
+    //     .exu_lsu_shake_hands(exu_mem_shake_hands),
+    //     .control_adventure(control_adventure)
 
-    );
+    // );
 
     ysyx_24080020_FORWARD u_forward(
 		.clk(clk),
