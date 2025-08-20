@@ -107,7 +107,7 @@ module ysyx_24080020_UART(
         end
         else if(wvalid && wready) begin
             $write("%c", wdata[7:0]);
-            $fflush;
+            $fflush();
             if(wfin) wfin <= 'b0;
         end
         else if(wvalid) begin
