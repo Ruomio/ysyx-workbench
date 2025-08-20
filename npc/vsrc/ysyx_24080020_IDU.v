@@ -222,7 +222,7 @@ module ysyx_24080020_IDU (
             skip_ref_idu <= 1'b0;
             imm_idu <= 'd0;
         end
-        else if(cnt == 'b1) begin
+        else if(cnt == 'b0) begin
             // initial
 
             // pc
@@ -268,7 +268,8 @@ module ysyx_24080020_IDU (
             fencei_idu <= 'b0;
             skip_ref_idu <= 1'b0;
             imm_idu <= 'd0;
-
+        end
+        else if(cnt == 'b1) begin
             // step 1 assignment for B-type
             src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
             src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
