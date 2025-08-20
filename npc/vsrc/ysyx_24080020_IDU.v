@@ -618,8 +618,7 @@ module ysyx_24080020_IDU (
 
                             wcsraddr_idu <= imm_idu[11:0];
                             src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                            src2_idu <= rcsrdata;
-                            alu_op_idu <= `ysyx_24080020_ALU_OR;
+                            wcsrdata_idu <= rcsrdata | src1_idu;
                             wcsren_idu <= 1'b1;
 
                             waddr_idu <= rd;
