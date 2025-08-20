@@ -296,10 +296,10 @@ module ysyx_24080020_IDU (
                     end
 
                     `ysyx_24080020_CSRRW: begin
-                        rcsraddr <= imm_idu[11:0];
+                        rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
                     end
                     `ysyx_24080020_CSRRS: begin
-                        rcsraddr <= imm_idu[11:0];
+                        rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
                     end
                     default: begin
                         is_csrtype_idu <= 1'b0;
