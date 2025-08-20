@@ -277,10 +277,10 @@ module ysyx_24080020_IDU (
 
             // step 1 assignment for CSR-type
             if(opcode == `ysyx_24080020_CSR_TYPE) begin
-                rcsraddr <= imm_idu[11:0];
+                rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
-                        if(imm_idu == 32'b0) begin
+                        if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
                             // ecall
                             // csrs[mcause] <= R[a5];
                             wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
@@ -289,7 +289,7 @@ module ysyx_24080020_IDU (
                             // dnpc <= csrs[mtvec];
                             rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
                         end
-                        else if(imm_idu == 32'b1100000010) begin
+                        else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
                             // mret
                             rcsraddr <= `ysyx_24080020_MEPC_ADDR;
                         end
@@ -537,12 +537,12 @@ module ysyx_24080020_IDU (
                 end
 
                 `ysyx_24080020_CSR_TYPE: begin
-                    imm_idu <= {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]};
+                    // imm_idu <= {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]};
 
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
 
-                    rcsraddr <= imm_idu[11:0];
+                    rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
                     src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     alu_src2_con_idu <= 1'b1;
@@ -551,13 +551,13 @@ module ysyx_24080020_IDU (
 
                     case(funct3)
                         `ysyx_24080020_ECALL_EBREAK: begin
-                            if(imm_idu == 32'b1) begin
+                            if(inst_idu[`ysyx_24080020_IMM_I] == 'b1) begin
                                 is_ebreak <= 1;
                                 // `ifdef CONFIG_DPIC
                                 // ebreak();
                                 // `endif
                             end
-                            else if(imm_idu == 32'b0) begin
+                            else if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
                                 // ecall
                                 // csrs[mepc] <= pc;
                                 wcsraddr_idu <= `ysyx_24080020_MEPC_ADDR;
@@ -581,7 +581,7 @@ module ysyx_24080020_IDU (
                                 // npc_difftest_skip_ref();
                                 // `endif
                             end
-                            else if(imm_idu == 32'b1100000010) begin
+                            else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
                                 // mret
                                 rcsraddr <= `ysyx_24080020_MEPC_ADDR;
                                 dnpc_idu <= rcsrdata;
@@ -598,12 +598,12 @@ module ysyx_24080020_IDU (
                         end
 
                         `ysyx_24080020_CSRRW: begin
-                            wcsraddr_idu <= imm_idu[11:0];
+                            wcsraddr_idu <= inst_idu[`ysyx_24080020_IMM_I];
                             // wcsrdata_idu <= val_raddr1;
                             wcsrdata_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wcsren_idu <= 1'b1;
 
-                            rcsraddr <= imm_idu[11:0];
+                            rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
                             waddr_idu <= rd;
                             wdata_idu <= rcsrdata;
@@ -615,9 +615,9 @@ module ysyx_24080020_IDU (
                             // `endif
                         end
                         `ysyx_24080020_CSRRS: begin
-                            rcsraddr <= imm_idu[11:0];
+                            rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
-                            wcsraddr_idu <= imm_idu[11:0];
+                            wcsraddr_idu <= inst_idu[`ysyx_24080020_IMM_I];
                             src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wcsrdata_idu <= rcsrdata | src1_idu;
                             wcsren_idu <= 1'b1;
