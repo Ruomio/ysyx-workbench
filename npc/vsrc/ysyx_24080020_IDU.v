@@ -575,7 +575,7 @@ module ysyx_24080020_IDU (
 
                                 is_dnpc_idu <= 1'b1;
 
-                                skip_ref_idu <= 1'b1;
+                                // skip_ref_idu <= 1'b1;
                                 // `ifdef CONFIG_DPIC
                                 // npc_difftest_skip_ref();
                                 // `endif
@@ -586,7 +586,7 @@ module ysyx_24080020_IDU (
                                 dnpc_idu <= rcsrdata;
                                 is_dnpc_idu <= 1'b1;
 
-                                skip_ref_idu <= 1'b1;
+                                // skip_ref_idu <= 1'b1;
                                 // `ifdef CONFIG_DPIC
                                 // npc_difftest_skip_ref();
                                 // `endif
@@ -608,7 +608,7 @@ module ysyx_24080020_IDU (
                             wdata_idu <= rcsrdata;
                             wen_idu <= 1'b1;
 
-                            skip_ref_idu <= 1'b1;
+                            // skip_ref_idu <= 1'b1;
                             // `ifdef CONFIG_DPIC
                             // npc_difftest_skip_ref();
                             // `endif
@@ -626,7 +626,7 @@ module ysyx_24080020_IDU (
                             wdata_idu <= rcsrdata;
                             wen_idu <= 1'b1;
 
-                            skip_ref_idu <= 1'b1;
+                            // skip_ref_idu <= 1'b1;
                             // `ifdef CONFIG_DPIC
                             // npc_difftest_skip_ref();
                             // `endif
