@@ -71,7 +71,7 @@ static void mret(Decode *s) {
   s->dnpc = CSR(MEPC_ADDR);
   uint32_t tmp_mstatus = CSR(MSTATUS_ADDR);
   // 保留 MPP bit[12:11]
-  tmp_mstatus |= (3 << 11);
+  tmp_mstatus = (3 << 11);
 
   // MIE = MPIE; MPIE = 1;   MIE: bit[3],  MPIE: bit[7]
   // bool flag = (tmp_mstatus & 0x80) == 0x80 ? 1 : 0;
