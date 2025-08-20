@@ -618,11 +618,11 @@ module ysyx_24080020_IDU (
                             rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
                             wcsraddr_idu <= inst_idu[`ysyx_24080020_IMM_I];
-                            src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wcsrdata_idu <= rcsrdata | src1_idu;
                             wcsren_idu <= 1'b1;
 
                             waddr_idu <= rd;
+                            src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wdata_idu <= rcsrdata;
                             wen_idu <= 1'b1;
 
