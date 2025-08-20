@@ -87,7 +87,7 @@ module ysyx_24080020_IDU (
 
     reg state; // 0: idle;    1: wait_ready
 
-    reg cnt;
+    reg [1:0] cnt;
 
 
     reg idu_exu_valid;
@@ -127,11 +127,11 @@ module ysyx_24080020_IDU (
             idu_ifu_ready <= 'b0;
             pc_idu <= 'b0;
         end
-        else if(idu_exu_valid_reg && exu_idu_ready && state &&!cnt) begin
+        else if(idu_exu_valid_reg && exu_idu_ready && state /* &&!cnt */) begin
             idu_exu_valid <= 1'b0;
             inst_idu <= 'b0;
         end
-        else if(cnt == 1'b1) begin
+        else if(cnt == 'd2) begin
             if(!flush_pipeline) begin
                 idu_exu_valid <= 1'b1;
             end
@@ -153,500 +153,588 @@ module ysyx_24080020_IDU (
 
             end
         end
-        else begin
-            // idu_exu_valid <= 1'b0;
-        end
 
     end
 
     always @(posedge clk) begin
         if(!rst) begin
-            cnt <= 1'b0;
+            cnt <= 'b0;
         end
-        else if(cnt == 1'b1) begin
-            cnt <= 1'b0;
+        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline) begin
+            cnt <= 'b0;
+        end
+        else if(cnt == 'b1) begin
+            cnt <= 'd2;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
-            cnt <= 1'b1;
+            cnt <= 'b1;
         end
     end
 
 
+    // always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2 or ifu_idu_valid or rd_data1_forward or rd_data2_forward) begin
+    always @(posedge clk) begin
+        if(!rst) begin
+            // initial
+            imm_idu <= 'b0;
 
-    always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2 or ifu_idu_valid or rd_data1_forward or rd_data2_forward) begin
-    // always_comb begin
-        // initial
+            // pc
+            is_dnpc_idu <= 1'b0;
+            is_load_idu <= 1'b0;
+            is_jal_idu <= 1'b0;
+            is_jalr_idu <= 1'b0;
+            is_btype_idu <= 1'b0;
+            dnpc_idu <= 'b0;
+            branch_src1_idu <= 'b0;
 
-        // pc
-        is_dnpc_idu = 1'b0;
-        is_load_idu = 1'b0;
-        is_jal_idu = 1'b0;
-        is_jalr_idu = 1'b0;
-        is_btype_idu = 1'b0;
-        dnpc_idu = 'b0;
-        branch_src1_idu = 'b0;
+            // mem
+            mren_idu <= 1'b0;
+            mwen_idu <= 1'b0;
+            mren_idu <= 'b0;
+            mrlen_idu <= 'b0;
+            mrtype_idu <= 'b0;
+            mwmask_idu <= 'b0;
 
-        // mem
-        mren_idu = 1'b0;
-        mwen_idu = 1'b0;
-        mren_idu = 'b0;
-        mrlen_idu = 'b0;
-        mrtype_idu = 'b0;
-        mwmask_idu = 'b0;
+            // reg
+            wen_idu <= 1'b0;
+            waddr_idu <= 'b0;
+            wdata_idu <= 'b0;
 
-        // reg
-        wen_idu = 1'b0;
-        waddr_idu = 'b0;
-        wdata_idu = 'b0;
+            // csr
+            is_csrtype_idu <= 1'b0;
+            wcsren_idu <= 1'b0;
+            wcsren2_idu <= 1'b0;
+            rcsraddr <= 'b0;
+            wcsraddr_idu <= 'b0;
+            wcsrdata_idu <= 'b0;
+            wcsraddr2_idu <= 'b0;
+            wcsrdata2_idu <= 'b0;
+            is_ebreak <= 'b0;
 
-        // csr
-        is_csrtype_idu = 1'b0;
-        wcsren_idu = 1'b0;
-        wcsren2_idu = 1'b0;
-        rcsraddr = 'b0;
-        wcsraddr_idu = 'b0;
-        wcsrdata_idu = 'b0;
-        wcsraddr2_idu = 'b0;
-        wcsrdata2_idu = 'b0;
-        is_ebreak = 'b0;
+            // alu
+            alu_src2_con_idu <= 'b0;
+            alu_op_idu <= 'b0;
+            src1_idu <= 'b0;
+            src2_idu <= 'b0;
 
-        // alu
-        alu_src2_con_idu = 'b0;
-        alu_op_idu = 'b0;
-        src1_idu = 'b0;
-        src2_idu = 'b0;
+            // other
+            fencei_idu <= 'b0;
+            skip_ref_idu <= 1'b0;
+            imm_idu <= 'd0;
+        end
+        else if(cnt == 'b0) begin
+            // initial
 
-        // other
-        fencei_idu = 'b0;
-        skip_ref_idu = 1'b0;
-        imm_idu = 'd0;
+            // pc
+            is_dnpc_idu <= 1'b0;
+            is_load_idu <= 1'b0;
+            is_jal_idu <= 1'b0;
+            is_jalr_idu <= 1'b0;
+            is_btype_idu <= 1'b0;
+            dnpc_idu <= 'b0;
+            branch_src1_idu <= 'b0;
 
-        case(opcode)
-            `ysyx_24080020_I_TYPE: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                alu_src2_con_idu = 1'b1;
+            // mem
+            mren_idu <= 1'b0;
+            mwen_idu <= 1'b0;
+            mren_idu <= 'b0;
+            mrlen_idu <= 'b0;
+            mrtype_idu <= 'b0;
+            mwmask_idu <= 'b0;
 
-                mwen_idu = 1'b0;
+            // reg
+            wen_idu <= 1'b0;
+            waddr_idu <= 'b0;
+            wdata_idu <= 'b0;
 
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
+            // csr
+            is_csrtype_idu <= 1'b0;
+            wcsren_idu <= 1'b0;
+            wcsren2_idu <= 1'b0;
+            rcsraddr <= 'b0;
+            wcsraddr_idu <= 'b0;
+            wcsrdata_idu <= 'b0;
+            wcsraddr2_idu <= 'b0;
+            wcsrdata2_idu <= 'b0;
+            is_ebreak <= 'b0;
 
-                src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                src2_idu = 32'b0;
-                alu_src2_con_idu = 1'b1;
-                case(funct3)
-                    `ysyx_24080020_ADDI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_ADD;
-                    end
-                    `ysyx_24080020_SLTI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLT;
-                    end
-                    `ysyx_24080020_SLTU: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLTU;
-                    end
-                    `ysyx_24080020_XORI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_XOR;
-                    end
-                    `ysyx_24080020_ORI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_OR;
-                    end
-                    `ysyx_24080020_ANDI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_AND;
-                    end
-                    `ysyx_24080020_SLLI: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLL;
-                        wen_idu = inst_idu[25] == 'b1 ? 'b0 : 'b1;
-                    end
-                    `ysyx_24080020_SRLAI: begin
-                        alu_op_idu = imm_idu[10] == 0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
-                        wen_idu = inst_idu[25] == 'b1 ? 'b0 : 'b1;
-                    end
+            // alu
+            alu_src2_con_idu <= 'b0;
+            alu_op_idu <= 'b0;
+            src1_idu <= 'b0;
+            src2_idu <= 'b0;
 
-                    default: begin
-                        wen_idu = 1'b0;
-                    end
-                endcase
-            end
-
-            `ysyx_24080020_I_TYPEI: begin
-                // load
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                alu_src2_con_idu = 1'b1;
-
-                mwen_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-
-                src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                src2_idu = 32'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-                is_load_idu = 1'b1;
-
-                mren_idu = 1'b1;
-
-                case(funct3)
-                    `ysyx_24080020_LB: begin
-                        mrlen_idu = 4'b001;
-                        mrtype_idu = 1'b0;
-                    end
-                    `ysyx_24080020_LH: begin
-                        mrlen_idu = 4'b010;
-                        mrtype_idu = 1'b0;
-                    end
-                    `ysyx_24080020_LW: begin
-                        mrlen_idu = 4'b100;
-                        mrtype_idu = 1'b0;
-                    end
-                    `ysyx_24080020_LBU: begin
-                        mrlen_idu = 4'b001;
-                        mrtype_idu = 1'b1;
-                    end
-                    `ysyx_24080020_LHU: begin
-                        mrlen_idu = 4'b010;
-                        mrtype_idu = 1'b1;
-                    end
-                    default: begin
-                        mren_idu = 1'b0;
-                        wen_idu = 1'b0;
-                    end
-
-                endcase
-            end
-
-            `ysyx_24080020_FENCEI_TYPE: begin
-              case(funct3)
-                `ysyx_24080020_FENCEI: begin
-                  fencei_idu = 'b1;
-                  `ifdef CONFIG_DPIC
-                  // $display("fencei type.");
-                  `endif
-                end
-                default: begin
-                end
-              endcase
-            end
-
-            `ysyx_24080020_S_TYPE: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[31:25], inst_idu[11:7]};
-                alu_src2_con_idu = 1'b1;
-
-                wen_idu = 1'b0;
-                mwen_idu = 1'b1;
-
-                src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                src2_idu = rs2_conflict ? rd_data2_forward : val_raddr2;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-                case(funct3)
-                    `ysyx_24080020_SB: begin
-                        mwmask_idu = 4'b1;
-                    end
-                    `ysyx_24080020_SH: begin
-                        mwmask_idu = 4'b10;
-                    end
-                    `ysyx_24080020_SW: begin
-                        mwmask_idu = 4'b100;
-                    end
-                    default: begin
-                        mwmask_idu = 4'b0;
-                        mwen_idu = 1'b0;
-                    end
-
-                endcase
-            end
-
-            `ysyx_24080020_B_TYPE: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[7], inst_idu[30:25], inst_idu[11:8], 1'b0};
-                alu_src2_con_idu = 1'b1;
-
-                wen_idu = 1'b0;
-                mwen_idu = 1'b0;
-
-                src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                src2_idu = rs2_conflict ? rd_data2_forward : val_raddr2;
-
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
-
-                // is_dnpc_idu = 1'b1;
-                is_btype_idu = 1'b1;
-
-                case(funct3)
-                    `ysyx_24080020_BEQ: begin
-                        is_dnpc_idu = src1_idu == src2_idu ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BNE: begin
-                        is_dnpc_idu = src1_idu != src2_idu ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BLT: begin
-                        is_dnpc_idu = $signed(src1_idu) < $signed(src2_idu) ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BGE: begin
-                        is_dnpc_idu = $signed(src1_idu) >= $signed(src2_idu) ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BLTU: begin
-                        is_dnpc_idu = src1_idu < src2_idu ? 1'b1 : 1'b0;
-                    end
-                    `ysyx_24080020_BGEU: begin
-                        is_dnpc_idu = src1_idu >= src2_idu ? 1'b1 : 1'b0;
-                    end
-
-                    default: begin
-                    end
-
-                endcase
+            // other
+            fencei_idu <= 'b0;
+            skip_ref_idu <= 1'b0;
+            imm_idu <= 'd0;
+        end
+        else if(cnt == 'b1) begin
+            // step 1 assignment for B-type
+            src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+            src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
 
 
-            end
-
-            `ysyx_24080020_R_TYPE: begin
-                imm_idu = 32'b0;
-                alu_src2_con_idu = 1'b0;
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-                src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                src2_idu = rs2_conflict ? rd_data2_forward : val_raddr2;
-                alu_src2_con_idu = 1'b0;
-
-                case(funct3)
-                    `ysyx_24080020_ADD_SUB:begin
-                        alu_op_idu = funct7[5] == 1'b0 ? `ysyx_24080020_ALU_ADD : `ysyx_24080020_ALU_SUB;
-                    end
-                    `ysyx_24080020_SLL: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLL;
-                    end
-                    `ysyx_24080020_SLT: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLT;
-                    end
-                    `ysyx_24080020_SLTU: begin
-                        alu_op_idu = `ysyx_24080020_ALU_SLTU;
-                    end
-                    `ysyx_24080020_XOR: begin
-                        alu_op_idu = `ysyx_24080020_ALU_XOR;
-                    end
-                    `ysyx_24080020_SRLA: begin
-                        alu_op_idu = funct7[5] == 1'b0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
-                    end
-                    `ysyx_24080020_OR: begin
-                        alu_op_idu = `ysyx_24080020_ALU_OR;
-                    end
-                    `ysyx_24080020_AND: begin
-                        alu_op_idu = `ysyx_24080020_ALU_AND;
-                    end
-
-                    default: begin
-                        wen_idu = 1'b0;
-                    end
-
-                endcase
-
-
-            end
-
-            `ysyx_24080020_CSR_TYPE: begin
-                imm_idu = {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]};
-
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-
-                rcsraddr = imm_idu[11:0];
-
-                src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                alu_src2_con_idu = 1'b1;
-
-                is_csrtype_idu = 1'b1;
-
+            // step 1 assignment for CSR-type
+            if(opcode == `ysyx_24080020_CSR_TYPE) begin
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
-                        if(imm_idu == 32'b1) begin
-                            is_ebreak = 1;
-                            // `ifdef CONFIG_DPIC
-                            // ebreak();
-                            // `endif
-                        end
-                        else if(imm_idu == 32'b0) begin
+                        if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
                             // ecall
-                            // csrs[mepc] = pc;
-                            wcsraddr_idu = `ysyx_24080020_MEPC_ADDR;
-                            wcsrdata_idu = pc_idu;
-                            wcsren_idu = 1'b1;
+                            // csrs[mcause] <= R[a5];
+                            wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
+                            wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
 
-                            // csrs[mcause] = R[a5];
-                            wcsraddr2_idu = `ysyx_24080020_MCAUSE_ADDR;
-                            // wcsrdata2_idu = val_raddr1;
-                            wcsrdata2_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                            wcsren2_idu = 1'b1;
-
-                            // dnpc = csrs[mtvec];
-                            rcsraddr = `ysyx_24080020_MTVEC_ADDR;
-                            dnpc_idu = rcsrdata;
-
-                            is_dnpc_idu = 1'b1;
-
-                            skip_ref_idu = 1'b1;
-                            // `ifdef CONFIG_DPIC
-                            // npc_difftest_skip_ref();
-                            // `endif
+                            // dnpc <= csrs[mtvec];
+                            rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
                         end
-                        else if(imm_idu == 32'b1100000010) begin
+                        else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
                             // mret
-                            rcsraddr = `ysyx_24080020_MEPC_ADDR;
-                            dnpc_idu = rcsrdata;
-                            is_dnpc_idu = 1'b1;
-
-                            skip_ref_idu = 1'b1;
-                            // `ifdef CONFIG_DPIC
-                            // npc_difftest_skip_ref();
-                            // `endif
-                        end
-                        else begin
-                            is_csrtype_idu = 1'b0;
+                            rcsraddr <= `ysyx_24080020_MEPC_ADDR;
                         end
                     end
 
                     `ysyx_24080020_CSRRW: begin
-                        wcsraddr_idu = imm_idu[11:0];
-                        // wcsrdata_idu = val_raddr1;
-                        wcsrdata_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                        wcsren_idu = 1'b1;
-
-                        rcsraddr = imm_idu[11:0];
-
-                        waddr_idu = rd;
-                        wdata_idu = rcsrdata;
-                        wen_idu = 1'b1;
-
-                        skip_ref_idu = 1'b1;
-                        // `ifdef CONFIG_DPIC
-                        // npc_difftest_skip_ref();
-                        // `endif
+                        rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
                     end
                     `ysyx_24080020_CSRRS: begin
-                        rcsraddr = imm_idu[11:0];
-
-                        wcsraddr_idu = imm_idu[11:0];
-                        src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
-                        src2_idu = rcsrdata;
-                        alu_op_idu = `ysyx_24080020_ALU_OR;
-                        wcsren_idu = 1'b1;
-
-                        waddr_idu = rd;
-                        wdata_idu = rcsrdata;
-                        wen_idu = 1'b1;
-
-                        skip_ref_idu = 1'b1;
-                        // `ifdef CONFIG_DPIC
-                        // npc_difftest_skip_ref();
-                        // `endif
+                        rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
                     end
-
                     default: begin
-                        is_csrtype_idu = 1'b0;
+                        is_csrtype_idu <= 1'b0;
                     end
-
                 endcase
-
-
             end
+        end
+        else if(cnt == 'd2) begin
 
-            `ysyx_24080020_JAL: begin
-                imm_idu = {{12{inst_idu[31]}}, inst_idu[19:12], inst_idu[20], inst_idu[30:21], 1'b0};
-                is_dnpc_idu = 1'b1;
+            case(opcode)
+                `ysyx_24080020_I_TYPE: begin
+                    imm_idu <= {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
+                    alu_src2_con_idu <= 1'b1;
 
-                mwen_idu = 1'b0;
+                    mwen_idu <= 1'b0;
 
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-                src1_idu = pc_idu;
-                src2_idu = 32'b100;
-                alu_src2_con_idu = 1'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+                    // reg_dst_con_idu <= 1'b0;
 
-                is_jal_idu = 'b1;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= 32'b0;
+                    alu_src2_con_idu <= 1'b1;
+                    case(funct3)
+                        `ysyx_24080020_ADDI: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_ADD;
+                        end
+                        `ysyx_24080020_SLTI: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_SLT;
+                        end
+                        `ysyx_24080020_SLTU: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_SLTU;
+                        end
+                        `ysyx_24080020_XORI: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_XOR;
+                        end
+                        `ysyx_24080020_ORI: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_OR;
+                        end
+                        `ysyx_24080020_ANDI: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_AND;
+                        end
+                        `ysyx_24080020_SLLI: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_SLL;
+                            wen_idu <= inst_idu[25] == 'b1 ? 'b0 : 'b1;
+                        end
+                        `ysyx_24080020_SRLAI: begin
+                            alu_op_idu <= imm_idu[10] == 0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
+                            wen_idu <= inst_idu[25] == 'b1 ? 'b0 : 'b1;
+                        end
 
-                `ifdef CONFIG_DPIC
-                update_ftrace_dpi();
-                `endif
-                if(imm_idu == 32'b0) begin
-                    `ifdef CONFIG_DPIC
-                    // halt();
-                    `endif
+                        default: begin
+                            wen_idu <= 1'b0;
+                        end
+                    endcase
                 end
-            end
 
-            `ysyx_24080020_JALR: begin
-                imm_idu = {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                is_dnpc_idu = 1'b1;
+                `ysyx_24080020_I_TYPEI: begin
+                    // load
+                    imm_idu <= {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
+                    alu_src2_con_idu <= 1'b1;
 
-                mwen_idu = 1'b0;
+                    mwen_idu <= 1'b0;
 
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
-                src1_idu = pc_idu;
-                src2_idu = 32'b100;
-                alu_src2_con_idu = 1'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+                    // reg_dst_con_idu <= 1'b0;
 
-                // branch_src1_idu = val_raddr1;
-                branch_src1_idu = rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= 32'b0;
+                    alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
-                is_jalr_idu = 1'b1;
-                // update_ftrace_dpi();
-            end
+                    is_load_idu <= 1'b1;
 
-            `ysyx_24080020_AUIPC: begin
-                imm_idu = {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                alu_src2_con_idu = 1'b1;
+                    mren_idu <= 1'b1;
 
-                mwen_idu = 1'b0;
+                    case(funct3)
+                        `ysyx_24080020_LB: begin
+                            mrlen_idu <= 4'b001;
+                            mrtype_idu <= 1'b0;
+                        end
+                        `ysyx_24080020_LH: begin
+                            mrlen_idu <= 4'b010;
+                            mrtype_idu <= 1'b0;
+                        end
+                        `ysyx_24080020_LW: begin
+                            mrlen_idu <= 4'b100;
+                            mrtype_idu <= 1'b0;
+                        end
+                        `ysyx_24080020_LBU: begin
+                            mrlen_idu <= 4'b001;
+                            mrtype_idu <= 1'b1;
+                        end
+                        `ysyx_24080020_LHU: begin
+                            mrlen_idu <= 4'b010;
+                            mrtype_idu <= 1'b1;
+                        end
+                        default: begin
+                            mren_idu <= 1'b0;
+                            wen_idu <= 1'b0;
+                        end
 
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
+                    endcase
+                end
 
-                src1_idu = pc_idu;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
+                `ysyx_24080020_FENCEI_TYPE: begin
+                case(funct3)
+                    `ysyx_24080020_FENCEI: begin
+                    fencei_idu <= 'b1;
+                    `ifdef CONFIG_DPIC
+                    // $display("fencei type.");
+                    `endif
+                    end
+                    default: begin
+                    end
+                endcase
+                end
+
+                `ysyx_24080020_S_TYPE: begin
+                    imm_idu <= {{20{inst_idu[31]}}, inst_idu[31:25], inst_idu[11:7]};
+                    alu_src2_con_idu <= 1'b1;
+
+                    wen_idu <= 1'b0;
+                    mwen_idu <= 1'b1;
+
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    alu_op_idu <= `ysyx_24080020_ALU_ADD;
+
+                    case(funct3)
+                        `ysyx_24080020_SB: begin
+                            mwmask_idu <= 4'b1;
+                        end
+                        `ysyx_24080020_SH: begin
+                            mwmask_idu <= 4'b10;
+                        end
+                        `ysyx_24080020_SW: begin
+                            mwmask_idu <= 4'b100;
+                        end
+                        default: begin
+                            mwmask_idu <= 4'b0;
+                            mwen_idu <= 1'b0;
+                        end
+
+                    endcase
+                end
+
+                `ysyx_24080020_B_TYPE: begin
+                    imm_idu <= {{20{inst_idu[31]}}, inst_idu[7], inst_idu[30:25], inst_idu[11:8], 1'b0};
+                    alu_src2_con_idu <= 1'b1;
+
+                    wen_idu <= 1'b0;
+                    mwen_idu <= 1'b0;
+
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+
+                    alu_op_idu <= `ysyx_24080020_ALU_ADD;
+
+                    // is_dnpc_idu <= 1'b1;
+                    is_btype_idu <= 1'b1;
+
+                    case(funct3)
+                        `ysyx_24080020_BEQ: begin
+                            is_dnpc_idu <= src1_idu == src2_idu ? 1'b1 : 1'b0;
+                        end
+                        `ysyx_24080020_BNE: begin
+                            is_dnpc_idu <= src1_idu != src2_idu ? 1'b1 : 1'b0;
+                        end
+                        `ysyx_24080020_BLT: begin
+                            is_dnpc_idu <= $signed(src1_idu) < $signed(src2_idu) ? 1'b1 : 1'b0;
+                        end
+                        `ysyx_24080020_BGE: begin
+                            is_dnpc_idu <= $signed(src1_idu) >= $signed(src2_idu) ? 1'b1 : 1'b0;
+                        end
+                        `ysyx_24080020_BLTU: begin
+                            is_dnpc_idu <= src1_idu < src2_idu ? 1'b1 : 1'b0;
+                        end
+                        `ysyx_24080020_BGEU: begin
+                            is_dnpc_idu <= src1_idu >= src2_idu ? 1'b1 : 1'b0;
+                        end
+
+                        default: begin
+                        end
+
+                    endcase
 
 
-            end
-            `ysyx_24080020_LUI: begin
-                imm_idu = {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                alu_src2_con_idu = 1'b1;
+                end
 
-                mwen_idu = 1'b0;
+                `ysyx_24080020_R_TYPE: begin
+                    imm_idu <= 32'b0;
+                    alu_src2_con_idu <= 1'b0;
 
-                wen_idu = 1'b1;
-                waddr_idu = rd;
-                // reg_dst_con_idu = 1'b0;
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+                    // reg_dst_con_idu <= 1'b0;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    alu_src2_con_idu <= 1'b0;
 
-                src1_idu = 32'b0;
-                alu_op_idu = `ysyx_24080020_ALU_ADD;
+                    case(funct3)
+                        `ysyx_24080020_ADD_SUB:begin
+                            alu_op_idu <= funct7[5] == 1'b0 ? `ysyx_24080020_ALU_ADD : `ysyx_24080020_ALU_SUB;
+                        end
+                        `ysyx_24080020_SLL: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_SLL;
+                        end
+                        `ysyx_24080020_SLT: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_SLT;
+                        end
+                        `ysyx_24080020_SLTU: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_SLTU;
+                        end
+                        `ysyx_24080020_XOR: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_XOR;
+                        end
+                        `ysyx_24080020_SRLA: begin
+                            alu_op_idu <= funct7[5] == 1'b0 ? `ysyx_24080020_ALU_SRL : `ysyx_24080020_ALU_SRA;
+                        end
+                        `ysyx_24080020_OR: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_OR;
+                        end
+                        `ysyx_24080020_AND: begin
+                            alu_op_idu <= `ysyx_24080020_ALU_AND;
+                        end
 
-            end
+                        default: begin
+                            wen_idu <= 1'b0;
+                        end
 
-            // rst
-            7'b0000000 : begin
-                imm_idu = 32'b0;
-            end
-            /* `ysyx_24080020_EBREAK: begin
-                imm = 32'b0;
-                ebreak();
-            end */
+                    endcase
 
-            default: begin
-                imm_idu = 32'b0;
-                // `ifdef CONFIG_DPIC
-                // invalid_inst();
-                // `endif
-            end
-        endcase
+
+                end
+
+                `ysyx_24080020_CSR_TYPE: begin
+                    // imm_idu <= {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]};
+
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+
+                    // rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
+
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    alu_src2_con_idu <= 1'b1;
+
+                    is_csrtype_idu <= 1'b1;
+
+                    case(funct3)
+                        `ysyx_24080020_ECALL_EBREAK: begin
+                            if(inst_idu[`ysyx_24080020_IMM_I] == 'b1) begin
+                                is_ebreak <= 1;
+                                // `ifdef CONFIG_DPIC
+                                // ebreak();
+                                // `endif
+                            end
+                            else if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
+                                // ecall
+                                // csrs[mepc] <= pc;
+                                wcsraddr_idu <= `ysyx_24080020_MEPC_ADDR;
+                                wcsrdata_idu <= pc_idu;
+                                wcsren_idu <= 1'b1;
+
+                                // csrs[mcause] <= R[a5];
+                                wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
+                                // wcsrdata2_idu <= val_raddr1;
+                                wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                                wcsren2_idu <= 1'b1;
+
+                                // dnpc <= csrs[mtvec];
+                                rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
+                                dnpc_idu <= rcsrdata;
+
+                                is_dnpc_idu <= 1'b1;
+
+                                // skip_ref_idu <= 1'b1;
+                                // `ifdef CONFIG_DPIC
+                                // npc_difftest_skip_ref();
+                                // `endif
+                            end
+                            else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
+                                // mret
+                                // rcsraddr <= `ysyx_24080020_MEPC_ADDR;
+                                dnpc_idu <= rcsrdata;
+                                is_dnpc_idu <= 1'b1;
+
+                                // CSRS[mstatus] = 1800
+                                wcsraddr_idu <= `ysyx_24080020_MSTATUS_ADDR;
+                                wcsrdata_idu <= 'h1800;
+                                wcsren_idu <= 'b1;
+
+                                // skip_ref_idu <= 1'b1;
+                                // `ifdef CONFIG_DPIC
+                                // npc_difftest_skip_ref();
+                                // `endif
+                            end
+                            else begin
+                                is_csrtype_idu <= 1'b0;
+                            end
+                        end
+
+                        `ysyx_24080020_CSRRW: begin
+                            wcsraddr_idu <= inst_idu[`ysyx_24080020_IMM_I];
+                            // wcsrdata_idu <= val_raddr1;
+                            wcsrdata_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                            wcsren_idu <= 1'b1;
+
+                            rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
+
+                            waddr_idu <= rd;
+                            wdata_idu <= rcsrdata;
+                            wen_idu <= 1'b1;
+
+                            // skip_ref_idu <= 1'b1;
+                            // `ifdef CONFIG_DPIC
+                            // npc_difftest_skip_ref();
+                            // `endif
+                        end
+                        `ysyx_24080020_CSRRS: begin
+                            rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
+
+                            wcsraddr_idu <= inst_idu[`ysyx_24080020_IMM_I];
+                            wcsrdata_idu <= rcsrdata | src1_idu;
+                            wcsren_idu <= 1'b1;
+
+                            waddr_idu <= rd;
+                            src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                            wdata_idu <= rcsrdata;
+                            wen_idu <= 1'b1;
+
+                            // skip_ref_idu <= 1'b1;
+                            // `ifdef CONFIG_DPIC
+                            // npc_difftest_skip_ref();
+                            // `endif
+                        end
+
+                        default: begin
+                            is_csrtype_idu <= 1'b0;
+                        end
+
+                    endcase
+
+
+                end
+
+                `ysyx_24080020_JAL: begin
+                    imm_idu <= {{12{inst_idu[31]}}, inst_idu[19:12], inst_idu[20], inst_idu[30:21], 1'b0};
+                    is_dnpc_idu <= 1'b1;
+
+                    mwen_idu <= 1'b0;
+
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+                    // reg_dst_con_idu <= 1'b0;
+                    src1_idu <= pc_idu;
+                    src2_idu <= 32'b100;
+                    alu_src2_con_idu <= 1'b0;
+                    alu_op_idu <= `ysyx_24080020_ALU_ADD;
+
+                    is_jal_idu <= 'b1;
+
+                    `ifdef CONFIG_DPIC
+                    update_ftrace_dpi();
+                    `endif
+                    if(imm_idu == 32'b0) begin
+                        `ifdef CONFIG_DPIC
+                        // halt();
+                        `endif
+                    end
+                end
+
+                `ysyx_24080020_JALR: begin
+                    imm_idu <= {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
+                    is_dnpc_idu <= 1'b1;
+
+                    mwen_idu <= 1'b0;
+
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+                    // reg_dst_con_idu <= 1'b0;
+                    src1_idu <= pc_idu;
+                    src2_idu <= 32'b100;
+                    alu_src2_con_idu <= 1'b0;
+                    alu_op_idu <= `ysyx_24080020_ALU_ADD;
+
+                    // branch_src1_idu <= val_raddr1;
+                    branch_src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+
+                    is_jalr_idu <= 1'b1;
+                    // update_ftrace_dpi();
+                end
+
+                `ysyx_24080020_AUIPC: begin
+                    imm_idu <= {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
+                    alu_src2_con_idu <= 1'b1;
+
+                    mwen_idu <= 1'b0;
+
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+                    // reg_dst_con_idu <= 1'b0;
+
+                    src1_idu <= pc_idu;
+                    alu_op_idu <= `ysyx_24080020_ALU_ADD;
+
+
+                end
+                `ysyx_24080020_LUI: begin
+                    imm_idu <= {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
+                    alu_src2_con_idu <= 1'b1;
+
+                    mwen_idu <= 1'b0;
+
+                    wen_idu <= 1'b1;
+                    waddr_idu <= rd;
+                    // reg_dst_con_idu <= 1'b0;
+
+                    src1_idu <= 32'b0;
+                    alu_op_idu <= `ysyx_24080020_ALU_ADD;
+
+                end
+
+                // rst
+                7'b0000000 : begin
+                    imm_idu <= 32'b0;
+                end
+
+                default: begin
+                    imm_idu <= 32'b0;
+                    // `ifdef CONFIG_DPIC
+                    // invalid_inst();
+                    // `endif
+                end
+            endcase
+        end
     end
 
 
