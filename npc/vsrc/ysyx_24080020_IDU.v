@@ -277,7 +277,6 @@ module ysyx_24080020_IDU (
 
             // step 1 assignment for CSR-type
             if(opcode == `ysyx_24080020_CSR_TYPE) begin
-                rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
                 case(funct3)
                     `ysyx_24080020_ECALL_EBREAK: begin
                         if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
@@ -542,7 +541,7 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
 
-                    rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
+                    // rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
                     src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     alu_src2_con_idu <= 1'b1;
