@@ -93,6 +93,13 @@ VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
 CSRC += $(shell find csrc -name "*.c" -or -name "*.cpp")
 V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
+
+# verilator system files
+VERILATOR_SYS_FILES := verilated.cpp verilated_threads.cpp verilated_vcd_c.cpp
+VERILATOR_SYS_TARGETS := $(addprefix $(OBJ_DIR)/,$(VERILATOR_SYS_FILES))
+
+
+
 #
 # # parameters
 override ARGS ?= --log=$(BUILD_DIR)/npc-log.txt
@@ -111,7 +118,7 @@ CFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 # LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
 
-# VERILATOR_CFLAGS += --lint-only
+# VERILATOR_CFLAGS += --lint-only -Wall -fno-const
 VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
 
 $(OBJ_DIR)/%.o: %.c
@@ -146,10 +153,13 @@ $(BIN): v_to_cpp
 
 # $(BIN): classic
 
-v_to_cpp: $(VSRC)
-	@cp /usr/share/verilator/include/verilated{.cpp,_threads.cpp,_vcd_c.cpp} $(OBJ_DIR)
-	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^  -Mdir $(OBJ_DIR)
-	@make -s -C $(OBJ_DIR) -f V$(TOPNAME).mk
+
+$(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
+	@echo "[COPY] $< -> $@"
+	@cp $< $@
+
+v_to_cpp: $(VSRC) $(VERILATOR_SYS_TARGETS)
+	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $(VSRC)  -Mdir $(OBJ_DIR)
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -205,7 +215,7 @@ perf: $(BIN)
 		$(shell echo "yosys-sta failed"); \
 	fi
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
-		ARCH=riscv32e-ysyxsoc run NEMUFLAGS="-b" mainargs=test \
+		ARCH=$(ARCH) run NEMUFLAGS="-b" mainargs=test \
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
 
 gtkwave: $(VCD_FILE)

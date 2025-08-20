@@ -223,7 +223,7 @@ void exec_once_npc(uint32_t pc) {
     if(is_clk_high) {
       g_get_pc();
       total_cycles++;
-      if(wait_cycles++ > 40000) {
+      if(wait_cycles++ > 50000) {
         printf("wait too many cycles, maybe dead loop\n");
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
@@ -396,7 +396,7 @@ void exec_npc(uint64_t n) {
 
   for(; n>0; n--) {
 #ifdef CONFIG_LIGHTSSS
-    int snapshot_interval_seconds = 30; // 快照间隔时间（ms）
+    int snapshot_interval_seconds = 50; // 快照间隔时间（ms）
 
     auto current_time = std::chrono::steady_clock::now();
     auto elapsed_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_snapshot_time).count();
@@ -469,8 +469,14 @@ void update_ftrace_dpi() {
 }
 
 void ebreak() {
-  u_npc_state.state = NPC_END;
-  u_npc_state.ret = false;
+  #ifdef ysyx_24080020_NPC
+  int a0 = top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[10];
+  #endif
+  #ifdef ysyxSoCFull
+  int a0 = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[10];
+  #endif
+  u_npc_state.state = a0 ? NPC_ABORT : NPC_END;
+  u_npc_state.ret = a0 ? true : false;
   u_npc_state.pc = g_pc;
 }
 
@@ -480,9 +486,9 @@ void invalid_inst() {
   printf("Unknown inst.\n");
 }
 
-void halt() {
-  ebreak();
-}
+// void halt() {
+//   ebreak();
+// }
 
 void check_trap(npc_state u_npc_state) {
   if(u_npc_state.ret) {
@@ -495,10 +501,9 @@ void check_trap(npc_state u_npc_state) {
 
 uint32_t g_get_pc() {
 #if defined (ysyxSoCFull)
-  // g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr;
   g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu;
 #elif defined (ysyx_24080020_NPC)
-  g_pc =  top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr;
+  g_pc = top->rootp->ysyx_24080020_NPC__DOT__pc_wbu;
 #endif
   return g_pc;
 }
@@ -506,10 +511,9 @@ uint32_t g_get_pc() {
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 #if defined (ysyxSoCFull)
-  // top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__ifu__DOT__addr = pc;
   top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu = pc;
 #elif defined (ysyx_24080020_NPC)
-  top->rootp->ysyx_24080020_NPC__DOT__ifu__DOT__addr = pc;
+  top->rootp->ysyx_24080020_NPC__DOT__pc_wbu = pc;
 #endif
 }
 
@@ -517,7 +521,7 @@ uint32_t g_get_reg(int i) {
 #if defined (ysyxSoCFull)
   return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__csrs[i];
+  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i];
 #else
   return 0;
 #endif
@@ -526,7 +530,7 @@ uint32_t g_get_csrs(int i) {
 #if defined (ysyxSoCFull)
   return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__csrs[i]);
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i];
+  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__csrs[i];
 #else
   return 0;
 #endif
@@ -583,7 +587,6 @@ void update_npc_cpu() {
 
 void update_dut() {
   for(int i=0; i<32; i++) {
-    // top->rootp->top__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #if defined (ysyxSoCFull)
     top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #elif defined (ysyx_24080020_NPC)
