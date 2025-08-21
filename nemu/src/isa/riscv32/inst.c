@@ -76,7 +76,7 @@ static void mret(Decode *s) {
   // MIE = MPIE; MPIE = 1;   MIE: bit[3],  MPIE: bit[7]
   // bool flag = (tmp_mstatus & 0x80) == 0x80 ? 1 : 0;
   // tmp_mstatus |= flag << 3;
-  // tmp_mstatus |= 0x80;
+  tmp_mstatus |= 0x80;
 
   CSR(MSTATUS_ADDR) = tmp_mstatus;
 }
