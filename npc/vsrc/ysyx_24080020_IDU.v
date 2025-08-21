@@ -586,15 +586,21 @@ module ysyx_24080020_IDU (
                                 dnpc_idu <= rcsrdata;
                                 is_dnpc_idu <= 1'b1;
 
+                                // only M mode 
                                 // CSRS[mstatus] = 1800
                                 wcsraddr_idu <= `ysyx_24080020_MSTATUS_ADDR;
                                 wcsrdata_idu <= 'h1800;
                                 wcsren_idu <= 'b1;
 
-                                // skip_ref_idu <= 1'b1;
-                                // `ifdef CONFIG_DPIC
-                                // npc_difftest_skip_ref();
-                                // `endif
+                                // todo: privilege mode
+                                // 1. privivlege_mode_idu <= CSRS(MSTATUS)[12:11];
+                                // 2. mstatus.mie = mstatus.mpie
+                                //    CSRS(MSTATUS)[3] <= CSRS(MSTATUS)[7];
+                                // 3. mstatus.mpie = 'b1;
+                                //    CSRS(MSTATUS)[7] <= 'b1;
+                                // 4. return user mode, mstatus.mpp = 2'b0
+                                //    CSRS(MSTATUS)[12:11] <= 2'b0;
+
                             end
                             else begin
                                 is_csrtype_idu <= 1'b0;
