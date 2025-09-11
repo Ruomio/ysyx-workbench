@@ -185,9 +185,10 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             wen_wb <= 'b0;
-            for(integer i = 0; i<`ysyx_24080020_REG_WIDTH; i = i+1 ) begin
-                regs[i] <= 32'b0;
-            end
+            regs[0] <= 'b0;
+            // for(integer i = 0; i<`ysyx_24080020_REG_WIDTH; i = i+1 ) begin
+            //     regs[i] <= 32'b0;
+            // end
         end
         else if(wen_wb) begin
             regs[waddr_wb] <= result;
@@ -228,8 +229,6 @@ module ysyx_24080020_REG
     always @(*) begin
     // always @(wcsraddr_wb or rcsraddr or wcsraddr2_wb) begin
         wcsr_idx = 'b0;
-        wcsr_idx2 = 'b0;
-        rcsr_idx = 'b0;
 
         case(wcsraddr_wb)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
@@ -240,6 +239,11 @@ module ysyx_24080020_REG
             `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
             default: wcsr_idx = 3'd7;
         endcase
+    end
+
+    always @(*) begin
+    // always @(wcsraddr_wb or rcsraddr or wcsraddr2_wb) begin
+        wcsr_idx2 = 'b0;
 
         case(wcsraddr2_wb)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx2 = 3'd0;
@@ -250,6 +254,11 @@ module ysyx_24080020_REG
             `ysyx_24080020_MARCHID_ADDR: wcsr_idx2 = 3'd5;
             default: wcsr_idx2 = 3'd7;
         endcase
+    end
+
+    always @(*) begin
+    // always @(wcsraddr_wb or rcsraddr or wcsraddr2_wb) begin
+        rcsr_idx = 'b0;
 
         case(rcsraddr)
             `ysyx_24080020_MEPC_ADDR:     rcsr_idx = 3'd0;
