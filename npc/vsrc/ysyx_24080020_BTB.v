@@ -197,34 +197,34 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             out_valid <= 'b0;
             pc <= `ysyx_24080020_MBASE;
-            predict_pc <= 'b0;
-            hit_pc <= 'b0;
-            hit_target_pc <= 'b0;
-            btb_hit <= 'b0;
+            // predict_pc <= 'b0;
+            // hit_pc <= 'b0;
+            // hit_target_pc <= 'b0;
+            // btb_hit <= 'b0;
             flush_pipeline <= 'b0;
-            pc_new <= 'b0;
+            // pc_new <= 'b0;
             is_hit <= 'b0;
-            tag_index <= 'b0;
+            // tag_index <= 'b0;
 
-            correct_pc <= 'b0;
-            dnpc_tmp <= 'b0;
+            // correct_pc <= 'b0;
+            // dnpc_tmp <= 'b0;
             is_dnpc_tmp <= 'b0;
 
             // state-machine
-            fin_judge <= 'b0;
-            fin_hit <= 'b0;
-            fin_miss <= 'b0;
-            fin_done <= 'b0;
+            // fin_judge <= 'b0;
+            // fin_hit <= 'b0;
+            // fin_miss <= 'b0;
+            // fin_done <= 'b0;
 
             out_en <= 'b0;
-            next_special_pc <= 'b0;
+            // next_special_pc <= 'b0;
             out_special_pc <= 'b0;
 
             for (integer i = 'b0; i < `ysyx_24080020_BRANCH_NUM; i = i + 'b1 ) begin
-                branch_data[i]   <= 'b0;
-                branch_tag[i]    <= 'b0;
+                // branch_data[i]   <= 'b0;
+                // branch_tag[i]    <= 'b0;
                 branch_valid[i]  <= 'b0;
-                fifo_index[i]   <= 'b0;
+                // fifo_index[i]   <= 'b0;
             end
         end
         // flush btb
@@ -470,7 +470,7 @@ module ysyx_24080020_BTB(
 
     always @(posedge clk) begin
         if(!rst) begin
-            pc_tmp <= 'b0;
+            // pc_tmp <= 'b0;
             in_ready <= 'b0;
         end
         else if(in_valid && in_ready) begin
