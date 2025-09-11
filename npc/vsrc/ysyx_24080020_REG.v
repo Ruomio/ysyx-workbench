@@ -111,21 +111,21 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             wb_mem_ready <= 'b0;
-            waddr_wb <= 'b0;
-            mrdata_wb <= 'b0;
-            wcsren_wb <= 'b0;
-            wcsraddr_wb <= 'b0;
-            wcsrdata_wb <= 'b0;
-            wcsren2_wb <= 'b0;
-            wcsraddr2_wb <= 'b0;
-            wcsrdata2_wb <= 'b0;
-            alu_out_wb <= 'b0;
-            is_load_wb <= 'b0;
-            is_dnpc_wb <= 'b0;
-            dnpc_wb <= 'b0;
-            // wb_ifu_valid <= 'b0;
-            skip_ref_wb <= 'b0;
-            pc_wbu <= 'b0;
+            // waddr_wb <= 'b0;
+            // mrdata_wb <= 'b0;
+            // wcsren_wb <= 'b0;
+            // wcsraddr_wb <= 'b0;
+            // wcsrdata_wb <= 'b0;
+            // wcsren2_wb <= 'b0;
+            // wcsraddr2_wb <= 'b0;
+            // wcsrdata2_wb <= 'b0;
+            // alu_out_wb <= 'b0;
+            // is_load_wb <= 'b0;
+            // is_dnpc_wb <= 'b0;
+            // dnpc_wb <= 'b0;
+            // // wb_ifu_valid <= 'b0;
+            // skip_ref_wb <= 'b0;
+            // pc_wbu <= 'b0;
             cnt <= 'b0;
         end
         // else if(wb_ifu_valid && ifu_wb_ready && state) begin
@@ -206,7 +206,7 @@ module ysyx_24080020_REG
     // csrs write
     always @(posedge clk) begin
         if(!rst) begin
-            for(integer j = 0; j<=3'd7; j = j+1) csrs[j] <= 32'b0;
+            // for(integer j = 0; j<=3'd7; j = j+1) csrs[j] <= 32'b0;
             csrs[1] <= 32'h1800;
             csrs[4] <= 32'h79737978;
             csrs[5] <= 32'h16f6e94;
