@@ -122,12 +122,12 @@ module ysyx_24080020_ICACHE(
   reg s3_s4_valid;
   reg s4_s3_ready;
   reg s0_s1_shake_hands, s1_s2_shake_hands, s2_s3_shake_hands, s3_s4_shake_hands;
-  reg [`ysyx_24080020_WIDTH-1:0] inst_s0;
+  // reg [`ysyx_24080020_WIDTH-1:0] inst_s0;
   // reg [`ysyx_24080020_WIDTH-1:0] rdata_araddr_s0;
 
   // reg special_pc_tmp;
   reg special_pc_s0;
-  reg special_pc_s0_o;
+  // reg special_pc_s0_o;
 
 
 // s0
@@ -140,15 +140,15 @@ module ysyx_24080020_ICACHE(
     always @(posedge clk) begin
         if(!rst) begin
             s0_s1_valid <= 'b0;
-            inst_s0 <= 'b0;
-            special_pc_s0 <= 'b0;
-            special_pc_s0_o <= 'b0;
+            // inst_s0 <= 'b0;
+            // special_pc_s0 <= 'b0;
+            // special_pc_s0_o <= 'b0;
 
-            araddr_s0 <= 'b0;
-            arlen_s0 <= 'b0;
-            arid_s0 <= 'b0;
-            arburst_s0 <= 'b0;
-            arsize_s0 <= 'b0;
+            // araddr_s0 <= 'b0;
+            // arlen_s0 <= 'b0;
+            // arid_s0 <= 'b0;
+            // arburst_s0 <= 'b0;
+            // arsize_s0 <= 'b0;
         end
         else if(s0_s1_valid && s1_s0_ready)begin
             s0_s1_valid <= 'b0;
@@ -194,7 +194,8 @@ module ysyx_24080020_ICACHE(
     end
   endgenerate
 
-  always_comb begin
+  // always_comb begin
+  always @(*) begin
       tmp_tag_index_s1 = 0;
       has_hit_s1 = 0;
       for (integer i = 0; i < cache_way; i++) begin
@@ -210,19 +211,19 @@ module ysyx_24080020_ICACHE(
       s1_s2_valid <= 'b0;
       s1_s0_ready <= 'b1;
 
-      araddr_s1 <= 'b0;
-      arlen_s1 <= 'b0;
-      arid_s1 <= 'b0;
-      arburst_s1 <= 'b0;
-      arsize_s1 <= 'b0;
+      // araddr_s1 <= 'b0;
+      // arlen_s1 <= 'b0;
+      // arid_s1 <= 'b0;
+      // arburst_s1 <= 'b0;
+      // arsize_s1 <= 'b0;
 
-      cache_tag_s1 <= 'b0;
-      cache_index_s1 <= 'b0;
-      cache_offset_s1 <= 'b0;
-      special_pc_s1 <= 'b0;
+      // cache_tag_s1 <= 'b0;
+      // cache_index_s1 <= 'b0;
+      // cache_offset_s1 <= 'b0;
+      // special_pc_s1 <= 'b0;
 
-      is_hit_s1 <= 'b0;
-      hit_tag_s1 <= 'b0;
+      // is_hit_s1 <= 'b0;
+      // hit_tag_s1 <= 'b0;
       s0_s1_shake_hands <= 'b0;
     end
     else if(s0_s1_valid && s1_s0_ready) begin
@@ -300,22 +301,22 @@ module ysyx_24080020_ICACHE(
       s2_s1_ready <= 'b1;
       s2_s3_valid <= 'b0;
 
-      inst_s2 <= 'b0;
+      // inst_s2 <= 'b0;
 
-      araddr_s2 <= 'b0;
-      arlen_s2 <= 'b0;
-      arid_s2 <= 'b0;
-      arburst_s2 <= 'b0;
-      arsize_s2 <= 'b0;
-      bubble <= 'b0;
-      special_pc_s2 <= 'b0;
+      // araddr_s2 <= 'b0;
+      // arlen_s2 <= 'b0;
+      // arid_s2 <= 'b0;
+      // arburst_s2 <= 'b0;
+      // arsize_s2 <= 'b0;
+      // bubble <= 'b0;
+      // special_pc_s2 <= 'b0;
       s1_s2_shake_hands <= 'b0;
 
-      is_hit_s2 <= 'b0;
-      hit_tag_s2 <= 'b0;
-      cache_index_s2 <= 'b0;
-      cache_offset_s2 <= 'b0;
-      cache_tag_s2 <= 'b0;
+      // is_hit_s2 <= 'b0;
+      // hit_tag_s2 <= 'b0;
+      // cache_index_s2 <= 'b0;
+      // cache_offset_s2 <= 'b0;
+      // cache_tag_s2 <= 'b0;
     end
     else if(s1_s2_valid && s2_s1_ready) begin
       s2_s1_ready <= 'b0;
@@ -400,29 +401,29 @@ module ysyx_24080020_ICACHE(
             s3_s2_ready <= 'b1;
             s2_s3_shake_hands <= 'b0;
 
-            // araddr_s3 <= 'b0;
-            arlen_s3 <= 'b0;
-            arid_s3 <= 'b0;
-            arburst_s3 <= 'b0;
-            arsize_s3 <= 'b0;
+            // // araddr_s3 <= 'b0;
+            // arlen_s3 <= 'b0;
+            // arid_s3 <= 'b0;
+            // arburst_s3 <= 'b0;
+            // arsize_s3 <= 'b0;
 
-            araddr_s3_base <= 'b0;
-            special_pc_s3 <= 'b0;
+            // araddr_s3_base <= 'b0;
+            // special_pc_s3 <= 'b0;
 
-            cache_tag_s3 <= 'b0;
-            cache_index_s3 <= 'b0;
+            // cache_tag_s3 <= 'b0;
+            // cache_index_s3 <= 'b0;
             // cache_offset_s3 <= 'b0;
 
-            is_hit_s3 <= 'b0;
-            hit_tag_s3 <= 'b0;
+            // is_hit_s3 <= 'b0;
+            // hit_tag_s3 <= 'b0;
 
-            inst_s3 <= 'b0;
-            arvalid_o <= 'b0;
-            araddr_o <= 'b0;
-            arsize_o <= 'b0;
-            arid_o <= 'b0;
-            arlen_o <= 'b0;
-            arburst_o <= 'b0;
+            // inst_s3 <= 'b0;
+            // arvalid_o <= 'b0;
+            // araddr_o <= 'b0;
+            // arsize_o <= 'b0;
+            // arid_o <= 'b0;
+            // arlen_o <= 'b0;
+            // arburst_o <= 'b0;
         end
         else if(arvalid_o && arready_o) begin
             arvalid_o <= 'b0;
@@ -581,14 +582,14 @@ module ysyx_24080020_ICACHE(
 
     always @(posedge clk) begin
         if(!rst) begin
-            rdata_i <= 'b0;
-            raddr <= 'b0;
+            // rdata_i <= 'b0;
+            // raddr <= 'b0;
             s4_s3_ready <= 'b1;
-            raddr_s4 <= 'b0;
-            special_pc_o <= 'b0;
+            // raddr_s4 <= 'b0;
+            // special_pc_o <= 'b0;
             s3_s4_shake_hands <= 'b0;
-            special_pc_s4 <= 'b0;
-            inst_s4 <= 'b0;
+            // special_pc_s4 <= 'b0;
+            // inst_s4 <= 'b0;
         end
         else if(s3_s4_shake_hands) begin
             s3_s4_shake_hands <= 'b0;

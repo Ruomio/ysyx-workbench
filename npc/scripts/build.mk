@@ -94,6 +94,11 @@ VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 CSRC += $(shell find csrc -name "*.c" -or -name "*.cpp")
 V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 
+
+VVP_FILE += $(BUILD_DIR)/sim_top.vvp
+TB_FILE += $(shell find . -type f -name "sim_top.v")
+
+
 # verilator system files
 VERILATOR_SYS_FILES := verilated.cpp verilated_threads.cpp verilated_vcd_c.cpp
 VERILATOR_SYS_TARGETS := $(addprefix $(OBJ_DIR)/,$(VERILATOR_SYS_FILES))
@@ -217,6 +222,13 @@ perf: $(BIN)
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=$(ARCH) run NEMUFLAGS="-b" mainargs=test \
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
+
+$(VVP_FILE): $(VSRC) $(TB_FILE)
+	@iverilog -g2012 -o $@ -D MEM_FILE=\"$(IMG)\" $^ -I $(VINC_PATH)
+
+iverilog: $(VVP_FILE)
+	@vvp $^
+	$(call git_commit, "iverilog NPC")
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^

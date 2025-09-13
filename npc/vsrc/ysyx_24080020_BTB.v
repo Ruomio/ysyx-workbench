@@ -124,10 +124,11 @@ module ysyx_24080020_BTB(
       end
     endgenerate
 
-    always_comb begin
+    // always_comb begin
+    always @(*) begin
         tmp_tag_index = 0;
         has_hit = 0;
-        for (int i = 0; i < branch_way; i++) begin
+        for (integer i = 0; i < branch_way; i++) begin
             if (total_hits[i]) begin
                 has_hit = 'b1;
                 tmp_tag_index = i[branch_way-1:0];

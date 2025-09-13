@@ -83,7 +83,7 @@ module ysyx_24080020_MEM(
     output wvalid_reg,
     output reg wlast,
     output reg [3:0] wstrb,
-    output [`ysyx_24080020_WIDTH-1:0] wdata,
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata,
 
     output reg bready,
     input bvalid,
@@ -377,7 +377,6 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             arvalid <= 1'b0;
             arlen <= 'b0;
-            arburst <= 'b0;
             arid <= 'b0;
 
             awvalid <= 1'b0;
