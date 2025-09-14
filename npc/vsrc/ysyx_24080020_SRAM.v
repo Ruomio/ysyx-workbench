@@ -60,7 +60,7 @@ module ysyx_24080020_SRAM(
         if(fd == 0)
         begin
             $display ("Could not open File");
-            $finish;
+            $finish(1);
         end
 
     end
