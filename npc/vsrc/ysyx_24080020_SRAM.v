@@ -46,12 +46,23 @@ module ysyx_24080020_SRAM(
 
 `ifdef __ICARUS__
 
-    localparam memory_len=8*1024*1024;
+
+    localparam memory_len = 32 << 20;
     reg [7:0] memory [0:memory_len-1];
+
+    integer fd;
 
     initial begin
         $display("show : %s", `MEM_FILE);
         $readmemh(`MEM_FILE, memory);
+
+        fd = $fopen(`MEM_FILE, "r");
+        if(fd == 0)
+        begin
+            $display ("Could not open File");
+            $stop;
+        end
+
     end
 `endif
 
