@@ -2,7 +2,7 @@
 
 module sim_top;
 
-    `define MEM_FILE = "default.hex";
+    `define MEM_FILE "\"/default/path/file\""
 
     reg clock;
     reg reset;

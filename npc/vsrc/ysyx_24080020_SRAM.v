@@ -45,9 +45,12 @@ module ysyx_24080020_SRAM(
 `endif
 
 `ifdef __ICARUS__
-    reg [7:0] memory [0:32*1024*1024];
+
+    localparam memory_len=8*1024*1024;
+    reg [7:0] memory [0:memory_len-1];
 
     initial begin
+        $display("show : %s", `MEM_FILE);
         $readmemh(`MEM_FILE, memory);
     end
 `endif

@@ -223,8 +223,10 @@ perf: $(BIN)
 		ARCH=$(ARCH) run NEMUFLAGS="-b" mainargs=test \
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
 
+
 $(VVP_FILE): $(VSRC) $(TB_FILE)
-	@iverilog -g2012 -o $@ -D MEM_FILE=\"$(IMG)\" $^ -I $(VINC_PATH)
+	@echo "+ iverilog -> $@"
+	@iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
 iverilog: $(VVP_FILE)
 	@vvp $^
