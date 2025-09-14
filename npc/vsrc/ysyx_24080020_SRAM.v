@@ -53,6 +53,7 @@ module ysyx_24080020_SRAM(
     integer fd;
 
     initial begin
+
         $display("show : %s", `MEM_FILE);
         // $readmemh(`MEM_FILE, memory);
 
