@@ -54,13 +54,13 @@ module ysyx_24080020_SRAM(
 
     initial begin
         $display("show : %s", `MEM_FILE);
-        $readmemh(`MEM_FILE, memory);
+        // $readmemh(`MEM_FILE, memory);
 
         fd = $fopen(`MEM_FILE, "r");
         if(fd == 0)
         begin
             $display ("Could not open File");
-            $stop;
+            $finish;
         end
 
     end
