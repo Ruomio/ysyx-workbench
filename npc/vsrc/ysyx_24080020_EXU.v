@@ -275,7 +275,7 @@ module ysyx_24080020_EXU
                 else statistics_idu_calculate_type();
                 `endif
                 `ifdef __ICARUS__
-                // $display("EXU pc: 0x%h", pc_idu);
+                $display("EXU pc: 0x%h", pc_idu);
                 `endif
 
             end
