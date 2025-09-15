@@ -53,13 +53,9 @@ module ysyx_24080020_SRAM(
 
     initial begin
 
-        // $display("show : %s", "/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32e-npc_tb.hex");
-        // $readmemh("/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32e-npc_tb.hex", memory);
-
         $display("show : %s", `MEM_FILE);
         $readmemh(`MEM_FILE, memory);
 
-        $display("memory[31:0]: 0x%h%h%h%h", memory[3], memory[2], memory[1], memory[0]);
 
     end
 `endif
