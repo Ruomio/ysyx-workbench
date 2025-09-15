@@ -107,8 +107,8 @@ module ysyx_24080020_UART(
         end
         else if(wvalid && wready) begin
             `ifdef CONFIG_DPIC
-            // $write("%c", wdata[7:0]);
-            // $fflush();
+            $write("%c", wdata[7:0]);
+            $fflush();
             `endif
             `ifdef __ICARUS__
             $write("%c", wdata[7:0]);
