@@ -37,10 +37,10 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
 
     // out src1 & src2
-    output [`ysyx_24080020_WIDTH-1:0] val_raddr1,
-    output [`ysyx_24080020_WIDTH-1:0] val_raddr2,
+    output reg [`ysyx_24080020_WIDTH-1:0] val_raddr1,
+    output reg [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     // out csr
-    output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
+    output reg [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
     input mem_wb_valid,
     // input ifu_wb_ready,
@@ -277,8 +277,23 @@ module ysyx_24080020_REG
         endcase
     end
 
-    assign val_raddr1 = regs[raddr1];
-    assign val_raddr2 = regs[raddr2];
+    always @(posedge clk) begin
+        if(!rst) begin
+            val_raddr1 <= 'b0;
+            val_raddr2 <= 'b0;
+        end
+        else begin
+            val_raddr1 <= regs[raddr1];
+            val_raddr2 <= regs[raddr2];
+        end
+    end
 
-    assign rcsrdata = csrs[rcsr_idx];
+    always @(posedge clk) begin
+        if(!rst) begin
+            rcsrdata <= 'b0;
+        end
+        else begin
+            rcsrdata <= csrs[rcsr_idx];
+        end
+    end
 endmodule
