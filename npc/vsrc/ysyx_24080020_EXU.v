@@ -334,5 +334,8 @@ module ysyx_24080020_EXU
         .c(branch_dnpc)
     );
 
+`ifdef __ICARUS__
+    reg [31:0] ref_pc [];
+`endif
 
 endmodule
