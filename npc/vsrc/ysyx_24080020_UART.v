@@ -110,6 +110,10 @@ module ysyx_24080020_UART(
             $write("%c", wdata[7:0]);
             $fflush();
             `endif
+            `ifdef __ICARUS__
+            $write("%c", wdata[7:0]);
+            $fflush();
+            `endif
             if(wfin) wfin <= 'b0;
         end
         else if(wvalid) begin

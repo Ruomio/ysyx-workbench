@@ -273,6 +273,8 @@ module ysyx_24080020_EXU
                 else if(is_csrtype_idu) statistics_idu_csr_type();
                 else if(is_dnpc_idu) statistics_idu_jump_type();
                 else statistics_idu_calculate_type();
+
+                $display("0x%h", {4'b0, pc_exu[27:0]});
                 `endif
 
             end
@@ -335,7 +337,11 @@ module ysyx_24080020_EXU
     );
 
 `ifdef __ICARUS__
-    reg [31:0] ref_pc [];
+    reg [31:0] ref_pc [0:(1<<20)-1];
+
+    initial begin
+        $readmemh();
+    end
 `endif
 
 endmodule
