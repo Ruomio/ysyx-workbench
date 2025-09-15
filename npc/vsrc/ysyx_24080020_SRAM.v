@@ -50,19 +50,12 @@ module ysyx_24080020_SRAM(
     localparam memory_len = 32 << 20;
     reg [7:0] memory [0:memory_len-1];
 
-    integer fd;
 
     initial begin
 
         $display("show : %s", `MEM_FILE);
         $readmemh(`MEM_FILE, memory);
 
-        fd = $fopen(`MEM_FILE, "r");
-        if(fd == 0)
-        begin
-            $display ("Could not open File");
-            $finish(0);
-        end
 
     end
 `endif

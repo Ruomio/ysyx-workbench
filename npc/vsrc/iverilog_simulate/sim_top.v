@@ -79,6 +79,8 @@ module sim_top;
     wire [1:0] io_slave_bresp;
     wire [3:0] io_slave_bid;
 
+    integer fd;
+
     initial begin
         clock = 'b0;
         forever begin
@@ -91,14 +93,22 @@ module sim_top;
         #20 reset = 'b1;
     end
 
-    initial begin
-        // initial in sram.v module
-        // $readmemh(`MEM_FILE, u_npc.u_reg.memory);
-    end
 
     initial begin
         // $dumpfile("build/wave.vcd"); // 指定 VCD 文件名
         // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
+
+        fd = $fopen("/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32e-npc_tb.bin", "r");
+        if(fd == 0)
+        begin
+            $display ("tb: Could not open File");
+            $finish(0);
+        end
+        else begin
+            $display ("tb: open File success!");
+            $fclose(fd);
+            $finish(0);
+        end
     end
 
 
