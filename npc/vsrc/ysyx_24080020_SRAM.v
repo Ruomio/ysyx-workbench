@@ -215,7 +215,7 @@ module ysyx_24080020_SRAM(
                     w_rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
                     `endif
                     `ifdef __ICARUS__
-                    w_rdata <= read_mem_by_bytes({awaddr[31:2],2'b0}, 32'd4);
+                    w_rdata <= read_mem_by_bytes({awaddr[31:2],2'b0}, 2'd2);
                     `endif
                 end
             end
