@@ -226,7 +226,8 @@ perf: $(BIN)
 
 $(VVP_FILE): $(VSRC) $(TB_FILE)
 	@echo "+ iverilog -> $@"
-	@iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
+	@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $^ -I $(VINC_PATH)
+# @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
 iverilog: $(VVP_FILE)
 	@vvp $^

@@ -51,13 +51,15 @@ module ysyx_24080020_SRAM(
     reg [7:0] memory [0:memory_len-1];
 
 
-    // initial begin
+    initial begin
 
-    //     $display("show : %s", `MEM_FILE);
-    //     $readmemh(`MEM_FILE, memory);
+        // $display("show : %s", "/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32e-npc_tb.hex");
+        // $readmemh("/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32e-npc_tb.hex", memory);
 
+        $display("show : %s", `MEM_FILE);
+        $readmemh(`MEM_FILE, memory);
 
-    // end
+    end
 `endif
 
     reg [`ysyx_24080020_WIDTH-1:0] paddr_r_base, paddr_r, paddr_w;
