@@ -47,7 +47,7 @@ module ysyx_24080020_SRAM(
 `ifdef __ICARUS__
 
 
-    localparam memory_len = 32 << 20;
+    localparam memory_len = 1 << 24;
     reg [7:0] memory [0:memory_len-1];
 
     initial begin
