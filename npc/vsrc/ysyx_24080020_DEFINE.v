@@ -18,11 +18,7 @@
 `endif
 
 `ifdef ysyx_24080020_NPC
-`ifdef __ICARUS__
 `define ysyx_24080020_MBASE 32'h80000000
-`else
-`define ysyx_24080020_MBASE 32'h80000000
-`endif
 // IOE
 `define ysyx_24080020_CLINT_ADDR 32'ha0000048
 `define ysyx_24080020_DEVICE_BASE 32'ha0000000
