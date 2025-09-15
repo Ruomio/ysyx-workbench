@@ -59,6 +59,8 @@ module ysyx_24080020_SRAM(
         $display("show : %s", `MEM_FILE);
         $readmemh(`MEM_FILE, memory);
 
+        $display("memory[31:0]: 0x%h%h%h%h", memory[3], memory[2], memory[1], memory[0]);
+
     end
 `endif
 
