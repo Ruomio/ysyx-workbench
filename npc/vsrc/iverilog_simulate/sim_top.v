@@ -106,7 +106,7 @@ module sim_top;
         // $dumpfile("build/wave.vcd"); // 指定 VCD 文件名
         // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
 
-        fd = $fopen("/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32e-npc_tb.bin", "r");
+        fd = $fopen(`MEM_FILE, "r");
         if(fd == 0)
         begin
             $display ("tb: Could not open File");
