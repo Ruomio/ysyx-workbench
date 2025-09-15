@@ -19,7 +19,7 @@
 
 `ifdef ysyx_24080020_NPC
 `ifdef __ICARUS__
-`define ysyx_24080020_MBASE 32'h00000000
+`define ysyx_24080020_MBASE 32'h80000000
 `else
 `define ysyx_24080020_MBASE 32'h80000000
 `endif
