@@ -274,9 +274,6 @@ module ysyx_24080020_EXU
                 else if(is_dnpc_idu) statistics_idu_jump_type();
                 else statistics_idu_calculate_type();
                 `endif
-                `ifdef __ICARUS__
-                $display("EXU pc: 0x%h", pc_idu);
-                `endif
 
             end
             else begin
@@ -350,6 +347,7 @@ module ysyx_24080020_EXU
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
             if(pc_delay_cnt > 32'h200) begin
+                $display("EXU lag at pc: 0x%h", pc_exu);
                 $display("PC delay count exceeded");
                 $finish;
             end
