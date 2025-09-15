@@ -81,6 +81,9 @@ module sim_top;
 
     integer fd;
 
+    localparam memory_len = 32 << 20;
+    reg [7:0] memory [0:memory_len-1];
+
     initial begin
         clock = 'b0;
         forever begin
@@ -91,6 +94,11 @@ module sim_top;
     initial begin
         reset = 'b0;
         #20 reset = 'b1;
+    end
+
+    initial begin
+        $display("show : %s", `MEM_FILE);
+        $readmemh(`MEM_FILE, memory);
     end
 
 
