@@ -270,7 +270,7 @@ module ysyx_24080020_SRAM(
         integer i;
         begin
             for (i = 0; i < (1<<len); i = i + 1) begin
-                if (addr + i < 32*1024*1024) begin  // 边界检查
+                if (addr + i < memory_len) begin  // 边界检查
                     memory[addr + i] = data[8*i +: 8];  // 小端序：bit[7:0] → addr+0
                 end
                 else begin
