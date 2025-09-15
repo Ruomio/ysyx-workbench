@@ -149,7 +149,7 @@ module ysyx_24080020_SRAM(
                 rdata <= read_memory(paddr_r, 32'd4);
                 `endif
                 `ifdef __ICARUS__
-                rdata <= read_mem_by_bytes(paddr_r, 2'd2);
+                rdata <= read_mem_by_bytes({4'b0, paddr_r[27:0]}, 2'd2);
                 `endif
 
                 rvalid <= 1'b1;
@@ -213,7 +213,7 @@ module ysyx_24080020_SRAM(
                     w_rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
                     `endif
                     `ifdef __ICARUS__
-                    w_rdata <= read_mem_by_bytes({awaddr[31:2],2'b0}, 2'd2);
+                    w_rdata <= read_mem_by_bytes({4'b0, awaddr[27:2],2'b0}, 2'd2);
                     `endif
                 end
             end
@@ -227,7 +227,7 @@ module ysyx_24080020_SRAM(
                     write_memory(paddr_w, 32'd4, write_data);
                     `endif
                     `ifdef __ICARUS__
-                    write_mem_by_bytes(paddr_w, 2'b10, write_data);
+                    write_mem_by_bytes({4'b0, paddr_w[27:0]}, 2'b10, write_data);
                     `endif
                     b_en <= 1'b1;
 
