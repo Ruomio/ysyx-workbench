@@ -276,10 +276,6 @@ module ysyx_24080020_EXU
                 `endif
                 `ifdef __ICARUS__
                 $display("EXU pc: 0x%h", pc_idu);
-                if(pc_delay_cnt > 32'h100) begin
-                    $display("PC delay count exceeded");
-                    $finish;
-                end
                 `endif
 
             end
@@ -353,6 +349,10 @@ module ysyx_24080020_EXU
         end
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
+            if(pc_delay_cnt > 32'h300) begin
+                $display("PC delay count exceeded");
+                $finish;
+            end
         end
     end
 `endif
