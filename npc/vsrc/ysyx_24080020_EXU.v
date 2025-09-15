@@ -349,7 +349,7 @@ module ysyx_24080020_EXU
         end
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
-            if(pc_delay_cnt > 32'h300) begin
+            if(pc_delay_cnt > 32'h200) begin
                 $display("PC delay count exceeded");
                 $finish;
             end
