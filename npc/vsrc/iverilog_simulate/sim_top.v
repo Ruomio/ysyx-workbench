@@ -94,10 +94,10 @@ module sim_top;
 
 
     initial begin
-        // $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
-        // #200000;
-        // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
-        // #100000 $finish;
+        $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
+        #200000;
+        $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
+        #100000 $finish;
     end
 
 
