@@ -277,8 +277,9 @@ module ysyx_24080020_EXU
                 // $display("%h", {4'b0, pc_exu[27:0]});
                 `endif
                 `ifdef __ICARUS__
+                ref_pc_idx <= ref_pc_idx + 'b1;
                 if(pc_idu != ref_pc[ref_pc_idx]) begin
-                    $display("pc error! at: 0x%h", pc_idu);
+                    $display("pc error! should be: 0x%h, but be: 0x%h", ref_pc[ref_pc_idx], pc_idu);
                     $finish;
                 end
                 `endif
