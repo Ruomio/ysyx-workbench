@@ -274,7 +274,13 @@ module ysyx_24080020_EXU
                 else if(is_dnpc_idu) statistics_idu_jump_type();
                 else statistics_idu_calculate_type();
 
-                $display("0x%h", {4'b0, pc_exu[27:0]});
+                // $display("%h", {4'b0, pc_exu[27:0]});
+                `endif
+                `ifdef __ICARUS__
+                if(pc_idu != ref_pc[ref_pc_idx]) begin
+                    $display("pc error! at: 0x%h", pc_idu);
+                    $finish;
+                end
                 `endif
 
             end
@@ -339,8 +345,11 @@ module ysyx_24080020_EXU
 `ifdef __ICARUS__
     reg [31:0] ref_pc [0:(1<<20)-1];
 
+    reg [20-1:0] ref_pc_idx = 'b0;
+
+
     initial begin
-        $readmemh();
+        $readmemh("/home/papillon/Documents/All_codes/ysyx-workbench/am-kernels/benchmarks/microbench/.ref/ref_pc_stream.txt", ref_pc);
     end
 `endif
 
