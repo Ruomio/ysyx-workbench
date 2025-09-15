@@ -218,7 +218,7 @@ module ysyx_24080020_BTB(
             // fin_done <= 'b0;
 
             out_en <= 'b0;
-            // next_special_pc <= 'b0;
+            next_special_pc <= 'b0;
             out_special_pc <= 'b0;
 
             for (integer i = 'b0; i < `ysyx_24080020_BRANCH_NUM; i = i + 'b1 ) begin
