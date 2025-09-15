@@ -274,7 +274,7 @@ module ysyx_24080020_SRAM(
                     memory[addr + i] = data[8*i +: 8];  // 小端序：bit[7:0] → addr+0
                 end
                 else begin
-                    $display(" out of range!");
+                    $display(" out of range! at: 0x%h", addr + i);
                 end
             end
         end
