@@ -153,7 +153,7 @@ module ysyx_24080020_SRAM(
                 rdata <= read_memory(paddr_r, 32'd4);
                 `endif
                 `ifdef __ICARUS__
-                rdata <= read_mem_by_bytes(paddr_r, 32'd4);
+                rdata <= read_mem_by_bytes(paddr_r, 2'd2);
                 `endif
 
                 rvalid <= 1'b1;
