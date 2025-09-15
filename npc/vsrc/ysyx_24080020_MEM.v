@@ -44,6 +44,7 @@ module ysyx_24080020_MEM(
 
     input reg is_load_exu,
     output reg is_load_mem,
+    output reg mwen_mem,
 
     input is_dnpc_exu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
@@ -107,7 +108,6 @@ module ysyx_24080020_MEM(
     assign wvalid_reg = wvalid;
 
     reg mren_mem;
-    reg mwen_mem;
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;
