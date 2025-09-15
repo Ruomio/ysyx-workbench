@@ -175,6 +175,12 @@ module ysyx_24080020_REG
             `ifdef CONFIG_DPIC
             if(is_ebreak_lsu) ebreak();
             `endif
+            `ifdef __ICARUS__
+            if(is_ebreak_lsu) begin
+                $display("ebreak inst!");
+                $finish;
+            end
+            `endif
         end
         else if(mem_wb_valid) begin
             wb_mem_ready <= 1'b1;
