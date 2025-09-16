@@ -431,30 +431,24 @@ module sim_top;
     endfunction
 
 
-    // reg [31:0] pc_delay_cnt;
+    reg [31:0] pc_delay_cnt;
 
-    // always @(posedge clock) begin
-    //     if(reset) begin
-    //         pc_delay_cnt <= 32'h0;
-    //     end
-    //     else if(u_cpu.u_npc.exu.exu_mem_valid && u_cpu.u_npc.exu.mem_exu_ready) begin
-    //         pc_delay_cnt <= 'h0;
-    //     end
-    //     else begin
-    //         pc_delay_cnt <= pc_delay_cnt + 1'b1;
-    //         if(pc_delay_cnt > 32'h200) begin
-    //             $display("EXU lag at pc: 0x%h", pc_exu);
-    //             $display("PC delay count exceeded");
-    //             $finish;
-    //         end
-    //     end
-    // end
-    // 在仿真代码前添加，查看实际层次结构
-initial begin
-    $display("Available hierarchy:");
-    #20;
-    $display("u_cpu exists: %b", (u_cpu.u_npc.exu.exu_mem_valid));
-
-end
+    always @(posedge clock) begin
+        if(reset) begin
+            pc_delay_cnt <= 32'h0;
+        end
+        else if(u_cpu.\u_npc/exu_mem_valid  && u_cpu.\u_npc/mem_exu_ready ) begin
+            pc_delay_cnt <= 'h0;
+        end
+        else begin
+            pc_delay_cnt <= pc_delay_cnt + 1'b1;
+            if(pc_delay_cnt > 32'h200) begin
+                $display("EXU lag at pc: 0x%h", u_cpu.\u_npc/pc_exu );
+                $display("PC delay count exceeded");
+                $finish;
+            end
+        end
+    end
+    // wire \u_npc/exu_mem_valid ;
 
 endmodule
