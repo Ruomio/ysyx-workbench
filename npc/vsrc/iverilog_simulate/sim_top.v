@@ -20,10 +20,10 @@ module sim_top;
 
 
     initial begin
-        // $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
+        $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
         // #200000;
-        // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
-        // #100000 $finish;
+        $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
+        #200000 $finish;
     end
 
     localparam memory_len = 1 << 27; // 128M
@@ -32,8 +32,8 @@ module sim_top;
 
     // MEM_FILE define in makefile
     initial begin
-        for(int i = 0; i < memory_len; i++)
-            memory[i] = 'b0;
+        // for(int i = 0; i < memory_len; i++)
+        //     memory[i] = 'b0;
 
         // $display("show : %s", `MEM_FILE);
         mem_file = "";
@@ -431,5 +431,32 @@ module sim_top;
     endfunction
 
 
+    // reg [31:0] pc_delay_cnt;
+
+    // always @(posedge clock) begin
+    //     if(reset) begin
+    //         pc_delay_cnt <= 32'h0;
+    //     end
+    //     else if(u_cpu.u_npc.exu.exu_mem_valid && u_cpu.u_npc.exu.mem_exu_ready) begin
+    //         pc_delay_cnt <= 'h0;
+    //     end
+    //     else begin
+    //         pc_delay_cnt <= pc_delay_cnt + 1'b1;
+    //         if(pc_delay_cnt > 32'h200) begin
+    //             $display("EXU lag at pc: 0x%h", pc_exu);
+    //             $display("PC delay count exceeded");
+    //             $finish;
+    //         end
+    //     end
+    // end
+    // 在仿真代码前添加，查看实际层次结构
+initial begin
+    $display("Available hierarchy:");
+    // 尝试列出可能的路径
+    if (1) begin
+        $display("u_cpu type: %s", $typename(u_cpu));
+        // 或者使用系统任务探索层次
+    end
+end
 
 endmodule

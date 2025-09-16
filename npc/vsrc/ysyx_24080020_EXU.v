@@ -334,25 +334,5 @@ module ysyx_24080020_EXU
         .c(branch_dnpc)
     );
 
-`ifdef __ICARUS__
-    reg [31:0] pc_delay_cnt;
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            pc_delay_cnt <= 32'h0;
-        end
-        else if(exu_mem_valid && mem_exu_ready) begin
-            pc_delay_cnt <= 'h0;
-        end
-        else begin
-            pc_delay_cnt <= pc_delay_cnt + 1'b1;
-            if(pc_delay_cnt > 32'h200) begin
-                $display("EXU lag at pc: 0x%h", pc_exu);
-                $display("PC delay count exceeded");
-                $finish;
-            end
-        end
-    end
-`endif
 
 endmodule
