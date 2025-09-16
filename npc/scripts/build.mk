@@ -224,15 +224,16 @@ perf: $(BIN)
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
 
 
-$(VVP_FILE): $(VSRC) $(TB_FILE) $(IMG)
+$(VVP_FILE): $(VSRC) $(TB_FILE)
 	@echo "+ iverilog -> $@"
-	@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
+	@iverilog -g2012 -o $@ $^ -I $(VINC_PATH)
+#@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
 # @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
 iverilog: $(VVP_FILE)
+	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
-	@vvp $^
-	$(call git_commit, "iverilog NPC")
+	@vvp $^ +MEM_FILE=$(IMG)
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
