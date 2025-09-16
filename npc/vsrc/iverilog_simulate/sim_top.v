@@ -28,13 +28,21 @@ module sim_top;
 
     localparam memory_len = 1 << 27; // 128M
     reg [7:0] memory [0:memory_len-1];
+    reg [64*8-1:0] mem_file;
 
     // MEM_FILE define in makefile
     initial begin
         for(int i = 0; i < memory_len; i++)
             memory[i] = 'b0;
+
         // $display("show : %s", `MEM_FILE);
-        $readmemh(`MEM_FILE, memory);
+        mem_file = "default.hex";
+        if ($value$plusargs("MEM_FILE=%s", mem_file)) begin
+        $display("[INFO] Loading memory from: %s", mem_file);
+        end else begin
+            $display("[WARN] No +MEM_FILE= specified, using default: %s", mem_file);
+        end
+        $readmemh(mem_file, memory);
     end
 
 
