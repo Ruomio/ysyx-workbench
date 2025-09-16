@@ -427,6 +427,7 @@ module sim_top;
                 end
             endcase
         end
+        $display("Get data: 0x%h from: 0x%h", read_mem_by_bytes, addr);
     endfunction
 
 
