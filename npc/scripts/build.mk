@@ -99,6 +99,7 @@ V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 VVP_FILE += $(BUILD_DIR)/sim_top.vvp
 VVP_NETLIST_FILE += $(BUILD_DIR)/sim_top_netlist.vvp
 TB_FILE += $(shell find . -type f -name "sim_top.v")
+TB_NETLIST_FILE += $(shell find . -type f -name "sim_top_netlist.v")
 NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
 CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
 
@@ -234,7 +235,7 @@ $(VVP_FILE): $(VSRC) $(TB_FILE)
 #@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
 # @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
-$(VVP_NETLIST_FILE): $(TB_FILE) $(NETLIST_FILE) $(CLEES_FILE)
+$(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
 	@echo "+ iverilog -> $@"
 	@iverilog -g2012 -o $@ $^
 
