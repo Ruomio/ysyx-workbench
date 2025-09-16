@@ -248,6 +248,7 @@ iverilog_netlist: $(VVP_NETLIST_FILE)
 	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
+	@vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave/fst
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
