@@ -28,7 +28,7 @@ module sim_top;
 
     localparam memory_len = 1 << 27; // 128M
     reg [7:0] memory [0:memory_len-1];
-    reg [0:128*8-1] mem_file;
+    reg [128*8-1:0] mem_file;
 
     // MEM_FILE define in makefile
     initial begin
