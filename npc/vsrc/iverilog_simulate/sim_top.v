@@ -7,9 +7,42 @@ module sim_top;
     reg clock;
     reg reset;
 
+
+    initial begin
+        clock = 'b0;
+        forever begin
+            #1 clock = ~clock;
+        end
+    end
+
+    initial begin
+        reset = 'b1;
+        #20 reset = 'b0;
+    end
+
+
+    initial begin
+        // $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
+        // #200000;
+        // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
+        // #100000 $finish;
+    end
+
+    localparam memory_len = 1 << 27; // 128M
+    reg [7:0] memory [0:memory_len-1];
+
+    initial begin
+        for(int i = 0; i < memory_len; i++)
+            memory[i] = 'b0;
+        // $display("show : %s", `MEM_FILE);
+        $readmemh(`MEM_FILE, memory);
+    end
+
+
     wire io_interrupt;
 
-    wire io_master_arready;
+    reg io_master_arready;
+        // AR
     wire io_master_arvalid;
     wire [31:0] io_master_araddr;
     wire [3:0] io_master_arid;
@@ -18,13 +51,13 @@ module sim_top;
     wire [1:0] io_master_arburst;
         // R
     wire io_master_rready;
-    wire io_master_rvalid;
-    wire [1:0] io_master_rresp;
-    wire [31:0] io_master_rdata;
-    wire io_master_rlast;
-    wire [3:0] io_master_rid;
+    reg io_master_rvalid;
+    reg [1:0] io_master_rresp;
+    reg [31:0] io_master_rdata;
+    reg io_master_rlast;
+    reg [3:0] io_master_rid;
         // AW
-    wire io_master_awready;
+    reg io_master_awready;
     wire io_master_awvalid;
     wire [31:0] io_master_awaddr;
     wire [3:0] io_master_awid;
@@ -32,16 +65,16 @@ module sim_top;
     wire [2:0] io_master_awsize;
     wire [1:0] io_master_awburst;
         // W
-    wire io_master_wready;
+    reg io_master_wready;
     wire io_master_wvalid;
     wire [31:0] io_master_wdata;
     wire [3:0] io_master_wstrb;
     wire io_master_wlast;
         // B
     wire io_master_bready;
-    wire io_master_bvalid;
-    wire [1:0] io_master_bresp;
-    wire [3:0] io_master_bid;
+    reg io_master_bvalid;
+    reg [1:0] io_master_bresp;
+    reg [3:0] io_master_bid;
 
         // slave
         // AR
@@ -78,28 +111,6 @@ module sim_top;
     wire io_slave_bvalid;
     wire [1:0] io_slave_bresp;
     wire [3:0] io_slave_bid;
-
-
-    initial begin
-        clock = 'b0;
-        forever begin
-            #1 clock = ~clock;
-        end
-    end
-
-    initial begin
-        reset = 'b1;
-        #20 reset = 'b0;
-    end
-
-
-    initial begin
-        // $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
-        // #200000;
-        // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
-        // #100000 $finish;
-    end
-
 
     // encapsulation to change pins' name
     ysyx_24080020 u_cpu(
@@ -179,6 +190,238 @@ module sim_top;
         .io_slave_bresp(io_slave_bresp),
         .io_slave_bid(io_slave_bid)
     );
+
+
+    reg [`ysyx_24080020_WIDTH-1:0] paddr_r_base, paddr_r, paddr_w;
+    reg [`ysyx_24080020_WIDTH-1:0] write_data;
+    reg read_en, write_en, b_en;
+
+    reg [5:0] ar_cnt, aw_cnt, w_cnt;
+    reg [5:0] r_cnt, b_cnt;
+
+    reg [7:0] arlen_cnt;
+    reg [31:0] w_rdata;
+
+
+
+    wire [`ysyx_24080020_WIDTH-1:0] wstrb_full;
+    wire [5:0] lfsr;    // the number of delay cycle
+
+    assign wstrb_full = {{8{io_master_wstrb[3]}}, {8{io_master_wstrb[2]}}, {8{io_master_wstrb[1]}}, {8{io_master_wstrb[0]}}};
+    assign lfsr = 6'd32;
+
+    // AR
+    always @(posedge clock) begin
+        if(reset) begin
+            io_master_arready <= 1'b0;
+            read_en <= 1'b0;
+            ar_cnt <= 6'b0;
+            paddr_r_base <= 'b0;
+        end
+        else if(io_master_rready && io_master_rvalid && io_master_rlast) begin
+            read_en <= 1'b0;
+        end
+        else if(io_master_arvalid && io_master_arready) begin
+            io_master_arready <= 'b0;
+        end
+        else if(io_master_arvalid) begin
+            if(ar_cnt < lfsr) begin
+                ar_cnt <= ar_cnt + 6'b1;
+            end
+            else begin
+                paddr_r_base <= {io_master_araddr[31:2],2'b0};
+                read_en <= 1'b1;
+                io_master_arready <= 1'b1;
+
+                ar_cnt <= 6'b0;
+            end
+        end
+    end
+
+    // R
+    always @(posedge clock) begin
+        if(reset) begin
+            io_master_rvalid <= 1'b0;
+            io_master_rresp <= 2'b0;
+            io_master_rdata <= 32'b0;
+            arlen_cnt <= 'b0;
+            paddr_r <= 'b0;
+            r_cnt <= 'b0;
+            io_master_rlast <= 'b0;
+        end
+        else if(io_master_arvalid && io_master_arready) begin
+            paddr_r <= paddr_r_base;
+        end
+        else if(read_en) begin
+            if(r_cnt < lfsr) begin
+                r_cnt <= r_cnt + 6'b1;
+            end
+            else if(io_master_rready && io_master_rvalid) begin
+                io_master_rvalid <= 1'b0;
+                io_master_rresp <= 2'b0;
+                if(io_master_rlast) begin
+                    r_cnt <= 'b0;
+                    arlen_cnt <= 'b0;
+                    io_master_rlast <= 'b0;
+                end
+                else begin
+                    arlen_cnt <= arlen_cnt + 'b1;
+                    if(io_master_arburst == 'b00) begin
+                        paddr_r <= paddr_r;
+                    end
+                    else if(io_master_arburst == 'b01) begin
+                        paddr_r <= paddr_r + (1<<io_master_arsize);
+                    end
+                end
+            end
+            else if(arlen_cnt <= io_master_arlen) begin
+                // printf_info();
+                // io_master_rdata <= read_memory(paddr_r, 32'd4);
+                io_master_rdata <= read_mem_by_bytes({4'b0, paddr_r[27:0]}, 2'd2);
+
+                io_master_rvalid <= 1'b1;
+                io_master_rresp <= 2'b0;
+                if(arlen_cnt == io_master_arlen) begin
+                    io_master_rlast <= 1'b1;
+                end
+            end
+        end
+    end
+
+
+    // AW
+    always @(posedge clock) begin
+        if(reset) begin
+            io_master_awready <= 1'b0;
+            paddr_w <= 'b0;
+            aw_cnt <= 'b0;
+        end
+        else if(io_master_awvalid && io_master_awready) begin
+            io_master_awready <= 1'b0;
+        end
+        else if(io_master_awvalid) begin
+            if(aw_cnt < lfsr) begin
+                aw_cnt <= aw_cnt + 6'b1;
+            end
+            else begin
+                paddr_w <= {io_master_awaddr[31:2], 2'b0};
+                io_master_awready <= 1'b1;
+
+                aw_cnt <= 6'b0;
+            end
+        end
+    end
+
+    // W
+    always @(posedge clock) begin
+        if(reset) begin
+            w_cnt <= 6'b0;
+            io_master_wready <= 1'b0;
+            write_en <= 1'b0;
+            w_rdata <= 'b0;
+
+            b_en <= 1'b0;
+            write_data <= 'b0;
+        end
+        else if(b_en && b_cnt >= lfsr) begin
+            b_en <= 'b0;
+        end
+        else if(io_master_wvalid && io_master_wready) begin
+            io_master_wready <= 'b0;
+            w_cnt <= 6'b0;
+            write_en <= 1'b0;
+        end
+        else if(io_master_wvalid) begin
+            if(w_cnt < lfsr) begin
+                w_cnt <= w_cnt + 6'b1;
+                if(w_cnt == lfsr - 'b1) begin
+                    // printf_info();
+                    // w_rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
+                    w_rdata <= read_mem_by_bytes({4'b0, io_master_awaddr[27:2], 2'b0}, 2'd2);
+                end
+            end
+            else begin
+                if(!write_en) begin
+                    write_data <= io_master_wdata & wstrb_full | (w_rdata & ~wstrb_full);
+                    write_en <= 1'b1;
+                end
+                else if(!io_master_wready) begin
+                    // write_memory(paddr_w, 32'd4, write_data);
+                    write_mem_by_bytes(paddr_w, 2'b10, write_data);
+                    b_en <= 1'b1;
+
+                    io_master_wready <= 1'b1;
+                end
+            end
+        end
+    end
+
+    // B
+    always @(posedge clock) begin
+        if(reset) begin
+            io_master_bvalid <= 1'b0;
+            io_master_bresp <= 2'b0;
+            b_cnt <= 'b0;
+        end
+        else if(b_en) begin
+            if(b_cnt < lfsr) begin
+                b_cnt <= b_cnt + 6'b1;
+            end
+            else begin
+                io_master_bvalid <= 1'b1;
+                io_master_bresp <= 2'b0;
+
+                b_cnt <= 6'b0;
+            end
+        end
+        else if(io_master_bready && io_master_bvalid) begin
+            io_master_bvalid <= 1'b0;
+            io_master_bresp <= 2'b0;
+        end
+    end
+
+
+    function void write_mem_by_bytes;
+        input [31:0] addr;   // 地址（0 ~ 32MB-1）
+        input [1:0]  len;    // 长度：1,2,4 字节（len=0 视为1）
+        input [31:0] data;   // 要写入的数据
+
+        integer i;
+        begin
+            for (i = 0; i < (1<<len); i = i + 1) begin
+                if (addr + i < memory_len) begin  // 边界检查
+                    memory[addr + i] = data[8*i +: 8];  // 小端序：bit[7:0] → addr+0
+                end
+                else begin
+                    $display(" out of range! at: 0x%h", addr + i);
+                end
+            end
+        end
+    endfunction
+
+    function [31:0] read_mem_by_bytes;
+        input [31:0] addr;  // 地址范围 0 ~ 32MB-1
+        input [1:0]  len;   // 0=>1B, 1=>2B, 2=>4B（通常这样编码）
+
+        begin
+            case (len)
+                2'd0: begin  // 读1字节
+                    read_mem_by_bytes = {24'h0, memory[addr]};
+                end
+                2'd1: begin  // 读2字节（小端序）
+                    read_mem_by_bytes = {16'h0, memory[addr + 1], memory[addr]};
+                end
+                2'd2: begin  // 读4字节（小端序）
+                    read_mem_by_bytes = {memory[addr + 3], memory[addr + 2],
+                                        memory[addr + 1], memory[addr]};
+                end
+                default: begin
+                    read_mem_by_bytes = 32'h0;
+                end
+            endcase
+        end
+    endfunction
+
 
 
 endmodule
