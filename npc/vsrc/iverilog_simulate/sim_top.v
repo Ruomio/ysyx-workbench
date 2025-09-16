@@ -7,7 +7,7 @@ module sim_top;
     reg clock;
     reg reset;
 
-    wire [31:0] pc_ifu;
+    wire io_interrupt;
 
     wire io_master_arready;
     wire io_master_arvalid;
@@ -88,8 +88,8 @@ module sim_top;
     end
 
     initial begin
-        reset = 'b0;
-        #20 reset = 'b1;
+        reset = 'b1;
+        #20 reset = 'b0;
     end
 
 
@@ -102,11 +102,11 @@ module sim_top;
 
 
     // encapsulation to change pins' name
-    ysyx_24080020_NPC u_npc(
-        .clk(clock),
-        .rst(reset),
+    ysyx_24080020 u_cpu(
+        .clock(clock),
+        .reset(reset),
 
-        .pc_ifu_out(pc_ifu),
+        .io_interrupt(io_interrupt),
         // master
         // AR
         .io_master_arready(io_master_arready),
