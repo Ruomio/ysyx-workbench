@@ -452,11 +452,9 @@ module sim_top;
     // 在仿真代码前添加，查看实际层次结构
 initial begin
     $display("Available hierarchy:");
-    // 尝试列出可能的路径
-    if (1) begin
-        $display("u_cpu type: %s", $typename(u_cpu));
-        // 或者使用系统任务探索层次
-    end
+    #20;
+    $display("u_cpu exists: %b", (u_cpu.u_npc.exu.exu_mem_valid));
+
 end
 
 endmodule
