@@ -36,7 +36,7 @@ module sim_top;
             memory[i] = 'b0;
 
         // $display("show : %s", `MEM_FILE);
-        mem_file = "default.hex";
+        mem_file = "";
         if ($value$plusargs("MEM_FILE=%s", mem_file)) begin
             $display("[INFO] Loading memory from: %s", mem_file);
         end else begin
