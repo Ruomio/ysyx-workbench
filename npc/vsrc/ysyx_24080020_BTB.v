@@ -471,7 +471,7 @@ module ysyx_24080020_BTB(
 
     always @(posedge clk) begin
         if(!rst) begin
-            // pc_tmp <= 'b0;
+            pc_tmp <= 'b0;
             in_ready <= 'b0;
         end
         else if(in_valid && in_ready) begin
