@@ -2,8 +2,6 @@
 
 module sim_top;
 
-    // `define MEM_FILE "\"/default/path/file\""
-
     reg clock;
     reg reset;
 
@@ -31,6 +29,7 @@ module sim_top;
     localparam memory_len = 1 << 27; // 128M
     reg [7:0] memory [0:memory_len-1];
 
+    // MEM_FILE define in makefile
     initial begin
         for(int i = 0; i < memory_len; i++)
             memory[i] = 'b0;
