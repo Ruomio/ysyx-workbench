@@ -284,7 +284,7 @@ module sim_top;
             else if(arlen_cnt <= io_master_arlen) begin
                 // printf_info();
                 // io_master_rdata <= read_memory(paddr_r, 32'd4);
-                io_master_rdata <= read_mem_by_bytes({4'b0, paddr_r[27:0]}, 2'd2);
+                io_master_rdata <= read_mem_by_bytes({paddr_r[27:0]}, 2'd2);
 
                 io_master_rvalid <= 1'b1;
                 io_master_rresp <= 2'b0;
@@ -311,7 +311,7 @@ module sim_top;
                 aw_cnt <= aw_cnt + 6'b1;
             end
             else begin
-                paddr_w <= {4'b0, io_master_awaddr[27:2], 2'b0};
+                paddr_w <= {io_master_awaddr[27:2], 2'b0};
                 io_master_awready <= 1'b1;
 
                 aw_cnt <= 6'b0;
@@ -344,7 +344,7 @@ module sim_top;
                 if(w_cnt == lfsr - 'b1) begin
                     // printf_info();
                     // w_rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
-                    w_rdata <= read_mem_by_bytes({4'b0, io_master_awaddr[27:2], 2'b0}, 2'd2);
+                    w_rdata <= read_mem_by_bytes({io_master_awaddr[27:2], 2'b0}, 2'd2);
                 end
             end
             else begin
@@ -396,11 +396,11 @@ module sim_top;
         integer i;
         begin
             for (i = 0; i < (1<<len); i = i + 1) begin
-                if (addr + i < memory_len) begin  // 边界检查
-                    memory[addr + i] = data[8*i +: 8];  // 小端序：bit[7:0] → addr+0
+                if ({4'b0, addr[27:0]} + i < memory_len) begin  // 边界检查
+                    memory[{4'b0, addr[27:0]} + i] = data[8*i +: 8];  // 小端序：bit[7:0] → {4'b0, addr[27:0]}+0
                 end
                 else begin
-                    $display(" out of range! at: 0x%h", addr + i);
+                    $display(" out of range! at: 0x%h", {4'b0, addr[27:0]} + i);
                 end
             end
         end
@@ -413,14 +413,14 @@ module sim_top;
         begin
             case (len)
                 2'd0: begin  // 读1字节
-                    read_mem_by_bytes = {24'h0, memory[addr]};
+                    read_mem_by_bytes = {24'h0, memory[{4'b0, addr[27:0]}]};
                 end
                 2'd1: begin  // 读2字节（小端序）
-                    read_mem_by_bytes = {16'h0, memory[addr + 1], memory[addr]};
+                    read_mem_by_bytes = {16'h0, memory[{4'b0, addr[27:0]} + 1], memory[{4'b0, addr[27:0]}]};
                 end
                 2'd2: begin  // 读4字节（小端序）
-                    read_mem_by_bytes = {memory[addr + 3], memory[addr + 2],
-                                        memory[addr + 1], memory[addr]};
+                    read_mem_by_bytes = {memory[{4'b0, addr[27:0]} + 3], memory[{4'b0, addr[27:0]} + 2],
+                                        memory[{4'b0, addr[27:0]} + 1], memory[{4'b0, addr[27:0]}]};
                 end
                 default: begin
                     read_mem_by_bytes = 32'h0;
