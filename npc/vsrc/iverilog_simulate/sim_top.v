@@ -32,8 +32,8 @@ module sim_top;
 
     // MEM_FILE define in makefile
     initial begin
-        // for(int i = 0; i < memory_len; i++)
-        //     memory[i] = 'b0;
+        for(int i = 0; i < memory_len; i++)
+            memory[i] = 'b0;
 
         // $display("show : %s", `MEM_FILE);
         mem_file = "";
