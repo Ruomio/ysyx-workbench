@@ -304,7 +304,7 @@ module sim_top;
                 aw_cnt <= aw_cnt + 6'b1;
             end
             else begin
-                paddr_w <= {io_master_awaddr[31:2], 2'b0};
+                paddr_w <= {4'b0, io_master_awaddr[27:2], 2'b0};
                 io_master_awready <= 1'b1;
 
                 aw_cnt <= 6'b0;
