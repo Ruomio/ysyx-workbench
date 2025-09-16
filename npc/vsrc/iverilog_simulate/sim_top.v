@@ -284,7 +284,7 @@ module sim_top;
             else if(arlen_cnt <= io_master_arlen) begin
                 // printf_info();
                 // io_master_rdata <= read_memory(paddr_r, 32'd4);
-                io_master_rdata <= read_mem_by_bytes({paddr_r[27:0]}, 2'd2);
+                io_master_rdata <= read_mem_by_bytes(paddr_r, 2'd2);
 
                 io_master_rvalid <= 1'b1;
                 io_master_rresp <= 2'b0;
@@ -311,7 +311,7 @@ module sim_top;
                 aw_cnt <= aw_cnt + 6'b1;
             end
             else begin
-                paddr_w <= {io_master_awaddr[27:2], 2'b0};
+                paddr_w <= {io_master_awaddr[31:2], 2'b0};
                 io_master_awready <= 1'b1;
 
                 aw_cnt <= 6'b0;
@@ -344,7 +344,7 @@ module sim_top;
                 if(w_cnt == lfsr - 'b1) begin
                     // printf_info();
                     // w_rdata <= read_memory({awaddr[31:2], 2'b0}, 32'd4);
-                    w_rdata <= read_mem_by_bytes({io_master_awaddr[27:2], 2'b0}, 2'd2);
+                    w_rdata <= read_mem_by_bytes({io_master_awaddr[31:2], 2'b0}, 2'd2);
                 end
             end
             else begin
