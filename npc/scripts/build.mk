@@ -236,7 +236,7 @@ $(VVP_FILE): $(VSRC) $(TB_FILE)
 
 $(VVP_NETLIST_FILE): $(TB_FILE) $(NETLIST_FILE) $(CLEES_FILE)
 	@echo "+ iverilog -> $@"
-	@echo "files: @^"
+	@echo "files: $^"
 #@iverilog -g2012 -o $@ $^
 
 iverilog: $(VVP_FILE)
