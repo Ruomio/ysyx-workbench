@@ -90,9 +90,9 @@ module ysyx_24080020_BTB(
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
-    logic has_hit;
-    logic total_hits [0 : branch_way - 1];
-    logic [branch_way-1:0] tmp_tag_index;
+    reg has_hit;
+    reg total_hits [0 : branch_way - 1];
+    reg [branch_way-1:0] tmp_tag_index;
 
 
     assign branch_tag_tmp = pc_tmp[31 : branch_num_bits+branch_size_bits];
