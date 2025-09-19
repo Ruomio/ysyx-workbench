@@ -201,7 +201,7 @@ module ysyx_24080020_BTB(
             // predict_pc <= 'b0;
             // hit_pc <= 'b0;
             // hit_target_pc <= 'b0;
-            // btb_hit <= 'b0;
+            btb_hit <= 'b0;
             flush_pipeline <= 'b0;
             // pc_new <= 'b0;
             is_hit <= 'b0;
