@@ -418,7 +418,7 @@ module ysyx_24080020_ICACHE(
             // hit_tag_s3 <= 'b0;
 
             // inst_s3 <= 'b0;
-            // arvalid_o <= 'b0;
+            arvalid_o <= 'b0;
             // araddr_o <= 'b0;
             // arsize_o <= 'b0;
             // arid_o <= 'b0;
