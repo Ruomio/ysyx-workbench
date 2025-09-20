@@ -273,7 +273,7 @@ module ysyx_24080020_MEM(
 
             pc_mem <= 'b0;
 
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
 
 
             is_ebreak_lsu <= 'b0;
@@ -356,11 +356,9 @@ module ysyx_24080020_MEM(
         else if(mem_wb_valid && wb_mem_ready && state) begin
             mem_wb_valid <= 1'b0;
         end
-        else if(exu_mem_shake_hands) begin
+        else if(exu_mem_shake_hands && !mwen_exu && !mren_exu) begin
 
-            if(!mwen_exu && !mren_exu) begin
-                mem_wb_valid <= 1'b1;
-            end
+            mem_wb_valid <= 1'b1;
         end
         else if(finish_read) begin
             mem_wb_valid <= 1'b1;
