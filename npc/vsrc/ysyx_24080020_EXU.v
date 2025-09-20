@@ -199,11 +199,11 @@ module ysyx_24080020_EXU
 
             skip_ref_exu <= 'b0;
             is_ebreak_exu <= 'b0;
-            exu_mem_valid <= 'b0;
+            // exu_mem_valid <= 'b0;
 
         end
         else if(mem_exu_ready && exu_mem_valid && state) begin
-            exu_mem_valid <= 1'b0;
+            // exu_mem_valid <= 1'b0;
             is_dnpc_exu <= 'b0;
             waddr_exu <= 'b0;
             is_btype_exu <= 'b0;
@@ -303,14 +303,26 @@ module ysyx_24080020_EXU
     always @(posedge clk) begin
         if(!rst) begin
             cnt <= 1'b0;
-            exu_mem_valid <= 1'b0;
+            // exu_mem_valid <= 1'b0;
         end
         else if(cnt == 1'b1) begin
-            exu_mem_valid <= 1'b1;
+            // exu_mem_valid <= 1'b1;
             cnt <= 1'b0;
         end
         else if(idu_exu_shake_hand) begin
             cnt <= 1'b1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            exu_mem_valid <= 'b0;
+        end
+        else if(mem_exu_ready && exu_mem_valid && state) begin
+            exu_mem_valid <= 1'b0;
+        end
+        else if(cnt == 1'b1) begin
+            exu_mem_valid <= 1'b1;
         end
     end
 
