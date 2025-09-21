@@ -205,7 +205,7 @@ module ysyx_24080020_BTB(
             flush_pipeline <= 'b0;
             // pc_new <= 'b0;
             is_hit <= 'b0;
-            // tag_index <= 'b0;
+            tag_index <= 'b0;
 
             // correct_pc <= 'b0;
             // dnpc_tmp <= 'b0;
