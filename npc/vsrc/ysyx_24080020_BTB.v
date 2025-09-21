@@ -225,7 +225,7 @@ module ysyx_24080020_BTB(
                 // branch_data[i]   <= 'b0;
                 branch_tag[i]    <= 'b0;
                 branch_valid[i]  <= 'b0;
-                // fifo_index[i]   <= 'b0;
+                fifo_index[i]   <= 'b0;
             end
         end
         // flush btb
