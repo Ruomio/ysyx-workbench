@@ -37,10 +37,10 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
 
     // out src1 & src2
-    output [`ysyx_24080020_WIDTH-1:0] val_raddr1,
-    output [`ysyx_24080020_WIDTH-1:0] val_raddr2,
+    output reg [`ysyx_24080020_WIDTH-1:0] val_raddr1,
+    output reg [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     // out csr
-    output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
+    output reg [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
     input mem_wb_valid,
     // input ifu_wb_ready,
@@ -111,21 +111,21 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             wb_mem_ready <= 'b0;
-            waddr_wb <= 'b0;
-            mrdata_wb <= 'b0;
-            wcsren_wb <= 'b0;
-            wcsraddr_wb <= 'b0;
-            wcsrdata_wb <= 'b0;
-            wcsren2_wb <= 'b0;
-            wcsraddr2_wb <= 'b0;
-            wcsrdata2_wb <= 'b0;
-            alu_out_wb <= 'b0;
-            is_load_wb <= 'b0;
-            is_dnpc_wb <= 'b0;
-            dnpc_wb <= 'b0;
-            // wb_ifu_valid <= 'b0;
-            skip_ref_wb <= 'b0;
-            pc_wbu <= 'b0;
+            // waddr_wb <= 'b0;
+            // mrdata_wb <= 'b0;
+            // wcsren_wb <= 'b0;
+            // wcsraddr_wb <= 'b0;
+            // wcsrdata_wb <= 'b0;
+            // wcsren2_wb <= 'b0;
+            // wcsraddr2_wb <= 'b0;
+            // wcsrdata2_wb <= 'b0;
+            // alu_out_wb <= 'b0;
+            // is_load_wb <= 'b0;
+            // is_dnpc_wb <= 'b0;
+            // dnpc_wb <= 'b0;
+            // // wb_ifu_valid <= 'b0;
+            // skip_ref_wb <= 'b0;
+            // pc_wbu <= 'b0;
             cnt <= 'b0;
         end
         // else if(wb_ifu_valid && ifu_wb_ready && state) begin
@@ -175,6 +175,12 @@ module ysyx_24080020_REG
             `ifdef CONFIG_DPIC
             if(is_ebreak_lsu) ebreak();
             `endif
+            `ifdef __ICARUS__
+            if(is_ebreak_lsu) begin
+                $display("ebreak inst!");
+                $finish;
+            end
+            `endif
         end
         else if(mem_wb_valid) begin
             wb_mem_ready <= 1'b1;
@@ -185,9 +191,10 @@ module ysyx_24080020_REG
     always @(posedge clk) begin
         if(!rst) begin
             wen_wb <= 'b0;
-            for(integer i = 0; i<`ysyx_24080020_REG_WIDTH; i = i+1 ) begin
-                regs[i] <= 32'b0;
-            end
+            regs[0] <= 'b0;
+            // for(integer i = 0; i<`ysyx_24080020_REG_WIDTH; i = i+1 ) begin
+            //     regs[i] <= 32'b0;
+            // end
         end
         else if(wen_wb) begin
             regs[waddr_wb] <= result;
@@ -205,7 +212,7 @@ module ysyx_24080020_REG
     // csrs write
     always @(posedge clk) begin
         if(!rst) begin
-            for(integer j = 0; j<=3'd7; j = j+1) csrs[j] <= 32'b0;
+            // for(integer j = 0; j<=3'd7; j = j+1) csrs[j] <= 32'b0;
             csrs[1] <= 32'h1800;
             csrs[4] <= 32'h79737978;
             csrs[5] <= 32'h16f6e94;
@@ -228,8 +235,6 @@ module ysyx_24080020_REG
     always @(*) begin
     // always @(wcsraddr_wb or rcsraddr or wcsraddr2_wb) begin
         wcsr_idx = 'b0;
-        wcsr_idx2 = 'b0;
-        rcsr_idx = 'b0;
 
         case(wcsraddr_wb)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
@@ -240,6 +245,11 @@ module ysyx_24080020_REG
             `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
             default: wcsr_idx = 3'd7;
         endcase
+    end
+
+    always @(*) begin
+    // always @(wcsraddr_wb or rcsraddr or wcsraddr2_wb) begin
+        wcsr_idx2 = 'b0;
 
         case(wcsraddr2_wb)
             `ysyx_24080020_MEPC_ADDR:     wcsr_idx2 = 3'd0;
@@ -250,6 +260,11 @@ module ysyx_24080020_REG
             `ysyx_24080020_MARCHID_ADDR: wcsr_idx2 = 3'd5;
             default: wcsr_idx2 = 3'd7;
         endcase
+    end
+
+    always @(*) begin
+    // always @(wcsraddr_wb or rcsraddr or wcsraddr2_wb) begin
+        rcsr_idx = 'b0;
 
         case(rcsraddr)
             `ysyx_24080020_MEPC_ADDR:     rcsr_idx = 3'd0;
@@ -262,8 +277,23 @@ module ysyx_24080020_REG
         endcase
     end
 
-    assign val_raddr1 = regs[raddr1];
-    assign val_raddr2 = regs[raddr2];
+    always @(posedge clk) begin
+        if(!rst) begin
+            val_raddr1 <= 'b0;
+            val_raddr2 <= 'b0;
+        end
+        else begin
+            val_raddr1 <= regs[raddr1];
+            val_raddr2 <= regs[raddr2];
+        end
+    end
 
-    assign rcsrdata = csrs[rcsr_idx];
+    always @(posedge clk) begin
+        if(!rst) begin
+            rcsrdata <= 'b0;
+        end
+        else begin
+            rcsrdata <= csrs[rcsr_idx];
+        end
+    end
 endmodule

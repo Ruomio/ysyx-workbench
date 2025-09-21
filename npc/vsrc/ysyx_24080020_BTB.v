@@ -90,9 +90,9 @@ module ysyx_24080020_BTB(
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
-    logic has_hit;
-    logic total_hits [0 : branch_way - 1];
-    logic [branch_way-1:0] tmp_tag_index;
+    reg has_hit;
+    reg total_hits [0 : branch_way - 1];
+    reg [branch_way-1:0] tmp_tag_index;
 
 
     assign branch_tag_tmp = pc_tmp[31 : branch_num_bits+branch_size_bits];
@@ -124,10 +124,11 @@ module ysyx_24080020_BTB(
       end
     endgenerate
 
-    always_comb begin
+    // always_comb begin
+    always @(*) begin
         tmp_tag_index = 0;
         has_hit = 0;
-        for (int i = 0; i < branch_way; i++) begin
+        for (integer i = 0; i < branch_way; i++) begin
             if (total_hits[i]) begin
                 has_hit = 'b1;
                 tmp_tag_index = i[branch_way-1:0];
@@ -197,31 +198,31 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             out_valid <= 'b0;
             pc <= `ysyx_24080020_MBASE;
-            predict_pc <= 'b0;
-            hit_pc <= 'b0;
-            hit_target_pc <= 'b0;
+            // predict_pc <= 'b0;
+            // hit_pc <= 'b0;
+            // hit_target_pc <= 'b0;
             btb_hit <= 'b0;
             flush_pipeline <= 'b0;
-            pc_new <= 'b0;
+            // pc_new <= 'b0;
             is_hit <= 'b0;
             tag_index <= 'b0;
 
-            correct_pc <= 'b0;
-            dnpc_tmp <= 'b0;
+            // correct_pc <= 'b0;
+            // dnpc_tmp <= 'b0;
             is_dnpc_tmp <= 'b0;
 
             // state-machine
-            fin_judge <= 'b0;
-            fin_hit <= 'b0;
-            fin_miss <= 'b0;
-            fin_done <= 'b0;
+            // fin_judge <= 'b0;
+            // fin_hit <= 'b0;
+            // fin_miss <= 'b0;
+            // fin_done <= 'b0;
 
             out_en <= 'b0;
             next_special_pc <= 'b0;
             out_special_pc <= 'b0;
 
             for (integer i = 'b0; i < `ysyx_24080020_BRANCH_NUM; i = i + 'b1 ) begin
-                branch_data[i]   <= 'b0;
+                // branch_data[i]   <= 'b0;
                 branch_tag[i]    <= 'b0;
                 branch_valid[i]  <= 'b0;
                 fifo_index[i]   <= 'b0;

@@ -684,6 +684,7 @@ module ysyx_24080020_NPC(
 
         .is_load_exu(is_load_exu),
         .is_load_mem(is_load_mem),
+        .mwen_mem(mwen_mem),
 
         .dnpc_new_exu(dnpc_new_exu),
         .dnpc_mem(dnpc_mem),
@@ -1056,6 +1057,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
+    `ifdef CONFIG_DPIC
         .arvalid(arvalid_xbar_sram),
         .araddr(araddr_xbar_sram),
         .arid(arid_xbar_sram),
@@ -1089,8 +1091,78 @@ module ysyx_24080020_NPC(
         .bvalid(bvalid_sram),
         .bid(bid_sram),
         .bready(bready_xbar_sram)
+    `else
+
+        .arvalid(arvalid_xbar_sram),
+        .araddr(araddr_xbar_sram),
+        .arid(arid_xbar_sram),
+        .arlen(arlen_xbar_sram),
+        .arsize(arsize_xbar_sram),
+        .arburst(arburst_xbar_sram),
+        .arready(arready_sram),
+
+        .rdata(rdata_sram),
+        .rresp(rresp_sram),
+        .rvalid(rvalid_sram),
+        .rid(rid_sram),
+        .rlast(rlast_sram),
+        .rready(rready_xbar_sram),
+
+        .awaddr(awaddr_xbar_sram),
+        .awvalid(awvalid_xbar_sram),
+        .awid(awid_xbar_sram),
+        .awlen(awlen_xbar_sram),
+        .awsize(awsize_xbar_sram),
+        .awburst(awburst_xbar_sram),
+        .awready(awready_sram),
+
+        .wdata(wdata_xbar_sram),
+        .wstrb(wstrb_xbar_sram),
+        .wvalid(wvalid_xbar_sram),
+        .wlast(wlast_xbar_sram),
+        .wready(wready_sram),
+
+        .bresp(bresp_sram),
+        .bvalid(bvalid_sram),
+        .bid(bid_sram),
+        .bready(bready_xbar_sram),
+
+        .out_arvalid(io_master_arvalid),
+        .out_araddr(io_master_araddr),
+        .out_arid(io_master_arid),
+        .out_arlen(io_master_arlen),
+        .out_arsize(io_master_arsize),
+        .out_arburst(io_master_arburst),
+        .out_arready(io_master_arready),
+
+        .out_rdata(io_master_rdata),
+        .out_rresp(io_master_rresp),
+        .out_rvalid(io_master_rvalid),
+        .out_rid(io_master_rid),
+        .out_rlast(io_master_rlast),
+        .out_rready(io_master_rready),
+
+        .out_awaddr(io_master_awaddr),
+        .out_awvalid(io_master_awvalid),
+        .out_awid(io_master_awid),
+        .out_awlen(io_master_awlen),
+        .out_awsize(io_master_awsize),
+        .out_awburst(io_master_awburst),
+        .out_awready(io_master_awready),
+
+        .out_wdata(io_master_wdata),
+        .out_wstrb(io_master_wstrb),
+        .out_wvalid(io_master_wvalid),
+        .out_wlast(io_master_wlast),
+        .out_wready(io_master_wready),
+
+        .out_bresp(io_master_bresp),
+        .out_bvalid(io_master_bvalid),
+        .out_bid(io_master_bid),
+        .out_bready(io_master_bready)
+    `endif // CONFIG_DPIC
     );
-`endif
+`endif // ysyx_24080020_NPC
 
     ysyx_24080020_CLINT u_clint(
         .clk(clk),

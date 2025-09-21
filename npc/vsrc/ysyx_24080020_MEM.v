@@ -44,6 +44,7 @@ module ysyx_24080020_MEM(
 
     input reg is_load_exu,
     output reg is_load_mem,
+    output reg mwen_mem,
 
     input is_dnpc_exu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
@@ -83,7 +84,7 @@ module ysyx_24080020_MEM(
     output wvalid_reg,
     output reg wlast,
     output reg [3:0] wstrb,
-    output [`ysyx_24080020_WIDTH-1:0] wdata,
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata,
 
     output reg bready,
     input bvalid,
@@ -107,7 +108,6 @@ module ysyx_24080020_MEM(
     assign wvalid_reg = wvalid;
 
     reg mren_mem;
-    reg mwen_mem;
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;
@@ -273,7 +273,7 @@ module ysyx_24080020_MEM(
 
             pc_mem <= 'b0;
 
-            mem_wb_valid <= 'b0;
+            // mem_wb_valid <= 'b0;
 
 
             is_ebreak_lsu <= 'b0;
@@ -356,11 +356,9 @@ module ysyx_24080020_MEM(
         else if(mem_wb_valid && wb_mem_ready && state) begin
             mem_wb_valid <= 1'b0;
         end
-        else if(exu_mem_shake_hands) begin
+        else if(exu_mem_shake_hands && !mwen_exu && !mren_exu) begin
 
-            if(!mwen_exu && !mren_exu) begin
-                mem_wb_valid <= 1'b1;
-            end
+            mem_wb_valid <= 1'b1;
         end
         else if(finish_read) begin
             mem_wb_valid <= 1'b1;
@@ -377,7 +375,6 @@ module ysyx_24080020_MEM(
         if(!rst) begin
             arvalid <= 1'b0;
             arlen <= 'b0;
-            arburst <= 'b0;
             arid <= 'b0;
 
             awvalid <= 1'b0;
