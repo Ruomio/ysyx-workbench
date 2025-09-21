@@ -94,6 +94,16 @@ VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 CSRC += $(shell find csrc -name "*.c" -or -name "*.cpp")
 V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 
+
+# iverilog simulation
+VVP_FILE += $(BUILD_DIR)/sim_top.vvp
+VVP_NETLIST_FILE += $(BUILD_DIR)/sim_top_netlist.vvp
+TB_FILE += $(shell find . -type f -name "sim_top.v")
+TB_NETLIST_FILE += $(shell find . -type f -name "sim_top_netlist.v")
+NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
+CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
+
+
 # verilator system files
 VERILATOR_SYS_FILES := verilated.cpp verilated_threads.cpp verilated_vcd_c.cpp
 VERILATOR_SYS_TARGETS := $(addprefix $(OBJ_DIR)/,$(VERILATOR_SYS_FILES))
@@ -217,6 +227,28 @@ perf: $(BIN)
 	@time make -s -C $(AM_HOME)/../am-kernels/benchmarks/microbench/ \
 		ARCH=$(ARCH) run NEMUFLAGS="-b" mainargs=test \
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
+
+
+$(VVP_FILE): $(VSRC) $(TB_FILE)
+	@echo "+ iverilog -> $@"
+	@iverilog -g2012 -o $@ $^ -I $(VINC_PATH)
+#@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
+# @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
+
+$(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
+	@echo "+ iverilog -> $@"
+	@iverilog -g2012 -o $@ $^
+
+iverilog: $(VVP_FILE)
+	@$(call git_commit, "iverilog NPC")
+	@echo "+ exec vvp $^"
+	@vvp $^ +MEM_FILE=$(IMG)
+
+iverilog_netlist: $(VVP_NETLIST_FILE)
+	@$(call git_commit, "iverilog NPC")
+	@echo "+ exec vvp $^"
+	@vvp $^ +MEM_FILE=$(IMG)
+	@vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
