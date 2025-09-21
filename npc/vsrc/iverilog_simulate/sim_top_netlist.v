@@ -451,4 +451,24 @@ module sim_top;
     end
     // wire \u_npc/exu_mem_valid ;
 
+    // ebreak
+    always @(posedge clock) begin
+        if(reset) begin
+        end
+        else if(u_cpu.\u_npc/is_ebreak_lsu ) begin
+            $display("ebreak inst!");
+            $finish;
+        end
+    end
+
+    // uart
+    always @(posedge clock) begin
+        if(reset) begin
+        end
+        else if(u_cpu.\u_npc/wvalid_xbar_uart  && u_cpu.\u_npc/wready_uart ) begin
+            $write("%c", u_cpu.\u_npc/wdata_xbar_uart [7:0] );
+            $fflush();
+        end
+    end
+
 endmodule
