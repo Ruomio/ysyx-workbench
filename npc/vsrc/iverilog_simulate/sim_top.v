@@ -439,6 +439,7 @@ module sim_top;
         end
         else if(u_cpu.u_npc.exu.exu_mem_valid && u_cpu.u_npc.exu.mem_exu_ready) begin
             pc_delay_cnt <= 'h0;
+            $display("%h", u_cpu.u_npc.exu.pc_exu);
         end
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
