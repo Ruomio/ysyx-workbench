@@ -244,7 +244,7 @@ iverilog: $(VVP_FILE)
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
 
-iverilog_netlist: $(VVP_NETLIST_FILE)
+iverilog-netlist: $(VVP_NETLIST_FILE)
 	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
