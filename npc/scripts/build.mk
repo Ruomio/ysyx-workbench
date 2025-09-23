@@ -78,8 +78,8 @@ endif
 
 # include dir
 ifeq ($(SOC_EN), 1)
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "rtl")
+VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find . -maxdepth 1 -type d -name "vsrc")
 
@@ -90,8 +90,8 @@ INC_PATH += $(abspath $(OBJ_DIR))
 
 # project source
 ifeq ($(SOC_EN), 1)
-VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
-VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
+VSRC += $(shell find ../ysyxSoC/perip -name "*.v")
+VSRC += $(shell find ../ysyxSoC/build -name "*.v")
 endif
 VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
@@ -104,8 +104,8 @@ VVP_FILE += $(BUILD_DIR)/sim_top.vvp
 VVP_NETLIST_FILE += $(BUILD_DIR)/sim_top_netlist.vvp
 TB_FILE += $(shell find . -type f -name "sim_top.v")
 TB_NETLIST_FILE += $(shell find . -type f -name "sim_top_netlist.v")
-NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
-CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
+# NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
+# CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
 
 
 # verilator system files
@@ -162,10 +162,39 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-$(BIN): v_to_cpp
-	@make link
+# $(BIN): v_to_cpp
+# 	@make link
 
-# $(BIN): classic
+$(BIN): modify-config clean_obj classic
+
+modify-config:
+ifeq ($(ARCH), riscv32e-npc)
+	@scripts/config --set-val CONFIG_MBASE 0x80000000
+	@scripts/config --set-val CONFIG_MSIZE 0x20000000
+	@scripts/config --disable CONFIG_PSRAM
+	@scripts/config --disable CONFIG_PSRAM_BASE
+	@scripts/config --disable CONFIG_PSRAM_SIZE
+	@scripts/config --disable CONFIG_SDRAM
+	@scripts/config --disable CONFIG_SDRAM_BASE
+	@scripts/config --disable CONFIG_SDRAM_SIZE
+	@scripts/config --disable CONFIG_SRAM
+	@scripts/config --disable CONFIG_SRAM_BASE 
+	@scripts/config --disable CONFIG_SRAM_SIZE
+endif
+ifeq ($(ARCH), riscv32e-ysyxsoc)
+	@scripts/config --set-val CONFIG_MBASE 0x30000000
+	@scripts/config --set-val CONFIG_MSIZE 0x01000000
+	@scripts/config --enable CONFIG_PSRAM
+	@scripts/config --enable CONFIG_SDRAM
+	@scripts/config --enable CONFIG_SRAM
+	@scripts/config --set-val CONFIG_PSRAM_BASE 0x80000000
+	@scripts/config --set-val CONFIG_PSRAM_SIZE 0x00400000
+	@scripts/config --set-val CONFIG_SDRAM_BASE 0xa0000000
+	@scripts/config --set-val CONFIG_SDRAM_SIZE 0x02000000
+	@scripts/config --set-val CONFIG_SRAM_BASE 0x0f000000
+	@scripts/config --set-val CONFIG_SRAM_SIZE 0x00002000
+endif
+	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 
 
 $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
@@ -239,9 +268,10 @@ $(VVP_FILE): $(VSRC) $(TB_FILE)
 #@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
 # @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
-$(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
+# $(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
+$(VVP_NETLIST_FILE): $(TB_NETLIST_FILE)
 	@echo "+ iverilog -> $@"
-	@iverilog -g2012 -o $@ $^
+	@iverilog -g2012 -o $@ $^ $(NETLIST) $(CELLS)
 
 iverilog: $(VVP_FILE)
 	@$(call git_commit, "iverilog NPC")
@@ -299,7 +329,10 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY: all clean gtkwave sim nvboard run perf verilog
+.PHONY: all clean clean_obj gtkwave sim nvboard run perf verilog
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
+
+clean_obj:
+	@rm -rf $(OBJ_DIR)
