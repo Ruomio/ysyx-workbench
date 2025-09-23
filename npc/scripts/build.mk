@@ -165,7 +165,7 @@ all: $(BIN)
 # $(BIN): v_to_cpp
 # 	@make link
 
-$(BIN): classic
+$(BIN): clean_obj classic
 
 
 $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
@@ -300,7 +300,10 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY: all clean gtkwave sim nvboard run perf verilog
+.PHONY: all clean clean_obj gtkwave sim nvboard run perf verilog
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd
+
+clean_obj:
+	@rm -rf $(OBJ_DIR)
