@@ -194,6 +194,7 @@ ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --set-val CONFIG_SRAM_BASE 0x0f000000
 	@scripts/config --set-val CONFIG_SRAM_SIZE 0x00002000
 endif
+	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 
 
 $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
