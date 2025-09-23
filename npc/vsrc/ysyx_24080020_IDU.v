@@ -570,7 +570,7 @@ module ysyx_24080020_IDU (
                                 wcsren2_idu <= 1'b1;
 
                                 // dnpc <= csrs[mtvec];
-                                rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
+                                // rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
                                 dnpc_idu <= rcsrdata;
 
                                 is_dnpc_idu <= 1'b1;
@@ -613,7 +613,7 @@ module ysyx_24080020_IDU (
                             wcsrdata_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wcsren_idu <= 1'b1;
 
-                            rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
+                            // rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
                             waddr_idu <= rd;
                             wdata_idu <= rcsrdata;
@@ -625,7 +625,7 @@ module ysyx_24080020_IDU (
                             // `endif
                         end
                         `ysyx_24080020_CSRRS: begin
-                            rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
+                            // rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
                             wcsraddr_idu <= inst_idu[`ysyx_24080020_IMM_I];
                             wcsrdata_idu <= rcsrdata | src1_idu;

@@ -28,9 +28,12 @@ VERILATOR_CFLAGS += -DysyxSoCFull
 SOC_EN = 1
 else ifeq ($(ARCH), riscv32e-npc)
 VERILATOR_CFLAGS += -Dysyx_24080020_NPC -UysyxSoCFull
+SOC_EN = 0
 else
-VERILATOR_CFLAGS += -DysyxSoCFull
-SOC_EN = 1
+# VERILATOR_CFLAGS += -DysyxSoCFull
+# SOC_EN = 1
+VERILATOR_CFLAGS += -Dysyx_24080020_NPC -UysyxSoCFull
+SOC_EN = 0
 endif
 
 include ../Makefile

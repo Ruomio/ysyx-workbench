@@ -7,7 +7,7 @@
 
 `ifndef ysyxSoCFull
 `ifndef ysyx_24080020_NPC
-`define ysyxSoCFull
+`define ysyx_24080020_NPC
 `endif
 `endif
 
