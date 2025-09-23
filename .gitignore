@@ -15,6 +15,9 @@
 !/branchsim/**
 !patch/**
 
+# menuconfig
+!**/.config
+
 /fceux-am
 /nvboard
 /yosys-sta
