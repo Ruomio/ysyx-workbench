@@ -18,7 +18,7 @@
 # menuconfig
 !**/.config
 
-/fceux-am
+# /fceux-am
 /nvboard
 /yosys-sta
 /am-kernels
