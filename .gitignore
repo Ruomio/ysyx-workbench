@@ -18,7 +18,7 @@
 /nvboard
 /yosys-sta
 /am-kernels
-/abstract-machine
+# /abstract-machine
 /rt-thread-am
 /ysyxSoC
 
