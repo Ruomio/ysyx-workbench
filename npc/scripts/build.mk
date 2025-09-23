@@ -169,18 +169,24 @@ $(BIN): modify-config clean_obj classic
 
 modify-config:
 ifeq ($(ARCH), riscv32e-npc)
-	@scripts/config --set-val CONFIG_MBASE 0x80000000 
-	@scripts/config --set-val CONFIG_MSIZE 0x20000000 
-	@scripts/config --disable CONFIG_PSRAM 
-	@scripts/config --disable CONFIG_SDRAM 
-	@scripts/config --disable CONFIG_SRAM 
+	@scripts/config --set-val CONFIG_MBASE 0x80000000
+	@scripts/config --set-val CONFIG_MSIZE 0x20000000
+	@scripts/config --disable CONFIG_PSRAM
+	@scripts/config --disable CONFIG_PSRAM_BASE
+	@scripts/config --disable CONFIG_PSRAM_SIZE
+	@scripts/config --disable CONFIG_SDRAM
+	@scripts/config --disable CONFIG_SDRAM_BASE
+	@scripts/config --disable CONFIG_SDRAM_SIZE
+	@scripts/config --disable CONFIG_SRAM
+	@scripts/config --disable CONFIG_SRAM_BASE 
+	@scripts/config --disable CONFIG_SRAM_SIZE
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
-	@scripts/config --set-val CONFIG_MBASE 0x30000000 
-	@scripts/config --set-val CONFIG_MSIZE 0x01000000 
-	@scripts/config --enable CONFIG_PSRAM 
-	@scripts/config --enable CONFIG_SDRAM 
-	@scripts/config --enable CONFIG_SRAM 
+	@scripts/config --set-val CONFIG_MBASE 0x30000000
+	@scripts/config --set-val CONFIG_MSIZE 0x01000000
+	@scripts/config --enable CONFIG_PSRAM
+	@scripts/config --enable CONFIG_SDRAM
+	@scripts/config --enable CONFIG_SRAM
 	@scripts/config --set-val CONFIG_PSRAM_BASE 0x80000000
 	@scripts/config --set-val CONFIG_PSRAM_SIZE 0x00400000
 	@scripts/config --set-val CONFIG_SDRAM_BASE 0xa0000000
