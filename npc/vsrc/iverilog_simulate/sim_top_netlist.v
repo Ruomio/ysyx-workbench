@@ -439,7 +439,7 @@ module sim_top;
         end
         else if(u_cpu.\u_npc/exu_mem_valid  && u_cpu.\u_npc/mem_exu_ready ) begin
             pc_delay_cnt <= 'h0;
-            $display("%h", u_cpu.\u_npc/pc_exu );
+            // $display("%h", u_cpu.\u_npc/pc_exu );
         end
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
@@ -467,8 +467,8 @@ module sim_top;
         if(reset) begin
         end
         else if(u_cpu.\u_npc/wvalid_xbar_uart  && u_cpu.\u_npc/wready_uart ) begin
-            // $write("%c", u_cpu.\u_npc/wdata_xbar_uart [7:0] );
-            // $fflush();
+            $write("%c", u_cpu.\u_npc/wdata_xbar_uart [7:0] );
+            $fflush();
         end
     end
 
