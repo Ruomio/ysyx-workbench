@@ -1,0 +1,314 @@
+From c10542f0cbf684929d377e8f48a33427347ea031 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Fri, 3 Jan 2025 09:48:34 +0800
+Subject: [PATCH 70/88] soc: psram
+
+---
+ perip/psram/psram.v | 292 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 291 insertions(+), 1 deletion(-)
+
+diff --git a/perip/psram/psram.v b/perip/psram/psram.v
+index d9bdd882..373845b5 100644
+--- a/perip/psram/psram.v
++++ b/perip/psram/psram.v
+@@ -4,6 +4,296 @@ module psram(
+   inout [3:0] dio
+ );
+ 
+-  assign dio = 4'bz;
++  import "DPI-C" function int psram_read(input int raddr);
++  import "DPI-C" function void psram_write(input int waddr, input int wdata, input int wstrb);
++
++  reg [7:0] cmd;
++
++  reg [5:0] addr_0;
++  reg [5:0] addr_1;
++  reg [5:0] addr_2;
++  reg [5:0] addr_3;
++
++  reg [7:0] buf_0;
++  reg [7:0] buf_1;
++  reg [7:0] buf_2;
++  reg [7:0] buf_3;
++
++
++  reg [31:0] rdata;
++  wire [31:0] wdata;
++
++  reg [3:0] dio_reg;
++
++
++  reg [5:0] cnt;
++
++  reg is_read;
++  reg is_write;
++  reg read_en;
++  reg write_en;
++  reg hig_low;
++  wire [3:0] wstrb;
++
++  reg noth;
++
++  wire [23:0] addr;
++
++
++  assign dio = (is_read && cnt > 6'd19 && cnt < 6'd29) ? dio_reg : 4'bz;
++
++  assign addr = { 
++                  addr_3[5], addr_2[5], addr_1[5], addr_0[5],
++                  addr_3[4], addr_2[4], addr_1[4], addr_0[4],
++                  addr_3[3], addr_2[3], addr_1[3], addr_0[3],
++                  addr_3[2], addr_2[2], addr_1[2], addr_0[2],
++                  addr_3[1], addr_2[1], addr_1[1], addr_0[1],
++                  addr_3[0], addr_2[0], addr_1[0], addr_0[0]
++                };
++
++  assign wdata = {
++                  buf_3[1], buf_2[1], buf_1[1], buf_0[1],
++                  buf_3[0], buf_2[0], buf_1[0], buf_0[0],
++                  buf_3[3], buf_2[3], buf_1[3], buf_0[3],
++                  buf_3[2], buf_2[2], buf_1[2], buf_0[2],
++                  buf_3[5], buf_2[5], buf_1[5], buf_0[5],
++                  buf_3[4], buf_2[4], buf_1[4], buf_0[4],
++                  buf_3[7], buf_2[7], buf_1[7], buf_0[7],
++                  buf_3[6], buf_2[6], buf_1[6], buf_0[6]
++                };
++
++  assign wstrb = is_write ? write_en ? 4'b1111 :
++                              cnt == 6'd16 ? 4'b0001 :
++                              cnt == 6'd18 ? 4'b0011 :
++                            4'b0000 :
++                  4'b0000;
++
++  always @(posedge sck or posedge ce_n) begin
++    if(ce_n) begin
++      if(write_en) begin
++        psram_write({8'b0, addr[23:0]}, wdata, {28'b0, wstrb});
++        // finish write
++        cnt <= 6'b0;
++        write_en <= 1'b0;
++        is_write <= 1'b0;
++      end
++      else if(cnt == 6'd16) begin
++        // 1-byte
++        psram_write({8'b0, addr[23:0]}, {24'b0, wdata[31:24]}, {28'b0, wstrb});
++        // finish write
++        cnt <= 6'b0;
++        is_write <= 1'b0;
++      end
++      else if(cnt == 6'd18) begin
++        // 1-byte
++        psram_write({8'b0, addr[23:0]}, {16'b0, wdata[31:16]}, {28'b0, wstrb});
++        // finish write
++        cnt <= 6'b0;
++        is_write <= 1'b0;
++      end
++      else begin
++        noth <= 1'b0;
++      end
++      cnt <= 6'b0;
++
++      cmd <= 8'b0;
++
++      addr_0 <= 6'b0;
++      addr_1 <= 6'b0;
++      addr_2 <= 6'b0;
++      addr_3 <= 6'b0;
++
++      buf_0 <= 8'b0;
++      buf_1 <= 8'b0;
++      buf_2 <= 8'b0;
++      buf_3 <= 8'b0;
++
++      is_read <= 1'b0;
++      is_write <= 1'b0;
++      write_en <= 1'b0;
++      read_en <= 1'b0;
++
++      hig_low <= 1'b0;
++
++      dio_reg <= 4'b0;
++    end    
++    else if(cnt < 6'd8) begin
++      cmd <= {cmd[6:0], dio[0]};
++      cnt <= cnt + 6'd1;
++    end
++    else if(cnt ==  6'd8) begin
++      if(cmd == 8'heb) is_read <= 1'b1;
++      else if(cmd == 8'h38) is_write <= 1'b1;
++      else begin
++        is_read <= 1'b0;
++        is_write <= 1'b0;
++      end
++
++      cmd <= 8'b0;
++
++      cnt <= cnt + 6'b1;
++
++      addr_0 <= {addr_0[4:0], dio[0]};
++      addr_1 <= {addr_1[4:0], dio[1]};
++      addr_2 <= {addr_2[4:0], dio[2]};
++      addr_3 <= {addr_3[4:0], dio[3]};
++
++    end
++    else if(cnt < 6'd14) begin
++      cnt <= cnt + 6'b1;
++
++      addr_0 <= {addr_0[4:0], dio[0]};
++      addr_1 <= {addr_1[4:0], dio[1]};
++      addr_2 <= {addr_2[4:0], dio[2]};
++      addr_3 <= {addr_3[4:0], dio[3]};
++
++    end
++
++    else if(cnt == 6'd14) begin
++      cnt <= cnt + 6'b1;
++      if(is_read) read_en <= 1'b1;
++      else if(is_write) begin
++        buf_0 <= {buf_0[6:0], dio[0]};
++        buf_1 <= {buf_1[6:0], dio[1]};
++        buf_2 <= {buf_2[6:0], dio[2]};
++        buf_3 <= {buf_3[6:0], dio[3]};
++      end
++      else begin
++        read_en <= 1'b0;
++        write_en <= 1'b0;
++      end
++    end
++    else if(is_read && cnt < 6'd20) begin
++      if(read_en) begin
++        rdata <= psram_read({8'b0, addr[23:2], 2'b0});
++        read_en <= 1'b0;
++
++        cnt <= cnt + 6'd1;
++      end
++      else begin
++        // read delay 6-cycles
++        cnt <= cnt + 6'd1;
++      end
++    end
++    else if(is_read && cnt < 6'd29) begin
++      cnt <= cnt + 6'b1;
++      // send data
++      if(!hig_low) begin
++        dio_reg <= rdata[7:4];  // maybe direction is wrong
++        hig_low <= 1'b1;
++      end
++      else begin
++        dio_reg <= rdata[3:0];  // maybe direction is wrong
++
++        rdata <= {8'b0, rdata[31:8]};
++        hig_low <= 1'b0;
++      end
++
++    end
++    else if(is_read && cnt == 6'd28) begin
++      // finish read
++      cnt <= 6'b1;
++
++      buf_0 <= 8'b0;
++      buf_1 <= 8'b0;
++      buf_2 <= 8'b0;
++      buf_3 <= 8'b0;
++    end
++    else if(is_write && cnt < 6'd21) begin
++      cnt <= cnt + 6'd1;
++
++      buf_0 <= {buf_0[6:0], dio[0]};
++      buf_1 <= {buf_1[6:0], dio[1]};
++      buf_2 <= {buf_2[6:0], dio[2]};
++      buf_3 <= {buf_3[6:0], dio[3]};
++
++    end
++    else if(is_write && cnt == 6'd21) begin
++      cnt <= cnt + 6'd1;
++
++      buf_0 <= {buf_0[6:0], dio[0]};
++      buf_1 <= {buf_1[6:0], dio[1]};
++      buf_2 <= {buf_2[6:0], dio[2]};
++      buf_3 <= {buf_3[6:0], dio[3]};
++      // start write data
++      write_en <= 1'b1; 
++    end
++    else begin
++      noth <= 1'b0;
++    end
++  end
++
++  // always @(ce_n or cnt) begin
++  //   if(is_write) begin
++  //     // write 1-byte or 2-byte; sb or sh
++  //     is_write <= 1'b0;
++
++  //     if(cnt == 6'd16) begin
++  //       // 1-byte
++  //       psram_write({8'b0, addr[23:2], 2'b0}, {24'b0, wdata[31:24]});
++  //       // finish write
++  //       cnt <= 6'b1;
++
++
++  //       buf_0 <= 8'b0;
++  //       buf_1 <= 8'b0;
++  //       buf_2 <= 8'b0;
++  //       buf_3 <= 8'b0;
++
++  //     end
++  //     else if(cnt == 6'd18) begin
++  //       // 1-byte
++  //       psram_write({8'b0, addr[23:2], 2'b0}, {16'b0, wdata[31:16]});
++  //       // finish write
++  //       cnt <= 6'b1;
++
++  //       buf_0 <= 8'b0;
++  //       buf_1 <= 8'b0;
++  //       buf_2 <= 8'b0;
++  //       buf_3 <= 8'b0;
++
++  //     end
++  //     else begin
++  //       noth <= 1'b0;
++  //     end
++  //   end
++  //   else begin
++  //     noth <= 1'b0;
++  //   end
++
++  // end
++
++  // always @(posedge sck) begin
++  //   if(ce_n) begin
++  //     rdata <= 32'b0;
++  //   end
++  //   else if(read_en) begin
++  //     rdata <= psram_read({8'b0, addr[23:2], 2'b0});
++  //     read_en <= 1'b0;
++  //   end
++  //   else begin
++  //     noth <= 1'b0;
++  //   end
++  // end
++
++  // always @(posedge sck) begin
++  //   if(ce_n) begin
++  //     noth <= 1'b0;
++  //   end
++  //   else if(write_en) begin
++  //     psram_write({8'b0, addr[23:2], 2'b0}, wdata);
++  //     // finish write
++  //     cnt <= 6'b1;
++  //     write_en <= 1'b0;
++
++  //     buf_0 <= 8'b0;
++  //     buf_1 <= 8'b0;
++  //     buf_2 <= 8'b0;
++  //     buf_3 <= 8'b0;
++  //   end
++  //   else begin
++  //     noth <= 1'b0;
++  //   end
++  // end
+ 
+ endmodule
+-- 
+2.51.0
+

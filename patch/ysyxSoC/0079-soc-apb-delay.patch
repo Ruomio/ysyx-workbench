@@ -1,0 +1,123 @@
+From e290f8ed13091907e1d5e79523d9d22ad82da31d Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Thu, 20 Mar 2025 16:23:49 +0800
+Subject: [PATCH 79/88] soc: apb delay
+
+---
+ perip/amba/apb_delayer.v | 96 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 91 insertions(+), 5 deletions(-)
+
+diff --git a/perip/amba/apb_delayer.v b/perip/amba/apb_delayer.v
+index c0d20764..05203553 100644
+--- a/perip/amba/apb_delayer.v
++++ b/perip/amba/apb_delayer.v
+@@ -24,15 +24,101 @@ module apb_delayer(
+   input         out_pslverr
+ );
+ 
++  reg rw_success;
++  reg        in_pready_reg;
++  reg [31:0] in_prdata_reg;
++  reg        in_pslverr_reg;
++
+   assign out_paddr   = in_paddr;
+-  assign out_psel    = in_psel;
+-  assign out_penable = in_penable;
++  assign out_psel    = rw_success ? 'b0 : in_psel;
++  assign out_penable = rw_success ? 'b0 : in_penable;
+   assign out_pprot   = in_pprot;
+   assign out_pwrite  = in_pwrite;
+   assign out_pwdata  = in_pwdata;
+   assign out_pstrb   = in_pstrb;
+-  assign in_pready   = out_pready;
+-  assign in_prdata   = out_prdata;
+-  assign in_pslverr  = out_pslverr;
++
++  assign in_pready   = in_pready_reg;
++  assign in_prdata   = in_prdata_reg;
++  assign in_pslverr  = in_pslverr_reg;
++
++// 定义不同设备的延迟
++  reg [15:0] delay_counter; // 延迟计数器
++  reg [15:0] delay_max; // 延迟计数器
++  reg [1:0] delay_state;   // 状态机状态
++  reg [15:0] cnt;
++
++  // 延迟配置（可以根据设备地址动态设置）
++  // npc 750MHz, r = 7.5, s = 4
++  parameter s = 4;
++  parameter DELAY_DEVICE_SDRAM = 30; // SDRAM 100MHz 设备 7.5 * 4 = 30 延迟
++  parameter DELAY_DEVICE_FLASH = 30; // FLASH 100MHz 设备 7.5 * 4 = 30  延迟
++  parameter DELAY_DEVICE_DEFAULT = 1 * s; // 默认延迟
++
++  // 状态机状态定义
++  localparam IDLE = 2'b00,
++             WAIT = 2'b01,
++             FORWARD = 2'b10;
++
++
++  always @(in_penable or in_psel) begin
++    case (in_paddr[31:24]) // 根据地址选择设备
++      8'ha0: delay_max = DELAY_DEVICE_SDRAM;
++      8'h30: delay_max = DELAY_DEVICE_FLASH;
++      default: delay_max = DELAY_DEVICE_DEFAULT; // 默认延迟
++    endcase
++  end
++
++  // 时序逻辑
++  always @(posedge clock or posedge reset) begin
++    if (reset) begin
++      delay_state <= IDLE;
++      in_pready_reg <= 1'b0;
++      in_prdata_reg <= 32'b0;
++      in_pslverr_reg <= 1'b0;
++      delay_counter <= 'd0;
++      cnt <= 'd0;
++      rw_success <= 'b0;
++    end else begin
++      case (delay_state)
++        IDLE: begin
++          if (in_psel && in_penable) begin
++            // 开始延迟
++            delay_state <= WAIT;
++            delay_counter <= 'd0;
++            cnt <= 'd0;
++          end
++        end
++
++        WAIT: begin
++          delay_counter <= delay_counter + (1 * delay_max);
++          if(out_pready) begin
++            // read/write success, 转到 FORWARD 状态
++            rw_success <= 'b1;
++            delay_state <= FORWARD;
++            in_prdata_reg <= out_prdata;
++          end
++        end
++
++        FORWARD: begin
++          // 转发信号
++          if(cnt >= delay_counter >> $clog2(s)) begin
++            in_pready_reg <= 'b1;
++            in_pslverr_reg <= out_pslverr;
++            cnt <= 'd0;
++            rw_success <= 'b0;
++          end else if(cnt < delay_counter >> $clog2(s)) begin
++            cnt <= cnt + 'd1;
++          end
++          if(~in_penable && ~in_psel) begin
++            delay_state <= IDLE; // 返回 IDLE 状态
++            in_pready_reg <= 1'b0;
++          end
++        end
++        default: begin
++          // nothing
++        end
++      endcase
++    end
++  end
+ 
+ endmodule
+-- 
+2.51.0
+

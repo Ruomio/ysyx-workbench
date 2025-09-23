@@ -1,0 +1,21 @@
+From c1ee0cbdf394aa0e056d638ef05db47b0ffb6819 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Thu, 6 Mar 2025 10:16:11 +0800
+Subject: [PATCH 06/10] rtt: gitignore
+
+---
+ .gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/.gitignore b/.gitignore
+index 558b09f1e..107c63d4d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -51,3 +51,4 @@ tags
+ CMakeLists.txt
+ cmake-build-debug
+ *.mk
++.cache
+-- 
+2.51.0
+

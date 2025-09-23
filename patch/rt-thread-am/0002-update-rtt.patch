@@ -1,0 +1,77 @@
+From a04e4e04c8d8d00174bf7f93edb09bbabb6c2c2c Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Thu, 31 Oct 2024 09:44:28 +0800
+Subject: [PATCH 02/10] update rtt
+
+---
+ bsp/abstract-machine/src/context.c | 14 --------------
+ bsp/abstract-machine/src/uart.c    |  2 +-
+ 2 files changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/bsp/abstract-machine/src/context.c b/bsp/abstract-machine/src/context.c
+index d53f14453..2cb0e901b 100644
+--- a/bsp/abstract-machine/src/context.c
++++ b/bsp/abstract-machine/src/context.c
+@@ -14,19 +14,11 @@ typedef struct {
+ 
+ 
+ void wrapped_entry(void *arg) {
+-  // printf("wrapped_entry: param arg addr = 0x%x\n", arg);
+   assert(arg);
+   ThreadArgs *thread_arg = (ThreadArgs *)arg;
+   assert(thread_arg != NULL);
+-  assert(thread_arg->tentry != NULL);
+-  // assert(thread_arg->parameter != NULL);
+-  assert(thread_arg->texit != NULL);
+-
+-  // printf("wrapped_entry 1\n");
+   thread_arg->tentry(thread_arg->parameter);
+-  // printf("wrapped_entry 2\n");
+   thread_arg->texit();
+-  // printf("finish wrapped_entry\n");
+ }
+ 
+ void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
+@@ -39,7 +31,6 @@ static Context* ev_handler(Event e, Context *c) {
+       rt_ubase_t *userdata = (rt_ubase_t *)(current->user_data);
+       rt_ubase_t to = userdata[0];
+       rt_ubase_t from = userdata[1];
+-      assert(to != (uintptr_t)NULL);
+       if(from != (rt_ubase_t)NULL) {
+         *(Context **)from = c;
+       }
+@@ -71,7 +62,6 @@ void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to) {
+   rt_ubase_t userdata[2];
+   userdata[0] = to;
+   userdata[1] = from;
+-  printf("func switch: to addr: 0x%x\n", to);
+   current->user_data = (rt_ubase_t)userdata;
+   yield();
+   current->user_data = (rt_ubase_t)tmp_data;
+@@ -89,10 +79,6 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
+   tmp_arg->parameter = (void *)parameter;
+   tmp_arg->texit = (void (*)(void))texit;
+ 
+-  // printf("tmp_arg addr = 0x%x\n", tmp_arg);
+-  // printf("parameter addr = 0x%x\n", parameter);
+-  // printf("tmp_arg->parameter addr = 0x%x\n", tmp_arg->parameter);
+-
+   // stack_addr end must be a struct Conttext
+   Area stack = {.end = stack_addr - sizeof(ThreadArgs)};
+ 
+diff --git a/bsp/abstract-machine/src/uart.c b/bsp/abstract-machine/src/uart.c
+index e4eb86689..156a8cdf2 100644
+--- a/bsp/abstract-machine/src/uart.c
++++ b/bsp/abstract-machine/src/uart.c
+@@ -37,7 +37,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
+ }
+ 
+ static int _uart_getc(struct rt_serial_device *serial) {
+-  static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\n";
++  static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\nam_hello\n";
+   return (*p != '\0' ? *(p ++) : -1);
+ }
+ 
+-- 
+2.51.0
+

@@ -1,0 +1,485 @@
+From 234b6088ebc2fd0c8514cdca836e9f87b2811f61 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Fri, 18 Apr 2025 10:00:58 +0800
+Subject: [PATCH 86/88] soc: fix xip flash bug
+
+---
+ perip/spi/rtl/spi_top_apb.v | 449 ++++++++++++------------------------
+ 1 file changed, 142 insertions(+), 307 deletions(-)
+
+diff --git a/perip/spi/rtl/spi_top_apb.v b/perip/spi/rtl/spi_top_apb.v
+index aed4873e..960990d3 100644
+--- a/perip/spi/rtl/spi_top_apb.v
++++ b/perip/spi/rtl/spi_top_apb.v
+@@ -150,22 +150,156 @@ module XIP(
+   input wb_int_o
+ );
+ 
+-  reg noth;
++  wire in_flash;
++
+   reg wb_cyc_i_tmp;
+-  reg [3:0] state; 
++  reg [3:0] state;
+   // 3'd0: wait xip_mod; 3'd1: wait write cmd; 3'd2: wait write divider; 3'3: write ss; 3'd4 write ctrl;
+   // 3'd5: waite go-bit; 3'd6: write ctrl 2nd; 3'd7: wait go-bit 2nd; 3'd8: read flash data;
+ 
++  assign in_flash = (in_paddr >= 32'h30000000) && (in_paddr < 32'h40000000);
++  assign xip_mod = in_flash;
++
+   always @(posedge clk) begin
+     if(rst) begin
+-      xip_mod <= 1'b0;
+-    end
+-    else if((in_paddr >= 32'h30000000 && in_paddr < 32'h40000000) && !xip_mod && (in_psel && !in_penable)) begin
+-      xip_mod <= 1'b1;
+-      state <= 4'b1;
++      state <= 'b0;
+     end
+     else begin
+-      noth <= 1'b0;
++      case(state)
++        'd0: begin
++          // IDLE
++          wb_we_i <= 1'b0;
++          wb_stb_i <= 1'b0;
++
++          if(in_flash && xip_mod && in_psel && !in_penable) begin
++            state <= 'd1;
++          end
++        end
++        'd1: begin
++          wb_adr_i <= 5'b0;
++          wb_dat_i <= {8'h03, in_paddr[23:2], 2'b0};
++          wb_sel_i <= 4'b1111;
++          wb_we_i <= 1'b1;
++          wb_stb_i <= 1'b1;
++          wb_cyc_i <= 'b1;
++
++          if(wb_ack_o) begin
++            wb_cyc_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++            state <= 4'd2;
++          end
++        end
++        'd2: begin
++          wb_adr_i <= 5'b10100;
++          wb_dat_i <= 32'b1;    // divider
++          wb_sel_i <= 4'b1111;
++          wb_we_i <= 1'b1;
++          wb_stb_i <= 1'b1;
++          wb_cyc_i <= 'b1;
++
++          if(wb_ack_o) begin
++            wb_cyc_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++
++            state <= 4'd3;
++          end
++        end
++        'd3: begin
++          wb_adr_i <= 5'b11000;
++          wb_dat_i <= 32'b1;    // ss, 0-bit is flash
++          wb_sel_i <= 4'b1111;
++          wb_we_i <= 1'b1;
++          wb_stb_i <= 1'b1;
++          wb_cyc_i <= 'b1;
++
++          if(wb_ack_o) begin
++            wb_cyc_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++
++            state <= 4'd4;
++          end
++        end
++        'd4: begin
++          wb_adr_i <= 5'b10000;
++          wb_dat_i <= 32'h00000120;
++          wb_sel_i <= 4'b1111;
++          wb_we_i <= 1'b1;
++          wb_stb_i <= 1'b1;
++          wb_cyc_i <= 'b1;
++
++          if(wb_ack_o) begin
++            wb_cyc_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++
++            state <= 4'd5;
++          end
++        end
++        'd5: begin
++          if((wb_dat_o & 32'h100) == 32'b0)
++            state <= 4'd6;
++        end
++        'd6: begin
++          wb_adr_i <= 5'b10000;
++          wb_dat_i <= 32'h00000120;
++          wb_sel_i <= 4'b1111;
++          wb_we_i <= 1'b1;
++          wb_stb_i <= 1'b1;
++          wb_cyc_i <= 'b1;
++
++          if(wb_ack_o) begin
++            wb_cyc_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++
++            state <= 4'd7;
++          end
++        end
++        'd7: begin
++          if((wb_dat_o & 32'h100) == 32'b0)
++            state <= 4'd8;
++        end
++        'd8: begin
++          wb_adr_i <= 5'b00000;
++          wb_dat_i <= 32'h0;
++          wb_sel_i <= 4'b0000;
++          wb_we_i <= 1'b1;
++          wb_stb_i <= 1'b1;
++          wb_cyc_i <= 'b1;
++
++          if(wb_ack_o) begin
++            wb_cyc_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++
++            state <= 4'd9;
++          end
++        end
++        'd9: begin
++          xip_prdata <= {wb_dat_o[7:0], wb_dat_o[15:8], wb_dat_o[23:16], wb_dat_o[31:24]};
++          xip_pready <= in_penable & in_psel & ~xip_pready;
++          xip_pslverr <= 1'b0;
++
++          wb_adr_i <= 5'b11000;
++          wb_dat_i <= 32'b0;    // ss, 0-bit is flash
++          wb_sel_i <= 4'b1111;
++          wb_we_i <= 1'b1;
++          wb_stb_i <= 1'b1;
++          wb_cyc_i <= 'b1;
++
++          if(wb_ack_o) begin
++            wb_cyc_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++            wb_adr_i <= 5'b00000;
++            wb_dat_i <= 32'b0;    // ss, 0-bit is flash
++            wb_sel_i <= 4'b0000;
++            wb_we_i <= 1'b0;
++            wb_stb_i <= 1'b0;
++
++            state <= 4'd0;
++          end
++        end
++        default: begin
++
++        end
++      endcase
+     end
+   end
+ 
+@@ -175,303 +309,4 @@ module XIP(
+ 
+   end
+ 
+-  // xip: write data to spi-reg, then waite go-bit become zero, read and process data from spi-rx-reg
+-  // step 1: write data to add flash read command, offset = 0x0
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-      wb_cyc_i_tmp <= 1'b0;
+-      wb_cyc_i <= 1'b0;
+-    end
+-    else if(state == 4'd1) begin
+-      wb_adr_i <= 5'b0;
+-      wb_dat_i <= {8'h03, in_paddr[23:2], 2'b0};
+-      wb_sel_i <= 4'b1111;
+-      wb_we_i <= 1'b1;
+-      wb_stb_i <= 1'b1;
+-
+-      wb_cyc_i_tmp <= 1'b1;
+-
+-      if(wb_ack_o) begin
+-        wb_cyc_i_tmp <= 1'b0;
+-        wb_cyc_i <= 1'b0;
+-        wb_stb_i <= 1'b0;
+-
+-        state <= 4'd2;
+-      end
+-      else if(wb_cyc_i_tmp) begin
+-        wb_cyc_i <= 1'b1;
+-      end
+-      else begin
+-        noth <= 1'b0;
+-      end
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 2: write divider, offset = 0x14
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd2) begin
+-      wb_adr_i <= 5'b10100;
+-      wb_dat_i <= 32'b1;    // divider
+-      wb_sel_i <= 4'b1111;
+-      wb_we_i <= 1'b1;
+-      wb_stb_i <= 1'b1;
+-
+-      wb_cyc_i_tmp <= 1'b1;
+-
+-      if(wb_ack_o) begin
+-        wb_cyc_i_tmp <= 1'b0;
+-        wb_cyc_i <= 1'b0;
+-        wb_stb_i <= 1'b0;
+-
+-        state <= 4'd3;
+-      end
+-      else if(wb_cyc_i_tmp) begin
+-        wb_cyc_i <= 1'b1;
+-      end
+-      else begin
+-        noth <= 1'b0;
+-      end
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 3: write ss, offset = 0x18
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd3) begin
+-      wb_adr_i <= 5'b11000;
+-      wb_dat_i <= 32'b1;    // ss, 0-bit is flash
+-      wb_sel_i <= 4'b1111;
+-      wb_we_i <= 1'b1;
+-      wb_stb_i <= 1'b1;
+-
+-      wb_cyc_i_tmp <= 1'b1;
+-
+-      if(wb_ack_o) begin
+-        wb_cyc_i_tmp <= 1'b0;
+-        wb_cyc_i <= 1'b0;
+-        wb_stb_i <= 1'b0;
+-
+-        state <= 4'd4;
+-      end
+-      else if(wb_cyc_i_tmp) begin
+-        wb_cyc_i <= 1'b1;
+-      end
+-      else begin
+-        noth <= 1'b0;
+-      end
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 4: write ctrl, offset = 0x10
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd4) begin
+-      wb_adr_i <= 5'b10000;
+-      wb_dat_i <= 32'h00000120;
+-      // case(in_pstrb)
+-      //   4'b0001: wb_dat_i <= 32'h00000108;
+-      //   4'b0011: wb_dat_i <= 32'h00000110;
+-      //   4'b1111: wb_dat_i <= 32'h00000120;
+-      //   default: wb_dat_i <= 32'b0;
+-      // endcase
+-      wb_sel_i <= 4'b1111;
+-      wb_we_i <= 1'b1;
+-      wb_stb_i <= 1'b1;
+-
+-      wb_cyc_i_tmp <= 1'b1;
+-
+-      if(wb_ack_o) begin
+-        wb_cyc_i_tmp <= 1'b0;
+-        wb_cyc_i <= 1'b0;
+-        wb_stb_i <= 1'b0;
+-
+-        state <= 4'd5;
+-      end
+-      else if(wb_cyc_i_tmp) begin
+-        wb_cyc_i <= 1'b1;
+-      end
+-      else begin
+-        noth <= 1'b0;
+-      end
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 5: wait go-bit become zero
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd5) begin
+-      if((wb_dat_o & 32'h100) == 32'b0)
+-        state <= 4'd6;
+-      else state <= 4'd5;
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 6: write ctrl 2nd, offset = 0x10
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd6) begin
+-      wb_adr_i <= 5'b10000;
+-      wb_dat_i <= 32'h00000120;
+-      // case(in_pstrb)
+-      //   4'b0001: wb_dat_i <= 32'h00000108;
+-      //   4'b0011: wb_dat_i <= 32'h00000110;
+-      //   4'b1111: wb_dat_i <= 32'h00000120;
+-      //   default: wb_dat_i <= 32'b0;
+-      // endcase
+-      wb_sel_i <= 4'b1111;
+-      wb_we_i <= 1'b1;
+-      wb_stb_i <= 1'b1;
+-
+-      wb_cyc_i_tmp <= 1'b1;
+-
+-      if(wb_ack_o) begin
+-        wb_cyc_i_tmp <= 1'b0;
+-        wb_cyc_i <= 1'b0;
+-        wb_stb_i <= 1'b0;
+-
+-        state <= 4'd7;
+-      end
+-      else if(wb_cyc_i_tmp) begin
+-        wb_cyc_i <= 1'b1;
+-      end
+-      else begin
+-        noth <= 1'b0;
+-      end
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 7: wait go-bit become zero 2nd
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd7) begin
+-      if((wb_dat_o & 32'h100) == 32'b0)
+-        state <= 4'd8;
+-      else state <= 4'd7;
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 8: set adr_i zero to get data, offset = 0x00
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd8) begin
+-      wb_adr_i <= 5'b00000;
+-      wb_dat_i <= 32'h0;
+-      wb_sel_i <= 4'b0000;
+-      wb_we_i <= 1'b1;
+-      wb_stb_i <= 1'b1;
+-
+-      wb_cyc_i_tmp <= 1'b1;
+-
+-      if(wb_ack_o) begin
+-        wb_cyc_i_tmp <= 1'b0;
+-        wb_cyc_i <= 1'b0;
+-        wb_stb_i <= 1'b0;
+-
+-        state <= 4'd9;
+-      end
+-      else if(wb_cyc_i_tmp) begin
+-        wb_cyc_i <= 1'b1;
+-      end
+-      else begin
+-        noth <= 1'b0;
+-      end
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 9: read flash data and return 
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd9) begin
+-      xip_prdata <= {wb_dat_o[7:0], wb_dat_o[15:8], wb_dat_o[23:16], wb_dat_o[31:24]};
+-      xip_pready <= in_penable & in_psel & ~xip_pready;
+-      xip_pslverr <= 1'b0;
+-
+-      // xip_mod <= 1'b0;
+-      state <= 4'd10;
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+-
+-  // step 10: set pready zero and set ss hign
+-  always @(posedge clk) begin
+-    if(rst) begin
+-      state <= 4'b0;
+-    end
+-    else if(state == 4'd10) begin
+-
+-      wb_adr_i <= 5'b11000;
+-      wb_dat_i <= 32'b0;    // ss, 0-bit is flash
+-      wb_sel_i <= 4'b1111;
+-      wb_we_i <= 1'b1;
+-      wb_stb_i <= 1'b1;
+-
+-      wb_cyc_i_tmp <= 1'b1;
+-
+-      if(wb_ack_o) begin
+-        wb_cyc_i_tmp <= 1'b0;
+-        wb_cyc_i <= 1'b0;
+-        wb_stb_i <= 1'b0;
+-
+-        xip_prdata <= {wb_dat_o[7:0], wb_dat_o[15:8], wb_dat_o[23:16], wb_dat_o[31:24]};
+-        xip_pready <= in_penable & in_psel & ~xip_pready;
+-        xip_pslverr <= 1'b0;
+-
+-        xip_mod <= 1'b0;
+-        state <= 4'd0;
+-      end
+-      else if(wb_cyc_i_tmp) begin
+-        wb_cyc_i <= 1'b1;
+-      end
+-      else begin
+-        noth <= 1'b0;
+-      end
+-    end
+-    else begin
+-      noth <= 1'b0;
+-    end
+-  end
+ endmodule
+-- 
+2.51.0
+

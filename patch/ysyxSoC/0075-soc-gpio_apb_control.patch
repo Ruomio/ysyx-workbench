@@ -1,0 +1,189 @@
+From 0c01bb99be377f616a70cb12318f516f994554f7 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Tue, 25 Feb 2025 16:18:12 +0800
+Subject: [PATCH 75/88] soc: gpio_apb_control
+
+---
+ perip/gpio/gpio_top_apb.v | 167 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 167 insertions(+)
+
+diff --git a/perip/gpio/gpio_top_apb.v b/perip/gpio/gpio_top_apb.v
+index ec51ffe5..6a1f0c89 100644
+--- a/perip/gpio/gpio_top_apb.v
++++ b/perip/gpio/gpio_top_apb.v
+@@ -23,5 +23,172 @@ module gpio_top_apb(
+   output [7:0]  gpio_seg_6,
+   output [7:0]  gpio_seg_7
+ );
++  import "DPI-C" function void npc_difftest_skip_ref();
++
++  reg [15:0] gpio_state;
++  reg [15:0] switch_state;
++  reg [31:0] seg_state;
++
++
++  reg pready_reg;
++  reg pslverr_reg;
++  reg [31:0] prdata_reg;
++
++
++
++  wire is_read  = ((in_psel && !in_penable)) && !in_pwrite;
++  wire is_write = ((in_psel && !in_penable)) &&  in_pwrite;
++
++  assign in_prdata = prdata_reg;
++  assign in_pready = pready_reg;
++  assign in_pslverr = pslverr_reg;
++
++  assign gpio_out = gpio_state;
++
++
++  always @(posedge clock) begin
++    if(reset) begin
++      gpio_state <= 16'h0000;
++      gpio_state <= 16'h0000;
++      seg_state <= 32'h00000000;
++    end else begin
++      if(is_write) begin
++        npc_difftest_skip_ref();
++        if(in_paddr >= 32'h1000_2000 && in_paddr < 32'h10002004) begin
++          // 0x00: gpio_state
++          case(in_pstrb)
++            4'b0001: gpio_state <= {8'b0, in_pwdata[7:0]};
++            4'b0010: gpio_state <= {in_pwdata[15:8], 8'b0};
++            4'b0011: gpio_state <= {in_pwdata[15:0]};
++            4'b1111: gpio_state <= in_pwdata[15:0];
++            default: begin
++              $display("error: addr:%h. strb:%b", in_paddr, in_pstrb);
++              $error("error");
++            end
++          endcase
++        end
++        else if(in_paddr >= 32'h1000_2004 && in_paddr < 32'h10002008) begin
++          // 0x4: switch_state
++          // $display("switch write: addr:%h. strb:%b", in_paddr, in_pstrb);
++          case(in_pstrb)
++            4'b0001: switch_state <= {8'b0, in_pwdata[7:0]};
++            4'b0010: switch_state <= {in_pwdata[15:8], 8'b0};
++            4'b0011: switch_state <= {in_pwdata[15:0]};
++            default: $error("error");
++          endcase
++        end
++        else if(in_paddr >= 32'h1000_2008 && in_paddr < 32'h1000200c) begin
++          // $display("seg write: addr:%h. strb:%b", in_paddr, in_pstrb);
++          // 0x8: seg_state
++          case(in_pstrb)
++            4'b0001: seg_state <= {24'b0, in_pwdata[7:0]};
++            4'b0010: seg_state <= {16'b0, in_pwdata[15:8], 8'b0};
++            4'b0011: seg_state <= {16'b0, in_pwdata[15:0]};
++            4'b1100: seg_state <= {in_pwdata[31:16], 16'b0};
++            4'b1111: seg_state <= {in_pwdata[31:0]};
++            default: $error("error");
++          endcase
++        end
++
++        pready_reg <= 1'b1;
++
++      end
++      else if(is_read) begin
++        $display("GPIO read!");
++        npc_difftest_skip_ref();
++        if(in_paddr >= 32'h1000_2004 && in_paddr < 32'h10002008) begin
++          switch_state <= gpio_in;
++        end
++
++        prdata_reg <= in_paddr == 32'h10002000 ? {16'b0, gpio_state} :
++                      in_paddr == 32'h10002004 ? {16'b0, switch_state} :
++                      in_paddr == 32'h10002008 ? seg_state :
++                      32'b0 ;
++
++        pready_reg <= 1'b1;
++      end
++      else begin
++        pready_reg <= 1'b0;
++        pslverr_reg <= 1'b0;
++
++      end
++    end
++    
++
++  end
++
++  bcd7seg u_0(
++    .b(seg_state[3:0]),
++    .h(gpio_seg_0)
++  );
++
++  bcd7seg u_1(
++    .b(seg_state[7:4]),
++    .h(gpio_seg_1)
++  );
++
++  bcd7seg u_2(
++    .b(seg_state[11:8]),
++    .h(gpio_seg_2)
++  );
++
++  bcd7seg u_3(
++    .b(seg_state[15:12]),
++    .h(gpio_seg_3)
++  );
++
++  bcd7seg u_4(
++    .b(seg_state[19:16]),
++    .h(gpio_seg_4)
++  );
++
++  bcd7seg u_5(
++    .b(seg_state[23:20]),
++    .h(gpio_seg_5)
++  );
++
++  bcd7seg u_6(
++    .b(seg_state[27:24]),
++    .h(gpio_seg_6)
++  );
++
++  bcd7seg u_7(
++    .b(seg_state[31:28]),
++    .h(gpio_seg_7)
++  );
++
++endmodule
++
++
++module bcd7seg(
++    input [3:0] b,
++    output [7:0] h
++);
++
++    reg [6:0] h_reg = 7'b1111111;
++    always @(b) begin
++        case(b)
++            4'b0000 : h_reg <= 7'b1000000;      // 0    
++            4'b0001 : h_reg <= 7'b1111001;      // 1
++            4'b0010 : h_reg <= 7'b0100100;      // 2
++            4'b0011 : h_reg <= 7'b0110000;      // 3
++            4'b0100 : h_reg <= 7'b0011001;      // 4
++            4'b0101 : h_reg <= 7'b0010010;      // 5
++            4'b0110 : h_reg <= 7'b0000010;      // 6
++            4'b0111 : h_reg <= 7'b1111000;      // 7
++            4'b1000 : h_reg <= 7'b0000000;      // 8
++            4'b1001 : h_reg <= 7'b0010000;      // 9
++            4'b1010 : h_reg <= 7'b0001000;      // a 
++            4'b1011 : h_reg <= 7'b0000011;      // b
++            4'b1100 : h_reg <= 7'b1000110;      // c
++            4'b1101 : h_reg <= 7'b0100001;      // d
++            4'b1110 : h_reg <= 7'b0000110;      // e
++            4'b1111 : h_reg <= 7'b0001110;      // f
++            default : h_reg <= 7'b1111111;
++        endcase
++    end
++
++    assign h = {1'b0,h_reg};
++
+ 
+ endmodule
+-- 
+2.51.0
+

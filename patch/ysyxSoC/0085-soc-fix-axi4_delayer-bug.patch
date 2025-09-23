@@ -1,0 +1,332 @@
+From 0a7165fa05493eb5bfd66ed3c38963ca48a052ef Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Wed, 16 Apr 2025 14:42:01 +0800
+Subject: [PATCH 85/88] soc: fix axi4_delayer bug
+
+---
+ perip/amba/axi4_delayer.v | 134 ++++++++++++++++++--------------------
+ 1 file changed, 63 insertions(+), 71 deletions(-)
+
+diff --git a/perip/amba/axi4_delayer.v b/perip/amba/axi4_delayer.v
+index 50fbe8ff..0f88102f 100644
+--- a/perip/amba/axi4_delayer.v
++++ b/perip/amba/axi4_delayer.v
+@@ -93,10 +93,8 @@ module axi4_delayer(
+   reg toogle;
+ 
+   // 延迟后的axi有效信号的使能信号
+-  reg arready_en, rvalid_en;
+-  reg awready_en, wready_en, bvalid_en;
+-  reg in_awvalid_reg, in_arvalid_reg, in_wvalid_reg, in_rready_reg,
+-      out_awready_reg, out_arready_reg, out_wready_reg;
++  reg in_awvalid_reg, in_arvalid_reg, in_wvalid_reg, in_rready_reg, in_bready_reg,
++      out_awready_reg, out_arready_reg, out_wready_reg, out_rvalid_reg, out_bvalid_reg;
+ 
+   wire in_sdram, in_flash;
+ 
+@@ -120,7 +118,6 @@ module axi4_delayer(
+   // AR dealy
+   always @(posedge clock) begin
+     if(reset) begin
+-      arready_en <= 'b0;
+       cnt_ar <= 'b0;
+       delay_counter_ar <= 'b0;
+       delay_state_ar <= IDLE;
+@@ -130,30 +127,31 @@ module axi4_delayer(
+     else begin
+       case(delay_state_ar)
+         IDLE: begin
++          delay_counter_ar <= 'b0;
++          cnt_ar <= 'b0;
++          out_arready_reg <= 'b0;
++          in_arvalid_reg <= 'b0;
+           if(in_arvalid) begin
+             delay_state_ar <= WAIT;
+-
+             in_arvalid_reg <= 'b1;
+-            arready_en <= 'b0;
+-            delay_counter_ar <= 'b0;
+-            cnt_ar <= 'b0;
+           end
+         end
+         WAIT: begin
+           delay_counter_ar <= delay_counter_ar + delay_max;
+           if(out_arready) begin
+-            out_arready_reg <= 'b1;
+-            delay_state_ar <= FORWARD;
+             in_arvalid_reg <= 'b0;
++            delay_state_ar <= FORWARD;
+           end
+         end
+         FORWARD: begin
+           if(cnt_ar >= (delay_counter_ar >> $clog2(s))) begin
+-            arready_en <= 'b1;
+-
+-            if(!in_arvalid) begin
++            if(in_arvalid && out_arready_reg) begin
++              out_arready_reg <= 'b1;
+               delay_state_ar <= IDLE;
+             end
++            else begin
++              out_arready_reg <= 'b1;
++            end
+           end
+           else begin
+             cnt_ar <= cnt_ar + 'b1;
+@@ -168,23 +166,20 @@ module axi4_delayer(
+   // R dealy
+   always @(posedge clock) begin
+     if(reset) begin
+-      rvalid_en <= 'b0;
+       cnt_r <= 'b0;
+       delay_counter_r <= 'b0;
+       delay_state_r <= IDLE;
+-      in_rready_reg <= 'b0;
++      out_rvalid_reg <= 'b0;
+       toogle <= 'b0;
+     end
+     else begin
+       case(delay_state_r)
+         IDLE: begin
++          out_rvalid_reg <= 'b0;
++          delay_counter_r <= 'b0;
++          cnt_r <= 'b0;
+           if(in_arvalid) begin
+             delay_state_r <= WAIT;
+-
+-            rvalid_en <= 'b0;
+-            in_rready_reg <= 'b0;
+-            delay_counter_r <= 'b0;
+-            cnt_r <= 'b0;
+           end
+         end
+         WAIT: begin
+@@ -196,28 +191,22 @@ module axi4_delayer(
+         end
+         FORWARD: begin
+           if(cnt_r >= (delay_counter_r >> $clog2(s))) begin
+-
+             if(!toogle) begin
+               toogle <= 'b1;
+-              rvalid_en <= 'b1;
+-              in_rready_reg <= 'b1;
++              out_rvalid_reg <= 'b1;
+             end
+             else begin
+-              if(in_rready && out_rlast) begin
++              if(in_rready && out_rlast && out_rvalid_reg) begin
++                out_rvalid_reg <= 'b0;
+                 delay_state_r <= IDLE;
+               end
+-              else if(out_rvalid && in_rready) begin
++              else if(out_rvalid_reg && in_rready) begin
+                 // next burst transmit
+-                rvalid_en <= 'b0;
+-                in_rready_reg <= 'b0;
++                out_rvalid_reg <= 'b0;
+                 delay_counter_r <= 'b0;
+                 cnt_r <= 'b0;
+                 delay_state_r <= WAIT;
+               end
+-              else begin
+-                rvalid_en <= 'b0;
+-                in_rready_reg <= 'b0;
+-              end
+             end
+           end
+           else begin
+@@ -234,7 +223,6 @@ module axi4_delayer(
+   // AW dealy
+   always @(posedge clock) begin
+     if(reset) begin
+-      awready_en <= 'b0;
+       cnt_aw <= 'b0;
+       delay_counter_aw <= 'b0;
+       delay_state_aw <= IDLE;
+@@ -244,7 +232,7 @@ module axi4_delayer(
+     else begin
+       case(delay_state_aw)
+         IDLE: begin
+-          awready_en <= 'b0;
++          in_awvalid_reg <= 'b0;
+           out_awready_reg <= 'b0;
+           delay_counter_aw <= 'b0;
+           cnt_aw <= 'b0;
+@@ -258,14 +246,13 @@ module axi4_delayer(
+           if(out_awready) begin
+             delay_state_aw <= FORWARD;
+             in_awvalid_reg <= 'b0;
+-            out_awready_reg <= 'b1;
+           end
+         end
+         FORWARD: begin
+           if(cnt_aw >= (delay_counter_aw >> $clog2(s))) begin
+-            awready_en <= 'b1;
+-
+-            if(!in_awvalid) begin
++            out_awready_reg <= 'b1;
++            if(in_awvalid && out_awready_reg) begin
++              out_awready_reg <= 'b0;
+               delay_state_aw <= IDLE;
+             end
+           end
+@@ -282,7 +269,6 @@ module axi4_delayer(
+   // W dealy
+   always @(posedge clock) begin
+     if(reset) begin
+-      wready_en <= 'b0;
+       cnt_w <= 'b0;
+       delay_counter_w <= 'b0;
+       delay_state_w <= IDLE;
+@@ -292,37 +278,29 @@ module axi4_delayer(
+     else begin
+       case(delay_state_w)
+         IDLE: begin
++          in_wvalid_reg <= 'b0;
++          out_wready_reg <= 'b0;
++          delay_counter_w <= 'b0;
++          cnt_w <= 'b0;
+           if(in_wvalid) begin
+             delay_state_w <= WAIT;
+-
+             in_wvalid_reg <= 'b1;
+-            wready_en <= 'b0;
+-            out_wready_reg <= 'b0;
+-            delay_counter_w <= 'b0;
+-            cnt_w <= 'b0;
+           end
+         end
+         WAIT: begin
+           delay_counter_w <= delay_counter_w + delay_max;
+           if(out_wready) begin
+-            out_wready_reg <= 'b1;
+             delay_state_w <= FORWARD;
+             in_wvalid_reg <= 'b0;
+           end
+         end
+         FORWARD: begin
+           if(cnt_w >= (delay_counter_w >> $clog2(s))) begin
+-            wready_en <= 'b1;
+-
+-            if(!in_wvalid && in_wlast) begin
++            out_wready_reg <= 'b1;
++            if(in_wvalid && out_wready_reg) begin
++              out_wready_reg <= 'b0;
+               delay_state_w <= IDLE;
+             end
+-            else if(in_rvalid) begin
+-              wready_en <= 'b0;
+-              delay_counter_w <= 'b0;
+-              cnt_w <= 'b0;
+-              delay_state_w <= WAIT;
+-            end
+           end
+           else begin
+             cnt_w <= cnt_w + 'b1;
+@@ -337,38 +315,52 @@ module axi4_delayer(
+   // B dealy
+   always @(posedge clock) begin
+     if(reset) begin
+-      bvalid_en <= 'b0;
+       cnt_b <= 'b0;
+       delay_counter_b <= 'b0;
+       delay_state_b <= IDLE;
++      out_bvalid_reg <= 'b0;
++      in_bready_reg <= 'b0;
+     end
+     else begin
+       case(delay_state_b)
+         IDLE: begin
+-          if(in_awvalid) begin
++          delay_counter_b <= 'b0;
++          cnt_b <= 'b0;
++          out_bvalid_reg <= 'b0;
++          in_bready_reg <= 'b0;
++          if(in_awvalid || in_wvalid) begin
+             delay_state_b <= WAIT;
+-
+-            bvalid_en <= 'b0;
+-            delay_counter_b <= 'b0;
+-            cnt_b <= 'b0;
+           end
+         end
+         WAIT: begin
+           delay_counter_b <= delay_counter_b + delay_max;
++          cnt_b <= cnt_b + 'b1;
+           if(out_bvalid) begin
++            in_bready_reg <= 'b1;
+             delay_state_b <= FORWARD;
++
++            `ifdef CONFIG_DPIC
++            if(out_bresp != 'b0) begin
++              $error("axi delayer bresp not zero");
++            end
++            `endif
+           end
+         end
+         FORWARD: begin
+           if(cnt_b >= (delay_counter_b >> $clog2(s))) begin
+-            bvalid_en <= 'b1;
+-
+-            if(in_bready) begin
++            if(in_bready && out_bvalid_reg) begin
++              out_bvalid_reg <= 'b0;
+               delay_state_b <= IDLE;
+             end
++            else begin
++              out_bvalid_reg <= 'b1;
++            end
+           end
+           else begin
+-            cnt_b <= cnt_b + 'b1;
++            cnt_b <= cnt_b + 'd1;
++          end
++          if(!out_bvalid) begin
++            in_bready_reg <= 'b0;
+           end
+         end
+         default: begin
+@@ -377,33 +369,33 @@ module axi4_delayer(
+     end
+   end
+ 
+-  assign in_arready = arready_en ? out_arready_reg : 'b0;
++  assign in_arready = out_arready_reg;
+   assign out_arvalid = in_arvalid_reg;
+   assign out_arid = in_arid;
+   assign out_araddr = in_araddr;
+   assign out_arlen = in_arlen;
+   assign out_arsize = in_arsize;
+   assign out_arburst = in_arburst;
+-  assign out_rready = in_rready_reg;
+-  assign in_rvalid = rvalid_en ? out_rvalid : 'b0;
++  assign out_rready = in_rready;
++  assign in_rvalid = out_rvalid_reg;
+   assign in_rid = out_rid;
+   assign in_rdata = out_rdata;
+   assign in_rresp = out_rresp;
+   assign in_rlast = out_rlast;
+-  assign in_awready = awready_en ? out_awready_reg : 'b0;
++  assign in_awready = out_awready_reg;
+   assign out_awvalid = in_awvalid_reg;
+   assign out_awid = in_awid;
+   assign out_awaddr = in_awaddr;
+   assign out_awlen = in_awlen;
+   assign out_awsize = in_awsize;
+   assign out_awburst = in_awburst;
+-  assign in_wready = wready_en ? out_wready_reg : 'b0;
++  assign in_wready = out_wready_reg;
+   assign out_wvalid = in_wvalid_reg;
+   assign out_wdata = in_wdata;
+   assign out_wstrb = in_wstrb;
+   assign out_wlast = in_wlast;
+-  assign out_bready = in_bready;
+-  assign in_bvalid = bvalid_en ? out_bvalid : 'b0;
++  assign out_bready = in_bready_reg;
++  assign in_bvalid = out_bvalid_reg;
+   assign in_bid = out_bid;
+   assign in_bresp = out_bresp;
+ 
+-- 
+2.51.0
+

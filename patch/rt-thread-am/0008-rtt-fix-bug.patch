@@ -1,0 +1,40 @@
+From 600ead137c53b96016fe8cc90e3fa1b4cb31ce03 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Mon, 31 Mar 2025 09:46:19 +0800
+Subject: [PATCH 08/10] rtt: fix bug
+
+---
+ bsp/abstract-machine/extra-soc.ld | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/bsp/abstract-machine/extra-soc.ld b/bsp/abstract-machine/extra-soc.ld
+index 0ec9077f5..b60ee130a 100644
+--- a/bsp/abstract-machine/extra-soc.ld
++++ b/bsp/abstract-machine/extra-soc.ld
+@@ -30,12 +30,12 @@ SECTIONS {
+     __am_apps_data_end = .;
+     . = ALIGN(8);
+     _data_extra_end = .;
+-  } > SDRAM AT> FLASH
++  } > SDRAM AT> FLASH : data
+ 
+   _data_extra_load = LOADADDR(.data.extra);
+ }
+-/* INSERT BEFORE .data; */
+-INSERT AFTER .data;
++INSERT BEFORE .data;
++/* INSERT AFTER .data; */
+ 
+ SECTIONS {
+   .bss.extra : {
+@@ -52,5 +52,5 @@ SECTIONS {
+ 
+   /* _bss_extra_load = LOADADDR(.bss.extra); */
+ }
+-/* INSERT BEFORE .bss; */
+-INSERT AFTER .bss;
++INSERT BEFORE .bss;
++/* INSERT AFTER .bss; */
+-- 
+2.51.0
+

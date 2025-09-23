@@ -1,0 +1,97 @@
+From a8b1e62c516413ae5720e732d2461420e4f55b1a Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Mon, 22 Sep 2025 19:40:57 +0800
+Subject: [PATCH 10/10] rtt: ci test
+
+---
+ bsp/abstract-machine/Makefile   | 4 +++-
+ bsp/abstract-machine/extra.ld   | 2 +-
+ bsp/abstract-machine/src/init.c | 8 ++++++++
+ bsp/abstract-machine/src/quit.c | 2 +-
+ bsp/abstract-machine/src/uart.c | 2 +-
+ 5 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/bsp/abstract-machine/Makefile b/bsp/abstract-machine/Makefile
+index d09753b2d..537e98ad5 100644
+--- a/bsp/abstract-machine/Makefile
++++ b/bsp/abstract-machine/Makefile
+@@ -16,8 +16,10 @@ ifeq ($(PLATFORM), ysyxsoc)
+ # LDFLAGS += -T $(AM_HOME)/scripts/linker-ysyxsoc-rtt.ld
+ LDFLAGS += -T extra-soc.ld
+ CFLAGS += -DYSYXSOC
+-else
++endif
++ifeq ($(PLATFORM), npc)
+ LDFLAGS += -T extra.ld
++CFLAGS += -DNPC
+ endif
+ 
+ -include $(FILE_MK)
+diff --git a/bsp/abstract-machine/extra.ld b/bsp/abstract-machine/extra.ld
+index 0ed4e07f1..23c86123c 100644
+--- a/bsp/abstract-machine/extra.ld
++++ b/bsp/abstract-machine/extra.ld
+@@ -27,7 +27,7 @@ SECTIONS {
+     *(__am_apps.sdata*)
+     __am_apps_data_end = .;
+     . = ALIGN(8);
+-  }
++  } : data
+ }
+ INSERT BEFORE .data;
+ /* INSERT AFTER .data; */
+diff --git a/bsp/abstract-machine/src/init.c b/bsp/abstract-machine/src/init.c
+index ce419ab15..a0edbf07d 100644
+--- a/bsp/abstract-machine/src/init.c
++++ b/bsp/abstract-machine/src/init.c
+@@ -12,6 +12,7 @@ uint8_t * am_apps_data_content = NULL;
+ 
+ extern char _data_extra_start, _data_extra_load, _data_extra_end;
+ extern char _bss_extra_start, _bss_extra_load, _bss_extra_end;
++extern char __am_apps_bss_start, __am_apps_bss_end;
+ 
+ void rt_hw_board_init() {
+ 
+@@ -64,6 +65,13 @@ int main() {
+   memset((void *)(uintptr_t)&_bss_extra_start, 0, (uintptr_t)&_bss_extra_end - (uintptr_t)&_bss_extra_start);
+   // memcpy((void *)(uintptr_t)&_bss_extra_start, (void *)(uintptr_t)&_bss_extra_load, (uintptr_t)&_bss_extra_end - (uintptr_t)&_bss_extra_start);
+ #endif
++#ifdef NPC
++  // copy .data.extra
++  // memcpy((void *)(uintptr_t)&_data_extra_start, (void *)(uintptr_t)&_data_extra_load, (uintptr_t)&_data_extra_end - (uintptr_t)&_data_extra_start);
++  // init .bss.extra
++  memset((void *)(uintptr_t)&__am_apps_bss_start, 0, (uintptr_t)&__am_apps_bss_end - (uintptr_t)&__am_apps_bss_start);
++  // memcpy((void *)(uintptr_t)&_bss_extra_start, (void *)(uintptr_t)&_bss_extra_load, (uintptr_t)&_bss_extra_end - (uintptr_t)&_bss_extra_start);
++#endif
+ 
+   ioe_init();
+ #ifdef __ISA_NATIVE__
+diff --git a/bsp/abstract-machine/src/quit.c b/bsp/abstract-machine/src/quit.c
+index 00fad68f8..5773f7687 100644
+--- a/bsp/abstract-machine/src/quit.c
++++ b/bsp/abstract-machine/src/quit.c
+@@ -4,7 +4,7 @@
+ 
+ static int quit() {
+   printf("Quit, please wait a second!\n");
+-  exit(0);
++  halt(0);
+   return 0;
+ }
+ MSH_CMD_EXPORT_ALIAS(quit, q, quit command.);
+diff --git a/bsp/abstract-machine/src/uart.c b/bsp/abstract-machine/src/uart.c
+index 1f78db305..b0f097d44 100644
+--- a/bsp/abstract-machine/src/uart.c
++++ b/bsp/abstract-machine/src/uart.c
+@@ -38,7 +38,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
+ }
+ 
+ static int _uart_getc(struct rt_serial_device *serial) {
+-  static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\nam_hello\n";
++  static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\nam_hello\nq\n";
+   return (*p != '\0' ? *(p ++) : io_read(AM_UART_RX).data);
+ }
+ 
+-- 
+2.51.0
+

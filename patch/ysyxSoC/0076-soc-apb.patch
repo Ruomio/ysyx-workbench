@@ -1,0 +1,25 @@
+From 1696c0ad4de2fcd5d9d4f129ee8c7618d65d5635 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Wed, 26 Feb 2025 16:02:00 +0800
+Subject: [PATCH 76/88] soc:apb
+
+---
+ perip/gpio/gpio_top_apb.v | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/perip/gpio/gpio_top_apb.v b/perip/gpio/gpio_top_apb.v
+index 6a1f0c89..5a8fd11e 100644
+--- a/perip/gpio/gpio_top_apb.v
++++ b/perip/gpio/gpio_top_apb.v
+@@ -94,7 +94,7 @@ module gpio_top_apb(
+ 
+       end
+       else if(is_read) begin
+-        $display("GPIO read!");
++        // $display("GPIO read!");
+         npc_difftest_skip_ref();
+         if(in_paddr >= 32'h1000_2004 && in_paddr < 32'h10002008) begin
+           switch_state <= gpio_in;
+-- 
+2.51.0
+

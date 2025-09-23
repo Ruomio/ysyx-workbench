@@ -1,0 +1,128 @@
+From 246829af48590911f6d52175ad73816fc2013b06 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Fri, 18 Apr 2025 10:02:08 +0800
+Subject: [PATCH 87/88] soc: fix apb_delayer bug
+
+---
+ perip/amba/apb_delayer.v | 61 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 45 insertions(+), 16 deletions(-)
+
+diff --git a/perip/amba/apb_delayer.v b/perip/amba/apb_delayer.v
+index 05203553..a8c3466a 100644
+--- a/perip/amba/apb_delayer.v
++++ b/perip/amba/apb_delayer.v
+@@ -1,3 +1,4 @@
++`define APB_DELAY
+ module apb_delayer(
+   input         clock,
+   input         reset,
+@@ -23,15 +24,17 @@ module apb_delayer(
+   input  [31:0] out_prdata,
+   input         out_pslverr
+ );
++`ifdef APB_DELAY
+ 
+-  reg rw_success;
+   reg        in_pready_reg;
+   reg [31:0] in_prdata_reg;
+   reg        in_pslverr_reg;
++  reg        in_psel_reg;
++  reg        in_penable_reg;
+ 
+   assign out_paddr   = in_paddr;
+-  assign out_psel    = rw_success ? 'b0 : in_psel;
+-  assign out_penable = rw_success ? 'b0 : in_penable;
++  assign out_psel    = in_psel_reg;
++  assign out_penable = in_penable_reg;
+   assign out_pprot   = in_pprot;
+   assign out_pwrite  = in_pwrite;
+   assign out_pwdata  = in_pwdata;
+@@ -75,25 +78,35 @@ module apb_delayer(
+       in_pready_reg <= 1'b0;
+       in_prdata_reg <= 32'b0;
+       in_pslverr_reg <= 1'b0;
++      in_psel_reg <= 'b0;
++      in_penable_reg <= 'b0;
+       delay_counter <= 'd0;
+       cnt <= 'd0;
+-      rw_success <= 'b0;
+     end else begin
+       case (delay_state)
+         IDLE: begin
+-          if (in_psel && in_penable) begin
++          in_psel_reg <= 'b0;
++          in_penable_reg <= 'b0;
++          delay_counter <= 'd0;
++          cnt <= 'd0;
++          if (in_psel && !in_penable) begin
++            in_psel_reg <= 'b1;
++            in_penable_reg <= 'b0;
++          end
++          else if(in_psel && in_penable) begin
++            in_psel_reg <= 'b1;
++            in_penable_reg <= 'b1;
+             // 开始延迟
+             delay_state <= WAIT;
+-            delay_counter <= 'd0;
+-            cnt <= 'd0;
+           end
+         end
+ 
+         WAIT: begin
+-          delay_counter <= delay_counter + (1 * delay_max);
++          delay_counter <= delay_counter + delay_max;
+           if(out_pready) begin
+             // read/write success, 转到 FORWARD 状态
+-            rw_success <= 'b1;
++            in_psel_reg <= 'b0;
++            in_penable_reg <= 'b0;
+             delay_state <= FORWARD;
+             in_prdata_reg <= out_prdata;
+           end
+@@ -104,15 +117,15 @@ module apb_delayer(
+           if(cnt >= delay_counter >> $clog2(s)) begin
+             in_pready_reg <= 'b1;
+             in_pslverr_reg <= out_pslverr;
+-            cnt <= 'd0;
+-            rw_success <= 'b0;
+-          end else if(cnt < delay_counter >> $clog2(s)) begin
++            if(in_penable && in_psel && in_pready_reg) begin
++              in_pready_reg <= 'b0;
++              delay_state <= IDLE; // 返回 IDLE 状态
++              in_pready_reg <= 1'b0;
++              cnt <= 'd0;
++            end
++          end else begin
+             cnt <= cnt + 'd1;
+           end
+-          if(~in_penable && ~in_psel) begin
+-            delay_state <= IDLE; // 返回 IDLE 状态
+-            in_pready_reg <= 1'b0;
+-          end
+         end
+         default: begin
+           // nothing
+@@ -121,4 +134,20 @@ module apb_delayer(
+     end
+   end
+ 
++`endif
++
++`ifndef APB_DELAY
++assign out_paddr   = in_paddr;
++assign out_psel    = in_psel;
++assign out_penable = in_penable;
++assign out_pprot   = in_pprot;
++assign out_pwrite  = in_pwrite;
++assign out_pwdata  = in_pwdata;
++assign out_pstrb   = in_pstrb;
++
++assign in_pready   = out_pready;
++assign in_prdata   = out_prdata;
++assign in_pslverr  = out_pslverr;
++`endif
++
+ endmodule
+-- 
+2.51.0
+

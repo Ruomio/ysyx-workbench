@@ -13,6 +13,7 @@
 !digital-circuit-experiments/*
 !/cachesim/**
 !/branchsim/**
+!patch/**
 
 /fceux-am
 /nvboard

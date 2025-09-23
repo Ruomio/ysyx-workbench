@@ -1,0 +1,405 @@
+From 940c020610b7c6ed8e0f0ba64643f988174d7e50 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Mon, 7 Apr 2025 13:20:44 +0800
+Subject: [PATCH 80/88] soc: update sdram
+
+---
+ perip/sdram/sdram.v | 217 ++++++++++++++++++++------------------------
+ 1 file changed, 99 insertions(+), 118 deletions(-)
+
+diff --git a/perip/sdram/sdram.v b/perip/sdram/sdram.v
+index 9e5f7f81..c847c95b 100644
+--- a/perip/sdram/sdram.v
++++ b/perip/sdram/sdram.v
+@@ -29,6 +29,7 @@ module sdram(
+   reg [12:0] mode_register;
+   reg [1:0] precharge_cnt;
+   reg [3:0] bank_en;
++  reg [15:0] tmp_a [3:0];
+ 
+ 
+   reg r_en;
+@@ -50,7 +51,7 @@ module sdram(
+ 
+   assign is_term = cmd_burst_term;
+   // wstrb
+-  assign wstrb = { {8{~dqm[3]}}, {8{~dqm[2]}}, {8{~dqm[1]}}, {8{~dqm[0]}} }; 
++  assign wstrb = { {8{~dqm[3]}}, {8{~dqm[2]}}, {8{~dqm[1]}}, {8{~dqm[0]}} };
+ 
+   // cke
+   always @(posedge clk) begin
+@@ -59,6 +60,10 @@ module sdram(
+       r_en <= 1'b0;
+       w_en <= 1'b0;
+       bank_en <= 4'b0;
++      tmp_a[0] <= 'b0;
++      tmp_a[1] <= 'b0;
++      tmp_a[2] <= 'b0;
++      tmp_a[3] <= 'b0;
+     end
+   end
+   // Initialize mode register
+@@ -72,16 +77,19 @@ module sdram(
+ 
+   // Activate command
+   always @(posedge clk) begin
+-    if (cmd_active && id[1] == 1'b0) begin
+-      row_addr[ba] <= a;
+-      bank_addr <= ba;
+-      bank_en[ba] <= 1'b1;
++    if (cmd_active) begin
++      tmp_a[ba] <= a;
++      if(id[1] == 0 && a < 16'h2000) begin
++        row_addr[ba] <= a;
++        bank_addr <= ba;
++        bank_en[ba] <= 1'b1;
++      end
+     end
+   end
+ 
+   // Read command
+   always @(posedge clk) begin
+-    if (cmd_read && id[1] == 1'b0) begin
++    if (cmd_read && id[1] == 1'b0 && row_addr[ba] < 16'h2000) begin
+       bank_addr <= ba;
+       r_en <= 1'b1;
+       col_addr <= a[9:0];
+@@ -93,24 +101,19 @@ module sdram(
+ 
+   // Write command
+   always @(posedge clk) begin
+-    if (cmd_write && id[1] == 1'b0) begin
++    if (cmd_write && id[1] == 1'b0 && row_addr[ba] < 16'h2000) begin
+       w_en <= 1'b1;
+       col_addr <= a[9:0];
+       auto_precharge <= a[10];
+       burst_counter <= 1;
+       bank_addr <= ba;
+-      if((id[1] == 1'b0) && row_addr[bank_addr] < 16'h2000) begin
+-        sdram_write({6'b0,id}, {6'b0, ba}, {16'b0, row_addr[ba]}, {22'b0, a[9:0]}, wstrb, {{16{1'b0}}, dq});
+-      end
+-      else if((id[1] == 1'b1) && row_addr[bank_addr] >= 16'h2000) begin
+-        sdram_write({6'b0,id}, {6'b0, ba}, {16'b0, row_addr[ba]}, {22'b0, a[9:0]}, wstrb, {{16{1'b0}}, dq});
+-      end
++      sdram_write({6'b0,id}, {6'b0, ba}, {16'b0, row_addr[ba]}, {22'b0, a[9:0]}, wstrb, {{16{1'b0}}, dq});
+     end
+   end
+ 
+   // Precharge command
+   always @(posedge clk) begin
+-    if (cmd_precharge && id[1] == 1'b0) begin
++    if (cmd_precharge && id[1] == 1'b0 && row_addr[ba] < 16'h2000) begin
+       if (a[10]) begin
+         // Precharge all banks
+         bank_en <= 4'b0;
+@@ -118,13 +121,12 @@ module sdram(
+         // Precharge selected bank
+         bank_en[ba] <= 1'b0;
+       end
+-
+     end
+   end
+ 
+   // Burst terminate command
+   always @(posedge clk) begin
+-    if (cmd_burst_term && id[1] == 1'b0) begin
++    if (cmd_burst_term && id[1] == 1'b0 && row_addr[bank_addr] < 16'h2000) begin
+       burst_counter <= 0;
+       cas_counter <= 2'b0;
+       r_en <= 1'b0;
+@@ -135,68 +137,57 @@ module sdram(
+ 
+   // Data output
+   always @(posedge clk) begin
+-    if (r_en && cas_counter == cas_latency - 2'b1 && burst_counter > burst_length && !is_term && id[1] == 1'b0) begin
+-      r_en <= 1'b0;
+-      cas_counter <= 2'b0;
+-      burst_counter <= 3'b0;
+-      dq_en <= 1'b0;
+-      if(auto_precharge) begin
+-        bank_en[bank_addr] <= 1'b0;
+-        auto_precharge <= 1'b0;
+-      end
+-    end
+-    else if (r_en && cas_counter == cas_latency - 2'b1 && burst_counter <= burst_length && !is_term && id[1] == 1'b0) begin
+-      if(id[1] == 1'b0 && row_addr[bank_addr] < 16'h2000) begin
+-        sdram_read({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq_out});
++    if(r_en && !is_term && id[1] == 1'b0 && row_addr[bank_addr] < 16'h2000) begin
++      if(cas_counter == cas_latency - 2'b1) begin
++        if(burst_counter > burst_length) begin
++          r_en <= 1'b0;
++          cas_counter <= 2'b0;
++          burst_counter <= 3'b0;
++          dq_en <= 1'b0;
++          if(auto_precharge) begin
++            bank_en[bank_addr] <= 1'b0;
++            auto_precharge <= 1'b0;
++          end
++        end
++        else if(burst_counter <= burst_length) begin
++          sdram_read({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq_out});
++          dq_en <= 1;
++          burst_counter <= burst_counter + 1;
++        end
+       end
+-      else if(id[1] == 1'b1 && row_addr[bank_addr] >= 16'h2000) begin
+-        sdram_read({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq_out});
++      else begin
++        cas_counter <= cas_counter + 1;
++        dq_en <= 0;
+       end
+-      dq_en <= 1;
+-      burst_counter <= burst_counter + 1;
+     end
+-    else if(r_en && id[1] == 1'b0) begin
+-      cas_counter <= cas_counter + 1;
+-      dq_en <= 0;
+-    end
+-    else begin
+ 
+-    end
+   end
+ 
+   // Data input
+   always @(posedge clk) begin
+-    if (w_en && burst_counter > burst_length && !is_term && !cmd_write && id[1] == 1'b0) begin
+-      w_en <= 1'b0;
+-      burst_counter <= 3'b0;
+-      if(auto_precharge) begin
+-        bank_en[bank_addr] <= 1'b0;
+-        auto_precharge <= 1'b0;
+-      end
+-    end
+-    else if (w_en && burst_counter <= burst_length && !is_term && !cmd_write && !cmd_burst_term && id[1] == 1'b0) begin
+-      if(id[1] == 1'b0 && row_addr[bank_addr] < 16'h2000) begin
+-        sdram_write({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq});
++    if(w_en && !is_term && !cmd_write && id[1] == 1'b0 && row_addr[bank_addr] < 16'h2000) begin
++      if(burst_counter > burst_length) begin
++        w_en <= 1'b0;
++        burst_counter <= 3'b0;
++        if(auto_precharge) begin
++          bank_en[bank_addr] <= 1'b0;
++          auto_precharge <= 1'b0;
++        end
+       end
+-      else if(id[1] == 1'b1 && row_addr[bank_addr] >= 16'h2000) begin
++      else if(burst_counter <= burst_length) begin
+         sdram_write({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq});
++        burst_counter <= burst_counter + 1;
+       end
+-      burst_counter <= burst_counter + 1;
+-    end
+-    else if(w_en) begin
+-    end
+-    else begin
+-
+     end
+   end
+ 
+ 
+   // Data bus control
+-  assign dq = dq_en && row_addr[bank_addr] < 16'h2000 ? dq_out : 16'bz;
++  assign dq = dq_en && row_addr[bank_addr] == tmp_a[bank_addr] ? dq_out : 16'bz;
+ 
+ endmodule
+ 
+-module sdram_word_exten(
++module sdram_word_extend(
+   input        clk,
+   input        cke,
+   input [1:0]  id,
+@@ -227,7 +218,7 @@ module sdram_word_exten(
+   reg [12:0] mode_register;
+   reg [1:0] precharge_cnt;
+   reg [3:0] bank_en;
+-
++  reg [15:0] tmp_a [3:0];
+ 
+   reg r_en;
+   reg w_en;
+@@ -248,7 +239,7 @@ module sdram_word_exten(
+ 
+   assign is_term = cmd_burst_term;
+   // wstrb
+-  assign wstrb = { {8{~dqm[3]}}, {8{~dqm[2]}}, {8{~dqm[1]}}, {8{~dqm[0]}} }; 
++  assign wstrb = { {8{~dqm[3]}}, {8{~dqm[2]}}, {8{~dqm[1]}}, {8{~dqm[0]}} };
+ 
+   // cke
+   always @(posedge clk) begin
+@@ -257,6 +248,10 @@ module sdram_word_exten(
+       r_en <= 1'b0;
+       w_en <= 1'b0;
+       bank_en <= 4'b0;
++      tmp_a[0] <= a;
++      tmp_a[1] <= a;
++      tmp_a[2] <= a;
++      tmp_a[3] <= a;
+     end
+   end
+   // Initialize mode register
+@@ -270,16 +265,19 @@ module sdram_word_exten(
+ 
+   // Activate command
+   always @(posedge clk) begin
+-    if (cmd_active && id[1] == 1'b1) begin
+-      row_addr[ba] <= a;
+-      bank_addr <= ba;
+-      bank_en[ba] <= 1'b1;
++    if (cmd_active) begin
++      tmp_a[ba] <= a;
++      if(id[1] == 1'b1 && a >= 16'h2000) begin
++        row_addr[ba] <= a;
++        bank_addr <= ba;
++        bank_en[ba] <= 1'b1;
++      end
+     end
+   end
+ 
+   // Read command
+   always @(posedge clk) begin
+-    if (cmd_read && id[1] == 1'b1) begin
++    if (cmd_read && id[1] == 1'b1 && row_addr[ba] >= 16'h2000) begin
+       bank_addr <= ba;
+       r_en <= 1'b1;
+       col_addr <= a[9:0];
+@@ -291,24 +289,19 @@ module sdram_word_exten(
+ 
+   // Write command
+   always @(posedge clk) begin
+-    if (cmd_write && id[1] == 1'b1) begin
++    if (cmd_write && id[1] == 1'b1 && row_addr[ba] >= 16'h2000) begin
+       w_en <= 1'b1;
+       col_addr <= a[9:0];
+       auto_precharge <= a[10];
+       burst_counter <= 1;
+       bank_addr <= ba;
+-      if((id[1] == 1'b0) && row_addr[bank_addr] < 16'h2000) begin
+-        sdram_write({6'b0,id}, {6'b0, ba}, {16'b0, row_addr[ba]}, {22'b0, a[9:0]}, wstrb, {{16{1'b0}}, dq});
+-      end
+-      else if((id[1] == 1'b1) && row_addr[bank_addr] >= 16'h2000) begin
+-        sdram_write({6'b0,id}, {6'b0, ba}, {16'b0, row_addr[ba]}, {22'b0, a[9:0]}, wstrb, {{16{1'b0}}, dq});
+-      end
++      sdram_write({6'b0,id}, {6'b0, ba}, {16'b0, row_addr[ba]}, {22'b0, a[9:0]}, wstrb, {{16{1'b0}}, dq});
+     end
+   end
+ 
+   // Precharge command
+   always @(posedge clk) begin
+-    if (cmd_precharge && id[1] == 1'b1) begin
++    if (cmd_precharge && id[1] == 1'b1 && row_addr[ba] >= 16'h2000) begin
+       if (a[10]) begin
+         // Precharge all banks
+         bank_en <= 4'b0;
+@@ -316,13 +309,12 @@ module sdram_word_exten(
+         // Precharge selected bank
+         bank_en[ba] <= 1'b0;
+       end
+-
+     end
+   end
+ 
+   // Burst terminate command
+   always @(posedge clk) begin
+-    if (cmd_burst_term && id[1] == 1'b1) begin
++    if (cmd_burst_term && id[1] == 1'b1 && row_addr[bank_addr] >= 16'h2000) begin
+       burst_counter <= 0;
+       cas_counter <= 2'b0;
+       r_en <= 1'b0;
+@@ -333,63 +325,52 @@ module sdram_word_exten(
+ 
+   // Data output
+   always @(posedge clk) begin
+-    if (r_en && cas_counter == cas_latency - 2'b1 && burst_counter > burst_length && !is_term && id[1] == 1'b1) begin
+-      r_en <= 1'b0;
+-      cas_counter <= 2'b0;
+-      burst_counter <= 3'b0;
+-      dq_en <= 1'b0;
+-      if(auto_precharge) begin
+-        bank_en[bank_addr] <= 1'b0;
+-        auto_precharge <= 1'b0;
+-      end
+-    end
+-    else if (r_en && cas_counter == cas_latency - 2'b1 && burst_counter <= burst_length && !is_term && id[1] == 1'b1) begin
+-      if(id[1] == 1'b0 && row_addr[bank_addr] < 16'h2000) begin
+-        sdram_read({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq_out});
++    if(r_en && !is_term && id[1] == 1'b1 && row_addr[bank_addr] >= 16'h2000) begin
++      if(cas_counter == cas_latency - 2'b1) begin
++        if(burst_counter > burst_length) begin
++          r_en <= 1'b0;
++          cas_counter <= 2'b0;
++          burst_counter <= 3'b0;
++          dq_en <= 1'b0;
++          if(auto_precharge) begin
++            bank_en[bank_addr] <= 1'b0;
++            auto_precharge <= 1'b0;
++          end
++        end
++        else if(burst_counter <= burst_length) begin
++          sdram_read({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq_out});
++          dq_en <= 1;
++          burst_counter <= burst_counter + 1;
++        end
+       end
+-      else if(id[1] == 1'b1 && row_addr[bank_addr] >= 16'h2000) begin
+-        sdram_read({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq_out});
++      else begin
++        cas_counter <= cas_counter + 1;
++        dq_en <= 0;
+       end
+-      dq_en <= 1;
+-      burst_counter <= burst_counter + 1;
+     end
+-    else if(r_en && id[1] == 1'b1) begin
+-      cas_counter <= cas_counter + 1;
+-      dq_en <= 0;
+-    end
+-    else begin
+ 
+-    end
+   end
+ 
+   // Data input
+   always @(posedge clk) begin
+-    if (w_en && burst_counter > burst_length && !is_term && !cmd_write && id[1] == 1'b1) begin
+-      w_en <= 1'b0;
+-      burst_counter <= 3'b0;
+-      if(auto_precharge) begin
+-        bank_en[bank_addr] <= 1'b0;
+-        auto_precharge <= 1'b0;
++    if(w_en && !is_term && !cmd_write && id[1] == 1'b1 && row_addr[bank_addr] >= 16'h2000) begin
++      if(burst_counter > burst_length) begin
++        w_en <= 1'b0;
++        burst_counter <= 3'b0;
++        if(auto_precharge) begin
++          bank_en[bank_addr] <= 1'b0;
++          auto_precharge <= 1'b0;
++        end
+       end
+-    end
+-    else if (w_en && burst_counter <= burst_length && !is_term && !cmd_write && !cmd_burst_term && id[1] == 1'b1) begin
+-      if(id[1] == 1'b0 && row_addr[bank_addr] < 16'h2000) begin
++      else if(burst_counter <= burst_length) begin
+         sdram_write({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq});
++        burst_counter <= burst_counter + 1;
+       end
+-      else if(id[1] == 1'b1 && row_addr[bank_addr] >= 16'h2000) begin
+-        sdram_write({6'b0,id}, {6'b0,bank_addr}, {16'b0, row_addr[bank_addr]}, {22'b0, col_addr} + {29'b0, burst_counter}, wstrb, {{16{1'b0}}, dq});
+-      end
+-      burst_counter <= burst_counter + 1;
+-    end
+-    else if(w_en) begin
+-    end
+-    else begin
+-
+     end
+   end
+ 
+ 
+   // Data bus control
+-  assign dq = dq_en && row_addr[bank_addr] >= 16'h2000 ? dq_out : 16'bz;
++  assign dq = dq_en && row_addr[bank_addr] == tmp_a[bank_addr] ? dq_out : 16'bz;
+ 
+ endmodule
+-- 
+2.51.0
+

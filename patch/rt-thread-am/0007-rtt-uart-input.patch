@@ -1,0 +1,33 @@
+From 59bc486e9e5f05ff798ed5c9de4a1c7336cad1dc Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Thu, 6 Mar 2025 10:16:21 +0800
+Subject: [PATCH 07/10] rtt: uart input
+
+---
+ bsp/abstract-machine/src/uart.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/bsp/abstract-machine/src/uart.c b/bsp/abstract-machine/src/uart.c
+index 156a8cdf2..1f78db305 100644
+--- a/bsp/abstract-machine/src/uart.c
++++ b/bsp/abstract-machine/src/uart.c
+@@ -11,6 +11,7 @@
+ #include <rtthread.h>
+ #include <am.h>
+ #include <klib.h>
++#include <klib-macros.h>
+ 
+ #define UART_DEFAULT_BAUDRATE 115200
+ 
+@@ -38,7 +39,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
+ 
+ static int _uart_getc(struct rt_serial_device *serial) {
+   static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\nam_hello\n";
+-  return (*p != '\0' ? *(p ++) : -1);
++  return (*p != '\0' ? *(p ++) : io_read(AM_UART_RX).data);
+ }
+ 
+ const struct rt_uart_ops _uart_ops = {
+-- 
+2.51.0
+
