@@ -181,6 +181,12 @@ ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --enable CONFIG_PSRAM 
 	@scripts/config --enable CONFIG_SDRAM 
 	@scripts/config --enable CONFIG_SRAM 
+	@scripts/config --set-val CONFIG_PSRAM_BASE 0x80000000
+	@scripts/config --set-val CONFIG_PSRAM_SIZE 0x00400000
+	@scripts/config --set-val CONFIG_SDRAM_BASE 0xa0000000
+	@scripts/config --set-val CONFIG_SDRAM_SIZE 0x02000000
+	@scripts/config --set-val CONFIG_SRAM_BASE 0x0f000000
+	@scripts/config --set-val CONFIG_SRAM_SIZE 0x00002000
 endif
 
 
