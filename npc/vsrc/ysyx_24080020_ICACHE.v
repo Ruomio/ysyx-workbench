@@ -51,22 +51,6 @@ module ysyx_24080020_ICACHE(
 `ifdef USE_ICACHE
 `ifdef ICACHE_PIPELINE
 
-  reg fin_r, fin_ar, all_fin, fin_judge, is_hit, update_fifo_index;
-  // reg [2:0] current_state, next_state;
-  reg [31:0] rdata_tmp, araddr_tmp;
-
-  reg flush_cache;
-  reg [cache_num-1:0] num_index;
-
-  reg cache_hit_next;
-
-  wire use_icache;
-  // wire in_flash;
-  // wire in_mrom;
-  // wire in_sdram;
-
-  // integer  i;
-
   // CACHE
   // cacheway maybe not the 2^n
   localparam cache_way = `ysyx_24080020_CACHE_WAY;
@@ -83,6 +67,24 @@ module ysyx_24080020_ICACHE(
   localparam cache_tag_ingroup_width = cache_tag_width * cache_way;
   localparam data_complete_bits = cache_data_ingroup_width - 32;
   localparam tag_complete_bits = cache_tag_ingroup_width - cache_tag_size;
+
+
+  reg fin_r, fin_ar, all_fin, fin_judge, is_hit, update_fifo_index;
+  // reg [2:0] current_state, next_state;
+  reg [31:0] rdata_tmp, araddr_tmp;
+
+  reg flush_cache;
+  reg [cache_num-1:0] num_index;
+
+  reg cache_hit_next;
+
+  wire use_icache;
+  // wire in_flash;
+  // wire in_mrom;
+  // wire in_sdram;
+
+  // integer  i;
+
 
   wire [cache_data_ingroup_width-1 : 0] shift_rdata;
   wire [cache_data_ingroup_width-1 : 0] shift_wdata;

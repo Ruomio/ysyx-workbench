@@ -1,0 +1,29 @@
+From 118227fb4eb2619d113ef95c613e143745784a9f Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Mon, 14 Apr 2025 11:23:13 +0800
+Subject: [PATCH 09/10] rtt: add quit command.
+
+---
+ bsp/abstract-machine/src/quit.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 bsp/abstract-machine/src/quit.c
+
+diff --git a/bsp/abstract-machine/src/quit.c b/bsp/abstract-machine/src/quit.c
+new file mode 100644
+index 000000000..00fad68f8
+--- /dev/null
++++ b/bsp/abstract-machine/src/quit.c
+@@ -0,0 +1,10 @@
++#include "finsh.h"
++#include <klib.h>
++#include <rtthread.h>
++
++static int quit() {
++  printf("Quit, please wait a second!\n");
++  exit(0);
++  return 0;
++}
++MSH_CMD_EXPORT_ALIAS(quit, q, quit command.);
+-- 
+2.51.0
+

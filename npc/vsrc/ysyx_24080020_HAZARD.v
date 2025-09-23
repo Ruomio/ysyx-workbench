@@ -1,3 +1,4 @@
+`include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_HAZARD(
     input clk,
     input rst,

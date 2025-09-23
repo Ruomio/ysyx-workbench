@@ -1,0 +1,130 @@
+From d388baacf1238f9a25eb2aecc41ce343c18a147b Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Wed, 30 Oct 2024 16:43:01 +0800
+Subject: [PATCH 01/10] update rtt to achive context handoff
+
+---
+ bsp/abstract-machine/.gitignore    |  3 ++
+ bsp/abstract-machine/src/context.c | 78 ++++++++++++++++++++++++++++--
+ 2 files changed, 77 insertions(+), 4 deletions(-)
+
+diff --git a/bsp/abstract-machine/.gitignore b/bsp/abstract-machine/.gitignore
+index 27ab723ff..63a806df1 100644
+--- a/bsp/abstract-machine/.gitignore
++++ b/bsp/abstract-machine/.gitignore
+@@ -1,2 +1,5 @@
+ rtconfig.h
+ files.mk
++build
++.cache
++compile_commands.json
+\ No newline at end of file
+diff --git a/bsp/abstract-machine/src/context.c b/bsp/abstract-machine/src/context.c
+index ee38829ae..d53f14453 100644
+--- a/bsp/abstract-machine/src/context.c
++++ b/bsp/abstract-machine/src/context.c
+@@ -2,8 +2,55 @@
+ #include <klib.h>
+ #include <rtthread.h>
+ 
++#define ROUNDUP(a, sz)   ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
++#define ROUNDDOWN(a, sz) ((((uintptr_t)a)) & ~((sz) - 1))
++
++
++typedef struct {
++  void (*tentry)(void *);
++  void *parameter;
++  void (*texit)(void);
++}ThreadArgs;
++
++
++void wrapped_entry(void *arg) {
++  // printf("wrapped_entry: param arg addr = 0x%x\n", arg);
++  assert(arg);
++  ThreadArgs *thread_arg = (ThreadArgs *)arg;
++  assert(thread_arg != NULL);
++  assert(thread_arg->tentry != NULL);
++  // assert(thread_arg->parameter != NULL);
++  assert(thread_arg->texit != NULL);
++
++  // printf("wrapped_entry 1\n");
++  thread_arg->tentry(thread_arg->parameter);
++  // printf("wrapped_entry 2\n");
++  thread_arg->texit();
++  // printf("finish wrapped_entry\n");
++}
++
++void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
++
+ static Context* ev_handler(Event e, Context *c) {
+   switch (e.event) {
++    case EVENT_YIELD: {
++      rt_thread_t current = rt_thread_self();
++      assert(current != NULL);
++      rt_ubase_t *userdata = (rt_ubase_t *)(current->user_data);
++      rt_ubase_t to = userdata[0];
++      rt_ubase_t from = userdata[1];
++      assert(to != (uintptr_t)NULL);
++      if(from != (rt_ubase_t)NULL) {
++        *(Context **)from = c;
++      }
++      printf("func ev_handler: to addr: 0x%x\n", to);
++      c = *(Context **)to;
++      break;
++    }
++    case EVENT_IRQ_TIMER: {
++
++      break;
++    }
+     default: printf("Unhandled event ID = %d\n", e.event); assert(0);
+   }
+   return c;
+@@ -14,11 +61,20 @@ void __am_cte_init() {
+ }
+ 
+ void rt_hw_context_switch_to(rt_ubase_t to) {
+-  assert(0);
++  rt_hw_context_switch((uintptr_t)NULL, to);
+ }
+ 
+ void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to) {
+-  assert(0);
++  rt_thread_t current = rt_thread_self();
++  assert(current != NULL);
++  rt_ubase_t *tmp_data = (rt_ubase_t *)current->user_data; 
++  rt_ubase_t userdata[2];
++  userdata[0] = to;
++  userdata[1] = from;
++  printf("func switch: to addr: 0x%x\n", to);
++  current->user_data = (rt_ubase_t)userdata;
++  yield();
++  current->user_data = (rt_ubase_t)tmp_data;
+ }
+ 
+ void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread) {
+@@ -26,6 +82,20 @@ void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t t
+ }
+ 
+ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_addr, void *texit) {
+-  assert(0);
+-  return NULL;
++  stack_addr = (rt_uint8_t *)ROUNDDOWN(stack_addr, sizeof(uintptr_t));
++
++  ThreadArgs *tmp_arg = (ThreadArgs *)((uintptr_t)stack_addr - sizeof(ThreadArgs));
++  tmp_arg->tentry = (void (*)(void *))tentry;
++  tmp_arg->parameter = (void *)parameter;
++  tmp_arg->texit = (void (*)(void))texit;
++
++  // printf("tmp_arg addr = 0x%x\n", tmp_arg);
++  // printf("parameter addr = 0x%x\n", parameter);
++  // printf("tmp_arg->parameter addr = 0x%x\n", tmp_arg->parameter);
++
++  // stack_addr end must be a struct Conttext
++  Area stack = {.end = stack_addr - sizeof(ThreadArgs)};
++
++  Context *tmp = kcontext(stack, wrapped_entry, (void *)tmp_arg);
++  return (rt_uint8_t *)tmp;
+ }
+-- 
+2.51.0
+

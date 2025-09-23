@@ -1,0 +1,149 @@
+From c034d76060c0e0b25997bdf018b84ff78d1a3075 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Wed, 8 Jan 2025 13:52:52 +0800
+Subject: [PATCH 04/10] rtt: soc support
+
+---
+ bsp/abstract-machine/Makefile     | 11 ++++++
+ bsp/abstract-machine/extra-soc.ld | 56 +++++++++++++++++++++++++++++++
+ bsp/abstract-machine/extra.ld     |  2 ++
+ bsp/abstract-machine/src/init.c   | 12 ++++++-
+ 4 files changed, 80 insertions(+), 1 deletion(-)
+ create mode 100644 bsp/abstract-machine/extra-soc.ld
+
+diff --git a/bsp/abstract-machine/Makefile b/bsp/abstract-machine/Makefile
+index 8d70f310b..d09753b2d 100644
+--- a/bsp/abstract-machine/Makefile
++++ b/bsp/abstract-machine/Makefile
+@@ -8,7 +8,18 @@ NAME = rtthread
+ SRCS = $(shell find src -name "*.c")
+ CFLAGS += -DHAVE_CCONFIG_H -D__RTTHREAD__
+ CFLAGS += -Wno-nonnull-compare
++ARCH_SPLIT = $(subst -, ,$(ARCH))
++ISA        = $(word 1,$(ARCH_SPLIT))
++PLATFORM   = $(word 2,$(ARCH_SPLIT))
++
++ifeq ($(PLATFORM), ysyxsoc)
++# LDFLAGS += -T $(AM_HOME)/scripts/linker-ysyxsoc-rtt.ld
++LDFLAGS += -T extra-soc.ld
++CFLAGS += -DYSYXSOC
++else
+ LDFLAGS += -T extra.ld
++endif
++
+ -include $(FILE_MK)
+ -include $(AM_APPS_MK)
+ include $(AM_HOME)/Makefile
+diff --git a/bsp/abstract-machine/extra-soc.ld b/bsp/abstract-machine/extra-soc.ld
+new file mode 100644
+index 000000000..3a1063eea
+--- /dev/null
++++ b/bsp/abstract-machine/extra-soc.ld
+@@ -0,0 +1,56 @@
++SECTIONS {
++  .data.extra : {
++    . = ALIGN(8);
++    _data_extra_start = .;
++    /* section information for finsh shell */
++    __fsymtab_start = .;
++    KEEP(*(FSymTab))
++    __fsymtab_end = .;
++    . = ALIGN(8);
++    __vsymtab_start = .;
++    KEEP(*(VSymTab))
++    __vsymtab_end = .;
++    . = ALIGN(8);
++
++    /* section information for initial. */
++    . = ALIGN(8);
++    __rt_init_start = .;
++    KEEP(*(SORT(.rti_fn*)))
++    __rt_init_end = .;
++    . = ALIGN(8);
++
++    __rt_utest_tc_tab_start = .;
++    KEEP(*(UtestTcTab))
++    __rt_utest_tc_tab_end = .;
++
++    . = ALIGN(8);
++    __am_apps_data_start = .;
++    *(__am_apps.data*)
++    *(__am_apps.sdata*)
++    __am_apps_data_end = .;
++    . = ALIGN(8);
++  } > PSRAM AT> FLASH
++
++  _data_extra_load = LOADADDR(.data.extra);
++  _data_extra_end = LOADADDR(.data.extra) + SIZEOF(.data.extra);
++}
++/* INSERT BEFORE .data; */
++INSERT AFTER .data;
++
++SECTIONS {
++  .bss.extra : {
++    . = ALIGN(8);
++    _bss_extra_start = .;
++    __am_apps_bss_start = .;
++    *(__am_apps.bss*)
++    *(__am_apps.sbss*)
++    *(__am_apps.scommon*)
++    __am_apps_bss_end = .;
++    . = ALIGN(8);
++  } > PSRAM AT> FLASH
++
++  _bss_extra_load = LOADADDR(.bss.extra);
++  _bss_extra_end = LOADADDR(.bss.extra) + SIZEOF(.bss.extra);
++}
++/* INSERT BEFORE .bss; */
++INSERT AFTER .bss;
+diff --git a/bsp/abstract-machine/extra.ld b/bsp/abstract-machine/extra.ld
+index 5cdc65670..0ed4e07f1 100644
+--- a/bsp/abstract-machine/extra.ld
++++ b/bsp/abstract-machine/extra.ld
+@@ -30,6 +30,7 @@ SECTIONS {
+   }
+ }
+ INSERT BEFORE .data;
++/* INSERT AFTER .data; */
+ 
+ SECTIONS {
+   .bss.extra : {
+@@ -43,3 +44,4 @@ SECTIONS {
+   }
+ }
+ INSERT BEFORE .bss;
++/* INSERT AFTER .bss; */
+diff --git a/bsp/abstract-machine/src/init.c b/bsp/abstract-machine/src/init.c
+index 93e271154..cd2f97df6 100644
+--- a/bsp/abstract-machine/src/init.c
++++ b/bsp/abstract-machine/src/init.c
+@@ -10,7 +10,17 @@
+ Area am_apps_heap = {}, am_apps_data = {}, am_apps_bss = {};
+ uint8_t * am_apps_data_content = NULL;
+ 
++extern char _data_extra_start, _data_extra_load, _data_extra_end;
++extern char _bss_extra_start, _bss_extra_load, _bss_extra_end;
++
+ void rt_hw_board_init() {
++#ifdef YSYXSOC
++  // copy .data.extra
++  memcpy((void *)(uintptr_t)&_data_extra_start, (void *)(uintptr_t)&_data_extra_load, (uintptr_t)&_data_extra_end - (uintptr_t)&_data_extra_load);
++  // init .bss.extra
++  memset((void *)(uintptr_t)&_bss_extra_start, 0, (uintptr_t)&_bss_extra_end - (uintptr_t)&_bss_extra_load);
++#endif
++
+   int rt_hw_uart_init(void);
+   rt_hw_uart_init();
+ 
+@@ -28,7 +38,7 @@ void rt_hw_board_init() {
+   extern char __am_apps_bss_start, __am_apps_bss_end;
+   am_apps_data = RANGE(&__am_apps_data_start, &__am_apps_data_end);
+   am_apps_bss  = RANGE(&__am_apps_bss_start,  &__am_apps_bss_end);
+-  printf("am-apps.data.size = %ld, am-apps.bss.size = %ld\n",
++  printf("am-apps.data.size = 0x%x, am-apps.bss.size = 0x%x\n",
+       am_apps_data.end - am_apps_data.start, am_apps_bss.end - am_apps_bss.start);
+ 
+   uint32_t data_size = am_apps_data.end - am_apps_data.start;
+-- 
+2.51.0
+

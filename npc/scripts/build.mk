@@ -31,6 +31,8 @@ BUILD_DIR=build
 OBJ_DIR=$(BUILD_DIR)/obj_dir
 BIN=$(BUILD_DIR)/$(TOPNAME)
 
+VERILOG_TARGET=$(BUILD_DIR)/ysyx_24080020.v
+
 $(shell mkdir -p $(OBJ_DIR))
 
 
@@ -46,8 +48,10 @@ else ifeq ($(ARCH), riscv32e-npc)
 TOPNAME=ysyx_24080020_NPC
 CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
 else
-TOPNAME=ysyxSoCFull
-CXXFLAGS += -DysyxSoCFull
+# TOPNAME=ysyxSoCFull
+# CXXFLAGS += -DysyxSoCFull
+TOPNAME=ysyx_24080020_NPC
+CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
 $(echo "default ARCH is riscv32e-ysyxsoc")
 endif
 
@@ -74,8 +78,8 @@ endif
 
 # include dir
 ifeq ($(SOC_EN), 1)
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
-VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
+VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "rtl")
+VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find . -maxdepth 1 -type d -name "vsrc")
 
@@ -86,8 +90,8 @@ INC_PATH += $(abspath $(OBJ_DIR))
 
 # project source
 ifeq ($(SOC_EN), 1)
-VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
-VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
+VSRC += $(shell find ../ysyxSoC/perip -name "*.v")
+VSRC += $(shell find ../ysyxSoC/build -name "*.v")
 endif
 VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
@@ -100,8 +104,8 @@ VVP_FILE += $(BUILD_DIR)/sim_top.vvp
 VVP_NETLIST_FILE += $(BUILD_DIR)/sim_top_netlist.vvp
 TB_FILE += $(shell find . -type f -name "sim_top.v")
 TB_NETLIST_FILE += $(shell find . -type f -name "sim_top_netlist.v")
-NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
-CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
+# NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
+# CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
 
 
 # verilator system files
@@ -235,9 +239,10 @@ $(VVP_FILE): $(VSRC) $(TB_FILE)
 #@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
 # @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
-$(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
+# $(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
+$(VVP_NETLIST_FILE): $(TB_NETLIST_FILE)
 	@echo "+ iverilog -> $@"
-	@iverilog -g2012 -o $@ $^
+	@iverilog -g2012 -o $@ $^ $(NETLIST) $(CELLS)
 
 iverilog: $(VVP_FILE)
 	@$(call git_commit, "iverilog NPC")
@@ -249,6 +254,33 @@ iverilog-netlist: $(VVP_NETLIST_FILE)
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
 	@vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst
+
+# CI TEST
+VVP_CI_FILE = $(BUILD_DIR)/ci_sim_top.v
+VVP_CI_NETLIST_FILE = $(BUILD_DIR)/ci_sim_netlist_top.v
+FORMAT_IMG = $(BUILD_DIR)/$(notdir $(IMG)).hex
+
+verilog: $(VSRC)
+	@iverilog -g2012 -I$(VINC_PATH) -E -o $(VERILOG_TARGET) $^
+
+$(VERILOG_TARGET): verilog
+	@echo "get merged file: build/ysyx_24080020.v"
+
+$(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_FILE)
+	@iverilog -g2012 -o $@ $^
+
+$(FORMAT_IMG):
+	@bash scripts/format_image.sh $(IMG) $(FORMAT_IMG)
+
+sim-iverilog: $(VVP_CI_FILE) $(FORMAT_IMG)
+	@vvp $(VVP_CI_FILE) +MEM_FILE=$(FORMAT_IMG)
+
+$(VVP_CI_NETLIST_FILE): $(TB_NETLIST_FILE)
+	@iverilog -g2012 -o $@ $^ $(NETLIST) $(CELLS)
+
+sim-iverilog-netlist: $(VVP_CI_NETLIST_FILE) $(FORMAT_IMG)
+	@vvp $(VVP_CI_NETLIST_FILE) +MEM_FILE=$(FORMAT_IMG)
+
 
 gtkwave: $(VCD_FILE)
 	gtkwave $^
@@ -268,7 +300,7 @@ lldb: $(BIN)
 	$(call git_commit, "lldb NPC")
 	lldb -- $(BIN) $(ARGS) $(IMG)
 
-.PHONY: all clean gtkwave sim nvboard run perf
+.PHONY: all clean gtkwave sim nvboard run perf verilog
 
 clean:
 	@rm -rf $(BUILD_DIR) *.vcd

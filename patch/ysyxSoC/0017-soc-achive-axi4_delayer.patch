@@ -1,0 +1,414 @@
+From f00a7c9c7b7be5a2819daa031f0c94bbc10df1dc Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Tue, 15 Apr 2025 11:18:35 +0800
+Subject: [PATCH 17/21] soc: achive axi4_delayer
+
+---
+ perip/amba/axi4_delayer.v | 367 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 358 insertions(+), 9 deletions(-)
+
+diff --git a/perip/amba/axi4_delayer.v b/perip/amba/axi4_delayer.v
+index f692803b..50fbe8ff 100644
+--- a/perip/amba/axi4_delayer.v
++++ b/perip/amba/axi4_delayer.v
+@@ -1,3 +1,4 @@
++`define AXI_DELAY
+ module axi4_delayer(
+   input         clock,
+   input         reset,
+@@ -62,35 +63,383 @@ module axi4_delayer(
+   input  [3:0]  out_bid,
+   input  [1:0]  out_bresp
+ );
++`ifdef AXI_DELAY
+ 
+-  assign in_arready = out_arready;
+-  assign out_arvalid = in_arvalid;
++  // 延迟配置（可以根据设备地址动态设置）
++  // npc 750MHz, r = 7.5, s = 4
++  parameter s = 4;
++  parameter DELAY_DEVICE_SDRAM = 30; // SDRAM 100MHz 设备 7.5 * 4 = 30 延迟
++  parameter DELAY_DEVICE_FLASH = 30; // FLASH 100MHz 设备 7.5 * 4 = 30  延迟
++  parameter DELAY_DEVICE_DEFAULT = 1 * s; // 默认延迟
++
++  // 状态机状态定义
++  localparam IDLE = 2'b00,
++             WAIT = 2'b01,
++             FORWARD = 2'b11;
++
++  // 定义不同设备的延迟
++  reg [15:0] delay_counter_ar,  // 延迟计数器
++             delay_counter_r,
++             delay_counter_aw,
++             delay_counter_w,
++             delay_counter_b;
++  reg [15:0] delay_max;       // 延迟计数器
++  reg [1:0] delay_state_ar,       // 状态机状态
++            delay_state_r,
++            delay_state_aw,
++            delay_state_w,
++            delay_state_b;
++  reg [15:0] cnt_ar, cnt_r, cnt_aw, cnt_w, cnt_b;
++  reg toogle;
++
++  // 延迟后的axi有效信号的使能信号
++  reg arready_en, rvalid_en;
++  reg awready_en, wready_en, bvalid_en;
++  reg in_awvalid_reg, in_arvalid_reg, in_wvalid_reg, in_rready_reg,
++      out_awready_reg, out_arready_reg, out_wready_reg;
++
++  wire in_sdram, in_flash;
++
++  assign in_flash = (in_araddr >= 32'h30000000 && in_araddr < 32'h40000000) ? 1'b1 :
++                    (in_awaddr >= 32'h30000000 && in_awaddr < 32'h40000000) ? 1'b1 : 1'b0;
++  assign in_sdram = (in_araddr >= 32'ha0000000 && in_araddr < 32'hc0000000) ? 1'b1 :
++                    (in_awaddr >= 32'ha0000000 && in_awaddr < 32'hc0000000) ? 1'b1 : 1'b0;
++
++  always @(in_arvalid or in_awvalid or in_arvalid or in_awvalid) begin
++    if((in_arvalid || in_awvalid) && in_flash) begin
++      delay_max = DELAY_DEVICE_FLASH;
++    end
++    else if((in_arvalid || in_awvalid) && in_sdram) begin
++      delay_max = DELAY_DEVICE_SDRAM;
++    end
++    else begin
++      delay_max = delay_max;
++    end
++  end
++
++  // AR dealy
++  always @(posedge clock) begin
++    if(reset) begin
++      arready_en <= 'b0;
++      cnt_ar <= 'b0;
++      delay_counter_ar <= 'b0;
++      delay_state_ar <= IDLE;
++      in_arvalid_reg <= 'b0;
++      out_arready_reg <= 'b0;
++    end
++    else begin
++      case(delay_state_ar)
++        IDLE: begin
++          if(in_arvalid) begin
++            delay_state_ar <= WAIT;
++
++            in_arvalid_reg <= 'b1;
++            arready_en <= 'b0;
++            delay_counter_ar <= 'b0;
++            cnt_ar <= 'b0;
++          end
++        end
++        WAIT: begin
++          delay_counter_ar <= delay_counter_ar + delay_max;
++          if(out_arready) begin
++            out_arready_reg <= 'b1;
++            delay_state_ar <= FORWARD;
++            in_arvalid_reg <= 'b0;
++          end
++        end
++        FORWARD: begin
++          if(cnt_ar >= (delay_counter_ar >> $clog2(s))) begin
++            arready_en <= 'b1;
++
++            if(!in_arvalid) begin
++              delay_state_ar <= IDLE;
++            end
++          end
++          else begin
++            cnt_ar <= cnt_ar + 'b1;
++          end
++        end
++        default: begin
++        end
++      endcase
++    end
++  end
++
++  // R dealy
++  always @(posedge clock) begin
++    if(reset) begin
++      rvalid_en <= 'b0;
++      cnt_r <= 'b0;
++      delay_counter_r <= 'b0;
++      delay_state_r <= IDLE;
++      in_rready_reg <= 'b0;
++      toogle <= 'b0;
++    end
++    else begin
++      case(delay_state_r)
++        IDLE: begin
++          if(in_arvalid) begin
++            delay_state_r <= WAIT;
++
++            rvalid_en <= 'b0;
++            in_rready_reg <= 'b0;
++            delay_counter_r <= 'b0;
++            cnt_r <= 'b0;
++          end
++        end
++        WAIT: begin
++          toogle <= 'b0;
++          delay_counter_r <= delay_counter_r + delay_max;
++          if(out_rvalid) begin
++            delay_state_r <= FORWARD;
++          end
++        end
++        FORWARD: begin
++          if(cnt_r >= (delay_counter_r >> $clog2(s))) begin
++
++            if(!toogle) begin
++              toogle <= 'b1;
++              rvalid_en <= 'b1;
++              in_rready_reg <= 'b1;
++            end
++            else begin
++              if(in_rready && out_rlast) begin
++                delay_state_r <= IDLE;
++              end
++              else if(out_rvalid && in_rready) begin
++                // next burst transmit
++                rvalid_en <= 'b0;
++                in_rready_reg <= 'b0;
++                delay_counter_r <= 'b0;
++                cnt_r <= 'b0;
++                delay_state_r <= WAIT;
++              end
++              else begin
++                rvalid_en <= 'b0;
++                in_rready_reg <= 'b0;
++              end
++            end
++          end
++          else begin
++            cnt_r <= cnt_r + 'b1;
++          end
++        end
++        default: begin
++        end
++      endcase
++    end
++  end
++
++
++  // AW dealy
++  always @(posedge clock) begin
++    if(reset) begin
++      awready_en <= 'b0;
++      cnt_aw <= 'b0;
++      delay_counter_aw <= 'b0;
++      delay_state_aw <= IDLE;
++      in_awvalid_reg <= 'b0;
++      out_wready_reg <= 'b0;
++    end
++    else begin
++      case(delay_state_aw)
++        IDLE: begin
++          awready_en <= 'b0;
++          out_awready_reg <= 'b0;
++          delay_counter_aw <= 'b0;
++          cnt_aw <= 'b0;
++          if(in_awvalid) begin
++            delay_state_aw <= WAIT;
++            in_awvalid_reg <= 'b1;
++          end
++        end
++        WAIT: begin
++          delay_counter_aw <= delay_counter_aw + delay_max;
++          if(out_awready) begin
++            delay_state_aw <= FORWARD;
++            in_awvalid_reg <= 'b0;
++            out_awready_reg <= 'b1;
++          end
++        end
++        FORWARD: begin
++          if(cnt_aw >= (delay_counter_aw >> $clog2(s))) begin
++            awready_en <= 'b1;
++
++            if(!in_awvalid) begin
++              delay_state_aw <= IDLE;
++            end
++          end
++          else begin
++            cnt_aw <= cnt_aw + 'b1;
++          end
++        end
++        default: begin
++        end
++      endcase
++    end
++  end
++
++  // W dealy
++  always @(posedge clock) begin
++    if(reset) begin
++      wready_en <= 'b0;
++      cnt_w <= 'b0;
++      delay_counter_w <= 'b0;
++      delay_state_w <= IDLE;
++      in_wvalid_reg <= 'b0;
++      out_wready_reg <= 'b0;
++    end
++    else begin
++      case(delay_state_w)
++        IDLE: begin
++          if(in_wvalid) begin
++            delay_state_w <= WAIT;
++
++            in_wvalid_reg <= 'b1;
++            wready_en <= 'b0;
++            out_wready_reg <= 'b0;
++            delay_counter_w <= 'b0;
++            cnt_w <= 'b0;
++          end
++        end
++        WAIT: begin
++          delay_counter_w <= delay_counter_w + delay_max;
++          if(out_wready) begin
++            out_wready_reg <= 'b1;
++            delay_state_w <= FORWARD;
++            in_wvalid_reg <= 'b0;
++          end
++        end
++        FORWARD: begin
++          if(cnt_w >= (delay_counter_w >> $clog2(s))) begin
++            wready_en <= 'b1;
++
++            if(!in_wvalid && in_wlast) begin
++              delay_state_w <= IDLE;
++            end
++            else if(in_rvalid) begin
++              wready_en <= 'b0;
++              delay_counter_w <= 'b0;
++              cnt_w <= 'b0;
++              delay_state_w <= WAIT;
++            end
++          end
++          else begin
++            cnt_w <= cnt_w + 'b1;
++          end
++        end
++        default: begin
++        end
++      endcase
++    end
++  end
++
++  // B dealy
++  always @(posedge clock) begin
++    if(reset) begin
++      bvalid_en <= 'b0;
++      cnt_b <= 'b0;
++      delay_counter_b <= 'b0;
++      delay_state_b <= IDLE;
++    end
++    else begin
++      case(delay_state_b)
++        IDLE: begin
++          if(in_awvalid) begin
++            delay_state_b <= WAIT;
++
++            bvalid_en <= 'b0;
++            delay_counter_b <= 'b0;
++            cnt_b <= 'b0;
++          end
++        end
++        WAIT: begin
++          delay_counter_b <= delay_counter_b + delay_max;
++          if(out_bvalid) begin
++            delay_state_b <= FORWARD;
++          end
++        end
++        FORWARD: begin
++          if(cnt_b >= (delay_counter_b >> $clog2(s))) begin
++            bvalid_en <= 'b1;
++
++            if(in_bready) begin
++              delay_state_b <= IDLE;
++            end
++          end
++          else begin
++            cnt_b <= cnt_b + 'b1;
++          end
++        end
++        default: begin
++        end
++      endcase
++    end
++  end
++
++  assign in_arready = arready_en ? out_arready_reg : 'b0;
++  assign out_arvalid = in_arvalid_reg;
+   assign out_arid = in_arid;
+   assign out_araddr = in_araddr;
+   assign out_arlen = in_arlen;
+   assign out_arsize = in_arsize;
+   assign out_arburst = in_arburst;
+-  assign out_rready = in_rready;
+-  assign in_rvalid = out_rvalid;
++  assign out_rready = in_rready_reg;
++  assign in_rvalid = rvalid_en ? out_rvalid : 'b0;
+   assign in_rid = out_rid;
+   assign in_rdata = out_rdata;
+   assign in_rresp = out_rresp;
+   assign in_rlast = out_rlast;
+-  assign in_awready = out_awready;
+-  assign out_awvalid = in_awvalid;
++  assign in_awready = awready_en ? out_awready_reg : 'b0;
++  assign out_awvalid = in_awvalid_reg;
+   assign out_awid = in_awid;
+   assign out_awaddr = in_awaddr;
+   assign out_awlen = in_awlen;
+   assign out_awsize = in_awsize;
+   assign out_awburst = in_awburst;
+-  assign in_wready = out_wready;
+-  assign out_wvalid = in_wvalid;
++  assign in_wready = wready_en ? out_wready_reg : 'b0;
++  assign out_wvalid = in_wvalid_reg;
+   assign out_wdata = in_wdata;
+   assign out_wstrb = in_wstrb;
+   assign out_wlast = in_wlast;
+   assign out_bready = in_bready;
+-  assign in_bvalid = out_bvalid;
++  assign in_bvalid = bvalid_en ? out_bvalid : 'b0;
+   assign in_bid = out_bid;
+   assign in_bresp = out_bresp;
+ 
++`endif
++
++`ifndef AXI_DELAY
++
++assign in_arready = out_arready;
++assign out_arvalid = in_arvalid;
++assign out_arid = in_arid;
++assign out_araddr = in_araddr;
++assign out_arlen = in_arlen;
++assign out_arsize = in_arsize;
++assign out_arburst = in_arburst;
++assign out_rready = in_rready;
++assign in_rvalid = out_rvalid;
++assign in_rid = out_rid;
++assign in_rdata = out_rdata;
++assign in_rresp = out_rresp;
++assign in_rlast = out_rlast;
++assign in_awready = out_awready;
++assign out_awvalid = in_awvalid;
++assign out_awid = in_awid;
++assign out_awaddr = in_awaddr;
++assign out_awlen = in_awlen;
++assign out_awsize = in_awsize;
++assign out_awburst = in_awburst;
++assign in_wready = out_wready;
++assign out_wvalid = in_wvalid;
++assign out_wdata = in_wdata;
++assign out_wstrb = in_wstrb;
++assign out_wlast = in_wlast;
++assign out_bready = in_bready;
++assign in_bvalid = out_bvalid;
++assign in_bid = out_bid;
++assign in_bresp = out_bresp;
++`endif
++
+ endmodule
+-- 
+2.51.0
+

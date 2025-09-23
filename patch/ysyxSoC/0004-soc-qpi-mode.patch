@@ -1,0 +1,585 @@
+From ebb00e2a913f1ec04f06181833e4b35925092c73 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Mon, 6 Jan 2025 14:22:55 +0800
+Subject: [PATCH 04/21] soc: qpi mode
+
+---
+ perip/psram/efabless/EF_PSRAM_CTRL.v         | 117 ++++++++++-
+ perip/psram/efabless/EF_PSRAM_CTRL_defines.v |   1 +
+ perip/psram/efabless/EF_PSRAM_CTRL_wb.v      |  28 +++
+ perip/psram/psram.v                          | 208 +++++++++++--------
+ 4 files changed, 265 insertions(+), 89 deletions(-)
+ create mode 100644 perip/psram/efabless/EF_PSRAM_CTRL_defines.v
+
+diff --git a/perip/psram/efabless/EF_PSRAM_CTRL.v b/perip/psram/efabless/EF_PSRAM_CTRL.v
+index b6e737e9..ec43986d 100644
+--- a/perip/psram/efabless/EF_PSRAM_CTRL.v
++++ b/perip/psram/efabless/EF_PSRAM_CTRL.v
+@@ -41,6 +41,8 @@
+ `timescale              1ns/1ps
+ `default_nettype        none
+ 
++`include "EF_PSRAM_CTRL_defines.v"
++
+ module PSRAM_READER (
+     input   wire            clk,
+     input   wire            rst_n,
+@@ -60,7 +62,11 @@ module PSRAM_READER (
+     localparam  IDLE = 1'b0,
+                 READ = 1'b1;
+ 
++`ifdef QPI_MODE
++    wire [7:0]  FINAL_COUNT = 14 + size*2; // was 22: Always read 1 word
++`else
+     wire [7:0]  FINAL_COUNT = 19 + size*2; // was 27: Always read 1 word
++`endif
+ 
+     reg         state, nstate;
+     reg [7:0]   counter;
+@@ -113,13 +119,33 @@ module PSRAM_READER (
+             saddr <= {addr[23:0]};
+ 
+     // Sample with the negedge of sck
++`ifdef QPI_MODE
++    wire[1:0] byte_index = {counter[7:0] + 8'b1}[2:1];
++`else
+     wire[1:0] byte_index = {counter[7:1] - 8'd10}[1:0];
++`endif
+     always @ (posedge clk)
++`ifdef QPI_MODE
++        if(counter >= 15 && counter <= FINAL_COUNT)
++`else
+         if(counter >= 20 && counter <= FINAL_COUNT)
++`endif
+             if(sck)
+                 data[byte_index] <= {data[byte_index][3:0], din}; // Optimize!
+ 
+-    assign dout     =   (counter < 8)   ?   {3'b0, CMD_EBH[7 - counter]}:
++    assign dout     =
++`ifdef QPI_MODE
++                        (counter == 0)   ?   {CMD_EBH[7:4]}      :
++                        (counter == 1)   ?   {CMD_EBH[3:0]}      :
++                        (counter == 2)   ?   saddr[23:20]        :
++                        (counter == 3)   ?   saddr[19:16]        :
++                        (counter == 4)   ?   saddr[15:12]        :
++                        (counter == 5)   ?   saddr[11:8]         :
++                        (counter == 6)   ?   saddr[7:4]          :
++                        (counter == 7)   ?   saddr[3:0]          :
++                        4'h0;
++`else  
++                        (counter < 8)   ?   {3'b0, CMD_EBH[7 - counter]}:
+                         (counter == 8)  ?   saddr[23:20]        :
+                         (counter == 9)  ?   saddr[19:16]        :
+                         (counter == 10) ?   saddr[15:12]        :
+@@ -127,8 +153,14 @@ module PSRAM_READER (
+                         (counter == 12) ?   saddr[7:4]          :
+                         (counter == 13) ?   saddr[3:0]          :
+                         4'h0;
++`endif
+ 
+-    assign douten   = (counter < 14);
++    assign douten   = 
++`ifdef QPI_MODE
++                        (counter < 8);
++`else
++                        (counter < 14);
++`endif
+ 
+     assign done     = (counter == FINAL_COUNT+1);
+ 
+@@ -161,7 +193,11 @@ module PSRAM_WRITER (
+     localparam  IDLE = 1'b0,
+                 WRITE = 1'b1;
+ 
++`ifdef QPI_MODE
++    wire[7:0]        FINAL_COUNT = 7 + size*2;
++`else
+     wire[7:0]        FINAL_COUNT = 13 + size*2;
++`endif
+ 
+     reg         state, nstate;
+     reg [7:0]   counter;
+@@ -212,6 +248,25 @@ module PSRAM_WRITER (
+         else if((state == IDLE) && wr)
+             saddr <= addr;
+ 
++`ifdef QPI_MODE
++    assign dout     =   (counter == 0)  ?   {CMD_38H[7:4]}      :
++                        (counter == 1)  ?   {CMD_38H[3:0]}      :
++                        (counter == 2)  ?   saddr[23:20]        :
++                        (counter == 3)  ?   saddr[19:16]        :
++                        (counter == 4)  ?   saddr[15:12]        :
++                        (counter == 5)  ?   saddr[11:8]         :
++                        (counter == 6)  ?   saddr[7:4]          :
++                        (counter == 7)  ?   saddr[3:0]          :
++                        (counter == 8)  ?   line[7:4]           :
++                        (counter == 9) ?   line[3:0]           :
++                        (counter == 10) ?   line[15:12]         :
++                        (counter == 11) ?   line[11:8]          :
++                        (counter == 12) ?   line[23:20]         :
++                        (counter == 13) ?   line[19:16]         :
++                        (counter == 14) ?   line[31:28]         :
++                        line[27:24];
++
++`else
+     assign dout     =   (counter < 8)   ?   {3'b0, CMD_38H[7 - counter]}:
+                         (counter == 8)  ?   saddr[23:20]        :
+                         (counter == 9)  ?   saddr[19:16]        :
+@@ -227,6 +282,7 @@ module PSRAM_WRITER (
+                         (counter == 19) ?   line[19:16]         :
+                         (counter == 20) ?   line[31:28]         :
+                         line[27:24];
++`endif
+ 
+     assign douten   = (~ce_n);
+ 
+@@ -234,3 +290,60 @@ module PSRAM_WRITER (
+ 
+ 
+ endmodule
++
++module PSRAM_QPI(
++    input   wire            clk,
++    input   wire            rst_n,
++    output  wire            done,
++    output  reg             is_qpi,
++
++    output  reg             sck,
++    output  reg             ce_n,
++    input   wire [3:0]      din,
++    output  wire [3:0]      dout,
++    output  wire            douten
++
++);
++
++    reg [3:0] cnt;
++    wire [7:0] cmd = 8'h35;
++
++    always @(posedge clk or negedge rst_n) begin
++        if(!rst_n) begin
++            cnt <= 4'b0;
++            is_qpi <= 1'b0;
++            sck <= 1'b0;
++            ce_n <= 1'b1;
++        end
++        else if(!is_qpi && ce_n) begin
++            ce_n <= 1'b0;
++        end
++        else if(!is_qpi) begin
++            sck <= ~sck;
++
++            if(sck) begin
++                cnt <= cnt + 4'b1;
++            end
++            else begin
++                cnt <= cnt;
++            end
++            if(cnt == 4'd8) begin
++                is_qpi <= 1'b1;
++                ce_n <= 1'b1;
++            end
++            else begin
++                is_qpi <= 1'b0;
++            end
++        end
++        else begin
++            is_qpi <= 1'b1;
++        end
++    end
++
++    assign dout = {3'b0, cmd[3'd7-cnt[2:0]]};
++
++    assign douten = ~ce_n;
++
++    assign done = cnt == 4'd8;
++
++endmodule
+diff --git a/perip/psram/efabless/EF_PSRAM_CTRL_defines.v b/perip/psram/efabless/EF_PSRAM_CTRL_defines.v
+new file mode 100644
+index 00000000..61f58335
+--- /dev/null
++++ b/perip/psram/efabless/EF_PSRAM_CTRL_defines.v
+@@ -0,0 +1 @@
++`define QPI_MODE
+\ No newline at end of file
+diff --git a/perip/psram/efabless/EF_PSRAM_CTRL_wb.v b/perip/psram/efabless/EF_PSRAM_CTRL_wb.v
+index 7b5296db..eb391d33 100644
+--- a/perip/psram/efabless/EF_PSRAM_CTRL_wb.v
++++ b/perip/psram/efabless/EF_PSRAM_CTRL_wb.v
+@@ -17,6 +17,8 @@
+ `timescale              1ns/1ps
+ `default_nettype        none
+ 
++`include "EF_PSRAM_CTRL_defines.v"
++
+ // Using EBH Command
+ module EF_PSRAM_CTRL_wb (
+     // WB bus Interface
+@@ -54,6 +56,13 @@ module EF_PSRAM_CTRL_wb (
+     wire [3:0]  mw_dout;
+     wire        mw_doe;
+ 
++    wire        qpi_sck;
++    wire        qpi_ce_n;
++    wire [3:0]  qpi_din;
++    wire [3:0]  qpi_dout;
++    wire        qpi_doe;
++    wire        qpi_done;
++    wire        is_qpi;
+     // PSRAM Reader and Writer wires
+     wire        mr_rd;
+     wire        mr_done;
+@@ -161,10 +170,29 @@ module EF_PSRAM_CTRL_wb (
+         .douten(mw_doe)
+     );
+ 
++    PSRAM_QPI u_QPI (
++        .clk(clk_i),
++        .rst_n(~rst_i),
++        .done(qpi_done),
++        .is_qpi(is_qpi),
++        .sck(qpi_sck),
++        .ce_n(qpi_ce_n),
++        .din(qpi_din),
++        .dout(qpi_dout),
++        .douten(qpi_doe)
++    );
++
++`ifdef QPI_MODE
++    assign sck  = !is_qpi ? qpi_sck : wb_we ? mw_sck  : mr_sck;
++    assign ce_n = !is_qpi ? qpi_ce_n : wb_we ? mw_ce_n : mr_ce_n;
++    assign dout = !is_qpi ? qpi_dout : wb_we ? mw_dout : mr_dout;
++    assign douten  = !is_qpi ? {4{qpi_doe}} : wb_we ? {4{mw_doe}}  : {4{mr_doe}};
++`else
+     assign sck  = wb_we ? mw_sck  : mr_sck;
+     assign ce_n = wb_we ? mw_ce_n : mr_ce_n;
+     assign dout = wb_we ? mw_dout : mr_dout;
+     assign douten  = wb_we ? {4{mw_doe}}  : {4{mr_doe}};
++`endif
+ 
+     assign mw_din = din;
+     assign mr_din = din;
+diff --git a/perip/psram/psram.v b/perip/psram/psram.v
+index 373845b5..286e6f59 100644
+--- a/perip/psram/psram.v
++++ b/perip/psram/psram.v
+@@ -28,6 +28,7 @@ module psram(
+ 
+   reg [5:0] cnt;
+ 
++  reg is_qpi;
+   reg is_read;
+   reg is_write;
+   reg read_en;
+@@ -40,7 +41,9 @@ module psram(
+   wire [23:0] addr;
+ 
+ 
+-  assign dio = (is_read && cnt > 6'd19 && cnt < 6'd29) ? dio_reg : 4'bz;
++  assign dio = is_qpi ? 
++                  (is_read && cnt > 6'd15 && cnt < 6'd24) ? dio_reg : 4'dz : 
++                  (is_read && cnt > 6'd19 && cnt < 6'd29) ? dio_reg : 4'bz;
+ 
+   assign addr = { 
+                   addr_3[5], addr_2[5], addr_1[5], addr_0[5],
+@@ -63,6 +66,11 @@ module psram(
+                 };
+ 
+   assign wstrb = is_write ? write_en ? 4'b1111 :
++                            is_qpi ? 
++                              cnt == 6'd10 ? 4'b0001 :
++                              cnt == 6'd12 ? 4'b0011 :
++                                4'b0
++                              :
+                               cnt == 6'd16 ? 4'b0001 :
+                               cnt == 6'd18 ? 4'b0011 :
+                             4'b0000 :
+@@ -70,27 +78,43 @@ module psram(
+ 
+   always @(posedge sck or posedge ce_n) begin
+     if(ce_n) begin
+-      if(write_en) begin
++      if(write_en && !is_qpi) begin
+         psram_write({8'b0, addr[23:0]}, wdata, {28'b0, wstrb});
+         // finish write
+         cnt <= 6'b0;
+         write_en <= 1'b0;
+         is_write <= 1'b0;
+       end
+-      else if(cnt == 6'd16) begin
++      else if(cnt == 6'd16 && !is_qpi) begin
+         // 1-byte
+         psram_write({8'b0, addr[23:0]}, {24'b0, wdata[31:24]}, {28'b0, wstrb});
+         // finish write
+         cnt <= 6'b0;
+         is_write <= 1'b0;
+       end
+-      else if(cnt == 6'd18) begin
+-        // 1-byte
++      else if(cnt == 6'd18 && !is_qpi) begin
++        // 2-byte
+         psram_write({8'b0, addr[23:0]}, {16'b0, wdata[31:16]}, {28'b0, wstrb});
+         // finish write
+         cnt <= 6'b0;
+         is_write <= 1'b0;
+       end
++      else if(write_en && is_qpi) begin
++        psram_write({8'b0, addr[23:0]}, wdata, {28'b0, wstrb});
++        write_en <= 1'b0;
++      end
++      else if(cnt == 6'd10 && is_qpi) begin
++        // 1-byte
++        psram_write({8'b0, addr[23:0]}, {24'b0, wdata[31:24]}, {28'b0, wstrb});
++      end
++      else if(cnt == 6'd12 && is_qpi) begin
++        // 2-byte
++        psram_write({8'b0, addr[23:0]}, {16'b0, wdata[31:16]}, {28'b0, wstrb});
++      end
++      else if(cmd == 8'h35 && cnt == 6'd8) begin
++        // finish qpi modi transport
++        is_qpi <= 1'b1;
++      end
+       else begin
+         noth <= 1'b0;
+       end
+@@ -117,11 +141,94 @@ module psram(
+ 
+       dio_reg <= 4'b0;
+     end    
+-    else if(cnt < 6'd8) begin
++    else if(cnt < 6'd2 && is_qpi) begin
++      cnt <= cnt + 6'd1;
++      cmd <= {cmd[3:0], dio};
++    end
++    else if(cnt == 6'd3 && is_qpi) begin
++      if(cmd == 8'heb) is_read <= 1'b1;
++      else if(cmd == 8'h38) is_write <= 1'b1;
++      else cmd <= cmd;
++
++      cnt <= cnt + 6'd1;
++
++      addr_0 <= {addr_0[4:0], dio[0]};
++      addr_1 <= {addr_1[4:0], dio[1]};
++      addr_2 <= {addr_2[4:0], dio[2]};
++      addr_3 <= {addr_3[4:0], dio[3]};
++    end
++    else if(cnt < 6'd8 && is_qpi) begin
++      cnt <= cnt + 6'd1;
++      addr_0 <= {addr_0[4:0], dio[0]};
++      addr_1 <= {addr_1[4:0], dio[1]};
++      addr_2 <= {addr_2[4:0], dio[2]};
++      addr_3 <= {addr_3[4:0], dio[3]};
++    end
++    else if(cnt == 6'd8 && is_qpi) begin
++      if(is_read) read_en <= 1'b1;
++      else if(is_write) begin
++        buf_0 <= {buf_0[6:0], dio[0]};
++        buf_1 <= {buf_1[6:0], dio[1]};
++        buf_2 <= {buf_2[6:0], dio[2]};
++        buf_3 <= {buf_3[6:0], dio[3]};
++      end
++      else noth <= 1'b0;
++
++      cnt <= cnt + 6'b1;
++    end
++    else if(cnt < 6'd15 && is_write && is_qpi) begin
++      cnt <= cnt + 6'b1;
++
++      buf_0 <= {buf_0[6:0], dio[0]};
++      buf_1 <= {buf_1[6:0], dio[1]};
++      buf_2 <= {buf_2[6:0], dio[2]};
++      buf_3 <= {buf_3[6:0], dio[3]};
++    end
++    else if(cnt == 6'd15 && is_write && is_qpi) begin
++      write_en <= 1'b1;
++      cnt <= cnt + 6'b1;
++
++      buf_0 <= {buf_0[6:0], dio[0]};
++      buf_1 <= {buf_1[6:0], dio[1]};
++      buf_2 <= {buf_2[6:0], dio[2]};
++      buf_3 <= {buf_3[6:0], dio[3]};
++    end
++    else if(cnt < 6'd15 && is_read && is_qpi) begin
++      // wait cycles and tACLK
++      if(read_en) begin
++        rdata <= psram_read({8'b0, addr[23:2], 2'b0});
++        read_en <= 1'b0;
++
++        cnt <= cnt + 6'd1;
++      end
++      else begin
++        cnt <= cnt + 6'd1;
++      end
++    end
++    else if(cnt < 6'd23 && is_qpi && is_read) begin
++      cnt <= cnt + 6'd1;
++
++      if(!hig_low) begin
++        dio_reg <= rdata[7:4];  // maybe direction is wrong
++        hig_low <= 1'b1;
++      end
++      else begin
++        dio_reg <= rdata[3:0];  // maybe direction is wrong
++
++        rdata <= {8'b0, rdata[31:8]};
++        hig_low <= 1'b0;
++      end
++    end
++    else if(cnt == 6'd23 && is_qpi && is_read) begin
++      // finish read
++      is_read <= 1'b0;
++      cnt <= 6'b0;
++    end
++    else if(cnt < 6'd8 && !is_qpi) begin
+       cmd <= {cmd[6:0], dio[0]};
+       cnt <= cnt + 6'd1;
+     end
+-    else if(cnt ==  6'd8) begin
++    else if(cnt ==  6'd8 && !is_qpi) begin
+       if(cmd == 8'heb) is_read <= 1'b1;
+       else if(cmd == 8'h38) is_write <= 1'b1;
+       else begin
+@@ -139,7 +246,7 @@ module psram(
+       addr_3 <= {addr_3[4:0], dio[3]};
+ 
+     end
+-    else if(cnt < 6'd14) begin
++    else if(cnt < 6'd14 && !is_qpi) begin
+       cnt <= cnt + 6'b1;
+ 
+       addr_0 <= {addr_0[4:0], dio[0]};
+@@ -149,7 +256,7 @@ module psram(
+ 
+     end
+ 
+-    else if(cnt == 6'd14) begin
++    else if(cnt == 6'd14 && !is_qpi) begin
+       cnt <= cnt + 6'b1;
+       if(is_read) read_en <= 1'b1;
+       else if(is_write) begin
+@@ -163,7 +270,7 @@ module psram(
+         write_en <= 1'b0;
+       end
+     end
+-    else if(is_read && cnt < 6'd20) begin
++    else if(is_read && cnt < 6'd20 && !is_qpi) begin
+       if(read_en) begin
+         rdata <= psram_read({8'b0, addr[23:2], 2'b0});
+         read_en <= 1'b0;
+@@ -175,7 +282,7 @@ module psram(
+         cnt <= cnt + 6'd1;
+       end
+     end
+-    else if(is_read && cnt < 6'd29) begin
++    else if(is_read && cnt < 6'd29 && !is_qpi) begin
+       cnt <= cnt + 6'b1;
+       // send data
+       if(!hig_low) begin
+@@ -190,7 +297,7 @@ module psram(
+       end
+ 
+     end
+-    else if(is_read && cnt == 6'd28) begin
++    else if(is_read && cnt == 6'd28 && !is_qpi) begin
+       // finish read
+       cnt <= 6'b1;
+ 
+@@ -199,7 +306,7 @@ module psram(
+       buf_2 <= 8'b0;
+       buf_3 <= 8'b0;
+     end
+-    else if(is_write && cnt < 6'd21) begin
++    else if(is_write && cnt < 6'd21 && !is_qpi) begin
+       cnt <= cnt + 6'd1;
+ 
+       buf_0 <= {buf_0[6:0], dio[0]};
+@@ -208,7 +315,7 @@ module psram(
+       buf_3 <= {buf_3[6:0], dio[3]};
+ 
+     end
+-    else if(is_write && cnt == 6'd21) begin
++    else if(is_write && cnt == 6'd21 && !is_qpi) begin
+       cnt <= cnt + 6'd1;
+ 
+       buf_0 <= {buf_0[6:0], dio[0]};
+@@ -223,77 +330,4 @@ module psram(
+     end
+   end
+ 
+-  // always @(ce_n or cnt) begin
+-  //   if(is_write) begin
+-  //     // write 1-byte or 2-byte; sb or sh
+-  //     is_write <= 1'b0;
+-
+-  //     if(cnt == 6'd16) begin
+-  //       // 1-byte
+-  //       psram_write({8'b0, addr[23:2], 2'b0}, {24'b0, wdata[31:24]});
+-  //       // finish write
+-  //       cnt <= 6'b1;
+-
+-
+-  //       buf_0 <= 8'b0;
+-  //       buf_1 <= 8'b0;
+-  //       buf_2 <= 8'b0;
+-  //       buf_3 <= 8'b0;
+-
+-  //     end
+-  //     else if(cnt == 6'd18) begin
+-  //       // 1-byte
+-  //       psram_write({8'b0, addr[23:2], 2'b0}, {16'b0, wdata[31:16]});
+-  //       // finish write
+-  //       cnt <= 6'b1;
+-
+-  //       buf_0 <= 8'b0;
+-  //       buf_1 <= 8'b0;
+-  //       buf_2 <= 8'b0;
+-  //       buf_3 <= 8'b0;
+-
+-  //     end
+-  //     else begin
+-  //       noth <= 1'b0;
+-  //     end
+-  //   end
+-  //   else begin
+-  //     noth <= 1'b0;
+-  //   end
+-
+-  // end
+-
+-  // always @(posedge sck) begin
+-  //   if(ce_n) begin
+-  //     rdata <= 32'b0;
+-  //   end
+-  //   else if(read_en) begin
+-  //     rdata <= psram_read({8'b0, addr[23:2], 2'b0});
+-  //     read_en <= 1'b0;
+-  //   end
+-  //   else begin
+-  //     noth <= 1'b0;
+-  //   end
+-  // end
+-
+-  // always @(posedge sck) begin
+-  //   if(ce_n) begin
+-  //     noth <= 1'b0;
+-  //   end
+-  //   else if(write_en) begin
+-  //     psram_write({8'b0, addr[23:2], 2'b0}, wdata);
+-  //     // finish write
+-  //     cnt <= 6'b1;
+-  //     write_en <= 1'b0;
+-
+-  //     buf_0 <= 8'b0;
+-  //     buf_1 <= 8'b0;
+-  //     buf_2 <= 8'b0;
+-  //     buf_3 <= 8'b0;
+-  //   end
+-  //   else begin
+-  //     noth <= 1'b0;
+-  //   end
+-  // end
+-
+ endmodule
+-- 
+2.51.0
+

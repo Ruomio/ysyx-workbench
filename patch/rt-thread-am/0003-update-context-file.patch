@@ -1,0 +1,24 @@
+From 7373a3a531d5edf27176c7f208aacfb938244d5c Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Fri, 1 Nov 2024 16:49:27 +0800
+Subject: [PATCH 03/10] update context file
+
+---
+ bsp/abstract-machine/src/context.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/bsp/abstract-machine/src/context.c b/bsp/abstract-machine/src/context.c
+index 2cb0e901b..71a06a784 100644
+--- a/bsp/abstract-machine/src/context.c
++++ b/bsp/abstract-machine/src/context.c
+@@ -34,7 +34,6 @@ static Context* ev_handler(Event e, Context *c) {
+       if(from != (rt_ubase_t)NULL) {
+         *(Context **)from = c;
+       }
+-      printf("func ev_handler: to addr: 0x%x\n", to);
+       c = *(Context **)to;
+       break;
+     }
+-- 
+2.51.0
+
