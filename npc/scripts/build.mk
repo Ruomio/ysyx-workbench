@@ -162,10 +162,10 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-$(BIN): v_to_cpp
-	@make link
+# $(BIN): v_to_cpp
+# 	@make link
 
-# $(BIN): classic
+$(BIN): classic
 
 
 $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
