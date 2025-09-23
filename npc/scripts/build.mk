@@ -165,7 +165,23 @@ all: $(BIN)
 # $(BIN): v_to_cpp
 # 	@make link
 
-$(BIN): clean_obj classic
+$(BIN): modify-config clean_obj classic
+
+modify-config:
+ifeq ($(ARCH), riscv32e-npc)
+	@scripts/config --set-val CONFIG_MBASE 0x80000000 
+	@scripts/config --set-val CONFIG_MSIZE 0x20000000 
+	@scripts/config --disable CONFIG_PSRAM 
+	@scripts/config --disable CONFIG_SDRAM 
+	@scripts/config --disable CONFIG_SRAM 
+endif
+ifeq ($(ARCH), riscv32e-ysyxsoc)
+	@scripts/config --set-val CONFIG_MBASE 0x30000000 
+	@scripts/config --set-val CONFIG_MSIZE 0x01000000 
+	@scripts/config --enable CONFIG_PSRAM 
+	@scripts/config --enable CONFIG_SDRAM 
+	@scripts/config --enable CONFIG_SRAM 
+endif
 
 
 $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
