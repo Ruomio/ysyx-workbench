@@ -1,0 +1,71 @@
+From 318a88b4f8e6ec6fd03434704e278543607c3bc4 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Mon, 30 Dec 2024 11:30:21 +0800
+Subject: [PATCH 02/21] soc: xip fix flash addr, align 4
+
+---
+ perip/spi/rtl/spi_top_apb.v | 35 ++++++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 7 deletions(-)
+
+diff --git a/perip/spi/rtl/spi_top_apb.v b/perip/spi/rtl/spi_top_apb.v
+index 0a032f70..aed4873e 100644
+--- a/perip/spi/rtl/spi_top_apb.v
++++ b/perip/spi/rtl/spi_top_apb.v
+@@ -185,7 +185,7 @@ module XIP(
+     end
+     else if(state == 4'd1) begin
+       wb_adr_i <= 5'b0;
+-      wb_dat_i <= {8'h03, in_paddr[23:0]};
++      wb_dat_i <= {8'h03, in_paddr[23:2], 2'b0};
+       wb_sel_i <= 4'b1111;
+       wb_we_i <= 1'b1;
+       wb_stb_i <= 1'b1;
+@@ -436,18 +436,39 @@ module XIP(
+     end
+   end
+ 
+-  // step 10: set pready zero 
++  // step 10: set pready zero and set ss hign
+   always @(posedge clk) begin
+     if(rst) begin
+       state <= 4'b0;
+     end
+     else if(state == 4'd10) begin
+-      xip_prdata <= {wb_dat_o[7:0], wb_dat_o[15:8], wb_dat_o[23:16], wb_dat_o[31:24]};
+-      xip_pready <= in_penable & in_psel & ~xip_pready;
+-      xip_pslverr <= 1'b0;
+ 
+-      xip_mod <= 1'b0;
+-      state <= 4'd0;
++      wb_adr_i <= 5'b11000;
++      wb_dat_i <= 32'b0;    // ss, 0-bit is flash
++      wb_sel_i <= 4'b1111;
++      wb_we_i <= 1'b1;
++      wb_stb_i <= 1'b1;
++
++      wb_cyc_i_tmp <= 1'b1;
++
++      if(wb_ack_o) begin
++        wb_cyc_i_tmp <= 1'b0;
++        wb_cyc_i <= 1'b0;
++        wb_stb_i <= 1'b0;
++
++        xip_prdata <= {wb_dat_o[7:0], wb_dat_o[15:8], wb_dat_o[23:16], wb_dat_o[31:24]};
++        xip_pready <= in_penable & in_psel & ~xip_pready;
++        xip_pslverr <= 1'b0;
++
++        xip_mod <= 1'b0;
++        state <= 4'd0;
++      end
++      else if(wb_cyc_i_tmp) begin
++        wb_cyc_i <= 1'b1;
++      end
++      else begin
++        noth <= 1'b0;
++      end
+     end
+     else begin
+       noth <= 1'b0;
+-- 
+2.51.0
+
