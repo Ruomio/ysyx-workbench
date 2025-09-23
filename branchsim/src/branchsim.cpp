@@ -43,11 +43,12 @@ void BranchSim::Init(std::string disasm_file_path, std::string pc_stream_file_pa
         std::smatch match;
         uint32_t pc, target;
         try {
-            if (regex_search(line, match, j_regex) && match.size() == 3) {
+            if (regex_search(line, match, b_regex) && match.size() == 3) {
                 pc = stoul(match[1], nullptr, 16);
                 target = stoul(match[2], nullptr, 16);
                 branch_map[pc] = { true, target };
-            } else if (regex_search(line, match, b_regex) && match.size() == 3) {
+            }
+            else if (regex_search(line, match, j_regex) && match.size() == 3) {
                 pc = stoul(match[1], nullptr, 16);
                 target = stoul(match[2], nullptr, 16);
                 branch_map[pc] = { true, target };
@@ -78,6 +79,8 @@ void BranchSim::RunPredict(int flag) {
         uint32_t current_pc = pc_stream[i];
         uint32_t next_pc = pc_stream[i + 1];
 
+        if(next_pc != current_pc + 0x4) total++;
+
         auto it = branch_map.find(current_pc);
         if (it != branch_map.end()) {
             switch(flag) {
@@ -87,7 +90,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc =  branch_target;
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -95,7 +97,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc =  current_pc + 4;
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -106,7 +107,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc = predicted_taken ? branch_target : (current_pc + 4);
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -118,7 +118,6 @@ void BranchSim::RunPredict(int flag) {
                     uint32_t predicted_next_pc = predicted_taken ? branch_target : (current_pc + 4);
 
                     if (predicted_next_pc == next_pc) ++correct;
-                    ++total;
 
                     break;
                 }
@@ -168,10 +167,11 @@ void BranchSim::RunPredictWithBTB(int flag) {
         uint32_t current_pc = pc_stream[i];
         uint32_t next_pc = pc_stream[i + 1];
 
+        if(next_pc != current_pc + 0x4) total++;
 
         auto it = branch_map.find(current_pc);
         if(it != branch_map.end()) {
-            total++;
+            // total++;
 
             uint32_t predict_pc = 0;
 
