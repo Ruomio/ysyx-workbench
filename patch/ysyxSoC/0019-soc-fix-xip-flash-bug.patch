@@ -1,7 +1,7 @@
-From 234b6088ebc2fd0c8514cdca836e9f87b2811f61 Mon Sep 17 00:00:00 2001
+From b178de4a3a13fadd58d332a0a5d7c5ee5808fab0 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Fri, 18 Apr 2025 10:00:58 +0800
-Subject: [PATCH 19/23] soc: fix xip flash bug
+Subject: [PATCH 19/26] soc: fix xip flash bug
 
 ---
  perip/spi/rtl/spi_top_apb.v | 449 ++++++++++++------------------------

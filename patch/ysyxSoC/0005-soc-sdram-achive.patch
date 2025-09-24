@@ -1,7 +1,7 @@
-From 2031637dda0288b09bc48056a74bd458562c1a71 Mon Sep 17 00:00:00 2001
+From 09690a362f7141ca2dd60dd859001deac7ada2f1 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Tue, 14 Jan 2025 13:38:03 +0800
-Subject: [PATCH 05/23] soc: sdram achive
+Subject: [PATCH 05/26] soc: sdram achive
 
 ---
  perip/sdram/sdram.v | 166 +++++++++++++++++++++++++++++++++++++++++++-

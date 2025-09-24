@@ -1,7 +1,7 @@
-From d8432ca288eef1043587e3004fb3a7b25cff4020 Mon Sep 17 00:00:00 2001
+From d4da1898e7007a9e726a599ba4678d909cdc488f Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 22 Jan 2025 15:41:04 +0800
-Subject: [PATCH 06/23] soc: sdram
+Subject: [PATCH 06/26] soc: sdram
 
 ---
  perip/sdram/sdram.v | 77 +++++++++++++++++++++++----------------------
