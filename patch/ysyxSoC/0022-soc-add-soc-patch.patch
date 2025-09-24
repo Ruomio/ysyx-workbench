@@ -1,0 +1,153 @@
+From 840664a1d7b85bfb4d449b74dfead661f03b085c Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Wed, 24 Sep 2025 10:45:51 +0800
+Subject: [PATCH] soc: add soc patch
+
+---
+ Makefile                |   1 +
+ patch/ysyxSocFull.patch | 121 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 122 insertions(+)
+ create mode 100644 patch/ysyxSocFull.patch
+
+diff --git a/Makefile b/Makefile
+index 6d76a223..4963b5a2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -9,6 +9,7 @@ $(V_FILE_FINAL): $(SCALA_FILES)
+ 	sed -i '/firrtl_black_box_resource_files.f/, $$d' $@
+ 
+ verilog: $(V_FILE_FINAL)
++	@patch build/ysyxSoCFull.v < patch/ysyxSoCFull.patch
+ 
+ clean:
+ 	-rm -rf build/
+diff --git a/patch/ysyxSocFull.patch b/patch/ysyxSocFull.patch
+new file mode 100644
+index 00000000..12d6ed8e
+--- /dev/null
++++ b/patch/ysyxSocFull.patch
+@@ -0,0 +1,121 @@
++--- build/ysyxSoCFull.v	2025-09-24 10:09:00.341903708 +0800
+++++ build/ysyxSoCFull_right.v	2025-04-16 11:02:12.301949472 +0800
++@@ -2570,7 +2570,7 @@
++   assign auto_anon_out_0_pstrb = auto_anon_in_pstrb;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
++ endmodule
++ 
++-// external module ysyx_24080020
+++// external module ysyx_00000000
++ 
++ module CPU(	// src/CPU.scala:33:9
++   input         clock,	// src/CPU.scala:33:9
++@@ -3225,10 +3225,10 @@
++                 sdram_bundle_ras,	// src/device/SDRAM.scala:67:26
++                 sdram_bundle_cas,	// src/device/SDRAM.scala:67:26
++                 sdram_bundle_we,	// src/device/SDRAM.scala:67:26
++-  output [12:0] sdram_bundle_a,	// src/device/SDRAM.scala:67:26
+++  output [15:0] sdram_bundle_a,	// src/device/SDRAM.scala:67:26
++   output [1:0]  sdram_bundle_ba,	// src/device/SDRAM.scala:67:26
++-                sdram_bundle_dqm,	// src/device/SDRAM.scala:67:26
++-  inout  [15:0] sdram_bundle_dq	// src/device/SDRAM.scala:67:26
+++  output [3:0]  sdram_bundle_dqm,	// src/device/SDRAM.scala:67:26
+++  inout  [31:0] sdram_bundle_dq	// src/device/SDRAM.scala:67:26
++ );
++ 
++   sdram_top_axi msdram (	// src/device/SDRAM.scala:69:24
++@@ -3425,7 +3425,6 @@
++   assign auto_in_rvalid = nodeIn_rvalid;	// src/amba/AXI4ToAPB.scala:45:25, :88:29
++   assign auto_in_rid = rid_reg;	// src/amba/AXI4ToAPB.scala:45:25, :67:33
++   assign auto_in_rdata = nodeOut_penable ? auto_out_prdata : nodeIn_rdata_r;	// rocket-chip/src/main/scala/util/package.scala:88:{42,63}, src/amba/AXI4ToAPB.scala:45:25, :75:28
++-  // assign auto_in_rdata = auto_out_prdata;	// rocket-chip/src/main/scala/util/package.scala:88:{42,63}, src/amba/AXI4ToAPB.scala:45:25, :75:28
++   assign auto_in_rresp = resp_hold;	// rocket-chip/src/main/scala/util/package.scala:88:42, src/amba/AXI4ToAPB.scala:45:25
++   assign auto_out_psel = accept_read | accept_write | nodeOut_penable;	// src/amba/AXI4ToAPB.scala:45:25, :51:44, :52:{39,61,73}, :74:{35,52}, :75:28
++   assign auto_out_penable = nodeOut_penable;	// src/amba/AXI4ToAPB.scala:45:25, :75:28
++@@ -4834,10 +4833,8 @@
++                 sdram_cas,	// src/SoC.scala:89:19
++                 sdram_we,	// src/SoC.scala:89:19
++   output [15:0] sdram_a,	// src/SoC.scala:89:19
++-  // output [12:0] sdram_a,	// src/SoC.scala:89:19
++   output [1:0]  sdram_ba,	// src/SoC.scala:89:19
++   output [3:0]  sdram_dqm,	// src/SoC.scala:89:19
++-  // inout  [15:0] sdram_dq,	// src/SoC.scala:89:19
++   inout  [31:0] sdram_dq,	// src/SoC.scala:89:19
++   output [15:0] gpio_out,	// src/SoC.scala:90:18
++   input  [15:0] gpio_in,	// src/SoC.scala:90:18
++@@ -5931,13 +5928,10 @@
++   wire        _asic_sdram_cas;	// src/SoC.scala:107:24
++   wire        _asic_sdram_we;	// src/SoC.scala:107:24
++   wire [15:0] _asic_sdram_a;	// src/SoC.scala:107:24
++-  // wire [12:0] _asic_sdram_a;	// src/SoC.scala:107:24
++   wire [1:0]  _asic_sdram_ba;	// src/SoC.scala:107:24
++   wire [3:0]  _asic_sdram_dqm;	// src/SoC.scala:107:24
++   wire [3:0]  _dio_wire;	// src/SoC.scala:143:23
++   wire [31:0] _dq_wire;	// src/SoC.scala:145:23
++-
++-
++   ysyxSoCASIC asic (	// src/SoC.scala:107:24
++     .clock      (clock),
++     .reset      (reset),
++@@ -5999,7 +5993,7 @@
++   sdram sdram_0 (	// src/SoC.scala:145:23
++     .clk (_asic_sdram_clk),	// src/SoC.scala:107:24
++     .cke (_asic_sdram_cke),	// src/SoC.scala:107:24
++-    .id  (2'b0),
+++    .id (2'b00),
++     .cs  (_asic_sdram_cs),	// src/SoC.scala:107:24
++     .ras (_asic_sdram_ras),	// src/SoC.scala:107:24
++     .cas (_asic_sdram_cas),	// src/SoC.scala:107:24
++@@ -6012,7 +6006,7 @@
++   sdram sdram_1 (	// src/SoC.scala:145:23
++     .clk (_asic_sdram_clk),	// src/SoC.scala:107:24
++     .cke (_asic_sdram_cke),	// src/SoC.scala:107:24
++-    .id  (2'b1),
+++    .id (2'b01),
++     .cs  (_asic_sdram_cs),	// src/SoC.scala:107:24
++     .ras (_asic_sdram_ras),	// src/SoC.scala:107:24
++     .cas (_asic_sdram_cas),	// src/SoC.scala:107:24
++@@ -6022,10 +6016,10 @@
++     .dqm (_asic_sdram_dqm),	// src/SoC.scala:107:24
++     .dq  (_dq_wire[15:0])
++   );	// src/SoC.scala:145:23
++-  sdram_word_exten sdram_2 (	// src/SoC.scala:145:23
+++  sdram_word_extend sdram_2 (	// src/SoC.scala:145:23
++     .clk (_asic_sdram_clk),	// src/SoC.scala:107:24
++     .cke (_asic_sdram_cke),	// src/SoC.scala:107:24
++-    .id  (2'b10),
+++    .id (2'b10),
++     .cs  (_asic_sdram_cs),	// src/SoC.scala:107:24
++     .ras (_asic_sdram_ras),	// src/SoC.scala:107:24
++     .cas (_asic_sdram_cas),	// src/SoC.scala:107:24
++@@ -6035,10 +6029,10 @@
++     .dqm (_asic_sdram_dqm),	// src/SoC.scala:107:24
++     .dq  (_dq_wire[31:16])
++   );	// src/SoC.scala:145:23
++-  sdram_word_exten sdram_3 (	// src/SoC.scala:145:23
+++  sdram_word_extend sdram_3 (	// src/SoC.scala:145:23
++     .clk (_asic_sdram_clk),	// src/SoC.scala:107:24
++     .cke (_asic_sdram_cke),	// src/SoC.scala:107:24
++-    .id  (2'b11),
+++    .id (2'b11),
++     .cs  (_asic_sdram_cs),	// src/SoC.scala:107:24
++     .ras (_asic_sdram_ras),	// src/SoC.scala:107:24
++     .cas (_asic_sdram_cas),	// src/SoC.scala:107:24
++@@ -6068,15 +6062,15 @@
++     .externalPins_gpio_seg_5 (/* unused */),
++     .externalPins_gpio_seg_6 (/* unused */),
++     .externalPins_gpio_seg_7 (/* unused */),
++-    .externalPins_ps2_clk    (/* unused */),
++-    .externalPins_ps2_data   (/* unused */),
+++    .externalPins_ps2_clk    (),
+++    .externalPins_ps2_data   (),
++     .externalPins_vga_r      (/* unused */),
++     .externalPins_vga_g      (/* unused */),
++     .externalPins_vga_b      (/* unused */),
++     .externalPins_vga_hsync  (/* unused */),
++     .externalPins_vga_vsync  (/* unused */),
++     .externalPins_vga_valid  (/* unused */),
++-    .externalPins_uart_rx    (/* 1'h0   */),
+++    .externalPins_uart_rx    (),
++     .externalPins_uart_tx    (/* unused */)
++   );	// src/Top.scala:18:20
++ endmodule
+-- 
+2.51.0
+

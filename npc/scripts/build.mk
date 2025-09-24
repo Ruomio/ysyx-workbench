@@ -91,7 +91,7 @@ INC_PATH += $(abspath $(OBJ_DIR))
 # project source
 ifeq ($(SOC_EN), 1)
 VSRC += $(shell find ../ysyxSoC/perip -name "*.v")
-VSRC += $(shell find ../ysyxSoC/build -name "*.v")
+VSRC += $(shell find ../ysyxSoC/build -name "ysyxSoCFull.v")
 endif
 VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
