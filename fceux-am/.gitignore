@@ -5,6 +5,7 @@
 !*.inc
 !*.cpp
 !*.py
+!*.nes
 !Makefile
 !README*
 !LICENSE
@@ -13,7 +14,8 @@
 _*
 *~
 build/
-nes/gen/
-nes/rom/
+# nes/gen/
+# nes/rom/
+!nes/
 !nes/rom/README.md
 !.gitignore
