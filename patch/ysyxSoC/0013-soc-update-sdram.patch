@@ -1,7 +1,7 @@
-From 940c020610b7c6ed8e0f0ba64643f988174d7e50 Mon Sep 17 00:00:00 2001
+From cccb8e82732c4e245cc2065de3133543f377e7b2 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 7 Apr 2025 13:20:44 +0800
-Subject: [PATCH 13/23] soc: update sdram
+Subject: [PATCH 13/25] soc: update sdram
 
 ---
  perip/sdram/sdram.v | 217 ++++++++++++++++++++------------------------

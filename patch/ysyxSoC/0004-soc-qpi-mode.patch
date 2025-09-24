@@ -1,7 +1,7 @@
-From ebb00e2a913f1ec04f06181833e4b35925092c73 Mon Sep 17 00:00:00 2001
+From a9fd0b3acb758653c40e6da90aeccbb66b6f681c Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 6 Jan 2025 14:22:55 +0800
-Subject: [PATCH 04/23] soc: qpi mode
+Subject: [PATCH 04/25] soc: qpi mode
 
 ---
  perip/psram/efabless/EF_PSRAM_CTRL.v         | 117 ++++++++++-

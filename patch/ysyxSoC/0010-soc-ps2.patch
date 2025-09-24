@@ -1,7 +1,7 @@
-From 2b8954dfcd4f020312a55dbe46fe70b365daf7fe Mon Sep 17 00:00:00 2001
+From ee47049e87075c32b8fcce2d461e98ac808b496f Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Fri, 7 Mar 2025 15:01:30 +0800
-Subject: [PATCH 10/23] soc: ps2
+Subject: [PATCH 10/25] soc: ps2
 
 ---
  perip/ps2/ps2_keyboard.v | 56 ++++++++++++++++++++++++++++++++++++++++

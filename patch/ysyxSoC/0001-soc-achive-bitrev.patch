@@ -1,7 +1,7 @@
-From ce4f2bc0dbc74964f6e2702f0f3793ad3d2bab1b Mon Sep 17 00:00:00 2001
+From 5f836d2dc8446c6ff4badf2b1bb88660f3d9ccbc Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Fri, 27 Dec 2024 16:00:12 +0800
-Subject: [PATCH 01/23] soc: achive bitrev
+Subject: [PATCH 01/25] soc: achive bitrev
 
 ---
  perip/bitrev/bitrev.v       |  35 +++-

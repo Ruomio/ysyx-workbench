@@ -1,7 +1,7 @@
-From e290f8ed13091907e1d5e79523d9d22ad82da31d Mon Sep 17 00:00:00 2001
+From 267e2024cc48d2118d7a6b1747d4188cf7eb395c Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Thu, 20 Mar 2025 16:23:49 +0800
-Subject: [PATCH 12/23] soc: apb delay
+Subject: [PATCH 12/25] soc: apb delay
 
 ---
  perip/amba/apb_delayer.v | 96 +++++++++++++++++++++++++++++++++++++---

@@ -1,7 +1,7 @@
-From 1696c0ad4de2fcd5d9d4f129ee8c7618d65d5635 Mon Sep 17 00:00:00 2001
+From aa6385c42a28b7d7994e6792bc5e5a3aab0023f3 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 26 Feb 2025 16:02:00 +0800
-Subject: [PATCH 09/23] soc:apb
+Subject: [PATCH 09/25] soc:apb
 
 ---
  perip/gpio/gpio_top_apb.v | 2 +-

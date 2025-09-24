@@ -1,7 +1,7 @@
-From 840664a1d7b85bfb4d449b74dfead661f03b085c Mon Sep 17 00:00:00 2001
+From 0d78eb86152f369ad0254875423f083192b7169f Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 24 Sep 2025 10:45:51 +0800
-Subject: [PATCH 22/23] soc: add soc patch
+Subject: [PATCH 22/25] soc: add soc patch
 
 ---
  Makefile                |   1 +
@@ -10,10 +10,10 @@ Subject: [PATCH 22/23] soc: add soc patch
  create mode 100644 patch/ysyxSocFull.patch
 
 diff --git a/Makefile b/Makefile
-index 6d76a223..4963b5a2 100644
+index c30262ea..fb0e1080 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -9,6 +9,7 @@ $(V_FILE_FINAL): $(SCALA_FILES)
+@@ -17,6 +17,7 @@ $(V_FILE_FINAL): $(SCALA_FILES)
  	sed -i '/firrtl_black_box_resource_files.f/, $$d' $@
  
  verilog: $(V_FILE_FINAL)
