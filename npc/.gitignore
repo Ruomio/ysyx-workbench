@@ -10,8 +10,12 @@
 !.gitignore
 !README.md
 !Kconfig
+!scripts/config
+
 build/
 include/config
 include/generated
 
 model_checker/
+
+!.config

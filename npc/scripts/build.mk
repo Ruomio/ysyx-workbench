@@ -167,7 +167,7 @@ all: $(BIN)
 
 $(BIN): modify-config clean_obj classic
 
-modify-config:
+modify-config: $(CONF)
 ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --set-val CONFIG_MBASE 0x80000000
 	@scripts/config --set-val CONFIG_MSIZE 0x20000000
@@ -178,7 +178,7 @@ ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --disable CONFIG_SDRAM_BASE
 	@scripts/config --disable CONFIG_SDRAM_SIZE
 	@scripts/config --disable CONFIG_SRAM
-	@scripts/config --disable CONFIG_SRAM_BASE 
+	@scripts/config --disable CONFIG_SRAM_BASE
 	@scripts/config --disable CONFIG_SRAM_SIZE
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
