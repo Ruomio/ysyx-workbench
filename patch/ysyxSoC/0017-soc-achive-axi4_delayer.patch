@@ -1,7 +1,7 @@
 From f00a7c9c7b7be5a2819daa031f0c94bbc10df1dc Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Tue, 15 Apr 2025 11:18:35 +0800
-Subject: [PATCH 17/21] soc: achive axi4_delayer
+Subject: [PATCH 17/23] soc: achive axi4_delayer
 
 ---
  perip/amba/axi4_delayer.v | 367 +++++++++++++++++++++++++++++++++++++-

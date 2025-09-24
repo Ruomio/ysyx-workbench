@@ -1,7 +1,7 @@
 From ce54e2b0c0075417c5a9b640393c31bc8fb3b32b Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Tue, 8 Apr 2025 10:44:27 +0800
-Subject: [PATCH 14/21] soc: axi sdram
+Subject: [PATCH 14/23] soc: axi sdram
 
 ---
  perip/sdram/core_sdram_axi4/sdram_axi.v |  8 ++++----
