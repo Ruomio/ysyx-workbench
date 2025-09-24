@@ -10,6 +10,8 @@
 !.gitignore
 !README.md
 !Kconfig
+!scripts/config
+
 build/
 include/config
 include/generated
