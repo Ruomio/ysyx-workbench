@@ -1,7 +1,7 @@
 From a7ea30c8e5418a95401cb5aeec79f5ff40decef9 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Fri, 11 Apr 2025 17:44:11 +0800
-Subject: [PATCH 15/21] soc: sdram fix read to read bugs
+Subject: [PATCH 15/23] soc: sdram fix read to read bugs
 
 ---
  perip/sdram/sdram.v | 12 ++++++++++--

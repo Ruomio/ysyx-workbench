@@ -1,7 +1,7 @@
 From c10542f0cbf684929d377e8f48a33427347ea031 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Fri, 3 Jan 2025 09:48:34 +0800
-Subject: [PATCH 03/21] soc: psram
+Subject: [PATCH 03/23] soc: psram
 
 ---
  perip/psram/psram.v | 292 +++++++++++++++++++++++++++++++++++++++++++-

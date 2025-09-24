@@ -1,7 +1,7 @@
 From a22c1bc346037f54ffca63971415d1eb76d15559 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 14 Apr 2025 09:22:35 +0800
-Subject: [PATCH 16/21] soc: sdram fix read more than once bug, though not
+Subject: [PATCH 16/23] soc: sdram fix read more than once bug, though not
  effect result
 
 ---
