@@ -1,0 +1,48 @@
+#
+# Automatically generated file; DO NOT EDIT.
+# NPC Configuration
+#
+CONFIG_ISA_riscv32=y
+# CONFIG_ISA_riscv64 is not set
+CONFIG_ISA="riscv32"
+
+#
+# Build options
+#
+# CONFIG_DEBUG is not set
+# CONFIG_NVBOARD is not set
+# CONFIG_WAVEFILE is not set
+# CONFIG_LIGHTSSS is not set
+# end of Build options
+
+#
+# Memory setting
+#
+CONFIG_MBASE=0x30000000
+CONFIG_MSIZE=0x01000000
+CONFIG_PSRAM=y
+CONFIG_SDRAM=y
+CONFIG_SRAM=y
+# end of Memory setting
+
+#
+# Test and debug
+#
+# CONFIG_ITRACE is not set
+# CONFIG_MTRACE is not set
+# CONFIG_FTRACE is not set
+CONFIG_WATCH_POINT=y
+# CONFIG_DIFFTEST is not set
+# end of Test and debug
+
+CONFIG_DEVICE=y
+CONFIG_HAS_SERIAL=y
+CONFIG_SERIAL_MMIO=0xa00003f8
+CONFIG_HAS_TIMER=y
+CONFIG_RTC_MMIO=0xa0000048
+CONFIG_PSRAM_BASE=0x80000000
+CONFIG_PSRAM_SIZE=0x00400000
+CONFIG_SDRAM_BASE=0xa0000000
+CONFIG_SDRAM_SIZE=0x02000000
+CONFIG_SRAM_BASE=0x0f000000
+CONFIG_SRAM_SIZE=0x00002000
