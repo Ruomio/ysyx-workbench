@@ -1,7 +1,7 @@
 From d17b23db9859663f6dcbeb4917853993eeca01d8 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 22 Sep 2025 19:45:09 +0800
-Subject: [PATCH 21/25] ysyxSoC: ci test
+Subject: [PATCH 21/26] ysyxSoC: ci test
 
 ---
  perip/spi/rtl/spi_top_apb.v | 188 +--------------------------------

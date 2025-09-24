@@ -1,7 +1,7 @@
 From 283b3b85cf581d6b4c0619da7fd93921a98ca5fa Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Tue, 25 Feb 2025 16:18:12 +0800
-Subject: [PATCH 08/25] soc: gpio_apb_control
+Subject: [PATCH 08/26] soc: gpio_apb_control
 
 ---
  perip/gpio/gpio_top_apb.v | 167 ++++++++++++++++++++++++++++++++++++++

@@ -1,7 +1,7 @@
 From 392909617ea855e4959d050f33c01e6d2fd0450a Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 30 Dec 2024 11:30:21 +0800
-Subject: [PATCH 02/25] soc: xip fix flash addr, align 4
+Subject: [PATCH 02/26] soc: xip fix flash addr, align 4
 
 ---
  perip/spi/rtl/spi_top_apb.v | 35 ++++++++++++++++++++++++++++-------

@@ -1,7 +1,7 @@
 From c101b294f43f60af7fb75c8a8ffd42283b4f49ea Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 24 Sep 2025 16:46:11 +0800
-Subject: [PATCH 24/25] soc: fix soc patch
+Subject: [PATCH 24/26] soc: fix soc patch
 
 ---
  patch/ysyxSoCFull.patch | 16 +++++++++++++++-

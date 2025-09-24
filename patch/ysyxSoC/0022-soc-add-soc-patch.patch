@@ -1,7 +1,7 @@
 From 0d78eb86152f369ad0254875423f083192b7169f Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 24 Sep 2025 10:45:51 +0800
-Subject: [PATCH 22/25] soc: add soc patch
+Subject: [PATCH 22/26] soc: add soc patch
 
 ---
  Makefile                |   1 +

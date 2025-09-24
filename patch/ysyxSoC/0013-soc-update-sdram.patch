@@ -1,7 +1,7 @@
 From cccb8e82732c4e245cc2065de3133543f377e7b2 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 7 Apr 2025 13:20:44 +0800
-Subject: [PATCH 13/25] soc: update sdram
+Subject: [PATCH 13/26] soc: update sdram
 
 ---
  perip/sdram/sdram.v | 217 ++++++++++++++++++++------------------------

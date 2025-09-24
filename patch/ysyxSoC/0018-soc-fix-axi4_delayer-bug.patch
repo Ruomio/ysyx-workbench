@@ -1,7 +1,7 @@
 From b6764456e56799c39f7b23ff9f2642431f42b938 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 16 Apr 2025 14:42:01 +0800
-Subject: [PATCH 18/25] soc: fix axi4_delayer bug
+Subject: [PATCH 18/26] soc: fix axi4_delayer bug
 
 ---
  perip/amba/axi4_delayer.v | 134 ++++++++++++++++++--------------------

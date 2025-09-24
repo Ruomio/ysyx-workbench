@@ -1,7 +1,7 @@
 From ad7c97b21423409cfeb525777ec853ccb5377feb Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 24 Sep 2025 19:22:45 +0800
-Subject: [PATCH 25/25] soc: merge origin/ysyx6
+Subject: [PATCH 25/26] soc: merge origin/ysyx6
 
 ---
  Makefile                                    |   2 +-

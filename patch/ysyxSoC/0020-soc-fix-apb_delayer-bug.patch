@@ -1,7 +1,7 @@
 From 2a412fd4a8d45c8b42a8f126dbb0b90499d5111e Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Fri, 18 Apr 2025 10:02:08 +0800
-Subject: [PATCH 20/25] soc: fix apb_delayer bug
+Subject: [PATCH 20/26] soc: fix apb_delayer bug
 
 ---
  perip/amba/apb_delayer.v | 61 +++++++++++++++++++++++++++++-----------

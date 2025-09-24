@@ -1,7 +1,7 @@
 From 476687a742aa793750105dcd10d1a993dbd91f55 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Thu, 13 Mar 2025 10:58:59 +0800
-Subject: [PATCH 11/25] soc: vga achive
+Subject: [PATCH 11/26] soc: vga achive
 
 ---
  perip/vga/vga_top_apb.v | 120 ++++++++++++++++++++++++++++++++++++++++
