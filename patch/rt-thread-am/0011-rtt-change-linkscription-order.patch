@@ -1,0 +1,39 @@
+From 6d4ac47c2acea0c9fe196903515ca18f3240c93c Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Thu, 25 Sep 2025 19:21:14 +0800
+Subject: [PATCH 11/11] rtt: change linkscription order
+
+---
+ bsp/abstract-machine/Makefile | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/bsp/abstract-machine/Makefile b/bsp/abstract-machine/Makefile
+index 537e98ad5..e563eccd0 100644
+--- a/bsp/abstract-machine/Makefile
++++ b/bsp/abstract-machine/Makefile
+@@ -12,6 +12,11 @@ ARCH_SPLIT = $(subst -, ,$(ARCH))
+ ISA        = $(word 1,$(ARCH_SPLIT))
+ PLATFORM   = $(word 2,$(ARCH_SPLIT))
+ 
++
++-include $(FILE_MK)
++-include $(AM_APPS_MK)
++include $(AM_HOME)/Makefile
++
+ ifeq ($(PLATFORM), ysyxsoc)
+ # LDFLAGS += -T $(AM_HOME)/scripts/linker-ysyxsoc-rtt.ld
+ LDFLAGS += -T extra-soc.ld
+@@ -22,10 +27,6 @@ LDFLAGS += -T extra.ld
+ CFLAGS += -DNPC
+ endif
+ 
+--include $(FILE_MK)
+--include $(AM_APPS_MK)
+-include $(AM_HOME)/Makefile
+-
+ $(RTCONFIG_H):
+ 	touch $@
+ 	scons --useconfig=.config
+-- 
+2.51.0
+
