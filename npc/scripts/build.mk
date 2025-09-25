@@ -180,6 +180,7 @@ ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --disable CONFIG_SRAM
 	@scripts/config --disable CONFIG_SRAM_BASE
 	@scripts/config --disable CONFIG_SRAM_SIZE
+	@scripts/config --disable CONFIG_DIFFTEST
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --set-val CONFIG_MBASE 0x30000000
@@ -193,6 +194,7 @@ ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --set-val CONFIG_SDRAM_SIZE 0x02000000
 	@scripts/config --set-val CONFIG_SRAM_BASE 0x0f000000
 	@scripts/config --set-val CONFIG_SRAM_SIZE 0x00002000
+	@scripts/config --disable CONFIG_DIFFTEST
 endif
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 
