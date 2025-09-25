@@ -199,7 +199,7 @@ endif
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 
 
-$(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
+$(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/local/share/verilator/include/%
 	@echo "[COPY] $< -> $@"
 	@cp $< $@
 
