@@ -169,6 +169,8 @@ $(BIN): modify-config clean_obj classic
 
 modify-config: $(CONF)
 ifeq ($(ARCH), riscv32e-npc)
+	@scripts/config --enable CONFIG_ISA_riscv32=y
+	@scripts/config --set-str CONFIG_ISA "riscv32"
 	@scripts/config --set-val CONFIG_MBASE 0x80000000
 	@scripts/config --set-val CONFIG_MSIZE 0x20000000
 	@scripts/config --disable CONFIG_PSRAM
@@ -183,6 +185,8 @@ ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --disable CONFIG_DIFFTEST
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
+	@scripts/config --enable CONFIG_ISA_riscv32=y
+	@scripts/config --set-str CONFIG_ISA "riscv32"
 	@scripts/config --set-val CONFIG_MBASE 0x30000000
 	@scripts/config --set-val CONFIG_MSIZE 0x01000000
 	@scripts/config --enable CONFIG_PSRAM
@@ -306,7 +310,7 @@ TB_CI_FILE += $(shell find . -type f -name "sim_iverilog_top.v")
 TB_CI_NETLIST_FILE += $(shell find . -type f -name "sim_iverilog_netlist_top.v")
 
 verilog: $(VSRC)
-	@iverilog -g2012 -I$(VINC_PATH) -D ysyxSoCFull -E -o $(VERILOG_TARGET) $^
+	@iverilog -g2012 -I$(VINC_PATH) -E -o $(VERILOG_TARGET) $^
 
 $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"
