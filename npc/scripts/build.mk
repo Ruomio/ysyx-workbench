@@ -274,7 +274,7 @@ $(VVP_FILE): $(VERILOG_TARGET) $(TB_FILE)
 # $(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
 $(VVP_NETLIST_FILE): $(TB_NETLIST_FILE)
 	@echo "+ iverilog -> $@"
-	@iverilog -g2012 -o $@ $^ $(NETLIST) $(CELLS)
+	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^ $(NETLIST) $(CELLS)
 
 iverilog: $(VVP_FILE)
 	@$(call git_commit, "iverilog NPC")
