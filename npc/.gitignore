@@ -21,4 +21,3 @@ include/generated
 model_checker/
 
 !.config
-!.config.old

@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include "stdio.h"
 
-static int is_batch_mode = false;
+static int is_batch_mode = true;
 extern npc_state u_npc_state;
 
 void init_regex();
