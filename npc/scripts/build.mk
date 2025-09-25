@@ -318,7 +318,7 @@ $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"
 
 $(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_CI_FILE)
-	@iverilog -g2012 -o $@ $^
+	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^
 
 $(FORMAT_IMG):
 	@bash scripts/format_image.sh $(IMG) $(FORMAT_IMG)
@@ -327,7 +327,7 @@ sim-iverilog: $(VVP_CI_FILE) $(FORMAT_IMG)
 	@vvp $(VVP_CI_FILE) +MEM_FILE=$(FORMAT_IMG)
 
 $(VVP_CI_NETLIST_FILE): $(TB_CI_NETLIST_FILE)
-	@iverilog -g2012 -o $@ $^ $(NETLIST) $(CELLS)
+	@iverilog -g2012 -Dysyx_24080020_NPC -o $@ $^ $(NETLIST) $(CELLS)
 
 sim-iverilog-netlist: $(VVP_CI_NETLIST_FILE) $(FORMAT_IMG)
 	@vvp $(VVP_CI_NETLIST_FILE) +MEM_FILE=$(FORMAT_IMG)
