@@ -9,22 +9,6 @@ VERILATOR_CFLAGS += -MMD -cc \
 
 NXDC_FILES = constr/top.nxdc
 
-# CSRC=$(shell find csrc -name "*.c")
-# CPPSRC=$(shell find csrc -name "*.cpp")
-# HSRC=$(shell find $(abspath ./include) -name "*.h")
-# # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c")
-# INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-#
-# ifeq ($(SOC_EN), 1)
-# VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
-# VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
-#
-# VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
-# VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
-# endif
-# VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
-#
-# VSRC += $(shell find $(abspath vsrc) -maxdepth 1 -name "*.v")
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=build
@@ -163,10 +147,10 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-# $(BIN): v_to_cpp
-# 	@make link
+$(BIN): v_to_cpp
+	@make link
 
-$(BIN): modify-config clean_obj classic
+# $(BIN): modify-config clean_obj classic
 
 modify-config: $(CONF)
 ifeq ($(ARCH), riscv32e-npc)
@@ -208,8 +192,9 @@ $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
 	@echo "[COPY] $< -> $@"
 	@cp $< $@
 
-v_to_cpp: $(VSRC) $(VERILATOR_SYS_TARGETS)
-	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $(VSRC)  -Mdir $(OBJ_DIR)
+v_to_cpp: $(VERILATOR_SYS_TARGETS) get_v_to_cpp
+get_v_to_cpp: $(VERILOG_TARGET) $(SOC_VSRC)
+	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^ -Mdir $(OBJ_DIR)
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
