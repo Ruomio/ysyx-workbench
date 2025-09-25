@@ -1,7 +1,7 @@
 From c034d76060c0e0b25997bdf018b84ff78d1a3075 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 8 Jan 2025 13:52:52 +0800
-Subject: [PATCH 04/10] rtt: soc support
+Subject: [PATCH 04/11] rtt: soc support
 
 ---
  bsp/abstract-machine/Makefile     | 11 ++++++

@@ -1,7 +1,7 @@
 From cba2463eb044209a9a406a3dfa37522dfa33c48a Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Wed, 22 Jan 2025 15:38:52 +0800
-Subject: [PATCH 05/10] rtt: ssbl
+Subject: [PATCH 05/11] rtt: ssbl
 
 ---
  bsp/abstract-machine/extra-soc.ld |   10 +-

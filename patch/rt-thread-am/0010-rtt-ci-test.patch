@@ -1,7 +1,7 @@
 From a8b1e62c516413ae5720e732d2461420e4f55b1a Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 22 Sep 2025 19:40:57 +0800
-Subject: [PATCH 10/10] rtt: ci test
+Subject: [PATCH 10/11] rtt: ci test
 
 ---
  bsp/abstract-machine/Makefile   | 4 +++-

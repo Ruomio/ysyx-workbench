@@ -1,7 +1,7 @@
 From c1ee0cbdf394aa0e056d638ef05db47b0ffb6819 Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Thu, 6 Mar 2025 10:16:11 +0800
-Subject: [PATCH 06/10] rtt: gitignore
+Subject: [PATCH 06/11] rtt: gitignore
 
 ---
  .gitignore | 1 +

@@ -1,7 +1,7 @@
 From 118227fb4eb2619d113ef95c613e143745784a9f Mon Sep 17 00:00:00 2001
 From: Ruomio <1065940593@qq.com>
 Date: Mon, 14 Apr 2025 11:23:13 +0800
-Subject: [PATCH 09/10] rtt: add quit command.
+Subject: [PATCH 09/11] rtt: add quit command.
 
 ---
  bsp/abstract-machine/src/quit.c | 10 ++++++++++
