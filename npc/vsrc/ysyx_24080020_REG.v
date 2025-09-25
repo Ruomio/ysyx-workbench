@@ -50,7 +50,7 @@ module ysyx_24080020_REG
     import "DPI-C" function void ebreak();
     import "DPI-C" function void npc_difftest_skip_ref();
 
-    reg [31:0] is_dnpc_wb;
+    reg is_dnpc_wb;
 `endif
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
