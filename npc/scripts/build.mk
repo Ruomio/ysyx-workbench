@@ -146,7 +146,7 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-$(BIN): v_to_cpp
+$(BIN): modify-config clean_obj v_to_cpp
 	@make link
 
 # $(BIN): modify-config clean_obj classic
