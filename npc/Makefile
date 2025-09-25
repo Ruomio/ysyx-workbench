@@ -21,7 +21,7 @@ INCFLAGS = $(addprefix -I, $(INC_PATH))
 CFLAGS += $(if $(CONFIG_DEBUG), -g)
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME=V$(TOPNAME) $(if $(CONFIG_DEBUG), -g) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += -lreadline -ldl -pie $(LIBS)
-VERILATOR_CFLAGS  += $(addprefix -I, $(VINC_PATH)) -DCONFIG_DPIC
+VERILATOR_CFLAGS  += -DCONFIG_DPIC
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 VERILATOR_CFLAGS += -DysyxSoCFull
