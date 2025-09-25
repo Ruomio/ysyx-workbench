@@ -9,22 +9,6 @@ VERILATOR_CFLAGS += -MMD -cc \
 
 NXDC_FILES = constr/top.nxdc
 
-# CSRC=$(shell find csrc -name "*.c")
-# CPPSRC=$(shell find csrc -name "*.cpp")
-# HSRC=$(shell find $(abspath ./include) -name "*.h")
-# # CSRC=$(shell find csrc -name "*.cpp" -or -name "*.c")
-# INC_PATH += $(shell find $(abspath ./) -type d -name "include")
-#
-# ifeq ($(SOC_EN), 1)
-# VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "rtl")
-# VINC_PATH += $(shell find $(ysyxSoC_HOME)/perip -type d -name "efabless")
-#
-# VSRC += $(shell find $(ysyxSoC_HOME)/perip -name "*.v")
-# VSRC += $(shell find $(ysyxSoC_HOME)/build -name "*.v")
-# endif
-# VINC_PATH += $(shell find $(NPC_HOME) -type d -name "vsrc")
-#
-# VSRC += $(shell find $(abspath vsrc) -maxdepth 1 -name "*.v")
 VCD_FILE=build/wave.vcd
 ELF_FILE_NAME=$(shell echo $(VSRC) | sed -E "s/vsrc\/([a-z\-]+)\.v/build\/obj_dir\/V\1/g" )
 BUILD_DIR=build
@@ -78,8 +62,8 @@ endif
 
 # include dir
 ifeq ($(SOC_EN), 1)
-VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "rtl")
-VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "efabless")
+SOC_VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "rtl")
+SOC_VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find . -maxdepth 1 -type d -name "vsrc")
 
@@ -90,8 +74,8 @@ INC_PATH += $(abspath $(OBJ_DIR))
 
 # project source
 ifeq ($(SOC_EN), 1)
-VSRC += $(shell find ../ysyxSoC/perip -name "*.v")
-VSRC += $(shell find ../ysyxSoC/build -name "ysyxSoCFull.v")
+SOC_VSRC += $(shell find ../ysyxSoC/perip -name "*.v")
+SOC_VSRC += $(shell find ../ysyxSoC/build -name "ysyxSoCFull.v")
 endif
 VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
@@ -100,10 +84,10 @@ V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 
 
 # iverilog simulation
-VVP_FILE += $(BUILD_DIR)/sim_top.vvp
-VVP_NETLIST_FILE += $(BUILD_DIR)/sim_top_netlist.vvp
-TB_FILE += $(shell find . -type f -name "sim_top.v")
-TB_NETLIST_FILE += $(shell find . -type f -name "sim_top_netlist.v")
+VVP_FILE += $(BUILD_DIR)/iverilog_top.vvp
+VVP_NETLIST_FILE += $(BUILD_DIR)/iverilog_netlist_top.vvp
+TB_FILE += $(shell find . -type f -name "iverilog_top.v")
+TB_NETLIST_FILE += $(shell find . -type f -name "iverilog_netlist_top.v")
 # NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
 # CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
 
@@ -133,7 +117,7 @@ CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 # LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
 
 # VERILATOR_CFLAGS += --lint-only -Wall -fno-const
-VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
+VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH)) $(addprefix -I, $(SOC_VINC_PATH))
 
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
@@ -162,13 +146,15 @@ $(OBJ_DIR)/%.o: $(OBJ_DIR)/%.cpp
 
 all: $(BIN)
 
-# $(BIN): v_to_cpp
+# $(BIN): modify-config clean_obj v_to_cpp
 # 	@make link
 
 $(BIN): modify-config clean_obj classic
 
 modify-config: $(CONF)
 ifeq ($(ARCH), riscv32e-npc)
+	@scripts/config --enable CONFIG_ISA_riscv32=y
+	@scripts/config --set-str CONFIG_ISA "riscv32"
 	@scripts/config --set-val CONFIG_MBASE 0x80000000
 	@scripts/config --set-val CONFIG_MSIZE 0x20000000
 	@scripts/config --disable CONFIG_PSRAM
@@ -183,6 +169,8 @@ ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --disable CONFIG_DIFFTEST
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
+	@scripts/config --enable CONFIG_ISA_riscv32=y
+	@scripts/config --set-str CONFIG_ISA "riscv32"
 	@scripts/config --set-val CONFIG_MBASE 0x30000000
 	@scripts/config --set-val CONFIG_MSIZE 0x01000000
 	@scripts/config --enable CONFIG_PSRAM
@@ -203,8 +191,9 @@ $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
 	@echo "[COPY] $< -> $@"
 	@cp $< $@
 
-v_to_cpp: $(VSRC) $(VERILATOR_SYS_TARGETS)
-	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $(VSRC)  -Mdir $(OBJ_DIR)
+v_to_cpp: get_v_to_cpp $(VERILATOR_SYS_TARGETS)
+get_v_to_cpp: $(VERILOG_TARGET) $(SOC_VSRC)
+	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^ -Mdir $(OBJ_DIR)
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -217,13 +206,23 @@ link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
 	@echo + LD $(BIN)
 	@g++ $(LDFLAGS) $^ -o $(BIN)
 
-# $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+# $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 # 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 # 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 # 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
 # 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
+
+classic: $(VERILOG_TARGET) $(SOC_VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE)
+	@echo $(NVBOARD_ENABLE) $(TOPNAME)
+	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
+	@$(VERILATOR) $(VERILATOR_CFLAGS) --build \
+		--top-module $(TOPNAME) $^ \
+		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
 else
 link: $(OBJS) $(V_OBJS)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -237,16 +236,18 @@ link: $(OBJS) $(V_OBJS)
 # 		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
-endif
 
-
-classic: $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
+classic: $(VERILOG_TARGET) $(SOC_VSRC) $(CSRC) $(CPPSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) --build \
-		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
+		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
+endif
+
+
 
 perf: $(BIN)
 	$(call git_commit, "perf NPC")
@@ -264,9 +265,9 @@ perf: $(BIN)
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
 
 
-$(VVP_FILE): $(VSRC) $(TB_FILE)
+$(VVP_FILE): $(VERILOG_TARGET) $(TB_FILE)
 	@echo "+ iverilog -> $@"
-	@iverilog -g2012 -o $@ $^ -I $(VINC_PATH)
+	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^ -I $(VINC_PATH)
 #@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
 # @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
@@ -290,15 +291,18 @@ iverilog-netlist: $(VVP_NETLIST_FILE)
 VVP_CI_FILE = $(BUILD_DIR)/ci_sim_top.v
 VVP_CI_NETLIST_FILE = $(BUILD_DIR)/ci_sim_netlist_top.v
 FORMAT_IMG = $(BUILD_DIR)/$(notdir $(IMG)).hex
+TB_CI_FILE += $(shell find . -type f -name "sim_iverilog_top.v")
+TB_CI_NETLIST_FILE += $(shell find . -type f -name "sim_iverilog_netlist_top.v")
 
 verilog: $(VSRC)
-	@iverilog -g2012 -I$(VINC_PATH) -E -o $(VERILOG_TARGET) $^
+	@python3 scripts/merge_verilog.py -o $(VERILOG_TARGET) $^
+# @iverilog -g2012 -I$(VINC_PATH) -E -o $(VERILOG_TARGET) $^
 
 $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"
 
-$(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_FILE)
-	@iverilog -g2012 -o $@ $^
+$(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_CI_FILE)
+	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^
 
 $(FORMAT_IMG):
 	@bash scripts/format_image.sh $(IMG) $(FORMAT_IMG)
@@ -306,8 +310,8 @@ $(FORMAT_IMG):
 sim-iverilog: $(VVP_CI_FILE) $(FORMAT_IMG)
 	@vvp $(VVP_CI_FILE) +MEM_FILE=$(FORMAT_IMG)
 
-$(VVP_CI_NETLIST_FILE): $(TB_NETLIST_FILE)
-	@iverilog -g2012 -o $@ $^ $(NETLIST) $(CELLS)
+$(VVP_CI_NETLIST_FILE): $(TB_CI_NETLIST_FILE)
+	@iverilog -g2012 -Dysyx_24080020_NPC -o $@ $^ $(NETLIST) $(CELLS)
 
 sim-iverilog-netlist: $(VVP_CI_NETLIST_FILE) $(FORMAT_IMG)
 	@vvp $(VVP_CI_NETLIST_FILE) +MEM_FILE=$(FORMAT_IMG)

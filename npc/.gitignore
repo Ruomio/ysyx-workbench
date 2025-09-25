@@ -11,6 +11,8 @@
 !README.md
 !Kconfig
 !scripts/config
+!scripts/format_image.sh
+!scripts/merge_verilog.py
 
 build/
 include/config
