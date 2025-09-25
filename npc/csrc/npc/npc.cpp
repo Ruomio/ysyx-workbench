@@ -549,7 +549,7 @@ uint32_t g_get_dnpc() {
     g_dnpc = g_pc + 4;
   return g_dnpc;
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__is_dnpc_wb;
+  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__dnpc_wb;
 #else
   return 0;
 #endif
