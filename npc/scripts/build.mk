@@ -170,7 +170,7 @@ $(BIN): modify-config clean_obj classic
 modify-config: $(CONF)
 ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --enable CONFIG_ISA_riscv32=y
-	@scripts/config --set-str CONFIG_ISA "riscv32"
+	@scripts/config --set-str CONFIG_ISA "riscv33"
 	@scripts/config --set-val CONFIG_MBASE 0x80000000
 	@scripts/config --set-val CONFIG_MSIZE 0x20000000
 	@scripts/config --disable CONFIG_PSRAM
