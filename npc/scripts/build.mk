@@ -117,8 +117,7 @@ CXXFLAGS += $(addprefix -I,$(INC_PATH)) -MMD -MP
 # LDFLAGS += -L$(OBJ_DIR) -lverilated -lV$(TOPNAME)
 
 # VERILATOR_CFLAGS += --lint-only -Wall -fno-const
-VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH))
-VERILATOR_CFLAGS += $(addprefix -I, $(SOC_VINC_PATH))
+VERILATOR_CFLAGS += $(addprefix -I, $(VINC_PATH)) $(addprefix -I, $(SOC_VINC_PATH))
 
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
