@@ -1,0 +1,57 @@
+From 53143427df56c7c265742dd547b674e47f296d2b Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Thu, 25 Sep 2025 19:51:19 +0800
+Subject: [PATCH] rtt: update makefile and ld
+
+---
+ bsp/abstract-machine/Makefile     | 9 ++++-----
+ bsp/abstract-machine/extra-soc.ld | 9 +++++++++
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/bsp/abstract-machine/Makefile b/bsp/abstract-machine/Makefile
+index e563eccd0..537e98ad5 100644
+--- a/bsp/abstract-machine/Makefile
++++ b/bsp/abstract-machine/Makefile
+@@ -12,11 +12,6 @@ ARCH_SPLIT = $(subst -, ,$(ARCH))
+ ISA        = $(word 1,$(ARCH_SPLIT))
+ PLATFORM   = $(word 2,$(ARCH_SPLIT))
+ 
+-
+--include $(FILE_MK)
+--include $(AM_APPS_MK)
+-include $(AM_HOME)/Makefile
+-
+ ifeq ($(PLATFORM), ysyxsoc)
+ # LDFLAGS += -T $(AM_HOME)/scripts/linker-ysyxsoc-rtt.ld
+ LDFLAGS += -T extra-soc.ld
+@@ -27,6 +22,10 @@ LDFLAGS += -T extra.ld
+ CFLAGS += -DNPC
+ endif
+ 
++-include $(FILE_MK)
++-include $(AM_APPS_MK)
++include $(AM_HOME)/Makefile
++
+ $(RTCONFIG_H):
+ 	touch $@
+ 	scons --useconfig=.config
+diff --git a/bsp/abstract-machine/extra-soc.ld b/bsp/abstract-machine/extra-soc.ld
+index b60ee130a..0e5381050 100644
+--- a/bsp/abstract-machine/extra-soc.ld
++++ b/bsp/abstract-machine/extra-soc.ld
+@@ -1,3 +1,12 @@
++MEMORY
++{
++  /* MROM (rx) : ORIGIN = 0x20000000, LENGTH = 0x1000 */       /* 4K */
++  SRAM (rwx) : ORIGIN = 0x0f000000, LENGTH = 0x2000            /* 8k */
++  FLASH (rx) : ORIGIN = 0x30000000, LENGTH = 0x01000000        /* 2^24 = 16M */
++  PSRAM (rwx) : ORIGIN = 0x80000000, LENGTH = 0x00400000       /* 4M */
++  SDRAM (rwx) : ORIGIN = 0xa0000000, LENGTH = 0x02000000       /* 32M */
++}
++
+ SECTIONS {
+   .data.extra : {
+     . = ALIGN(8);
+-- 
+2.51.0
+
