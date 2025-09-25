@@ -191,7 +191,7 @@ $(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
 	@echo "[COPY] $< -> $@"
 	@cp $< $@
 
-v_to_cpp: $(VERILATOR_SYS_TARGETS) get_v_to_cpp
+v_to_cpp: get_v_to_cpp $(VERILATOR_SYS_TARGETS)
 get_v_to_cpp: $(VERILOG_TARGET) $(SOC_VSRC)
 	@verilator $(VERILATOR_CFLAGS) --top-module $(TOPNAME) $^ -Mdir $(OBJ_DIR)
 
