@@ -302,7 +302,7 @@ $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"
 
 $(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_CI_FILE)
-	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^
+	@iverilog -g2012 -Dysyx_24080020_NPC -o $@ $^
 
 $(FORMAT_IMG):
 	@bash scripts/format_image.sh $(IMG) $(FORMAT_IMG)
