@@ -324,6 +324,7 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
+	@echo "exec run"
 	@$^ $(ARGS) $(IMG)
 	$(call git_commit, "run NPC")
 
