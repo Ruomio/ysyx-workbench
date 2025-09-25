@@ -100,10 +100,10 @@ V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 
 
 # iverilog simulation
-VVP_FILE += $(BUILD_DIR)/sim_top.vvp
-VVP_NETLIST_FILE += $(BUILD_DIR)/sim_top_netlist.vvp
-TB_FILE += $(shell find . -type f -name "sim_top.v")
-TB_NETLIST_FILE += $(shell find . -type f -name "sim_top_netlist.v")
+VVP_FILE += $(BUILD_DIR)/iverilog_top.vvp
+VVP_NETLIST_FILE += $(BUILD_DIR)/iverilog_netlist_top.vvp
+TB_FILE += $(shell find . -type f -name "iverilog_top.v")
+TB_NETLIST_FILE += $(shell find . -type f -name "iverilog_netlist_top.v")
 # NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
 # CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
 
@@ -199,7 +199,7 @@ endif
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 
 
-$(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/local/share/verilator/include/%
+$(VERILATOR_SYS_TARGETS): $(OBJ_DIR)/%: /usr/share/verilator/include/%
 	@echo "[COPY] $< -> $@"
 	@cp $< $@
 
@@ -278,7 +278,7 @@ perf: $(BIN)
 
 $(VVP_FILE): $(VSRC) $(TB_FILE)
 	@echo "+ iverilog -> $@"
-	@iverilog -g2012 -o $@ $^ -I $(VINC_PATH)
+	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^ -I $(VINC_PATH)
 #@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
 # @iverilog -g2012 -DMEM_FILE=\"\\\"$(IMG)\\\"\" -o $@ $^ -I $(VINC_PATH)
 
@@ -304,7 +304,7 @@ VVP_CI_NETLIST_FILE = $(BUILD_DIR)/ci_sim_netlist_top.v
 FORMAT_IMG = $(BUILD_DIR)/$(notdir $(IMG)).hex
 
 verilog: $(VSRC)
-	@iverilog -g2012 -I$(VINC_PATH) -E -o $(VERILOG_TARGET) $^
+	@iverilog -g2012 -I$(VINC_PATH) -D ysyxSoCFull -E -o $(VERILOG_TARGET) $^
 
 $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"

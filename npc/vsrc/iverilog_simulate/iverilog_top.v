@@ -452,13 +452,13 @@ module sim_top;
     end
 
     // uart
-    always @(posedge clock) begin
-        if(reset) begin
-        end
-        else if(u_cpu.u_npc.u_uart.wvalid  && u_cpu.u_npc.u_uart.wready ) begin
-            $write("%c", u_cpu.u_npc.u_uart.wdata[7:0] );
-            $fflush();
-        end
-    end
+    // always @(posedge clock) begin
+    //     if(reset) begin
+    //     end
+    //     else if(u_cpu.u_npc.u_uart.wvalid  && u_cpu.u_npc.u_uart.wready ) begin
+    //         $write("%c", u_cpu.u_npc.u_uart.wdata[7:0] );
+    //         $fflush();
+    //     end
+    // end
 
 endmodule
