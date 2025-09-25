@@ -78,8 +78,8 @@ endif
 
 # include dir
 ifeq ($(SOC_EN), 1)
-VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "rtl")
-VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "efabless")
+SOC_VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "rtl")
+SOC_VINC_PATH += $(shell find ../ysyxSoC/perip -type d -name "efabless")
 endif
 VINC_PATH += $(shell find . -maxdepth 1 -type d -name "vsrc")
 
@@ -90,8 +90,8 @@ INC_PATH += $(abspath $(OBJ_DIR))
 
 # project source
 ifeq ($(SOC_EN), 1)
-VSRC += $(shell find ../ysyxSoC/perip -name "*.v")
-VSRC += $(shell find ../ysyxSoC/build -name "ysyxSoCFull.v")
+SOC_VSRC += $(shell find ../ysyxSoC/perip -name "*.v")
+SOC_VSRC += $(shell find ../ysyxSoC/build -name "ysyxSoCFull.v")
 endif
 VSRC += $(shell find vsrc -maxdepth 1 -name "*.v")
 
@@ -169,8 +169,8 @@ $(BIN): modify-config clean_obj classic
 
 modify-config: $(CONF)
 ifeq ($(ARCH), riscv32e-npc)
-	@scripts/config --enable CONFIG_ISA_riscv33=y
-	@scripts/config --set-str CONFIG_ISA "riscv33"
+	@scripts/config --enable CONFIG_ISA_riscv32=y
+	@scripts/config --set-str CONFIG_ISA "riscv32"
 	@scripts/config --set-val CONFIG_MBASE 0x80000000
 	@scripts/config --set-val CONFIG_MSIZE 0x20000000
 	@scripts/config --disable CONFIG_PSRAM
@@ -221,7 +221,7 @@ link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
 	@echo + LD $(BIN)
 	@g++ $(LDFLAGS) $^ -o $(BIN)
 
-# $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
+# $(BIN): $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 # 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 # 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 # 	@$(VERILATOR) $(VERILATOR_CFLAGS) \
@@ -230,11 +230,11 @@ link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
 
-classic: $(VSRC) $(CSRC) $(CPPSRC) $(HSRC) $(NVBOARD_ARCHIVE)
+classic: $(VERILOG_TARGET) $(SOC_VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) --build \
-		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) $(NVBOARD_ARCHIVE) \
+		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
@@ -252,11 +252,11 @@ link: $(OBJS) $(V_OBJS)
 # 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 # 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
-classic: $(VSRC) $(CSRC) $(CPPSRC) $(HSRC)
+classic: $(VERILOG_TARGET) $(SOC_VSRC) $(CSRC) $(CPPSRC)
 	@echo $(NVBOARD_ENABLE) $(TOPNAME)
 	@$(call git_commit, "sim NPC") # DO NOT REMOVE THIS LINE!!!
 	@$(VERILATOR) $(VERILATOR_CFLAGS) --build \
-		--top-module $(TOPNAME) $(VSRC) $(CSRC) $(CPPSRC) \
+		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 
@@ -280,7 +280,7 @@ perf: $(BIN)
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
 
 
-$(VVP_FILE): $(VSRC) $(TB_FILE)
+$(VVP_FILE): $(VERILOG_TARGET) $(TB_FILE)
 	@echo "+ iverilog -> $@"
 	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^ -I $(VINC_PATH)
 #@iverilog -g2012 -DMEM_FILE=\"$(IMG)\" -o $@ $(VSRC) $(TB_FILE) -I $(VINC_PATH)
@@ -310,7 +310,8 @@ TB_CI_FILE += $(shell find . -type f -name "sim_iverilog_top.v")
 TB_CI_NETLIST_FILE += $(shell find . -type f -name "sim_iverilog_netlist_top.v")
 
 verilog: $(VSRC)
-	@iverilog -g2012 -I$(VINC_PATH) -E -o $(VERILOG_TARGET) $^
+	@python3 scripts/merge_verilog.py -o $(VERILOG_TARGET) $^
+# @iverilog -g2012 -I$(VINC_PATH) -E -o $(VERILOG_TARGET) $^
 
 $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"
