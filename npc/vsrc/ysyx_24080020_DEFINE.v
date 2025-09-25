@@ -1,10 +1,6 @@
 // `define CONFIG_DPIC // define in makefile
 // ysyxSoCFull and ysyx_24080020_NPC are defined in makefile or iverilog-default
 
-`ifdef __ICARUS__
-`define ysyx_24080020_NPC
-`endif
-
 `ifndef ysyxSoCFull
 `ifndef ysyx_24080020_NPC
 `define ysyx_24080020_NPC
