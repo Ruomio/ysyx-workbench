@@ -302,6 +302,8 @@ iverilog-netlist: $(VVP_NETLIST_FILE)
 VVP_CI_FILE = $(BUILD_DIR)/ci_sim_top.v
 VVP_CI_NETLIST_FILE = $(BUILD_DIR)/ci_sim_netlist_top.v
 FORMAT_IMG = $(BUILD_DIR)/$(notdir $(IMG)).hex
+TB_CI_FILE += $(shell find . -type f -name "sim_iverilog_top.v")
+TB_CI_NETLIST_FILE += $(shell find . -type f -name "sim_iverilog_netlist_top.v")
 
 verilog: $(VSRC)
 	@iverilog -g2012 -I$(VINC_PATH) -D ysyxSoCFull -E -o $(VERILOG_TARGET) $^
@@ -309,7 +311,7 @@ verilog: $(VSRC)
 $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"
 
-$(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_FILE)
+$(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_CI_FILE)
 	@iverilog -g2012 -o $@ $^
 
 $(FORMAT_IMG):
@@ -318,7 +320,7 @@ $(FORMAT_IMG):
 sim-iverilog: $(VVP_CI_FILE) $(FORMAT_IMG)
 	@vvp $(VVP_CI_FILE) +MEM_FILE=$(FORMAT_IMG)
 
-$(VVP_CI_NETLIST_FILE): $(TB_NETLIST_FILE)
+$(VVP_CI_NETLIST_FILE): $(TB_CI_NETLIST_FILE)
 	@iverilog -g2012 -o $@ $^ $(NETLIST) $(CELLS)
 
 sim-iverilog-netlist: $(VVP_CI_NETLIST_FILE) $(FORMAT_IMG)

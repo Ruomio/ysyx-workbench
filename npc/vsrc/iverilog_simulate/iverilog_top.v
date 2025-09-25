@@ -451,6 +451,16 @@ module sim_top;
         end
     end
 
+    // ebreak
+    always @(posedge clock) begin
+        if(reset) begin
+        end
+        else if(u_cpu.u_npc.is_ebreak_lsu ) begin
+            $display("ebreak inst!");
+            $finish;
+        end
+    end
+
     // uart
     always @(posedge clock) begin
         if(reset) begin
