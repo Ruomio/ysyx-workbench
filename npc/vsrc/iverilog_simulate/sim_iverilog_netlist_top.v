@@ -20,7 +20,7 @@ module sim_top;
 
 
     initial begin
-        // $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
+        // $dumpfile("build/tb_netlist_wave.vcd"); // 指定 VCD 文件名
         // #200000;
         // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
         // #200 $finish;
@@ -437,17 +437,28 @@ module sim_top;
         if(reset) begin
             pc_delay_cnt <= 32'h0;
         end
-        else if(u_cpu.u_npc.exu.exu_mem_valid && u_cpu.u_npc.exu.mem_exu_ready) begin
+        else if(u_cpu.\u_npc/exu_mem_valid  && u_cpu.\u_npc/mem_exu_ready ) begin
             pc_delay_cnt <= 'h0;
-            // $display("%h", u_cpu.u_npc.exu.pc_exu);
+            // $display("%h", u_cpu.\u_npc/pc_exu );
         end
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
             if(pc_delay_cnt > 32'h200) begin
-                $display("EXU lag at pc: 0x%h", u_cpu.u_npc.exu.pc_exu);
+                $display("EXU lag at pc: 0x%h", u_cpu.\u_npc/pc_exu );
                 $display("PC delay count exceeded");
                 $finish;
             end
+        end
+    end
+    // wire \u_npc/exu_mem_valid ;
+
+    // ebreak
+    always @(posedge clock) begin
+        if(reset) begin
+        end
+        else if(u_cpu.\u_npc/is_ebreak_lsu ) begin
+            $display("ebreak inst!");
+            $finish;
         end
     end
 
@@ -455,8 +466,8 @@ module sim_top;
     always @(posedge clock) begin
         if(reset) begin
         end
-        else if(u_cpu.u_npc.u_uart.wvalid  && u_cpu.u_npc.u_uart.wready ) begin
-            $write("%c", u_cpu.u_npc.u_uart.wdata[7:0] );
+        else if(u_cpu.\u_npc/wvalid_xbar_uart  && u_cpu.\u_npc/wready_uart ) begin
+            $write("%c", u_cpu.\u_npc/wdata_xbar_uart [7:0] );
             $fflush();
         end
     end
