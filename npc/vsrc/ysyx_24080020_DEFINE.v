@@ -24,7 +24,7 @@
 // cache
 `define ysyx_24080020_CACHE_SIZE 16
 `define ysyx_24080020_CACHE_NUM 4
-`define ysyx_24080020_CACHE_WAY 0
+`define ysyx_24080020_CACHE_WAY 1
 
 // branch
 `define ysyx_24080020_BRANCH_SIZE 4
