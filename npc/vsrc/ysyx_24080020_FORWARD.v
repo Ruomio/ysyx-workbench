@@ -32,7 +32,7 @@ module ysyx_24080020_FORWARD(
 
     assign rd_data1_forward = rs1_conflict ?
                                 rs1_idu == rd_exu ? rd_data_exu :
-                                rs1_idu == rd_lsu ? is_load ? mrdata : rd_data_lsu :
+                                rs1_idu == rd_lsu ? rd_data_mem :
                                 rs1_idu == rd_wbu ? rd_data_wbu :
                                 'b0
                             : 'b0;
