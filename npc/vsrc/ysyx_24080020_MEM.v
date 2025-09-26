@@ -11,10 +11,9 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] mraddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
 
     input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
+    output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     output reg exu_mem_shake_hands,
 
     input skip_ref_exu,
@@ -122,6 +121,9 @@ module ysyx_24080020_MEM(
     reg awlen_cnt;
     reg [31:0] rdata1, rdata2;
 
+    reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
+    reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem;
+
     reg state; // 0: idle;   1: wait_ready
 
     wire [31:0] rdata_shift_1, rdata_shift_2, rdata_shift;
@@ -223,6 +225,7 @@ module ysyx_24080020_MEM(
                         4'b0000 :
                     4'b0000;
 
+    assign rd_data_mem = is_load_mem ? mrdata_mem : alu_out_mem;
 
     always @(posedge clk) begin
         if(!rst) begin

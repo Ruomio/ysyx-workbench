@@ -18,8 +18,9 @@ module ysyx_24080020_REG
 
     input wen_mem,
     input [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
-    input [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
-    input [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
+    // input [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
+    // input [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
+    input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
 
     input is_ebreak_lsu,
@@ -64,8 +65,9 @@ module ysyx_24080020_REG
     // reg [2:0] wcsr_idx2;
     // reg [2:0] rcsr_idx;
 
-    reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
+    // reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
+    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
+    reg [`ysyx_24080020_WIDTH-1:0] rd_data_wb;
 
     reg wen_wb;
     reg cnt;
@@ -81,7 +83,7 @@ module ysyx_24080020_REG
 
     // reg [`ysyx_24080020_WIDTH-1:0] result;
 
-    assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
+    // assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
     // always @(mrdata_wb or alu_out_wb or is_load_wb) begin
     //     if(is_load_wb) begin
     //         result = mrdata_wb;
@@ -130,7 +132,8 @@ module ysyx_24080020_REG
 
             // shake hands successfully
             waddr_wb <= waddr_mem;
-            mrdata_wb <= mrdata_mem;
+            // mrdata_wb <= mrdata_mem;
+            rd_data_wb <= rd_data_mem;
 
             wcsren_wb <= wcsren_mem;
             wcsraddr_wb <= wcsraddr_mem;
@@ -140,7 +143,7 @@ module ysyx_24080020_REG
             wcsraddr2_wb <= wcsraddr2_mem;
             wcsrdata2_wb <= wcsrdata2_mem;
 
-            alu_out_wb <= alu_out_mem;
+            // alu_out_wb <= alu_out_mem;
             is_load_wb <= is_load_mem;
 
             pc_wbu <= pc_lsu;
@@ -169,7 +172,7 @@ module ysyx_24080020_REG
             regs[0] <= 'b0;
         end
         else if(wen_wb) begin
-            regs[waddr_wb] <= result;
+            regs[waddr_wb] <= rd_data_wb;
             wen_wb <= 1'b0;
             regs[0] <= 32'b0;
         end
