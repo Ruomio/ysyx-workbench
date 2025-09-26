@@ -12,7 +12,7 @@ module ysyx_24080020_FORWARD(
     input [4:0] rd_lsu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     // input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
-    // input is_load,
+    input is_load,
     // input [`ysyx_24080020_WIDTH-1:0] mrdata,
     input fin_load,
 
