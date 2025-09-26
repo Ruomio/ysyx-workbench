@@ -11,6 +11,7 @@ module ysyx_24080020_MEM(
     input [`ysyx_24080020_WIDTH-1:0] mraddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
 
     input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
     output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
@@ -121,7 +122,7 @@ module ysyx_24080020_MEM(
     reg awlen_cnt;
     reg [31:0] rdata1, rdata2;
 
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
+    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
     reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem;
 
     reg state; // 0: idle;   1: wait_ready
