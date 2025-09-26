@@ -542,8 +542,8 @@ uint32_t g_get_snpc() {
 
 uint32_t g_get_dnpc() {
 #if defined (ysyxSoCFull)
-  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__is_dnpc_wb) {
-    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__is_dnpc_wb) {
+    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__dnpc_wb;
   }
   else
     g_dnpc = g_pc + 4;
