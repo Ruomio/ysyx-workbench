@@ -43,7 +43,7 @@
 `define ysyx_24080020_MARCHID_ADDR 12'hf12
 
 // reg
-`define ysyx2_24080020_E_EXTERN
+`define ysyx_24080020_E_EXTERN
 
 `ifdef ysyx_24080020_E_EXTERN
 `define ysyx_24080020_REG_NUM 16

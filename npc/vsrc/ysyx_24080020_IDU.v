@@ -361,7 +361,7 @@ module ysyx_24080020_IDU (
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
 
-                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     src2_idu <= 32'b0;
                     alu_src2_con_idu <= 1'b1;
                     case(funct3)
@@ -409,7 +409,7 @@ module ysyx_24080020_IDU (
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
 
-                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     src2_idu <= 32'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
@@ -466,8 +466,8 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b0;
                     mwen_idu <= 1'b1;
 
-                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    // src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
                     case(funct3)
@@ -495,8 +495,8 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b0;
                     mwen_idu <= 1'b0;
 
-                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    // src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
 
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
@@ -538,8 +538,8 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
-                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    // src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
                     alu_src2_con_idu <= 1'b0;
 
                     case(funct3)
@@ -585,7 +585,7 @@ module ysyx_24080020_IDU (
 
                     // rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
-                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     alu_src2_con_idu <= 1'b1;
 
                     is_csrtype_idu <= 1'b1;
@@ -674,7 +674,7 @@ module ysyx_24080020_IDU (
                             wcsren_idu <= 1'b1;
 
                             waddr_idu <= rd;
-                            src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                            // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wdata_idu <= rcsrdata;
                             wen_idu <= 1'b1;
 
