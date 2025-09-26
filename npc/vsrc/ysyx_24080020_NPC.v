@@ -108,9 +108,9 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu, wcsraddr_exu, wcsraddr_mem, wcsraddr_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu, wcsrdata_exu, wcsrdata_mem, wcsrdata_wb;
   wire wcsren2_idu, wcsren2_exu, wcsren2_mem, wcsren2_wb;
-  wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu, wcsraddr2_exu, wcsraddr2_mem, wcsraddr2_wb;
+  wire [2:0] wcsraddr2_idu, wcsraddr2_exu, wcsraddr2_mem, wcsraddr2_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu, wcsrdata2_exu, wcsrdata2_mem, wcsrdata2_wb;
-  wire [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr;
+  wire [2:0] rcsraddr;
   wire [`ysyx_24080020_WIDTH-1:0] rcsrdata;
 
   // memory
@@ -487,12 +487,12 @@ module ysyx_24080020_NPC(
         .fencei_idu(fencei_idu),
 
         .rcsrdata(rcsrdata),
-        .rcsraddr(rcsraddr),
+        .rcsraddr_(rcsraddr),
         .wcsren_idu(wcsren_idu),
-        .wcsraddr_idu(wcsraddr_idu),
+        .wcsraddr_idu_(wcsraddr_idu),
         .wcsrdata_idu(wcsrdata_idu),
         .wcsren2_idu(wcsren2_idu),
-        .wcsraddr2_idu(wcsraddr2_idu),
+        .wcsraddr2_idu_(wcsraddr2_idu),
         .wcsrdata2_idu(wcsrdata2_idu),
 
         .alu_op_idu(alu_op_idu),

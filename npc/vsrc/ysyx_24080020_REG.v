@@ -27,12 +27,12 @@ module ysyx_24080020_REG
 
     //csr
     input wcsren_mem,
-    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_mem,
+    input [2:0] wcsraddr_mem,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
     input wcsren2_mem,
-    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_mem,
+    input [2:0] wcsraddr2_mem,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
-    input [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
+    input [2:0] rcsraddr,
 
     // out src1 & src2
     output [`ysyx_24080020_WIDTH-1:0] val_raddr1,
@@ -60,9 +60,9 @@ module ysyx_24080020_REG
 
     reg is_load_wb;
 
-    reg [2:0] wcsr_idx;
-    reg [2:0] wcsr_idx2;
-    reg [2:0] rcsr_idx;
+    // reg [2:0] wcsr_idx;
+    // reg [2:0] wcsr_idx2;
+    // reg [2:0] rcsr_idx;
 
     reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
@@ -73,10 +73,10 @@ module ysyx_24080020_REG
     reg skip_ref_wb;
 
     reg wcsren_wb;
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_wb;
+    reg [2:0] wcsraddr_wb;
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_wb;
     reg wcsren2_wb;
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_wb;
+    reg [2:0] wcsraddr2_wb;
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
 
     // reg [`ysyx_24080020_WIDTH-1:0] result;
@@ -186,58 +186,58 @@ module ysyx_24080020_REG
             csrs[5] <= 32'h16f6e94;
         end
         else if(wcsren_wb && wcsren2_wb) begin
-            csrs[wcsr_idx] <= wcsrdata_wb;
-            csrs[wcsr_idx2] <= wcsrdata2_wb;
+            csrs[wcsraddr_wb] <= wcsrdata_wb;
+            csrs[wcsraddr2_wb] <= wcsrdata2_wb;
         end
         else if(wcsren_wb) begin
-            csrs[wcsr_idx] <= wcsrdata_wb;
+            csrs[wcsraddr_wb] <= wcsrdata_wb;
         end
         else if(wcsren2_wb) begin
-            csrs[wcsr_idx2] <= wcsrdata2_wb;
+            csrs[wcsraddr2_wb] <= wcsrdata2_wb;
         end
     end
 
-    always @(*) begin
-        wcsr_idx = 'b0;
-        case(wcsraddr_wb)
-            `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: wcsr_idx = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
-            default: wcsr_idx = 3'd7;
-        endcase
-    end
+    // always @(*) begin
+    //     wcsr_idx = 'b0;
+    //     case(wcsraddr_wb)
+    //         `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
+    //         `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
+    //         `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
+    //         `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
+    //         `ysyx_24080020_MVENDORID_ADDR: wcsr_idx = 3'd4;
+    //         `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
+    //         default: wcsr_idx = 3'd7;
+    //     endcase
+    // end
 
-    always @(*) begin
-        wcsr_idx2 = 'b0;
-        case(wcsraddr2_wb)
-            `ysyx_24080020_MEPC_ADDR:     wcsr_idx2 = 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx2 = 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx2 = 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    wcsr_idx2 = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: wcsr_idx2 = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: wcsr_idx2 = 3'd5;
-            default: wcsr_idx2 = 3'd7;
-        endcase
-    end
+    // always @(*) begin
+    //     wcsr_idx2 = 'b0;
+    //     case(wcsraddr2_wb)
+    //         `ysyx_24080020_MEPC_ADDR:     wcsr_idx2 = 3'd0;
+    //         `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx2 = 3'd1;
+    //         `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx2 = 3'd2;
+    //         `ysyx_24080020_MTVEC_ADDR:    wcsr_idx2 = 3'd3;
+    //         `ysyx_24080020_MVENDORID_ADDR: wcsr_idx2 = 3'd4;
+    //         `ysyx_24080020_MARCHID_ADDR: wcsr_idx2 = 3'd5;
+    //         default: wcsr_idx2 = 3'd7;
+    //     endcase
+    // end
 
-    always @(*) begin
-        rcsr_idx = 'b0;
-        case(rcsraddr)
-            `ysyx_24080020_MEPC_ADDR:     rcsr_idx = 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  rcsr_idx = 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   rcsr_idx = 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    rcsr_idx = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: rcsr_idx = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: rcsr_idx = 3'd5;
-            default: rcsr_idx = 3'd7;
-        endcase
-    end
+    // always @(*) begin
+    //     rcsr_idx = 'b0;
+    //     case(rcsraddr)
+    //         `ysyx_24080020_MEPC_ADDR:     rcsr_idx = 3'd0;
+    //         `ysyx_24080020_MSTATUS_ADDR:  rcsr_idx = 3'd1;
+    //         `ysyx_24080020_MCAUSE_ADDR:   rcsr_idx = 3'd2;
+    //         `ysyx_24080020_MTVEC_ADDR:    rcsr_idx = 3'd3;
+    //         `ysyx_24080020_MVENDORID_ADDR: rcsr_idx = 3'd4;
+    //         `ysyx_24080020_MARCHID_ADDR: rcsr_idx = 3'd5;
+    //         default: rcsr_idx = 3'd7;
+    //     endcase
+    // end
 
     assign val_raddr1 = regs[raddr1];
     assign val_raddr2 = regs[raddr2];
 
-    assign rcsrdata = csrs[rcsr_idx];
+    assign rcsrdata = csrs[rcsraddr];
 endmodule

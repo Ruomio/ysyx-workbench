@@ -25,16 +25,16 @@ module ysyx_24080020_MEM(
 
     // csrs
     input wcsren_exu,
-    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_exu,
+    input [2:0] wcsraddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
     input wcsren2_exu,
-    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_exu,
+    input [2:0] wcsraddr2_exu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
     output reg wcsren_mem,
-    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_mem,
+    output reg [2:0] wcsraddr_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
     output reg wcsren2_mem,
-    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_mem,
+    output reg [2:0] wcsraddr2_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
     // regs
     input wen_exu,
