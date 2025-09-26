@@ -10,9 +10,10 @@ module ysyx_24080020_FORWARD(
     input [`ysyx_24080020_WIDTH-1:0] rd_data_exu,
 
     input [4:0] rd_lsu,
-    input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
-    input is_load,
-    input [`ysyx_24080020_WIDTH-1:0] mrdata,
+    input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
+    // input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
+    // input is_load,
+    // input [`ysyx_24080020_WIDTH-1:0] mrdata,
     input fin_load,
 
     input [4:0] rd_wbu,
@@ -38,7 +39,7 @@ module ysyx_24080020_FORWARD(
 
     assign rd_data2_forward = rs2_conflict ?
                                 rs2_idu == rd_exu ? rd_data_exu :
-                                rs2_idu == rd_lsu ? is_load ? mrdata : rd_data_lsu :
+                                rs2_idu == rd_lsu ? rd_data_mem :
                                 rs2_idu == rd_wbu ? rd_data_wbu :
                                 'b0
                             : 'b0;

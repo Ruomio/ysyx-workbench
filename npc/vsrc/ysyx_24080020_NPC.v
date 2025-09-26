@@ -1278,9 +1278,10 @@ module ysyx_24080020_NPC(
 		.rd_data_exu(alu_out_exu),
 
 		.rd_lsu(waddr_mem),
-		.rd_data_lsu(alu_out_mem),
-		.is_load(is_load_mem | mwen_mem),
-		.mrdata(mrdata_mem),
+		.rd_data_mem(rd_data_mem),
+		// .rd_data_lsu(alu_out_mem),
+		// .is_load(is_load_mem | mwen_mem),
+		// .mrdata(mrdata_mem),
 		.fin_load(mem_wb_valid),
 
 		.rd_wbu(waddr_wb),

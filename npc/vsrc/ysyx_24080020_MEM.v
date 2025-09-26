@@ -293,7 +293,7 @@ module ysyx_24080020_MEM(
             next_inst <= 'b1;
 
         end
-        else if(exu_mem_shake_hands) begin
+        else if(exu_mem_shake_hands && mem_wb_valid) begin
             exu_mem_shake_hands <= 1'b0;
         end
         else if(exu_mem_valid) begin
