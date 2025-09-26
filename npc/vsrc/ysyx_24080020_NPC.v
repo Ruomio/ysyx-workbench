@@ -105,7 +105,7 @@ module ysyx_24080020_NPC(
   // csrs
   wire is_csrtype_idu;
   wire wcsren_idu, wcsren_exu, wcsren_mem, wcsren_wb;
-  wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu, wcsraddr_exu, wcsraddr_mem, wcsraddr_wb;
+  wire [2:0] wcsraddr_idu, wcsraddr_exu, wcsraddr_mem, wcsraddr_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu, wcsrdata_exu, wcsrdata_mem, wcsrdata_wb;
   wire wcsren2_idu, wcsren2_exu, wcsren2_mem, wcsren2_wb;
   wire [2:0] wcsraddr2_idu, wcsraddr2_exu, wcsraddr2_mem, wcsraddr2_wb;
