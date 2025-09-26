@@ -223,7 +223,7 @@ void exec_once_npc(uint32_t pc) {
     if(is_clk_high) {
       g_get_pc();
       total_cycles++;
-      if(wait_cycles++ > 80000) {
+      if(wait_cycles++ > 50000) {
         printf("wait too many cycles, maybe dead loop, last_pc:0x%x\n", last_pc);
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
@@ -549,9 +549,12 @@ uint32_t g_get_dnpc() {
     g_dnpc = g_pc + 4;
   return g_dnpc;
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__dnpc_wb;
-#else
-  return 0;
+  if(top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__is_dnpc_wb) {
+    g_dnpc = top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__dnpc_wb;
+  }
+  else
+    g_dnpc = g_pc + 4;
+  return g_dnpc;
 #endif
 }
 
