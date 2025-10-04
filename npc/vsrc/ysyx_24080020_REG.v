@@ -23,6 +23,7 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
     output reg [`ysyx_24080020_WIDTH-1:0] rd_data_wb,
+    output reg wen_wb,
 
     input is_ebreak_lsu,
     // output [`ysyx_24080020_WIDTH-1:0] result,
@@ -69,7 +70,6 @@ module ysyx_24080020_REG
     // reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
     // reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
 
-    reg wen_wb;
     reg cnt;
 
     reg skip_ref_wb;

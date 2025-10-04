@@ -8,16 +8,19 @@ module ysyx_24080020_FORWARD(
 
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_exu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_exu,
+    input rd_en_exu,
 
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_lsu,
-    input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
-    // input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
+    input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
+    input rd_en_lsu,
+
     input is_load,
     // input [`ysyx_24080020_WIDTH-1:0] mrdata,
     input fin_load,
 
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_wbu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_wbu,
+    input rd_en_wbu,
 
     output need_stall,
     output reg [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
@@ -27,19 +30,19 @@ module ysyx_24080020_FORWARD(
 );
     // reg is_load_next;
 
-    assign rs1_conflict = ((rs1_idu == rd_exu) || (rs1_idu == rd_lsu) || (rs1_idu == rd_wbu)) && (rs1_idu != 'b0);
-    assign rs2_conflict = ((rs2_idu == rd_exu) || (rs2_idu == rd_lsu) || (rs2_idu == rd_wbu)) && (rs2_idu != 'b0);
+    assign rs1_conflict = (((rs1_idu == rd_exu) && (rd_en_exu)) || ((rs1_idu == rd_lsu) && (rd_en_lsu)) || ((rs1_idu == rd_wbu) && (rd_en_wbu))) && (rs1_idu != 'b0);
+    assign rs2_conflict = (((rs2_idu == rd_exu) && (rd_en_exu)) || ((rs2_idu == rd_lsu) && (rd_en_lsu)) || ((rs2_idu == rd_wbu) && (rd_en_wbu))) && (rs2_idu != 'b0);
 
     assign rd_data1_forward = rs1_conflict ?
                                 rs1_idu == rd_exu ? rd_data_exu :
-                                rs1_idu == rd_lsu ? rd_data_mem :
+                                rs1_idu == rd_lsu ? rd_data_lsu :
                                 rs1_idu == rd_wbu ? rd_data_wbu :
                                 'b0
                             : 'b0;
 
     assign rd_data2_forward = rs2_conflict ?
                                 rs2_idu == rd_exu ? rd_data_exu :
-                                rs2_idu == rd_lsu ? rd_data_mem :
+                                rs2_idu == rd_lsu ? rd_data_lsu :
                                 rs2_idu == rd_wbu ? rd_data_wbu :
                                 'b0
                             : 'b0;
