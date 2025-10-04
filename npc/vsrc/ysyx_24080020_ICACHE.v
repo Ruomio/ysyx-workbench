@@ -682,8 +682,17 @@ module ysyx_24080020_ICACHE(
 `ifndef USE_ICACHE
 
 
-  assign raddr = araddr_i;
   assign special_pc_o = 'b1;
+
+  // assign raddr = araddr_i;
+  always @(posedge clk) begin
+      if(!rst) begin
+          raddr <= 'b0;
+      end
+      else if(arvalid_o && arready_o) begin
+          raddr <= araddr_o;
+      end
+  end
 
   // AR
   assign arvalid_o = arvalid_i;
