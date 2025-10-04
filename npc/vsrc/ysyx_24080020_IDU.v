@@ -14,7 +14,7 @@ module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     // input [`ysyx_24080020_WIDTH-1:0] snpc_ifu,
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
-    input flush_pipeline,
+    // input flush_pipeline,
 
     output reg [`ysyx_24080020_WIDTH-1:0] imm_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
@@ -136,9 +136,7 @@ module ysyx_24080020_IDU (
             inst_idu <= 'b0;
         end
         else if(cnt == 'd2) begin
-            if(!flush_pipeline) begin
-                idu_exu_valid <= 1'b1;
-            end
+            idu_exu_valid <= 1'b1;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
             idu_ifu_ready <= 1'b0;
@@ -164,7 +162,7 @@ module ysyx_24080020_IDU (
         if(!rst) begin
             cnt <= 'b0;
         end
-        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline) begin
+        else if((idu_exu_valid_reg && exu_idu_ready) || need_stall) begin
             cnt <= 'b0;
         end
         else if(cnt == 'b1) begin

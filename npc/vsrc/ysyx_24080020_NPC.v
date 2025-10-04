@@ -436,7 +436,7 @@ module ysyx_24080020_NPC(
         .inst_ifu(inst_ifu),
 
         .inst_fin(inst_fin),
-        .flush_pipeline(flush_pipeline),
+        // .flush_pipeline(flush_pipeline),
         .raddr(raddr_ir),
         .special_pc_i(special_pc_ir),
         .need_flush_pipeline(need_flush_pipeline),
@@ -461,7 +461,7 @@ module ysyx_24080020_NPC(
         .rd_data1_forward(rd_data1_forward),
         .rd_data2_forward(rd_data2_forward),
         // .data_adventure(data_adventure),
-        .flush_pipeline(flush_pipeline),
+        // .flush_pipeline(flush_pipeline),
 
         .skip_ref_idu(skip_ref_idu),
         .is_ebreak(is_ebreak_idu),
