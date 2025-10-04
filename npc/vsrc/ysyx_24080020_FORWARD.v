@@ -3,20 +3,20 @@ module ysyx_24080020_FORWARD(
     input clk,
     input rst,
 
-    input [4:0] rs1_idu,
-    input [4:0] rs2_idu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rs1_idu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rs2_idu,
 
-    input [4:0] rd_exu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rd_exu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_exu,
 
-    input [4:0] rd_lsu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rd_lsu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     // input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
     input is_load,
     // input [`ysyx_24080020_WIDTH-1:0] mrdata,
     input fin_load,
 
-    input [4:0] rd_wbu,
+    input [`ysyx_24080020_REG_WIDTH-1:0] rd_wbu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_wbu,
 
     output need_stall,
