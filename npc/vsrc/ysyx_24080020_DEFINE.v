@@ -48,10 +48,20 @@
 `ifdef ysyx_24080020_E_EXTERN
 `define ysyx_24080020_REG_NUM 16
 `define ysyx_24080020_REG_WIDTH 4
+`define ysyx_24080020_RD 10:7
+`define ysyx_24080020_RS1 18:15
+`define ysyx_24080020_RS2 23:20     // same location as shamt
 `else
 `define ysyx_24080020_REG_NUM 32
 `define ysyx_24080020_REG_WIDTH 5
+`define ysyx_24080020_RD 11:7
+`define ysyx_24080020_RS1 19:15
+`define ysyx_24080020_RS2 24:20     // same location as shamt
 `endif
+
+`define ysyx_24080020_OPCODE 6:0
+`define ysyx_24080020_FUNCT3 14:12
+`define ysyx_24080020_FUNCT7 31:25
 
 // ALU OP code
 `define ysyx_24080020_ALU_OP_WIDTH 5
@@ -76,12 +86,6 @@
 
 
 
-`define ysyx_24080020_OPCODE 6:0
-`define ysyx_24080020_RD 11:7
-`define ysyx_24080020_FUNCT3 14:12
-`define ysyx_24080020_RS1 19:15
-`define ysyx_24080020_RS2 24:20     // same location as shamt
-`define ysyx_24080020_FUNCT7 31:25
 
 
 // I-TYPE
