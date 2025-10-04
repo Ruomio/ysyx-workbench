@@ -589,7 +589,7 @@ void update_npc_cpu() {
 }
 
 void update_dut() {
-  for(int i=0; i<32; i++) {
+  for(int i=0; i<CONFIG_REGS_NUM; i++) {
 #if defined (ysyxSoCFull)
     top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #elif defined (ysyx_24080020_NPC)
