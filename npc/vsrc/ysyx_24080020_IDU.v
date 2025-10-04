@@ -101,7 +101,7 @@ module ysyx_24080020_IDU (
     assign opcode = inst_idu[`ysyx_24080020_OPCODE];
     assign rd = inst_idu[`ysyx_24080020_RD];
     assign funct3 = inst_idu[`ysyx_24080020_FUNCT3];
-    assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 5'hf : inst_idu[`ysyx_24080020_RS1];
+    assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 'hf : inst_idu[`ysyx_24080020_RS1];
     assign rs2 = inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
 
