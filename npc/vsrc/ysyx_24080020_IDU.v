@@ -135,7 +135,7 @@ module ysyx_24080020_IDU (
             idu_exu_valid <= 1'b0;
             inst_idu <= 'b0;
         end
-        else if(cnt == 'd2) begin
+        else if((cnt == 'd2) && !need_stall) begin
             idu_exu_valid <= 1'b1;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
@@ -168,8 +168,20 @@ module ysyx_24080020_IDU (
         else if(cnt == 'b1) begin
             cnt <= 'd2;
         end
-        else if(ifu_idu_valid && idu_ifu_ready) begin
+        else if((ifu_idu_valid && idu_ifu_ready) || (need_stall_next && !need_stall)) begin
             cnt <= 'b1;
+        end
+    end
+
+    // after need_stall, need decode again
+    reg need_stall_next;
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            need_stall_next <= 1'b0;
+        end
+        else begin
+            need_stall_next <= need_stall;
         end
     end
 
