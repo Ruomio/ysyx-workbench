@@ -90,11 +90,11 @@ module ysyx_24080020_ARBITER (
     input [3:0] bid_xbar,
     output bready_arbiter
 );
-  localparam max_cnt = 2'd2;
+  localparam max_cnt = 3'd2;
 
   // wire [2:0] max_cnt;
-  reg [1:0] ifu_wait_cnt;
-  reg [1:0] mem_wait_cnt;
+  reg [2:0] ifu_wait_cnt;
+  reg [2:0] mem_wait_cnt;
 
   reg ifu_or_mem;
   reg wait_rdata;
