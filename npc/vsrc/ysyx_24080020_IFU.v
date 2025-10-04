@@ -9,6 +9,7 @@ module ysyx_24080020_IFU (
     input [`ysyx_24080020_WIDTH-1:0] raddr,
 
     // pipeline
+    output reg flush_pipeline,
 
     output inst_fin,
 
@@ -42,8 +43,6 @@ module ysyx_24080020_IFU (
 
     reg state; // 0: idle  ;  1: wait_ready
     reg [`ysyx_24080020_WIDTH-1:0] correct_pc;
-
-    reg flush_pipeline;
 
     assign inst_fin = inst_fin_valid & inst_fin_ready;
 
