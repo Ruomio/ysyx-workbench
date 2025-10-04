@@ -18,6 +18,10 @@ config ISA
   default "loongarch32r" if ISA_loongarch32r
   default "none"
 
+config E_EXTENSION
+    bool "enable RISCV E EXTENSION"
+    default yes
+
 menu "Build options"
     config DEBUG
         bool "is enable -g parameter when compiling"
