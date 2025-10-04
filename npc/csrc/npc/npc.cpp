@@ -579,7 +579,7 @@ uint32_t g_get_rd() {
 
 
 void update_npc_cpu() {
-  for(int i=0; i<32; i++) {
+  for(int i=0; i<CONFIG_REGS_NUM; i++) {
     npc_cpu.gpr[i] = g_get_reg(i);
     if(i<6) {
       npc_cpu.csrs[i] = g_get_csrs(i);
