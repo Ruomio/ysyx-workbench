@@ -93,8 +93,8 @@ module ysyx_24080020_ARBITER (
   localparam max_cnt = 2'd2;
 
   // wire [2:0] max_cnt;
-  reg [2:0] ifu_wait_cnt;
-  reg [2:0] mem_wait_cnt;
+  reg [1:0] ifu_wait_cnt;
+  reg [1:0] mem_wait_cnt;
 
   reg ifu_or_mem;
   reg wait_rdata;
