@@ -101,7 +101,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] src1_idu, src1_exu;
   wire [`ysyx_24080020_WIDTH-1:0] src2_idu, src2_exu, src2_mem;
   wire [`ysyx_24080020_WIDTH-1:0] val_raddr1, val_raddr2;
-  wire [`ysyx_24080020_WIDTH-1:0] result_wb;
+  wire [`ysyx_24080020_WIDTH-1:0] rd_data_wb;
   // csrs
   wire is_csrtype_idu;
   wire wcsren_idu, wcsren_exu, wcsren_mem, wcsren_wb;
@@ -535,7 +535,8 @@ module ysyx_24080020_NPC(
         // .alu_out_mem(alu_out_mem),
         .rd_data_mem(rd_data_mem),
         .waddr_wb(waddr_wb),
-        .result(result_wb),
+        // .result(result_wb),
+        .rd_data_wb(rd_data_wb),
 
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
@@ -1285,7 +1286,7 @@ module ysyx_24080020_NPC(
 		.fin_load(mem_wb_valid),
 
 		.rd_wbu(waddr_wb),
-		.rd_data_wbu(result_wb),
+		.rd_data_wbu(rd_data_wb),
 
 		.need_stall(need_stall),
 		.rd_data1_forward(rd_data1_forward),
