@@ -132,7 +132,7 @@ module ysyx_24080020_IDU (
         else if(ifu_idu_valid && idu_ifu_ready) begin
             next_inst <= 'b0;
         end
-        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline) begin
+        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline ) begin
             next_inst <= 'b1;
         end
     end
@@ -189,8 +189,13 @@ module ysyx_24080020_IDU (
         if(!rst) begin
             cnt <= 'b0;
         end
-        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline) begin
+        else if((idu_exu_valid_reg && exu_idu_ready) /* || flush_pipeline */) begin
             cnt <= 'b0;
+        end
+        else if(cnt == 'b10) begin
+            if(need_stall) begin
+                cnt <= 'b1;
+            end
         end
         else if(cnt == 'b1) begin
             if(need_stall) begin
