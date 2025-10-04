@@ -189,7 +189,7 @@ module ysyx_24080020_IDU (
         if(!rst) begin
             cnt <= 'b0;
         end
-        else if((idu_exu_valid_reg && exu_idu_ready) /* || flush_pipeline */) begin
+        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline ) begin
             cnt <= 'b0;
         end
         else if(cnt == 'b10) begin
@@ -198,8 +198,11 @@ module ysyx_24080020_IDU (
             end
         end
         else if(cnt == 'b1) begin
-            if(need_stall || flush_pipeline) begin
+            if(need_stall) begin
                 cnt <= 'b1;
+            end
+            else if(flush_pipeline) begin
+                cnt <= 'b0;
             end
             else begin
                 cnt <= 'd2;
