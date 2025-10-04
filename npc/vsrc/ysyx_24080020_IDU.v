@@ -85,9 +85,10 @@ module ysyx_24080020_IDU (
     wire [`ysyx_24080020_REG_WIDTH-1:0] rd;
 
 
-    reg state; // 0: idle;    1: wait_ready
+    // reg state; // 0: idle;    1: wait_ready
 
     reg [1:0] cnt;
+    reg next_inst;
 
 
     reg idu_exu_valid;
@@ -108,59 +109,80 @@ module ysyx_24080020_IDU (
     // assign idu_exu_valid_reg = idu_exu_valid && !data_adventure;
     assign idu_exu_valid_reg = idu_exu_valid && !need_stall;
 
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         state <= 1'b0;
+    //     end
+    //     else if(!state) begin
+    //         if(idu_exu_valid) state <= 1'b1;
+    //         else state <= 1'b0;
+    //     end
+    //     else begin
+    //         if(exu_idu_ready) state <= 1'b0;
+    //         else begin
+    //             state <= 1'b1;
+    //         end
+    //     end
+    // end
+
     always @(posedge clk) begin
         if(!rst) begin
-            state <= 1'b0;
+            next_inst <= 'b1;
         end
-        else if(!state) begin
-            if(idu_exu_valid) state <= 1'b1;
-            else state <= 1'b0;
+        else if(ifu_idu_valid && idu_ifu_ready) begin
+            next_inst <= 'b0;
         end
-        else begin
-            if(exu_idu_ready) state <= 1'b0;
-            else begin
-                state <= 1'b1;
-            end
+        else if(idu_exu_valid_reg && exu_idu_ready) begin
+            next_inst <= 'b1;
         end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
-            idu_exu_valid <= 1'b0;
-            inst_idu <= 'b0;
             idu_ifu_ready <= 'b0;
             pc_idu <= 'b0;
-        end
-        else if(idu_exu_valid_reg && exu_idu_ready && state /* &&!cnt */) begin
-            idu_exu_valid <= 1'b0;
-            inst_idu <= 'b0;
-        end
-        else if(need_stall) begin
-            idu_exu_valid <= 1'b0;
-        end
-        else if(cnt == 'd2) begin
-            if(!flush_pipeline) begin
-                idu_exu_valid <= 1'b1;
-            end
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
             idu_ifu_ready <= 1'b0;
 
             // update inst reg
             pc_idu <= pc_ifu;
-            inst_idu <= inst_ifu;
 
-            // idu_exu_valid <= 1'b1;
         end
-        else if(ifu_idu_valid) begin
-            if(idu_exu_valid) idu_ifu_ready <= 1'b0;
-            else if(!need_stall) begin
-                // shake hands successfully
-                idu_ifu_ready <= 1'b1;
+        else if(next_inst) begin
+            idu_ifu_ready <= 1'b1;
+        end
 
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            idu_exu_valid <= 1'b0;
+        end
+        else if(idu_exu_valid_reg && exu_idu_ready) begin
+            idu_exu_valid <= 1'b0;
+        end
+        else if(need_stall) begin
+            idu_exu_valid <= 1'b0;
+        end
+        else if(cnt == 'd2) begin
+            if(!flush_pipeline && !next_inst) begin
+                idu_exu_valid <= 1'b1;
             end
         end
 
+    end
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            inst_idu <= 'b0;
+        end
+        else if(idu_exu_valid_reg && exu_idu_ready) begin
+            inst_idu <= 'b0;
+        end
+        else if(ifu_idu_valid && idu_ifu_ready) begin
+            inst_idu <= inst_ifu;
+        end
     end
 
     always @(posedge clk) begin
