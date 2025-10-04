@@ -132,7 +132,7 @@ module ysyx_24080020_IDU (
         else if(ifu_idu_valid && idu_ifu_ready) begin
             next_inst <= 'b0;
         end
-        else if(idu_exu_valid_reg && exu_idu_ready) begin
+        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline) begin
             next_inst <= 'b1;
         end
     end
