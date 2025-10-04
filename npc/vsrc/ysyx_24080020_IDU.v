@@ -82,7 +82,7 @@ module ysyx_24080020_IDU (
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
-    wire [4:0] rd;
+    wire [`ysyx_24080020_REG_WIDTH-1:0] rd;
 
 
     reg state; // 0: idle;    1: wait_ready
