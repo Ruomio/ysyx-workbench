@@ -169,7 +169,7 @@ module ysyx_24080020_IDU (
             cnt <= 'b0;
         end
         else if(need_stall) begin
-            cnt <= ''b1;
+            cnt <= 'b1;
         end
         else if(cnt == 'b1) begin
             cnt <= 'd2;
