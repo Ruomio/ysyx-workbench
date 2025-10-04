@@ -198,7 +198,7 @@ module ysyx_24080020_IDU (
             end
         end
         else if(cnt == 'b1) begin
-            if(need_stall) begin
+            if(need_stall || flush_pipeline) begin
                 cnt <= 'b1;
             end
             else begin
