@@ -441,7 +441,7 @@ module ysyx_24080020_MEM(
                 || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
                 ) begin
                 // skip uart keyboard etc.
-                skip_ref_mem <= 'b0;
+                skip_ref_mem <= 'b1;
             end
 
 
