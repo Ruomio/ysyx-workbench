@@ -88,6 +88,7 @@ module ysyx_24080020_REG
         else if(mem_wb_valid && wb_mem_ready) begin
             wb_mem_ready <= 'b0;
 
+            cnt <= 'b1;
             // shake hands successfully
             waddr_wb <= waddr_mem;
             rd_data_wb <= rd_data_mem;
@@ -99,12 +100,6 @@ module ysyx_24080020_REG
             wcsren2_wb <= wcsren2_mem;
             wcsraddr2_wb <= wcsraddr2_mem;
             wcsrdata2_wb <= wcsrdata2_mem;
-
-
-
-            cnt <= 'b1;
-
-
 
             `ifdef CONFIG_DPIC
             pc_wbu <= pc_lsu;
@@ -155,8 +150,10 @@ module ysyx_24080020_REG
         end
     end
 
+    // regs read
     assign val_raddr1 = regs[raddr1];
     assign val_raddr2 = regs[raddr2];
 
+    // csrs read
     assign rcsrdata = csrs[rcsraddr];
 endmodule
