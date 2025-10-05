@@ -445,8 +445,6 @@ module ysyx_24080020_NPC(
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
-        // .wb_ifu_valid(1'b1),
-        // .ifu_wb_ready(ifu_wb_ready)
         .idu_ifu_ready(idu_ifu_ready),
         .ifu_idu_valid(ifu_idu_valid)
     );
@@ -454,6 +452,11 @@ module ysyx_24080020_NPC(
     ysyx_24080020_IDU idu(
         .clk(clk),
         .rst(rst),
+
+        `ifdef CONFIG_DEBUG
+        .skip_ref_idu(skip_ref_idu),
+        .is_ebreak(is_ebreak_idu),
+        `endif
 
         .need_stall(need_stall),
         .rs1_conflict(rs1_conflict),
@@ -463,8 +466,6 @@ module ysyx_24080020_NPC(
         // .data_adventure(data_adventure),
         .flush_pipeline(flush_pipeline),
 
-        .skip_ref_idu(skip_ref_idu),
-        .is_ebreak(is_ebreak_idu),
 
         .inst_ifu(inst_ifu),
         .rs1(rs1),

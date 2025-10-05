@@ -8,6 +8,7 @@ module ysyx_24080020_IDU (
     output reg skip_ref_idu,
 
 `endif
+
     // input data_adventure,
     input need_stall,
     input rs1_conflict,
@@ -18,7 +19,6 @@ module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
-    // input [`ysyx_24080020_WIDTH-1:0] snpc_ifu,
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     input flush_pipeline,
 
@@ -36,7 +36,6 @@ module ysyx_24080020_IDU (
     output reg is_jal_idu,
     output reg is_btype_idu,
     output reg is_jalr_idu,
-    // output reg [2:0] is_btype_idu,
     output reg is_csrtype_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg fencei_idu,
@@ -54,7 +53,6 @@ module ysyx_24080020_IDU (
     // alu control
     output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
     output reg alu_src2_con_idu,
-    // output reg reg_dst_con_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] src1_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] src2_idu,
@@ -110,24 +108,7 @@ module ysyx_24080020_IDU (
     assign rs2 = inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
 
-    // assign idu_exu_valid_reg = idu_exu_valid && !data_adventure;
     assign idu_exu_valid_reg = idu_exu_valid && !need_stall;
-
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         state <= 1'b0;
-    //     end
-    //     else if(!state) begin
-    //         if(idu_exu_valid) state <= 1'b1;
-    //         else state <= 1'b0;
-    //     end
-    //     else begin
-    //         if(exu_idu_ready) state <= 1'b0;
-    //         else begin
-    //             state <= 1'b1;
-    //         end
-    //     end
-    // end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -719,11 +700,6 @@ module ysyx_24080020_IDU (
                             // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wdata_idu <= rcsrdata;
                             wen_idu <= 1'b1;
-
-                            // skip_ref_idu <= 1'b1;
-                            // `ifdef CONFIG_DPIC
-                            // npc_difftest_skip_ref();
-                            // `endif
                         end
 
                         default: begin
@@ -754,11 +730,6 @@ module ysyx_24080020_IDU (
                     `ifdef CONFIG_DPIC
                     update_ftrace_dpi();
                     `endif
-                    if(imm_idu == 32'b0) begin
-                        `ifdef CONFIG_DPIC
-                        // halt();
-                        `endif
-                    end
                 end
 
                 `ysyx_24080020_JALR: begin
@@ -779,7 +750,6 @@ module ysyx_24080020_IDU (
                     branch_src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
 
                     is_jalr_idu <= 1'b1;
-                    // update_ftrace_dpi();
                 end
 
                 `ysyx_24080020_AUIPC: begin

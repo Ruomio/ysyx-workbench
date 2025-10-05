@@ -151,9 +151,24 @@ module ysyx_24080020_REG
     end
 
     // regs read
-    assign val_raddr1 = regs[raddr1];
-    assign val_raddr2 = regs[raddr2];
+    // assign val_raddr1 = regs[raddr1];
+    // assign val_raddr2 = regs[raddr2];
+    always @(posedge clk) begin
+        if(!rst) begin
+        end
+        else begin
+            val_raddr1 <= regs[raddr1];
+            val_raddr2 <= regs[raddr2];
+        end
+    end
 
     // csrs read
-    assign rcsrdata = csrs[rcsraddr];
+    // assign rcsrdata = csrs[rcsraddr];
+    always @(posedge clk) begin
+        if(!rst) begin
+        end
+        else begin
+            rcsrdata <= csrs[rcsraddr];
+        end
+    end
 endmodule
