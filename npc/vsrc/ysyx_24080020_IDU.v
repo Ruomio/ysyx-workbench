@@ -4,10 +4,11 @@ module ysyx_24080020_IDU (
     input rst,
 
 `ifdef CONFIG_DPIC
-    output reg is_ebreak,
     output reg skip_ref_idu,
 
 `endif
+
+    output reg is_ebreak,
 
     // input data_adventure,
     input need_stall,
@@ -284,8 +285,10 @@ module ysyx_24080020_IDU (
 
             // other
             fencei_idu <= 'b0;
-            skip_ref_idu <= 1'b0;
             imm_idu <= 'd0;
+            `ifdef CONFIG_DPIC
+            skip_ref_idu <= 1'b0;
+            `endif
         end
         else if(cnt == 'b0) begin
             // initial
@@ -331,8 +334,10 @@ module ysyx_24080020_IDU (
 
             // other
             fencei_idu <= 'b0;
-            skip_ref_idu <= 1'b0;
             imm_idu <= 'd0;
+            `ifdef CONFIG_DPIC
+            skip_ref_idu <= 1'b0;
+            `endif
         end
         else if(cnt == 'b1) begin
             // step 1 assignment for B-type
@@ -752,9 +757,9 @@ module ysyx_24080020_IDU (
                 end
 
                 // rst
-                7'b0000000 : begin
-                    imm_idu <= 32'b0;
-                end
+                // 7'b0000000 : begin
+                //     imm_idu <= 32'b0;
+                // end
 
                 default: begin
                     imm_idu <= 32'b0;
