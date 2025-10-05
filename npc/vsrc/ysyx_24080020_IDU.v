@@ -85,7 +85,6 @@ module ysyx_24080020_IDU (
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
     wire [`ysyx_24080020_REG_WIDTH-1:0] rd;
-    wire [`ysyx_24080020_WIDTH-1:0] imm_idu;
 
 
     // reg state; // 0: idle;    1: wait_ready
