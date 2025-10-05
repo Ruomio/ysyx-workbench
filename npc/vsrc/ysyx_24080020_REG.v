@@ -134,7 +134,7 @@ module ysyx_24080020_REG
         end
         else if(wen_wb) begin
             regs[waddr_wb] <= rd_data_wb;
-            regs[0] = 'b0;
+            regs[0] <= 'b0;
         end
     end
 
