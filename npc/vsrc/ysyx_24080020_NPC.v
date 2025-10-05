@@ -127,6 +127,8 @@ module ysyx_24080020_NPC(
   // alu
   wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu, alu_op_exu;
   wire [`ysyx_24080020_WIDTH-1:0] alu_out_exu, alu_out_mem;
+  wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu;
+  wire [`ysyx_24080020_WIDTH-1:0] alu_src1, alu_src2, alu_out;
 
   // bus control
   wire ifu_idu_valid;
@@ -553,7 +555,14 @@ module ysyx_24080020_NPC(
         .wb_mem_ready(wb_mem_ready)
     );
 
-    ysyx_24080020_EXU exu(
+    ysyx_24080020_ALU u_alu(
+        .alu_op(alu_op_exu),
+        .alu_src1(alu_src1),
+        .alu_src2(alu_src2),
+        .alu_out(alu_out)
+    );
+
+    ysyx_24080020_EXU u_exu(
         .clk(clk),
         .rst(rst),
 
@@ -577,6 +586,11 @@ module ysyx_24080020_NPC(
         .is_btype_exu(is_btype_exu),
         .is_jal_exu(is_jal_exu),
         .dnpc_new_exu(dnpc_new_exu),
+
+        .alu_op_exu(alu_op_exu),
+        .alu_src1(alu_src1),
+        .alu_src2(alu_src2),
+        .alu_out(alu_out),
 
         .alu_src2_con_idu(alu_src2_con_idu),
         .src1_idu(src1_idu),

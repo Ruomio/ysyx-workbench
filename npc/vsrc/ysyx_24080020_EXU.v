@@ -36,6 +36,11 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
 
+    output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu,
+    output [`ysyx_24080020_WIDTH-1:0] alu_src1,
+    output [`ysyx_24080020_WIDTH-1:0] alu_src2,
+    input [`ysyx_24080020_WIDTH-1:0] alu_out,
+
     // reg
     input wen_idu,
     input [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
@@ -90,9 +95,6 @@ module ysyx_24080020_EXU
     import "DPI-C" function void statistics_idu_jump_type();
 `endif
 
-    wire [`ysyx_24080020_WIDTH-1:0] alu_src1;
-    wire [`ysyx_24080020_WIDTH-1:0] alu_src2;
-    wire [`ysyx_24080020_WIDTH-1:0] alu_out;
 
     wire [`ysyx_24080020_WIDTH-1:0] dnpc;
     wire [`ysyx_24080020_WIDTH-1:0] branch_dnpc;
@@ -105,7 +107,6 @@ module ysyx_24080020_EXU
     reg is_jalr_exu;
     reg is_csrtype_exu;
     reg alu_src2_con_exu;
-    reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
     reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
@@ -326,12 +327,12 @@ module ysyx_24080020_EXU
     assign alu_src1 = src1_exu;
     assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
 
-    ysyx_24080020_ALU alu(
-        .alu_op(alu_op_exu),
-        .alu_src1(alu_src1),
-        .alu_src2(alu_src2),
-        .alu_out(alu_out)
-    );
+    // ysyx_24080020_ALU alu(
+    //     .alu_op(alu_op_exu),
+    //     .alu_src1(alu_src1),
+    //     .alu_src2(alu_src2),
+    //     .alu_out(alu_out)
+    // );
 
     assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
                             is_csrtype_exu == 1'b1 ? dnpc_exu : pc_exu;
