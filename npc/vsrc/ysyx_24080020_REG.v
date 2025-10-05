@@ -140,6 +140,7 @@ module ysyx_24080020_REG
 
     // 寄存器0始终为0
     assign regs[0] = 32'b0;
+
     always @(posedge clk) begin
         if(!rst) begin
             wen_wb <= 'b0;
