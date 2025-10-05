@@ -9,8 +9,6 @@ module ysyx_24080020_EXU
     output reg is_load_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_exu,
 
-    input skip_ref_idu,
-    output reg skip_ref_exu,
 
     input is_ebreak_idu,
     output reg is_ebreak_exu,
@@ -196,7 +194,6 @@ module ysyx_24080020_EXU
             fencei_exu <= 'b0;
 
 
-            skip_ref_exu <= 'b0;
             is_ebreak_exu <= 'b0;
             // exu_mem_valid <= 'b0;
 
@@ -262,7 +259,6 @@ module ysyx_24080020_EXU
 
                 fencei_exu <= fencei_idu;
 
-                skip_ref_exu <= skip_ref_idu;
 
                 is_ebreak_exu <= is_ebreak_idu;
 

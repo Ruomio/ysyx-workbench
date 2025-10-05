@@ -4,7 +4,6 @@ module ysyx_24080020_IDU (
     input rst,
 
 `ifdef CONFIG_DPIC
-    output reg skip_ref_idu,
 
 `endif
 
@@ -286,9 +285,6 @@ module ysyx_24080020_IDU (
             // other
             fencei_idu <= 'b0;
             imm_idu <= 'd0;
-            `ifdef CONFIG_DPIC
-            skip_ref_idu <= 1'b0;
-            `endif
         end
         else if(cnt == 'b0) begin
             // initial
@@ -335,9 +331,6 @@ module ysyx_24080020_IDU (
             // other
             fencei_idu <= 'b0;
             imm_idu <= 'd0;
-            `ifdef CONFIG_DPIC
-            skip_ref_idu <= 1'b0;
-            `endif
         end
         else if(cnt == 'b1) begin
             // step 1 assignment for B-type
@@ -614,10 +607,6 @@ module ysyx_24080020_IDU (
 
                                 is_dnpc_idu <= 1'b1;
 
-                                // skip_ref_idu <= 1'b1;
-                                // `ifdef CONFIG_DPIC
-                                // npc_difftest_skip_ref();
-                                // `endif
                             end
                             else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
                                 // mret
@@ -658,10 +647,6 @@ module ysyx_24080020_IDU (
                             wdata_idu <= rcsrdata;
                             wen_idu <= 1'b1;
 
-                            // skip_ref_idu <= 1'b1;
-                            // `ifdef CONFIG_DPIC
-                            // npc_difftest_skip_ref();
-                            // `endif
                         end
                         `ysyx_24080020_CSRRS: begin
                             rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];

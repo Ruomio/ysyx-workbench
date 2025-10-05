@@ -17,7 +17,6 @@ module ysyx_24080020_MEM(
     output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     output reg exu_mem_shake_hands,
 
-    input skip_ref_exu,
     output reg skip_ref_mem,
 
     input is_ebreak_exu,
@@ -449,9 +448,9 @@ module ysyx_24080020_MEM(
             `endif
 
         end
-        else if(exu_mem_valid && mem_exu_ready) begin
-            skip_ref_mem <= skip_ref_exu;
-        end
+        // else if(exu_mem_valid && mem_exu_ready) begin
+        //     skip_ref_mem <= skip_ref_exu;
+        // end
     end
 
     always @(posedge clk) begin

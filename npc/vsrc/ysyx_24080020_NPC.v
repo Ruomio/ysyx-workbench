@@ -324,7 +324,7 @@ module ysyx_24080020_NPC(
 
 
   // skip difftest ref
-  wire skip_ref_idu, skip_ref_exu, skip_ref_mem;
+  wire skip_ref_mem;
 
   wire is_ebreak_idu, is_ebreak_exu, is_ebreak_lsu;
 
@@ -454,9 +454,9 @@ module ysyx_24080020_NPC(
         .rst(rst),
 
         `ifdef CONFIG_DPIC
-        .skip_ref_idu(skip_ref_idu),
-        .is_ebreak(is_ebreak_idu),
         `endif
+
+        .is_ebreak(is_ebreak_idu),
 
         .need_stall(need_stall),
         .rs1_conflict(rs1_conflict),
@@ -557,8 +557,6 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .skip_ref_idu(skip_ref_idu),
-        .skip_ref_exu(skip_ref_exu),
 
         .is_ebreak_idu(is_ebreak_idu),
         .is_ebreak_exu(is_ebreak_exu),
@@ -638,7 +636,6 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .skip_ref_exu(skip_ref_exu),
         .skip_ref_mem(skip_ref_mem),
 
         .is_ebreak_exu(is_ebreak_exu),
