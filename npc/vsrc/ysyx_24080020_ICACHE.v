@@ -682,7 +682,7 @@ module ysyx_24080020_ICACHE(
 `ifndef USE_ICACHE
 
 
-  assign special_pc_o = 'b1;
+  assign special_pc_o = special_pc_i;
 
   // assign raddr = araddr_i;
   always @(posedge clk) begin
