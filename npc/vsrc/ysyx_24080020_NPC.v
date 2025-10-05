@@ -467,6 +467,9 @@ module ysyx_24080020_NPC(
         // .data_adventure(data_adventure),
         .flush_pipeline(flush_pipeline),
 
+        // .imm_idu(imm_idu),
+        // .alu_src2_con_idu(alu_src2_con_idu),
+        .pc_idu(pc_idu),
 
         .inst_ifu(inst_ifu),
         .rs1(rs1),
@@ -474,7 +477,6 @@ module ysyx_24080020_NPC(
         .val_raddr1(val_raddr1),
         .val_raddr2(val_raddr2),
         .pc_ifu(pc_ifu),
-        .imm_idu(imm_idu),
         .branch_src1_idu(branch_src1_idu),
         .wen_idu(wen_idu),
         .waddr_idu(waddr_idu),
@@ -498,8 +500,6 @@ module ysyx_24080020_NPC(
         .wcsrdata2_idu(wcsrdata2_idu),
 
         .alu_op_idu(alu_op_idu),
-        .alu_src2_con_idu(alu_src2_con_idu),
-        .pc_idu(pc_idu),
         .src1_idu(src1_idu),
         .src2_idu(src2_idu),
 
@@ -569,8 +569,10 @@ module ysyx_24080020_NPC(
         .is_ebreak_idu(is_ebreak_idu),
         .is_ebreak_exu(is_ebreak_exu),
 
+        // .imm_idu(imm_idu),
+        // .alu_src2_con_idu(alu_src2_con_idu),
+
         .pc_idu(pc_idu),
-        .imm_idu(imm_idu),
         .is_load_idu(is_load_idu),
         .is_load_exu(is_load_exu),
         .pc_exu(pc_exu),
@@ -591,7 +593,6 @@ module ysyx_24080020_NPC(
         .alu_src2(alu_src2),
         .alu_out(alu_out),
 
-        .alu_src2_con_idu(alu_src2_con_idu),
         .src1_idu(src1_idu),
         .src2_idu(src2_idu),
         .alu_op_idu(alu_op_idu),
