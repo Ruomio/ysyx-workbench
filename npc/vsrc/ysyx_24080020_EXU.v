@@ -337,11 +337,7 @@ module ysyx_24080020_EXU
                             is_csrtype_exu == 1'b1 ? dnpc_exu : pc_exu;
     assign branch_src2 = is_csrtype_exu == 1'b1 ? 32'b0 : imm_exu;
 
-    ysyx_24080020_ADDER u_branch(
-        .a(branch_src1),
-        .b(branch_src2),
-        .c(branch_dnpc)
-    );
+    assign branch_dnpc = branch_src1 + branch_src2;
 
 
 endmodule
