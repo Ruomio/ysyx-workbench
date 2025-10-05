@@ -453,7 +453,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        `ifdef CONFIG_DEBUG
+        `ifdef CONFIG_DPIC
         .skip_ref_idu(skip_ref_idu),
         .is_ebreak(is_ebreak_idu),
         `endif
