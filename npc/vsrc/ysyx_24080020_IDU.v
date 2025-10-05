@@ -2,6 +2,12 @@
 module ysyx_24080020_IDU (
     input clk,
     input rst,
+
+`ifdef CONFIG_DPIC
+    output reg is_ebreak,
+    output reg skip_ref_idu,
+
+`endif
     // input data_adventure,
     input need_stall,
     input rs1_conflict,
@@ -19,7 +25,6 @@ module ysyx_24080020_IDU (
     output reg [`ysyx_24080020_WIDTH-1:0] imm_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
 
-    output reg is_ebreak,
     // reg
     output reg wen_idu,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] rs1,
@@ -35,7 +40,6 @@ module ysyx_24080020_IDU (
     output reg is_csrtype_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg fencei_idu,
-    output reg skip_ref_idu,
 
     // csrs
     input [`ysyx_24080020_WIDTH-1:0] rcsrdata,

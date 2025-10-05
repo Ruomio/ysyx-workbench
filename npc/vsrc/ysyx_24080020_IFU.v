@@ -22,9 +22,9 @@ module ysyx_24080020_IFU (
     input inst_fin_valid,
     output reg inst_fin_ready,
 
-    input wb_ifu_valid,
+    // input wb_ifu_valid,
+    // output reg ifu_wb_ready,
     input idu_ifu_ready,
-    output reg ifu_wb_ready,
     output reg ifu_idu_valid
 );
 
@@ -73,6 +73,10 @@ module ysyx_24080020_IFU (
         end
         else if(inst_fin_valid && inst_fin_ready) begin
             inst_fin_ready <= 'b0;
+
+            `ifdef CONFIG_DPIC
+            statistics_ifu_get_inst();
+            `endif
         end
         else if(inst_fin_valid) begin
             special_pc <= special_pc_i;
@@ -96,32 +100,32 @@ module ysyx_24080020_IFU (
         end
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            ifu_wb_ready <= 1'b0;
-            wb_ifu_shake_hands <= 'b0;
-        end
-        else if(ifu_idu_valid && idu_ifu_ready && state) begin
-            // ifu_idu_valid <= 1'b0;
-            `ifdef CONFIG_DPIC
-            statistics_ifu_get_inst();
-            `endif
-        end
-        else if(wb_ifu_valid) begin
-            if(ifu_idu_valid) begin
-                ifu_wb_ready <= 1'b0;
-            end
-            else begin
-                // shake hands
-                ifu_wb_ready <= 1'b1;
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         ifu_wb_ready <= 1'b0;
+    //         wb_ifu_shake_hands <= 'b0;
+    //     end
+    //     else if(ifu_idu_valid && idu_ifu_ready && state) begin
+    //         // ifu_idu_valid <= 1'b0;
+    //         `ifdef CONFIG_DPIC
+    //         statistics_ifu_get_inst();
+    //         `endif
+    //     end
+    //     else if(wb_ifu_valid) begin
+    //         if(ifu_idu_valid) begin
+    //             ifu_wb_ready <= 1'b0;
+    //         end
+    //         else begin
+    //             // shake hands
+    //             ifu_wb_ready <= 1'b1;
 
-                wb_ifu_shake_hands <= 1'b1;
-            end
-        end
-        else begin
-            ifu_wb_ready <= 1'b0;
-        end
-    end
+    //             wb_ifu_shake_hands <= 1'b1;
+    //         end
+    //     end
+    //     else begin
+    //         ifu_wb_ready <= 1'b0;
+    //     end
+    // end
 
     always @(posedge clk) begin
         if(!rst) begin
