@@ -126,51 +126,110 @@ module ysyx_24080020_REG
         end
     end
 
-    // regs write
-    genvar i;
-    generate
-        for (i = 1; i < `ysyx_24080020_REG_NUM; i = i + 1) begin : gen_regs
-            always @(posedge clk) begin
-                if (wen_wb && waddr_wb == i) begin
-                    regs[i] <= rd_data_wb;
-                end
+    // regs write - 优化的集中式实现
+    integer j;
+    always @(posedge clk) begin
+        if (!rst) begin
+            for (j = 0; j < `ysyx_24080020_REG_NUM; j = j + 1) begin
+                regs[j] <= 32'b0;
             end
+        end else if (wen_wb && waddr_wb != 4'b0) begin
+            regs[waddr_wb] <= rd_data_wb;
         end
-    endgenerate
-
-    // 寄存器0始终为0
-    assign regs[0] = 32'b0;
+        // 寄存器0始终保持为0
+        regs[0] <= 32'b0;
+    end
 
     always @(posedge clk) begin
         if(!rst) begin
             wen_wb <= 'b0;
-            // regs[0] <= 'b0;
         end
         else if(wen_wb) begin
-            // regs[waddr_wb] <= rd_data_wb;
             wen_wb <= 1'b0;
-            // regs[0] <= 32'b0;
         end
         else if(mem_wb_valid && wb_mem_ready) begin
             wen_wb <= wen_mem;
         end
     end
 
-    // csrs write
+    // csrs write - 优化实现
     always @(posedge clk) begin
         if(!rst) begin
-            csrs[1] <= 32'h1800;
-            csrs[4] <= 32'h79737978;
-            csrs[5] <= 32'h16f6e94;
+            csrs[0] <= 32'b0;           // mepc
+            csrs[1] <= 32'h1800;        // mstatus
+            csrs[2] <= 32'b0;           // mcause
+            csrs[3] <= 32'b0;           // mtvec
+            csrs[4] <= 32'h79737978;    // MVENDORID
+            csrs[5] <= 32'h16f6e94;     // MARCHID
         end
         else  begin
-            if(wcsren_wb) csrs[wcsraddr_wb] <= wcsrdata_wb;
-            if(wcsren2_wb) csrs[wcsraddr2_wb] <= wcsrdata2_wb;
+            if(wcsren_wb && wcsraddr_wb < 3'd6) csrs[wcsraddr_wb] <= wcsrdata_wb;
+            if(wcsren2_wb && wcsraddr2_wb < 3'd6) csrs[wcsraddr2_wb] <= wcsrdata2_wb;
         end
     end
 
-    assign val_raddr1 = regs[raddr1];
-    assign val_raddr2 = regs[raddr2];
+    // 读取端口优化 - 显式多路复用器避免大型组合逻辑
+    reg [`ysyx_24080020_WIDTH-1:0] val_raddr1_reg;
+    reg [`ysyx_24080020_WIDTH-1:0] val_raddr2_reg;
+    reg [`ysyx_24080020_WIDTH-1:0] rcsrdata_reg;
+    
+    always @(*) begin
+        case(raddr1)
+            4'd0: val_raddr1_reg = 32'b0;
+            4'd1: val_raddr1_reg = regs[1];
+            4'd2: val_raddr1_reg = regs[2];
+            4'd3: val_raddr1_reg = regs[3];
+            4'd4: val_raddr1_reg = regs[4];
+            4'd5: val_raddr1_reg = regs[5];
+            4'd6: val_raddr1_reg = regs[6];
+            4'd7: val_raddr1_reg = regs[7];
+            4'd8: val_raddr1_reg = regs[8];
+            4'd9: val_raddr1_reg = regs[9];
+            4'd10: val_raddr1_reg = regs[10];
+            4'd11: val_raddr1_reg = regs[11];
+            4'd12: val_raddr1_reg = regs[12];
+            4'd13: val_raddr1_reg = regs[13];
+            4'd14: val_raddr1_reg = regs[14];
+            4'd15: val_raddr1_reg = regs[15];
+            default: val_raddr1_reg = 32'b0;
+        endcase
+    end
+    
+    always @(*) begin
+        case(raddr2)
+            4'd0: val_raddr2_reg = 32'b0;
+            4'd1: val_raddr2_reg = regs[1];
+            4'd2: val_raddr2_reg = regs[2];
+            4'd3: val_raddr2_reg = regs[3];
+            4'd4: val_raddr2_reg = regs[4];
+            4'd5: val_raddr2_reg = regs[5];
+            4'd6: val_raddr2_reg = regs[6];
+            4'd7: val_raddr2_reg = regs[7];
+            4'd8: val_raddr2_reg = regs[8];
+            4'd9: val_raddr2_reg = regs[9];
+            4'd10: val_raddr2_reg = regs[10];
+            4'd11: val_raddr2_reg = regs[11];
+            4'd12: val_raddr2_reg = regs[12];
+            4'd13: val_raddr2_reg = regs[13];
+            4'd14: val_raddr2_reg = regs[14];
+            4'd15: val_raddr2_reg = regs[15];
+            default: val_raddr2_reg = 32'b0;
+        endcase
+    end
+    
+    always @(*) begin
+        case(rcsraddr)
+            3'd0: rcsrdata_reg = csrs[0];
+            3'd1: rcsrdata_reg = csrs[1];
+            3'd2: rcsrdata_reg = csrs[2];
+            3'd3: rcsrdata_reg = csrs[3];
+            3'd4: rcsrdata_reg = csrs[4];
+            3'd5: rcsrdata_reg = csrs[5];
+            default: rcsrdata_reg = 32'b0;
+        endcase
+    end
 
-    assign rcsrdata = csrs[rcsraddr];
+    assign val_raddr1 = val_raddr1_reg;
+    assign val_raddr2 = val_raddr2_reg;
+    assign rcsrdata = rcsrdata_reg;
 endmodule
