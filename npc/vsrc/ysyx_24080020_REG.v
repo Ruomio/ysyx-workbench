@@ -163,12 +163,12 @@ module ysyx_24080020_REG
     // end
 
     // csrs read
-    // assign rcsrdata = csrs[rcsraddr];
-    always @(posedge clk) begin
-        if(!rst) begin
-        end
-        else begin
-            rcsrdata <= csrs[rcsraddr];
-        end
-    end
+    assign rcsrdata = csrs[rcsraddr];
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //     end
+    //     else begin
+    //         rcsrdata <= csrs[rcsraddr];
+    //     end
+    // end
 endmodule

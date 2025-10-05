@@ -347,8 +347,8 @@ module ysyx_24080020_IDU (
                         if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
                             // ecall
                             // csrs[mcause] <= R[a5];
-                            wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
-                            wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                            // wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
+                            // wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
 
                             // dnpc <= csrs[mtvec];
                             rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
