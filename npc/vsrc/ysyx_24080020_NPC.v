@@ -445,10 +445,10 @@ module ysyx_24080020_NPC(
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
-        .wb_ifu_valid(1'b1),
+        // .wb_ifu_valid(1'b1),
+        // .ifu_wb_ready(ifu_wb_ready)
         .idu_ifu_ready(idu_ifu_ready),
-        .ifu_idu_valid(ifu_idu_valid),
-        .ifu_wb_ready(ifu_wb_ready)
+        .ifu_idu_valid(ifu_idu_valid)
     );
 
     ysyx_24080020_IDU idu(
