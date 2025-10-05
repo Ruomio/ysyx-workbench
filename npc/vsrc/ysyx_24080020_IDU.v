@@ -149,7 +149,7 @@ module ysyx_24080020_IDU (
             pc_idu <= pc_ifu;
 
         end
-        else if(next_inst && ifu_idu_valid) begin
+        else if(next_inst && ifu_idu_valid && !need_stall) begin
             idu_ifu_ready <= 1'b1;
         end
 
