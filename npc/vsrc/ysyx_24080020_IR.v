@@ -40,6 +40,19 @@ module ysyx_24080020_IR(
 );
 
   reg if_en_shake_hands;
+  reg next_inst;
+
+  always @(posedge clk) begin
+    if(!rst) begin
+      next_inst <= 'b1;
+    end
+    else if(arvalid && arready) begin
+      next_inst <= 'b0;
+    end
+    else if(rvalid && rlast && rready) begin
+      next_inst <= 'b1;
+    end
+  end
 
   always @(posedge clk) begin
     if(!rst) begin
@@ -78,7 +91,7 @@ module ysyx_24080020_IR(
 
     end
     else if(if_en_valid) begin
-        if(!arvalid && !if_en_shake_hands) begin
+        if(!arvalid && !if_en_shake_hands && next_inst) begin
             if_en_ready <= 'b1;
         end
     end
