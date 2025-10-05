@@ -23,10 +23,10 @@ module ysyx_24080020_FORWARD(
     input rd_en_wbu,
 
     output need_stall,
-    output reg [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
-    output reg [`ysyx_24080020_WIDTH-1:0] rd_data2_forward,
-    output reg rs1_conflict,
-    output reg rs2_conflict
+    output [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
+    output [`ysyx_24080020_WIDTH-1:0] rd_data2_forward,
+    output rs1_conflict,
+    output rs2_conflict
 );
     // reg is_load_next;
 

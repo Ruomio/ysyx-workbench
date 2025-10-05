@@ -14,7 +14,7 @@ module ysyx_24080020_HAZARD(
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_exu,
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_lsu,
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_wbu,
-    output reg data_adventure,
+    output data_adventure,
 
     // control adventures, between ifu and exu
     input is_dnpc,
