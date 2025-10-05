@@ -127,15 +127,28 @@ module ysyx_24080020_REG
     end
 
     // regs write
+    genvar i;
+    generate
+        for (i = 1; i < `ysyx_24080020_REG_NUM; i = i + 1) begin : gen_regs
+            always @(posedge clk) begin
+                if (wen_wb && waddr_wb == i) begin
+                    regs[i] <= rd_data_wb;
+                end
+            end
+        end
+    endgenerate
+
+    // 寄存器0始终为0
+    assign regs[0] = 32'b0;
     always @(posedge clk) begin
         if(!rst) begin
             wen_wb <= 'b0;
-            regs[0] <= 'b0;
+            // regs[0] <= 'b0;
         end
         else if(wen_wb) begin
-            regs[waddr_wb] <= rd_data_wb;
+            // regs[waddr_wb] <= rd_data_wb;
             wen_wb <= 1'b0;
-            regs[0] <= 32'b0;
+            // regs[0] <= 32'b0;
         end
         else if(mem_wb_valid && wb_mem_ready) begin
             wen_wb <= wen_mem;
