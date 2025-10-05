@@ -27,8 +27,8 @@ module ysyx_24080020_IDU (
 
     // reg
     output reg wen_idu,
-    output reg [`ysyx_24080020_REG_WIDTH-1:0] rs1,
-    output reg [`ysyx_24080020_REG_WIDTH-1:0] rs2,
+    output [`ysyx_24080020_REG_WIDTH-1:0] rs1,
+    output [`ysyx_24080020_REG_WIDTH-1:0] rs2,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
     output reg is_load_idu,
@@ -68,7 +68,7 @@ module ysyx_24080020_IDU (
     input ifu_idu_valid,
     input exu_idu_ready,
     output reg idu_ifu_ready,
-    output reg idu_exu_valid_reg
+    output idu_exu_valid_reg
 
 );
 `ifdef CONFIG_DPIC

@@ -91,7 +91,7 @@ module ysyx_24080020_BTB(
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
     reg has_hit;
-    reg total_hits [0 : branch_way - 1];
+    wire total_hits [0 : branch_way - 1];
     reg [branch_way-1:0] tmp_tag_index;
 
 
@@ -343,7 +343,7 @@ module ysyx_24080020_BTB(
             end
         end
         else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
-            // error hit: should not jump, but jump 
+            // error hit: should not jump, but jump
             if(btb_hit) begin
                 btb_hit <= 'b0;
 

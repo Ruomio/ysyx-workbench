@@ -182,9 +182,9 @@ module ysyx_24080020_ICACHE(
   reg is_hit_s1;
   reg [cache_way-1:0] hit_tag_s1;
 
-  logic has_hit_s1;
-  logic total_hits_s1 [0 : cache_way - 1];
-  logic [cache_way-1:0] tmp_tag_index_s1;
+  reg has_hit_s1;
+  wire total_hits_s1 [0 : cache_way - 1];
+  reg [cache_way-1:0] tmp_tag_index_s1;
 
 
   generate
