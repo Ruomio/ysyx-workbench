@@ -106,7 +106,7 @@ module ysyx_24080020_EXU
 
     reg is_jalr_exu;
     reg is_csrtype_exu;
-    reg alu_src2_con_exu;
+    // reg alu_src2_con_exu;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
     // reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
@@ -172,7 +172,7 @@ module ysyx_24080020_EXU
             branch_src1_exu <= 'b0;
 
             alu_op_exu <= 'b0;
-            alu_src2_con_exu <= 'b0;
+            // alu_src2_con_exu <= 'b0;
             // reg_dst_con_exu <= 'b0;
             // imm_exu <= 'b0;
 
@@ -237,7 +237,7 @@ module ysyx_24080020_EXU
                 branch_src1_exu <= branch_src1_idu;
 
                 alu_op_exu <= alu_op_idu;
-                alu_src2_con_exu <= alu_src2_con_idu;
+                // alu_src2_con_exu <= alu_src2_con_idu;
                 // reg_dst_con_exu <= reg_dst_con_idu;
                 // imm_exu <= imm_idu;
 
