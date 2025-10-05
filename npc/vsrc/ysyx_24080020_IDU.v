@@ -569,6 +569,7 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_CSR_TYPE: begin
                     // imm_idu <= {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]};
+                    imm_idu <= 'b0;
 
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
