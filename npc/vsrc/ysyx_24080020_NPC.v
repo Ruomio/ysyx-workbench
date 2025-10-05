@@ -517,13 +517,15 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
+        `ifdef CONFIG_DPIC
         .skip_ref_mem(skip_ref_mem),
+        `endif
         .is_ebreak_lsu(is_ebreak_lsu),
 
         .raddr1(rs1),
         .raddr2(rs2),
 
-        .is_load_mem(is_load_mem),
+        // .is_load_mem(is_load_mem),
         .is_dnpc_mem(is_dnpc_mem),
         .dnpc_mem(dnpc_mem),
         .pc_lsu(pc_lsu),

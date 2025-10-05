@@ -3,8 +3,10 @@ module ysyx_24080020_REG
 (
     input clk,
     input rst,
-
+`ifdef CONFIG_DPIC
     input skip_ref_mem,
+`endif
+
 
     input [`ysyx_24080020_WIDTH-1:0] pc_lsu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu,
@@ -12,7 +14,6 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr1,
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr2,
 
-    input is_load_mem,
     input is_dnpc_mem,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
@@ -62,8 +63,6 @@ module ysyx_24080020_REG
     reg [`ysyx_24080020_WIDTH-1:0] csrs[0:5];
 
 
-    reg is_load_wb;
-
     reg cnt;
 
 
@@ -104,8 +103,6 @@ module ysyx_24080020_REG
             wcsren2_wb <= wcsren2_mem;
             wcsraddr2_wb <= wcsraddr2_mem;
             wcsrdata2_wb <= wcsrdata2_mem;
-
-            is_load_wb <= is_load_mem;
 
             pc_wbu <= pc_lsu;
 
