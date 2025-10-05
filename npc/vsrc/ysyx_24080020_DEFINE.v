@@ -24,7 +24,7 @@
 // inst cache
 `define USE_ICACHE
 `define ICACHE_PIPELINE
-`define ysyx_24080020_CACHE_SIZE 8
+`define ysyx_24080020_CACHE_SIZE 4
 `define ysyx_24080020_CACHE_NUM 2
 `define ysyx_24080020_CACHE_WAY 2
 
