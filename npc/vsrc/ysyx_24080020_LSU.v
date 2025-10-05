@@ -1,5 +1,5 @@
 `include "ysyx_24080020_DEFINE.v"
-module ysyx_24080020_MEM(
+module ysyx_24080020_LSU(
     input clk,
     input rst,
     // memory
@@ -409,7 +409,7 @@ module ysyx_24080020_MEM(
                 || araddr >= 32'ha0000048 && araddr < 32'ha0000050
                 ) begin
                 // skip uart keyboard etc.
-                skip_ref_mem <= 'b0;
+                skip_ref_mem <= 'b1;
             end
             `endif
 
@@ -448,9 +448,6 @@ module ysyx_24080020_MEM(
             `endif
 
         end
-        // else if(exu_mem_valid && mem_exu_ready) begin
-        //     skip_ref_mem <= skip_ref_exu;
-        // end
     end
 
     always @(posedge clk) begin

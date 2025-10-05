@@ -427,7 +427,7 @@ module ysyx_24080020_NPC(
         .rready(rready_ifu)
     );
 
-    ysyx_24080020_IFU ifu(
+    ysyx_24080020_IFU u_ifu(
         .clk(clk),
         .rst(rst),
 
@@ -449,7 +449,7 @@ module ysyx_24080020_NPC(
         .ifu_idu_valid(ifu_idu_valid)
     );
 
-    ysyx_24080020_IDU idu(
+    ysyx_24080020_IDU u_idu(
         .clk(clk),
         .rst(rst),
 
@@ -632,7 +632,7 @@ module ysyx_24080020_NPC(
     );
 
 
-    ysyx_24080020_MEM u_mem(
+    ysyx_24080020_LSU u_lsu(
         .clk(clk),
         .rst(rst),
 
