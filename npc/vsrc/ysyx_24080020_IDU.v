@@ -74,7 +74,7 @@ module ysyx_24080020_IDU (
 `ifdef CONFIG_DPIC
     // import "DPI-C" function void invalid_inst();
     // import "DPI-C" function void halt();
-    import "DPI-C" function void update_ftrace_dpi();
+    // import "DPI-C" function void update_ftrace_dpi();
     // import "DPI-C" function void statistics_idu_calculate_type();
     // import "DPI-C" function void statistics_idu_load_type();
     // import "DPI-C" function void statistics_idu_store_type();
@@ -704,9 +704,6 @@ module ysyx_24080020_IDU (
 
                     is_jal_idu <= 'b1;
 
-                    `ifdef CONFIG_DPIC
-                    update_ftrace_dpi();
-                    `endif
                 end
 
                 `ysyx_24080020_JALR: begin

@@ -87,6 +87,7 @@ module ysyx_24080020_EXU
 );
 `ifdef CONFIG_DPIC
     import "DPI-C" function void statistics_exu_complete_calcu();
+    import "DPI-C" function void update_ftrace_dpi();
 
     import "DPI-C" function void statistics_idu_calculate_type();
     import "DPI-C" function void statistics_idu_load_type();
@@ -209,6 +210,9 @@ module ysyx_24080020_EXU
             fencei_exu <= 'b0;
             `ifdef CONFIG_DPIC
             statistics_exu_complete_calcu();
+            if(is_jal_exu || is_jalr_exu) begin
+                update_ftrace_dpi();
+            end
             `endif
         end
         else if(idu_exu_shake_hand) begin
