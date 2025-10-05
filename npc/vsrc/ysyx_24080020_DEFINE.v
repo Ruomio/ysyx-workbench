@@ -30,8 +30,8 @@
 
 // branch
 `define ysyx_24080020_BRANCH_SIZE 4
-`define ysyx_24080020_BRANCH_NUM 1
-`define ysyx_24080020_BRANCH_WAY 1
+`define ysyx_24080020_BRANCH_NUM 2
+`define ysyx_24080020_BRANCH_WAY 2
 
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
