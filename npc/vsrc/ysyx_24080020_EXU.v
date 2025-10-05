@@ -143,7 +143,8 @@ module ysyx_24080020_EXU
 
     // branch
     assign dnpc = is_jalr_exu == 1'b1 ? (branch_dnpc & (~32'b1)) : branch_dnpc;
-    always @(dnpc or alu_out or wdata_exu or is_csrtype_exu) begin
+    // always @(dnpc or alu_out or wdata_exu or is_csrtype_exu) begin
+    always @(*) begin
         dnpc_new_exu = dnpc;
         alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
     end
