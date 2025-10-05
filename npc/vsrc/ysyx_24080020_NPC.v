@@ -519,25 +519,20 @@ module ysyx_24080020_NPC(
 
         `ifdef CONFIG_DPIC
         .skip_ref_mem(skip_ref_mem),
-        `endif
         .is_ebreak_lsu(is_ebreak_lsu),
+        .pc_lsu(pc_lsu),
+        .pc_wbu(pc_wbu),
+        .is_dnpc_mem(is_dnpc_mem),
+        .dnpc_mem(dnpc_mem),
+        `endif
 
         .raddr1(rs1),
         .raddr2(rs2),
 
-        // .is_load_mem(is_load_mem),
-        .is_dnpc_mem(is_dnpc_mem),
-        .dnpc_mem(dnpc_mem),
-        .pc_lsu(pc_lsu),
-        .pc_wbu(pc_wbu),
-
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
-        // .mrdata_mem(mrdata_mem),
-        // .alu_out_mem(alu_out_mem),
         .rd_data_mem(rd_data_mem),
         .waddr_wb(waddr_wb),
-        // .result(result_wb),
         .rd_data_wb(rd_data_wb),
         .wen_wb(wen_wb),
 
@@ -554,8 +549,6 @@ module ysyx_24080020_NPC(
         .rcsrdata(rcsrdata),
 
         .mem_wb_valid(mem_wb_valid),
-        // .ifu_wb_ready(1'b1),
-        // .wb_ifu_valid(wb_ifu_valid),
         .wb_mem_ready(wb_mem_ready)
     );
 

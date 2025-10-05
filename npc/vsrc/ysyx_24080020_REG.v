@@ -3,31 +3,29 @@ module ysyx_24080020_REG
 (
     input clk,
     input rst,
+
 `ifdef CONFIG_DPIC
     input skip_ref_mem,
+    input is_ebreak_lsu,
+    input [`ysyx_24080020_WIDTH-1:0] pc_lsu,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu,
+    input is_dnpc_mem,
+    input [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 `endif
 
 
-    input [`ysyx_24080020_WIDTH-1:0] pc_lsu,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu,
 
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr1,
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr2,
 
-    input is_dnpc_mem,
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
     input wen_mem,
     input [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
-    // input [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
-    // input [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
     output reg [`ysyx_24080020_WIDTH-1:0] rd_data_wb,
     output reg wen_wb,
 
-    input is_ebreak_lsu,
-    // output [`ysyx_24080020_WIDTH-1:0] result,
 
     //csr
     input wcsren_mem,
@@ -45,8 +43,6 @@ module ysyx_24080020_REG
     output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
     input mem_wb_valid,
-    // input ifu_wb_ready,
-    // output reg wb_ifu_valid,
     output reg wb_mem_ready
 );
 `ifdef CONFIG_DPIC
@@ -104,7 +100,6 @@ module ysyx_24080020_REG
             wcsraddr2_wb <= wcsraddr2_mem;
             wcsrdata2_wb <= wcsrdata2_mem;
 
-            pc_wbu <= pc_lsu;
 
 
             cnt <= 'b1;
@@ -112,6 +107,7 @@ module ysyx_24080020_REG
 
 
             `ifdef CONFIG_DPIC
+            pc_wbu <= pc_lsu;
             is_dnpc_wb <= is_dnpc_mem;
             dnpc_wb <= dnpc_mem;
             skip_ref_wb <= skip_ref_mem;
