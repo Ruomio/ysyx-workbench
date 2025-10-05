@@ -339,37 +339,6 @@ module ysyx_24080020_IDU (
             src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
             src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
 
-
-            // step 1 assignment for CSR-type
-            // if(opcode == `ysyx_24080020_CSR_TYPE) begin
-            //     case(funct3)
-            //         `ysyx_24080020_ECALL_EBREAK: begin
-            //             if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
-            //                 // ecall
-            //                 // csrs[mcause] <= R[a5];
-            //                 // wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
-            //                 // wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-
-            //                 // dnpc <= csrs[mtvec];
-            //                 rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
-            //             end
-            //             else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
-            //                 // mret
-            //                 rcsraddr <= `ysyx_24080020_MEPC_ADDR;
-            //             end
-            //         end
-
-            //         `ysyx_24080020_CSRRW: begin
-            //             rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
-            //         end
-            //         `ysyx_24080020_CSRRS: begin
-            //             rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
-            //         end
-            //         default: begin
-            //             is_csrtype_idu <= 1'b0;
-            //         end
-            //     endcase
-            // end
         end
         else if(cnt == 'd2) begin
 
