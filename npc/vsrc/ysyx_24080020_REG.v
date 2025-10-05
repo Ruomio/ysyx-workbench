@@ -62,12 +62,12 @@ module ysyx_24080020_REG
     reg cnt;
 
 
-    // reg wcsren_wb;
-    // reg [2:0] wcsraddr_wb;
-    // reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_wb;
-    // reg wcsren2_wb;
-    // reg [2:0] wcsraddr2_wb;
-    // reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
+    reg wcsren_wb;
+    reg [2:0] wcsraddr_wb;
+    reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_wb;
+    reg wcsren2_wb;
+    reg [2:0] wcsraddr2_wb;
+    reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -78,12 +78,12 @@ module ysyx_24080020_REG
             cnt <= 'b0;
             waddr_wb <= 'b0;
 
-            `ifdef CONFIG_DPIC
+`ifdef CONFIG_DPIC
             if(skip_ref_wb) begin
                 skip_ref_wb <= 1'b0;
                 npc_difftest_skip_ref();
             end
-            `endif
+`endif
         end
         else if(mem_wb_valid && wb_mem_ready) begin
             wb_mem_ready <= 'b0;
@@ -92,7 +92,19 @@ module ysyx_24080020_REG
             waddr_wb <= waddr_mem;
             rd_data_wb <= rd_data_mem;
 
+            wcsren_wb <= wcsren_mem;
+            wcsraddr_wb <= wcsraddr_mem;
+            wcsrdata_wb <= wcsrdata_mem;
+
+            wcsren2_wb <= wcsren2_mem;
+            wcsraddr2_wb <= wcsraddr2_mem;
+            wcsrdata2_wb <= wcsrdata2_mem;
+
+
+
             cnt <= 'b1;
+
+
 
             `ifdef CONFIG_DPIC
             pc_wbu <= pc_lsu;
@@ -138,8 +150,8 @@ module ysyx_24080020_REG
             csrs[5] <= 32'h16f6e94;
         end
         else  begin
-            if(wcsren_mem && mem_wb_valid && wb_mem_ready) csrs[wcsraddr_mem] <= wcsrdata_mem;
-            if(wcsren2_mem && mem_wb_valid && wb_mem_ready) csrs[wcsraddr2_mem] <= wcsrdata2_mem;
+            if(wcsren_wb) csrs[wcsraddr_wb] <= wcsrdata_wb;
+            if(wcsren2_wb) csrs[wcsraddr2_wb] <= wcsrdata2_wb;
         end
     end
 
