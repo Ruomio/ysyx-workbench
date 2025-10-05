@@ -90,9 +90,7 @@ module ysyx_24080020_ARBITER (
     input [3:0] bid_xbar,
     output bready_arbiter
 );
-  localparam max_cnt = 3'd2;
-
-  // wire [2:0] max_cnt;
+  wire [2:0] max_cnt;
   reg [2:0] ifu_wait_cnt;
   reg [2:0] mem_wait_cnt;
 
@@ -102,6 +100,7 @@ module ysyx_24080020_ARBITER (
 
   reg busy;
 
+  assign max_cnt = 3'd7;
 
   always @(posedge clk) begin
       if(!rst) begin

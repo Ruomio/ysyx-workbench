@@ -39,12 +39,12 @@ module ysyx_24080020_IDU (
 
     // csrs
     input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
-    output reg [2:0] rcsraddr_,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr,
     output reg wcsren_idu,
-    output reg [2:0] wcsraddr_idu_,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu,
     output reg wcsren2_idu,
-    output reg [2:0] wcsraddr2_idu_,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu,
 
     // alu control
@@ -82,175 +82,95 @@ module ysyx_24080020_IDU (
 
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
-    wire [`ysyx_24080020_REG_WIDTH-1:0] rd;
+    wire [4:0] rd;
 
 
-    // reg state; // 0: idle;    1: wait_ready
+    reg state; // 0: idle;    1: wait_ready
 
     reg [1:0] cnt;
-    reg next_inst;
 
 
     reg idu_exu_valid;
 
     reg [`ysyx_24080020_WIDTH-1:0] inst_idu;
 
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr;
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu;
-    reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu;
-
     assign opcode = inst_idu[`ysyx_24080020_OPCODE];
     assign rd = inst_idu[`ysyx_24080020_RD];
     assign funct3 = inst_idu[`ysyx_24080020_FUNCT3];
-    assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 'hf : inst_idu[`ysyx_24080020_RS1];
+    assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 5'hf : inst_idu[`ysyx_24080020_RS1];
     assign rs2 = inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
 
     // assign idu_exu_valid_reg = idu_exu_valid && !data_adventure;
     assign idu_exu_valid_reg = idu_exu_valid && !need_stall;
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         state <= 1'b0;
-    //     end
-    //     else if(!state) begin
-    //         if(idu_exu_valid) state <= 1'b1;
-    //         else state <= 1'b0;
-    //     end
-    //     else begin
-    //         if(exu_idu_ready) state <= 1'b0;
-    //         else begin
-    //             state <= 1'b1;
-    //         end
-    //     end
-    // end
-
     always @(posedge clk) begin
         if(!rst) begin
-            next_inst <= 'b1;
+            state <= 1'b0;
         end
-        else if(ifu_idu_valid && idu_ifu_ready) begin
-            next_inst <= 'b0;
+        else if(!state) begin
+            if(idu_exu_valid) state <= 1'b1;
+            else state <= 1'b0;
         end
-        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline ) begin
-            next_inst <= 'b1;
+        else begin
+            if(exu_idu_ready) state <= 1'b0;
+            else begin
+                state <= 1'b1;
+            end
         end
     end
 
     always @(posedge clk) begin
         if(!rst) begin
+            idu_exu_valid <= 1'b0;
+            inst_idu <= 'b0;
             idu_ifu_ready <= 'b0;
             pc_idu <= 'b0;
+        end
+        else if(idu_exu_valid_reg && exu_idu_ready && state /* &&!cnt */) begin
+            idu_exu_valid <= 1'b0;
+            inst_idu <= 'b0;
+        end
+        else if(cnt == 'd2) begin
+            if(!flush_pipeline) begin
+                idu_exu_valid <= 1'b1;
+            end
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
             idu_ifu_ready <= 1'b0;
 
             // update inst reg
             pc_idu <= pc_ifu;
-
-        end
-        else if(next_inst && ifu_idu_valid && !need_stall) begin
-            idu_ifu_ready <= 1'b1;
-        end
-
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            idu_exu_valid <= 1'b0;
-        end
-        else if(idu_exu_valid_reg && exu_idu_ready) begin
-            idu_exu_valid <= 1'b0;
-        end
-        else if(need_stall) begin
-            idu_exu_valid <= 1'b0;
-        end
-        else if(cnt == 'd2) begin
-            if(!flush_pipeline && !next_inst) begin
-                idu_exu_valid <= 1'b1;
-            end
-        end
-
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            inst_idu <= 'b0;
-        end
-        else if(idu_exu_valid_reg && exu_idu_ready) begin
-            inst_idu <= 'b0;
-        end
-        else if(ifu_idu_valid && idu_ifu_ready) begin
             inst_idu <= inst_ifu;
+
+            // idu_exu_valid <= 1'b1;
         end
+        else if(ifu_idu_valid) begin
+            if(idu_exu_valid) idu_ifu_ready <= 1'b0;
+            else if(!need_stall) begin
+                // shake hands successfully
+                idu_ifu_ready <= 1'b1;
+
+            end
+        end
+
     end
 
     always @(posedge clk) begin
         if(!rst) begin
             cnt <= 'b0;
         end
-        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline ) begin
+        else if((idu_exu_valid_reg && exu_idu_ready) || flush_pipeline) begin
             cnt <= 'b0;
-        end
-        else if(cnt == 'b10) begin
-            if(need_stall || flush_pipeline) begin
-                cnt <= 'b1;
-            end
         end
         else if(cnt == 'b1) begin
-            if(need_stall) begin
-                cnt <= 'b1;
-            end
-            else if(flush_pipeline) begin
-                cnt <= 'b0;
-            end
-            else begin
-                cnt <= 'd2;
-            end
+            cnt <= 'd2;
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
             cnt <= 'b1;
         end
     end
 
-    // csr addr transform
-    always @(*) begin
-        rcsraddr_ = 'b0;
-        case(rcsraddr)
-            `ysyx_24080020_MEPC_ADDR:     rcsraddr_ = 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  rcsraddr_ = 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   rcsraddr_ = 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    rcsraddr_ = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: rcsraddr_ = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: rcsraddr_ = 3'd5;
-            default: rcsraddr_ = 3'd7;
-        endcase
-    end
-    always @(*) begin
-        wcsraddr_idu_ = 'b0;
-        case(wcsraddr_idu)
-            `ysyx_24080020_MEPC_ADDR:     wcsraddr_idu_ = 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  wcsraddr_idu_ = 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   wcsraddr_idu_ = 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    wcsraddr_idu_ = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: wcsraddr_idu_ = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: wcsraddr_idu_ = 3'd5;
-            default: wcsraddr_idu_ = 3'd7;
-        endcase
-    end
-
-    always @(*) begin
-        wcsraddr2_idu_ = 'b0;
-        case(wcsraddr2_idu)
-            `ysyx_24080020_MEPC_ADDR:     wcsraddr2_idu_ = 3'd0;
-            `ysyx_24080020_MSTATUS_ADDR:  wcsraddr2_idu_ = 3'd1;
-            `ysyx_24080020_MCAUSE_ADDR:   wcsraddr2_idu_ = 3'd2;
-            `ysyx_24080020_MTVEC_ADDR:    wcsraddr2_idu_ = 3'd3;
-            `ysyx_24080020_MVENDORID_ADDR: wcsraddr2_idu_ = 3'd4;
-            `ysyx_24080020_MARCHID_ADDR: wcsraddr2_idu_ = 3'd5;
-            default: wcsraddr2_idu_ = 3'd7;
-        endcase
-    end
 
     // always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2 or ifu_idu_valid or rd_data1_forward or rd_data2_forward) begin
     always @(posedge clk) begin
@@ -399,7 +319,7 @@ module ysyx_24080020_IDU (
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
 
-                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     src2_idu <= 32'b0;
                     alu_src2_con_idu <= 1'b1;
                     case(funct3)
@@ -447,7 +367,7 @@ module ysyx_24080020_IDU (
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
 
-                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     src2_idu <= 32'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
@@ -504,8 +424,8 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b0;
                     mwen_idu <= 1'b1;
 
-                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    // src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
                     case(funct3)
@@ -533,8 +453,8 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b0;
                     mwen_idu <= 1'b0;
 
-                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    // src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
 
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
@@ -576,8 +496,8 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
-                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    // src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src2_idu <= rs2_conflict ? rd_data2_forward : val_raddr2;
                     alu_src2_con_idu <= 1'b0;
 
                     case(funct3)
@@ -623,7 +543,7 @@ module ysyx_24080020_IDU (
 
                     // rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
-                    // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                     alu_src2_con_idu <= 1'b1;
 
                     is_csrtype_idu <= 1'b1;
@@ -666,7 +586,7 @@ module ysyx_24080020_IDU (
                                 dnpc_idu <= rcsrdata;
                                 is_dnpc_idu <= 1'b1;
 
-                                // only M mode
+                                // only M mode 
                                 // CSRS[mstatus] = 1800
                                 wcsraddr_idu <= `ysyx_24080020_MSTATUS_ADDR;
                                 wcsrdata_idu <= 'h1800;
@@ -712,7 +632,7 @@ module ysyx_24080020_IDU (
                             wcsren_idu <= 1'b1;
 
                             waddr_idu <= rd;
-                            // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                            src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
                             wdata_idu <= rcsrdata;
                             wen_idu <= 1'b1;
 

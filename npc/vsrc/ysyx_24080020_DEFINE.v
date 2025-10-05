@@ -21,17 +21,15 @@
 `define ysyx_24080020_SERIAL_PORT 32'ha00003f8
 `endif
 
-// inst cache
-`define USE_ICACHE
-`define ICACHE_PIPELINE
-`define ysyx_24080020_CACHE_SIZE 8
-`define ysyx_24080020_CACHE_NUM 2
-`define ysyx_24080020_CACHE_WAY 2
+// cache
+`define ysyx_24080020_CACHE_SIZE 16
+`define ysyx_24080020_CACHE_NUM 4
+`define ysyx_24080020_CACHE_WAY 4
 
 // branch
 `define ysyx_24080020_BRANCH_SIZE 4
-`define ysyx_24080020_BRANCH_NUM 2
-`define ysyx_24080020_BRANCH_WAY 2
+`define ysyx_24080020_BRANCH_NUM 4
+`define ysyx_24080020_BRANCH_WAY 4
 
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
@@ -45,25 +43,8 @@
 `define ysyx_24080020_MARCHID_ADDR 12'hf12
 
 // reg
-`define ysyx_24080020_E_EXTERN
-
-`ifdef ysyx_24080020_E_EXTERN
-`define ysyx_24080020_REG_NUM 16
-`define ysyx_24080020_REG_WIDTH 4
-`define ysyx_24080020_RD 10:7
-`define ysyx_24080020_RS1 18:15
-`define ysyx_24080020_RS2 23:20     // same location as shamt
-`else
 `define ysyx_24080020_REG_NUM 32
 `define ysyx_24080020_REG_WIDTH 5
-`define ysyx_24080020_RD 11:7
-`define ysyx_24080020_RS1 19:15
-`define ysyx_24080020_RS2 24:20     // same location as shamt
-`endif
-
-`define ysyx_24080020_OPCODE 6:0
-`define ysyx_24080020_FUNCT3 14:12
-`define ysyx_24080020_FUNCT7 31:25
 
 // ALU OP code
 `define ysyx_24080020_ALU_OP_WIDTH 5
@@ -88,6 +69,12 @@
 
 
 
+`define ysyx_24080020_OPCODE 6:0
+`define ysyx_24080020_RD 11:7
+`define ysyx_24080020_FUNCT3 14:12
+`define ysyx_24080020_RS1 19:15
+`define ysyx_24080020_RS2 24:20     // same location as shamt
+`define ysyx_24080020_FUNCT7 31:25
 
 
 // I-TYPE

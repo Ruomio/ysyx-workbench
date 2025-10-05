@@ -14,7 +14,7 @@ module ysyx_24080020_MEM(
     output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
 
     input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
-    output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
+    output reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem,
     output reg exu_mem_shake_hands,
 
     input skip_ref_exu,
@@ -25,16 +25,16 @@ module ysyx_24080020_MEM(
 
     // csrs
     input wcsren_exu,
-    input [2:0] wcsraddr_exu,
+    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
     input wcsren2_exu,
-    input [2:0] wcsraddr2_exu,
+    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_exu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
     output reg wcsren_mem,
-    output reg [2:0] wcsraddr_mem,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
     output reg wcsren2_mem,
-    output reg [2:0] wcsraddr2_mem,
+    output reg [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
     // regs
     input wen_exu,
@@ -121,9 +121,6 @@ module ysyx_24080020_MEM(
     reg arlen_cnt;
     reg awlen_cnt;
     reg [31:0] rdata1, rdata2;
-
-    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem;
 
     reg state; // 0: idle;   1: wait_ready
 
@@ -226,7 +223,6 @@ module ysyx_24080020_MEM(
                         4'b0000 :
                     4'b0000;
 
-    assign rd_data_mem = is_load_mem ? mrdata_mem : alu_out_mem;
 
     always @(posedge clk) begin
         if(!rst) begin

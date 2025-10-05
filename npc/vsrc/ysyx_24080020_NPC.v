@@ -78,8 +78,8 @@ module ysyx_24080020_NPC(
 
   // pc
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
-  wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem;
-  wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem, dnpc_wb;
+  wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, is_dnpc_wb;
   wire is_jalr_idu, is_btype_idu, is_btype_exu, is_jal_idu, is_jal_exu;
 
   // inst
@@ -101,16 +101,16 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] src1_idu, src1_exu;
   wire [`ysyx_24080020_WIDTH-1:0] src2_idu, src2_exu, src2_mem;
   wire [`ysyx_24080020_WIDTH-1:0] val_raddr1, val_raddr2;
-  wire [`ysyx_24080020_WIDTH-1:0] rd_data_wb;
+  wire [`ysyx_24080020_WIDTH-1:0] result_wb;
   // csrs
   wire is_csrtype_idu;
   wire wcsren_idu, wcsren_exu, wcsren_mem, wcsren_wb;
-  wire [2:0] wcsraddr_idu, wcsraddr_exu, wcsraddr_mem, wcsraddr_wb;
+  wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu, wcsraddr_exu, wcsraddr_mem, wcsraddr_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu, wcsrdata_exu, wcsrdata_mem, wcsrdata_wb;
   wire wcsren2_idu, wcsren2_exu, wcsren2_mem, wcsren2_wb;
-  wire [2:0] wcsraddr2_idu, wcsraddr2_exu, wcsraddr2_mem, wcsraddr2_wb;
+  wire [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu, wcsraddr2_exu, wcsraddr2_mem, wcsraddr2_wb;
   wire [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu, wcsrdata2_exu, wcsrdata2_mem, wcsrdata2_wb;
-  wire [2:0] rcsraddr;
+  wire [`ysyx_24080020_CSR_WIDTH-1:0] rcsraddr;
   wire [`ysyx_24080020_WIDTH-1:0] rcsrdata;
 
   // memory
@@ -122,7 +122,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] mraddr_exu, mraddr_mem;
   wire [`ysyx_24080020_WIDTH-1:0] mwaddr_exu, mwaddr_mem;
   wire [`ysyx_24080020_WIDTH-1:0] mwdata_exu, mwdata_mem;
-  wire [`ysyx_24080020_WIDTH-1:0] rd_data_mem, mrdata_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] mrdata_exu, mrdata_mem, mrdata_wb;
 
   // alu
   wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu, alu_op_exu;
@@ -487,12 +487,12 @@ module ysyx_24080020_NPC(
         .fencei_idu(fencei_idu),
 
         .rcsrdata(rcsrdata),
-        .rcsraddr_(rcsraddr),
+        .rcsraddr(rcsraddr),
         .wcsren_idu(wcsren_idu),
-        .wcsraddr_idu_(wcsraddr_idu),
+        .wcsraddr_idu(wcsraddr_idu),
         .wcsrdata_idu(wcsrdata_idu),
         .wcsren2_idu(wcsren2_idu),
-        .wcsraddr2_idu_(wcsraddr2_idu),
+        .wcsraddr2_idu(wcsraddr2_idu),
         .wcsrdata2_idu(wcsrdata2_idu),
 
         .alu_op_idu(alu_op_idu),
@@ -525,19 +525,18 @@ module ysyx_24080020_NPC(
 
         .is_load_mem(is_load_mem),
         .is_dnpc_mem(is_dnpc_mem),
+        .is_dnpc_wb(is_dnpc_wb),
         .dnpc_mem(dnpc_mem),
+        .dnpc_wb(dnpc_wb),
         .pc_lsu(pc_lsu),
         .pc_wbu(pc_wbu),
 
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
-        // .mrdata_mem(mrdata_mem),
-        // .alu_out_mem(alu_out_mem),
-        .rd_data_mem(rd_data_mem),
+        .mrdata_mem(mrdata_mem),
+        .alu_out_mem(alu_out_mem),
         .waddr_wb(waddr_wb),
-        // .result(result_wb),
-        .rd_data_wb(rd_data_wb),
-        .wen_wb(wen_wb),
+        .result(result_wb),
 
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
@@ -661,7 +660,7 @@ module ysyx_24080020_NPC(
         .exu_mem_shake_hands(exu_mem_shake_hands),
 
         .alu_out_exu(alu_out_exu),
-        .rd_data_mem(rd_data_mem),
+        .alu_out_mem(alu_out_mem),
 
         .wcsren_exu(wcsren_exu),
         .wcsraddr_exu(wcsraddr_exu),
@@ -1278,19 +1277,15 @@ module ysyx_24080020_NPC(
 
 		.rd_exu(waddr_exu),
 		.rd_data_exu(alu_out_exu),
-		.rd_en_exu(wen_exu),
 
 		.rd_lsu(waddr_mem),
-		.rd_data_lsu(rd_data_mem),
-		.rd_en_lsu(wen_mem),
-		// .rd_data_lsu(alu_out_mem),
-		.is_load(is_load_mem),
-		// .mrdata(mrdata_mem),
+		.rd_data_lsu(alu_out_mem),
+		.is_load(is_load_mem | mwen_mem),
+		.mrdata(mrdata_mem),
 		.fin_load(mem_wb_valid),
 
 		.rd_wbu(waddr_wb),
-		.rd_data_wbu(rd_data_wb),
-		.rd_en_wbu(wen_wb),
+		.rd_data_wbu(result_wb),
 
 		.need_stall(need_stall),
 		.rd_data1_forward(rd_data1_forward),

@@ -18,15 +18,6 @@ config ISA
   default "loongarch32r" if ISA_loongarch32r
   default "none"
 
-config E_EXTENSION
-    bool "enable RISCV E EXTENSION"
-    default yes
-
-config REGS_NUM
-    int "Number of registers"
-    default "32" if !E_EXTENSION
-    default "16" if E_EXTENSION
-
 menu "Build options"
     config DEBUG
         bool "is enable -g parameter when compiling"
@@ -35,7 +26,7 @@ menu "Build options"
     config NVBOARD
         bool "enable nvboard"
         default n
-
+    
     config WAVEFILE
         bool "is generate wave file"
         default n
@@ -49,7 +40,7 @@ menu "Build options"
         depends on WAVEFILE
         int "Base wave step"
         default "0"
-
+    
     config LIGHTSSS
         depends on !WAVEFILE
         bool "is enable lightsss"
@@ -123,7 +114,7 @@ endmenu
 menuconfig DEVICE
     bool "Device"
     default n
-    help
+    help 
         Provide devices support for NPC.
 
 if DEVICE

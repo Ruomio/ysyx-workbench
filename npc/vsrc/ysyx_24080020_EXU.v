@@ -63,17 +63,18 @@ module ysyx_24080020_EXU
 
     //csrs
     input is_csrtype_idu,
+    // input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
     input wcsren_idu,
-    input [2:0] wcsraddr_idu,
+    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_idu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu,
     input wcsren2_idu,
-    input [2:0] wcsraddr2_idu,
+    input [`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_idu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu,
     output reg wcsren_exu,
-    output reg[2:0] wcsraddr_exu,
+    output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr_exu,
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
     output reg wcsren2_exu,
-    output reg[2:0] wcsraddr2_exu,
+    output reg[`ysyx_24080020_CSR_WIDTH-1:0] wcsraddr2_exu,
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
 
     // axi
