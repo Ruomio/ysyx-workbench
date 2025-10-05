@@ -10,7 +10,7 @@ module ysyx_24080020_XBAR(
     input [7:0] arlen_arbiter,
     input [2:0] arsize_arbiter,
     input [1:0] arburst_arbiter,
-    output reg arready_xbar,
+    output arready_xbar,
 
     input rready_arbiter,
     output [`ysyx_24080020_WIDTH-1:0] rdata_xbar,

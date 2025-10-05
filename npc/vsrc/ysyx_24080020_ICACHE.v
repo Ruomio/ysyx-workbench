@@ -375,8 +375,8 @@ module ysyx_24080020_ICACHE(
 
     wire [cache_way-1:0] last_fifo_index_s3;
 
-    logic has_hit_s3;
-    logic total_hits_s3 [0 : cache_way - 1];
+    reg has_hit_s3;
+    wire total_hits_s3 [0 : cache_way - 1];
 
 
     generate
