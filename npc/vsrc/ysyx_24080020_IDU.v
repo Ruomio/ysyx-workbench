@@ -21,11 +21,10 @@ module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     input flush_pipeline,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_idu,
 
-    // output reg [`ysyx_24080020_WIDTH-1:0] imm_idu,
-    // output reg alu_src2_con_idu,
+    output [`ysyx_24080020_WIDTH-1:0] imm_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
+    output reg alu_src2_con_idu,
 
     // reg
     output reg wen_idu,
@@ -54,6 +53,7 @@ module ysyx_24080020_IDU (
 
     // alu control
     output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] src1_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] src2_idu,
 
@@ -105,11 +105,21 @@ module ysyx_24080020_IDU (
     assign opcode = inst_idu[`ysyx_24080020_OPCODE];
     assign rd = inst_idu[`ysyx_24080020_RD];
     assign funct3 = inst_idu[`ysyx_24080020_FUNCT3];
-    assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 'hf : inst_idu[`ysyx_24080020_RS1];
-    assign rs2 = inst_idu[`ysyx_24080020_RS2];
+    assign rs1 = inst_idu == `ysyx_24080020_ECALL ? 'hf :
+                 opcode == `ysyx_24080020_LUI ? 'b0 :
+                 opcode == `ysyx_24080020_AUIPC ? 'b0 :
+                 opcode == `ysyx_24080020_JAL ? 'b0 :
+                 inst_idu[`ysyx_24080020_RS1];
+    assign rs2 = opcode == `ysyx_24080020_LUI ? 'b0 :
+                 opcode == `ysyx_24080020_AUIPC ? 'b0 :
+                 opcode == `ysyx_24080020_JAL ? 'b0 :
+                 opcode == `ysyx_24080020_JALR ? 'b0 :
+                 opcode == `ysyx_24080020_LOAD_TYPE ? 'b0 :
+                 opcode == `ysyx_24080020_I_TYPE ? 'b0 :
+                 inst_idu[`ysyx_24080020_RS2];
     assign funct7 = inst_idu[`ysyx_24080020_FUNCT7];
     assign imm_idu = opcode == `ysyx_24080020_I_TYPE ? {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]} :
-                     opcode == `ysyx_24080020_I_TYPEI ? {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]} :
+                     opcode == `ysyx_24080020_LOAD_TYPE ? {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]} :
                      opcode == `ysyx_24080020_S_TYPE ? {{20{inst_idu[31]}}, inst_idu[31:25], inst_idu[11:7]} :
                      opcode == `ysyx_24080020_B_TYPE ? {{20{inst_idu[31]}}, inst_idu[7], inst_idu[30:25], inst_idu[11:8], 1'b0} :
                      opcode == `ysyx_24080020_JAL ? {{12{inst_idu[31]}}, inst_idu[19:12], inst_idu[20], inst_idu[30:21], 1'b0} :
@@ -287,7 +297,7 @@ module ysyx_24080020_IDU (
             is_ebreak <= 'b0;
 
             // alu
-            // alu_src2_con_idu <= 'b0;
+            alu_src2_con_idu <= 'b0;
             alu_op_idu <= 'b0;
             src1_idu <= 'b0;
             src2_idu <= 'b0;
@@ -333,7 +343,7 @@ module ysyx_24080020_IDU (
             is_ebreak <= 'b0;
 
             // alu
-            // alu_src2_con_idu <= 'b0;
+            alu_src2_con_idu <= 'b0;
             alu_op_idu <= 'b0;
             src1_idu <= 'b0;
             src2_idu <= 'b0;
@@ -353,8 +363,7 @@ module ysyx_24080020_IDU (
             case(opcode)
                 `ysyx_24080020_I_TYPE: begin
                     // imm_idu <= {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                    // alu_src2_con_idu <= 1'b1;
-                    src2_idu <= imm_idu;
+                    alu_src2_con_idu <= 1'b1;
 
                     mwen_idu <= 1'b0;
 
@@ -363,8 +372,8 @@ module ysyx_24080020_IDU (
                     // reg_dst_con_idu <= 1'b0;
 
                     // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    // src2_idu <= 32'b0;
-                    // alu_src2_con_idu <= 1'b1;
+                    src2_idu <= 32'b0;
+                    alu_src2_con_idu <= 1'b1;
                     case(funct3)
                         `ysyx_24080020_ADDI: begin
                             alu_op_idu <= `ysyx_24080020_ALU_ADD;
@@ -399,11 +408,10 @@ module ysyx_24080020_IDU (
                     endcase
                 end
 
-                `ysyx_24080020_I_TYPEI: begin
+                `ysyx_24080020_LOAD_TYPE: begin
                     // load
                     // imm_idu <= {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                    // alu_src2_con_idu <= 1'b1;
-                    src2_idu <= imm_idu;
+                    alu_src2_con_idu <= 1'b1;
 
                     mwen_idu <= 1'b0;
 
@@ -412,7 +420,7 @@ module ysyx_24080020_IDU (
                     // reg_dst_con_idu <= 1'b0;
 
                     // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    // src2_idu <= 32'b0;
+                    src2_idu <= 32'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
                     is_load_idu <= 1'b1;
@@ -463,8 +471,7 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_S_TYPE: begin
                     // imm_idu <= {{20{inst_idu[31]}}, inst_idu[31:25], inst_idu[11:7]};
-                    // alu_src2_con_idu <= 1'b1;
-                    src2_idu <= imm_idu;
+                    alu_src2_con_idu <= 1'b1;
 
                     wen_idu <= 1'b0;
                     mwen_idu <= 1'b1;
@@ -493,8 +500,7 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_B_TYPE: begin
                     // imm_idu <= {{20{inst_idu[31]}}, inst_idu[7], inst_idu[30:25], inst_idu[11:8], 1'b0};
-                    // alu_src2_con_idu <= 1'b1;
-                    src2_idu <= imm_idu;
+                    alu_src2_con_idu <= 1'b1;
 
                     wen_idu <= 1'b0;
                     mwen_idu <= 1'b0;
@@ -537,8 +543,7 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_R_TYPE: begin
                     // imm_idu <= 32'b0;
-                    // alu_src2_con_idu <= 1'b0;
-                    src2_idu <= imm_idu;
+                    alu_src2_con_idu <= 1'b0;
 
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
@@ -583,8 +588,6 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_CSR_TYPE: begin
                     // imm_idu <= {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]};
-                    src2_idu <= imm_idu;
-
 
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
@@ -592,7 +595,7 @@ module ysyx_24080020_IDU (
                     // rcsraddr <= inst_idu[`ysyx_24080020_IMM_I];
 
                     // src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                    // alu_src2_con_idu <= 1'b1;
+                    alu_src2_con_idu <= 1'b1;
 
                     is_csrtype_idu <= 1'b1;
 
@@ -688,8 +691,7 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_JAL: begin
                     // imm_idu <= {{12{inst_idu[31]}}, inst_idu[19:12], inst_idu[20], inst_idu[30:21], 1'b0};
-                    // is_dnpc_idu <= 1'b1;
-                    // src2_idu <= imm_idu;
+                    is_dnpc_idu <= 1'b1;
 
                     mwen_idu <= 1'b0;
 
@@ -698,7 +700,7 @@ module ysyx_24080020_IDU (
                     // reg_dst_con_idu <= 1'b0;
                     src1_idu <= pc_idu;
                     src2_idu <= 32'b100;
-                    // alu_src2_con_idu <= 1'b0;
+                    alu_src2_con_idu <= 1'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
                     is_jal_idu <= 'b1;
@@ -710,8 +712,7 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_JALR: begin
                     // imm_idu <= {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]};
-                    // is_dnpc_idu <= 1'b1;
-                    //src2_idu <= imm_idu;
+                    is_dnpc_idu <= 1'b1;
 
                     mwen_idu <= 1'b0;
 
@@ -720,7 +721,7 @@ module ysyx_24080020_IDU (
                     // reg_dst_con_idu <= 1'b0;
                     src1_idu <= pc_idu;
                     src2_idu <= 32'b100;
-                    // alu_src2_con_idu <= 1'b0;
+                    alu_src2_con_idu <= 1'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
                     // branch_src1_idu <= val_raddr1;
@@ -731,8 +732,7 @@ module ysyx_24080020_IDU (
 
                 `ysyx_24080020_AUIPC: begin
                     // imm_idu <= {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                    // alu_src2_con_idu <= 1'b1;
-                    src2_idu <= imm_idu;
+                    alu_src2_con_idu <= 1'b1;
 
                     mwen_idu <= 1'b0;
 
@@ -747,8 +747,7 @@ module ysyx_24080020_IDU (
                 end
                 `ysyx_24080020_LUI: begin
                     // imm_idu <= {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}};
-                    // alu_src2_con_idu <= 1'b1;
-                    src2_idu <= imm_idu;
+                    alu_src2_con_idu <= 1'b1;
 
                     mwen_idu <= 1'b0;
 
@@ -764,6 +763,9 @@ module ysyx_24080020_IDU (
 
                 default: begin
                     // imm_idu <= 32'b0;
+                    // `ifdef CONFIG_DPIC
+                    // invalid_inst();
+                    // `endif
                 end
             endcase
         end

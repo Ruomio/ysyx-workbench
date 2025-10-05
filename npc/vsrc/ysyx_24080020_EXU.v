@@ -8,8 +8,8 @@ module ysyx_24080020_EXU
     output reg is_load_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_exu,
 
-    // input [`ysyx_24080020_WIDTH-1:0] imm_idu,
-    // input alu_src2_con_idu,
+    input [`ysyx_24080020_WIDTH-1:0] imm_idu,
+    input alu_src2_con_idu,
 
     input is_ebreak_idu,
     output reg is_ebreak_exu,
@@ -106,9 +106,9 @@ module ysyx_24080020_EXU
 
     reg is_jalr_exu;
     reg is_csrtype_exu;
-    // reg alu_src2_con_exu;
+    reg alu_src2_con_exu;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
-    // reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
+    reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src2_exu;
     reg [`ysyx_24080020_WIDTH-1:0] wdata_exu;
@@ -237,9 +237,8 @@ module ysyx_24080020_EXU
                 branch_src1_exu <= branch_src1_idu;
 
                 alu_op_exu <= alu_op_idu;
-                // alu_src2_con_exu <= alu_src2_con_idu;
-                // reg_dst_con_exu <= reg_dst_con_idu;
-                // imm_exu <= imm_idu;
+                alu_src2_con_exu <= alu_src2_con_idu;
+                imm_exu <= imm_idu;
 
                 src1_exu <= src1_idu;
                 src2_exu <= src2_idu;
@@ -325,11 +324,11 @@ module ysyx_24080020_EXU
     end
 
     assign alu_src1 = src1_exu;
-    assign alu_src2 = src2_exu;
+    assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
 
     assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
                             is_csrtype_exu == 1'b1 ? dnpc_exu : pc_exu;
-    assign branch_src2 = src2_exu;
+    assign branch_src2 = imm_exu;
 
     assign branch_dnpc = branch_src1 + branch_src2;
 

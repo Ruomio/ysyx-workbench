@@ -467,8 +467,8 @@ module ysyx_24080020_NPC(
         // .data_adventure(data_adventure),
         .flush_pipeline(flush_pipeline),
 
-        // .imm_idu(imm_idu),
-        // .alu_src2_con_idu(alu_src2_con_idu),
+        .imm_idu(imm_idu),
+        .alu_src2_con_idu(alu_src2_con_idu),
         .pc_idu(pc_idu),
 
         .inst_ifu(inst_ifu),
@@ -569,8 +569,8 @@ module ysyx_24080020_NPC(
         .is_ebreak_idu(is_ebreak_idu),
         .is_ebreak_exu(is_ebreak_exu),
 
-        // .imm_idu(imm_idu),
-        // .alu_src2_con_idu(alu_src2_con_idu),
+        .imm_idu(imm_idu),
+        .alu_src2_con_idu(alu_src2_con_idu),
 
         .pc_idu(pc_idu),
         .is_load_idu(is_load_idu),

@@ -103,7 +103,7 @@
 `define ysyx_24080020_SRLAI 3'b101
 
 
-`define ysyx_24080020_I_TYPEI 7'b0000011
+`define ysyx_24080020_LOAD_TYPE 7'b0000011
 `define ysyx_24080020_LB 3'b000
 `define ysyx_24080020_LH 3'b001
 `define ysyx_24080020_LW 3'b010
