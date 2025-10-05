@@ -54,25 +54,18 @@ module ysyx_24080020_REG
 
     reg is_dnpc_wb;
     reg [`ysyx_24080020_WIDTH-1:0] dnpc_wb;
+    reg skip_ref_wb;
 `endif
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec, csrs[4] = MVENDORID, csrs[5] = MARCHID
-    reg [`ysyx_24080020_WIDTH-1:0] csrs[0:7];
+    reg [`ysyx_24080020_WIDTH-1:0] csrs[0:5];
 
 
     reg is_load_wb;
 
-    // reg [2:0] wcsr_idx;
-    // reg [2:0] wcsr_idx2;
-    // reg [2:0] rcsr_idx;
-
-    // reg [`ysyx_24080020_WIDTH-1:0] alu_out_wb;
-    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_wb;
-
     reg cnt;
 
-    reg skip_ref_wb;
 
     reg wcsren_wb;
     reg [2:0] wcsraddr_wb;
@@ -81,43 +74,13 @@ module ysyx_24080020_REG
     reg [2:0] wcsraddr2_wb;
     reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_wb;
 
-    // reg [`ysyx_24080020_WIDTH-1:0] result;
-
-    // assign result = is_load_wb == 1'b1 ? mrdata_wb : alu_out_wb;
-    // always @(mrdata_wb or alu_out_wb or is_load_wb) begin
-    //     if(is_load_wb) begin
-    //         result = mrdata_wb;
-    //     end
-    //     else begin
-    //         result = alu_out_wb;
-    //     end
-    // end
-
     always @(posedge clk) begin
         if(!rst) begin
             wb_mem_ready <= 'b0;
-            // waddr_wb <= 'b0;
-            // mrdata_wb <= 'b0;
-            // wcsren_wb <= 'b0;
-            // wcsraddr_wb <= 'b0;
-            // wcsrdata_wb <= 'b0;
-            // wcsren2_wb <= 'b0;
-            // wcsraddr2_wb <= 'b0;
-            // wcsrdata2_wb <= 'b0;
-            // alu_out_wb <= 'b0;
-            // is_load_wb <= 'b0;
-            // dnpc_wb <= 'b0;
-            // // wb_ifu_valid <= 'b0;
-            // skip_ref_wb <= 'b0;
-            // pc_wbu <= 'b0;
             cnt <= 'b0;
         end
         else if(cnt && !wen_wb) begin
             cnt <= 'b0;
-            // shake hands successfully
-            // wb_ifu_valid <= 1'b0;
-
-            // pc_wbu <= pc_lsu;
             waddr_wb <= 'b0;
 
 `ifdef CONFIG_DPIC
@@ -132,7 +95,6 @@ module ysyx_24080020_REG
 
             // shake hands successfully
             waddr_wb <= waddr_mem;
-            // mrdata_wb <= mrdata_mem;
             rd_data_wb <= rd_data_mem;
 
             wcsren_wb <= wcsren_mem;
@@ -143,12 +105,10 @@ module ysyx_24080020_REG
             wcsraddr2_wb <= wcsraddr2_mem;
             wcsrdata2_wb <= wcsrdata2_mem;
 
-            // alu_out_wb <= alu_out_mem;
             is_load_wb <= is_load_mem;
 
             pc_wbu <= pc_lsu;
 
-            skip_ref_wb <= skip_ref_mem;
 
             cnt <= 'b1;
 
@@ -157,6 +117,7 @@ module ysyx_24080020_REG
             `ifdef CONFIG_DPIC
             is_dnpc_wb <= is_dnpc_mem;
             dnpc_wb <= dnpc_mem;
+            skip_ref_wb <= skip_ref_mem;
             if(is_ebreak_lsu) ebreak();
             `endif
         end
@@ -188,56 +149,11 @@ module ysyx_24080020_REG
             csrs[4] <= 32'h79737978;
             csrs[5] <= 32'h16f6e94;
         end
-        else if(wcsren_wb && wcsren2_wb) begin
-            csrs[wcsraddr_wb] <= wcsrdata_wb;
-            csrs[wcsraddr2_wb] <= wcsrdata2_wb;
-        end
-        else if(wcsren_wb) begin
-            csrs[wcsraddr_wb] <= wcsrdata_wb;
-        end
-        else if(wcsren2_wb) begin
-            csrs[wcsraddr2_wb] <= wcsrdata2_wb;
+        else  begin
+            if(wcsren_wb) csrs[wcsraddr_wb] <= wcsrdata_wb;
+            if(wcsren2_wb) csrs[wcsraddr2_wb] <= wcsrdata2_wb;
         end
     end
-
-    // always @(*) begin
-    //     wcsr_idx = 'b0;
-    //     case(wcsraddr_wb)
-    //         `ysyx_24080020_MEPC_ADDR:     wcsr_idx = 3'd0;
-    //         `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx = 3'd1;
-    //         `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx = 3'd2;
-    //         `ysyx_24080020_MTVEC_ADDR:    wcsr_idx = 3'd3;
-    //         `ysyx_24080020_MVENDORID_ADDR: wcsr_idx = 3'd4;
-    //         `ysyx_24080020_MARCHID_ADDR: wcsr_idx = 3'd5;
-    //         default: wcsr_idx = 3'd7;
-    //     endcase
-    // end
-
-    // always @(*) begin
-    //     wcsr_idx2 = 'b0;
-    //     case(wcsraddr2_wb)
-    //         `ysyx_24080020_MEPC_ADDR:     wcsr_idx2 = 3'd0;
-    //         `ysyx_24080020_MSTATUS_ADDR:  wcsr_idx2 = 3'd1;
-    //         `ysyx_24080020_MCAUSE_ADDR:   wcsr_idx2 = 3'd2;
-    //         `ysyx_24080020_MTVEC_ADDR:    wcsr_idx2 = 3'd3;
-    //         `ysyx_24080020_MVENDORID_ADDR: wcsr_idx2 = 3'd4;
-    //         `ysyx_24080020_MARCHID_ADDR: wcsr_idx2 = 3'd5;
-    //         default: wcsr_idx2 = 3'd7;
-    //     endcase
-    // end
-
-    // always @(*) begin
-    //     rcsr_idx = 'b0;
-    //     case(rcsraddr)
-    //         `ysyx_24080020_MEPC_ADDR:     rcsr_idx = 3'd0;
-    //         `ysyx_24080020_MSTATUS_ADDR:  rcsr_idx = 3'd1;
-    //         `ysyx_24080020_MCAUSE_ADDR:   rcsr_idx = 3'd2;
-    //         `ysyx_24080020_MTVEC_ADDR:    rcsr_idx = 3'd3;
-    //         `ysyx_24080020_MVENDORID_ADDR: rcsr_idx = 3'd4;
-    //         `ysyx_24080020_MARCHID_ADDR: rcsr_idx = 3'd5;
-    //         default: rcsr_idx = 3'd7;
-    //     endcase
-    // end
 
     assign val_raddr1 = regs[raddr1];
     assign val_raddr2 = regs[raddr2];
