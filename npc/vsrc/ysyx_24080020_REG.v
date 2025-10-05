@@ -74,16 +74,16 @@ module ysyx_24080020_REG
             wb_mem_ready <= 'b0;
             cnt <= 'b0;
         end
-        else if(cnt && !wen_wb) begin
+        else if(cnt) begin
             cnt <= 'b0;
             waddr_wb <= 'b0;
 
-`ifdef CONFIG_DPIC
+            `ifdef CONFIG_DPIC
             if(skip_ref_wb) begin
                 skip_ref_wb <= 1'b0;
                 npc_difftest_skip_ref();
             end
-`endif
+            `endif
         end
         else if(mem_wb_valid && wb_mem_ready) begin
             wb_mem_ready <= 'b0;
