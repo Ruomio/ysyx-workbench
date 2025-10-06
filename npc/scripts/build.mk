@@ -274,6 +274,7 @@ $(VVP_FILE): $(VERILOG_TARGET) $(TB_FILE)
 # $(VVP_NETLIST_FILE): $(TB_NETLIST_FILE) $(NETLIST_FILE) $(CLEES_FILE)
 $(VVP_NETLIST_FILE): $(TB_NETLIST_FILE)
 	@echo "+ iverilog -> $@"
+	@echo "+ generate netlist"
 	@make -s -C $(YSYX_HOME)/yosys-sta sta > /dev/null
 	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^ $(NETLIST) $(CELLS)
 
