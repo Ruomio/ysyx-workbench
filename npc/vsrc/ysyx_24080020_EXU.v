@@ -160,21 +160,21 @@ module ysyx_24080020_EXU
 
             idu_exu_shake_hand <= 1'b0;
 
-            wen_exu <= 'b0;
-            waddr_exu <= 'b0;
-            wdata_exu <= 'b0;
+            // wen_exu <= 'b0;
+            // waddr_exu <= 'b0;
+            // wdata_exu <= 'b0;
 
-            mwen_exu <= 'b0;
-            mwmask_exu <= 'b0;
-            mren_exu <= 'b0;
-            mrtype_exu <= 'b0;
-            mrlen_exu <= 'b0;
+            // mwen_exu <= 'b0;
+            // mwmask_exu <= 'b0;
+            // mren_exu <= 'b0;
+            // mrtype_exu <= 'b0;
+            // mrlen_exu <= 'b0;
 
-            is_load_exu <= 'b0;
-            is_dnpc_exu <= 'b0;
-            branch_src1_exu <= 'b0;
+            // is_load_exu <= 'b0;
+            // is_dnpc_exu <= 'b0;
+            // branch_src1_exu <= 'b0;
 
-            alu_op_exu <= 'b0;
+            // alu_op_exu <= 'b0;
             // alu_src2_con_exu <= 'b0;
             // reg_dst_con_exu <= 'b0;
             // imm_exu <= 'b0;
