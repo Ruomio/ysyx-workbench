@@ -125,7 +125,7 @@ module ysyx_24080020_REG
     //     end
     // end
     always @(posedge clk) begin
-        if(wen_wb && waddr_wb) begin
+        if(wen_wb && |waddr_wb) begin
             regs[waddr_wb] <= rd_data_wb;
         end
     end
