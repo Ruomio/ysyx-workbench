@@ -160,6 +160,10 @@ module ysyx_24080020_EXU
 
             idu_exu_shake_hand <= 1'b0;
 
+            fencei_exu <= 'b0;
+            is_dnpc_exu <= 'b0;
+            is_btype_exu <= 'b0;
+
         end
         else if(mem_exu_ready && exu_mem_valid && state) begin
             // exu_mem_valid <= 1'b0;
