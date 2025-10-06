@@ -124,9 +124,8 @@ module ysyx_24080020_REG
     //         regs[0] <= 'b0;
     //     end
     // end
-    assign regs[0] = 'b0;
     always @(posedge clk) begin
-        if(wen_wb) begin
+        if(wen_wb && waddr_wb) begin
             regs[waddr_wb] <= rd_data_wb;
         end
     end
