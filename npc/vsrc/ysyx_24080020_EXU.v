@@ -3,6 +3,7 @@ module ysyx_24080020_EXU
 (
     input clk,
     input rst,
+
     input [`ysyx_24080020_WIDTH-1:0] pc_idu,
     input is_load_idu,
     output reg is_load_exu,
@@ -72,6 +73,7 @@ module ysyx_24080020_EXU
     input wcsren2_idu,
     input [2:0] wcsraddr2_idu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu,
+
     output reg wcsren_exu,
     output reg[2:0] wcsraddr_exu,
     output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
