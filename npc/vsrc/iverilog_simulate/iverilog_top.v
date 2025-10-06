@@ -437,14 +437,14 @@ module sim_top;
         if(reset) begin
             pc_delay_cnt <= 32'h0;
         end
-        else if(u_cpu.u_npc.exu.exu_mem_valid && u_cpu.u_npc.exu.mem_exu_ready) begin
+        else if(u_cpu.u_npc.u_exu.exu_mem_valid && u_cpu.u_npc.u_exu.mem_exu_ready) begin
             pc_delay_cnt <= 'h0;
             // $display("%h", u_cpu.u_npc.exu.pc_exu);
         end
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
             if(pc_delay_cnt > 32'h200) begin
-                $display("EXU lag at pc: 0x%h", u_cpu.u_npc.exu.pc_exu);
+                $display("EXU lag at pc: 0x%h", u_cpu.u_npc.u_exu.pc_exu);
                 $display("PC delay count exceeded");
                 $finish;
             end

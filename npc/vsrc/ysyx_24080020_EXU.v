@@ -160,49 +160,6 @@ module ysyx_24080020_EXU
 
             idu_exu_shake_hand <= 1'b0;
 
-            // wen_exu <= 'b0;
-            // waddr_exu <= 'b0;
-            // wdata_exu <= 'b0;
-
-            // mwen_exu <= 'b0;
-            // mwmask_exu <= 'b0;
-            // mren_exu <= 'b0;
-            // mrtype_exu <= 'b0;
-            // mrlen_exu <= 'b0;
-
-            // is_load_exu <= 'b0;
-            // is_dnpc_exu <= 'b0;
-            // branch_src1_exu <= 'b0;
-
-            // alu_op_exu <= 'b0;
-            // alu_src2_con_exu <= 'b0;
-            // reg_dst_con_exu <= 'b0;
-            // imm_exu <= 'b0;
-
-            src1_exu <= 'b0;
-            src2_exu <= 'b0;
-            pc_exu <= 'b0;
-            dnpc_exu <= 'b0;
-            is_jalr_exu <= 'b0;
-            is_jal_exu <= 'b0;
-            is_btype_exu <= 'b0;
-
-            wcsren_exu <= 'b0;
-            wcsraddr_exu <= 'b0;
-            wcsrdata_exu <= 'b0;
-            wcsren2_exu <= 'b0;
-            wcsraddr2_exu <= 'b0;
-            wcsrdata2_exu <= 'b0;
-
-            is_csrtype_exu <= 'b0;
-
-
-            fencei_exu <= 'b0;
-
-
-            is_ebreak_exu <= 'b0;
-            // exu_mem_valid <= 'b0;
-
         end
         else if(mem_exu_ready && exu_mem_valid && state) begin
             // exu_mem_valid <= 1'b0;
