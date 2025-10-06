@@ -281,11 +281,14 @@ iverilog: $(VVP_FILE)
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
 
-iverilog-netlist: $(VVP_NETLIST_FILE)
+iverilog-netlist: generate_netlist $(VVP_NETLIST_FILE)
 	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
 	@vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst
+
+generate_netlist:
+	@make -s -C $(YSYX_HOME)/yosys-sta sta
 
 # CI TEST
 VVP_CI_FILE = $(BUILD_DIR)/ci_sim_top.v
