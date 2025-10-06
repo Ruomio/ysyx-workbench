@@ -227,7 +227,7 @@ module ysyx_24080020_IDU (
             `ysyx_24080020_MTVEC_ADDR:    rcsraddr_ = 3'd3;
             `ysyx_24080020_MVENDORID_ADDR: rcsraddr_ = 3'd4;
             `ysyx_24080020_MARCHID_ADDR: rcsraddr_ = 3'd5;
-            default: rcsraddr_ = 3'd7;
+            default: rcsraddr_ = 3'd0;
         endcase
     end
     always @(*) begin
