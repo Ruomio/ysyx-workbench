@@ -239,7 +239,7 @@ module ysyx_24080020_IDU (
             `ysyx_24080020_MTVEC_ADDR:    wcsraddr_idu_ = 3'd3;
             `ysyx_24080020_MVENDORID_ADDR: wcsraddr_idu_ = 3'd4;
             `ysyx_24080020_MARCHID_ADDR: wcsraddr_idu_ = 3'd5;
-            default: wcsraddr_idu_ = 3'd7;
+            default: wcsraddr_idu_ = 3'd0;
         endcase
     end
 
@@ -252,7 +252,7 @@ module ysyx_24080020_IDU (
             `ysyx_24080020_MTVEC_ADDR:    wcsraddr2_idu_ = 3'd3;
             `ysyx_24080020_MVENDORID_ADDR: wcsraddr2_idu_ = 3'd4;
             `ysyx_24080020_MARCHID_ADDR: wcsraddr2_idu_ = 3'd5;
-            default: wcsraddr2_idu_ = 3'd7;
+            default: wcsraddr2_idu_ = 3'd0;
         endcase
     end
 
