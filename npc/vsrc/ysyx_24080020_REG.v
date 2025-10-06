@@ -156,8 +156,8 @@ module ysyx_24080020_REG
     end
 
     // regs read
-    assign val_raddr1 = raddr1 == 'b0 ? 'b0 : regs[raddr1];
-    assign val_raddr2 = raddr2 == 'b0 ? 'b0 : regs[raddr2];
+    assign val_raddr1 = regs[raddr1];
+    assign val_raddr2 = regs[raddr2];
 
     // csrs read
     assign rcsrdata = csrs[rcsraddr];
