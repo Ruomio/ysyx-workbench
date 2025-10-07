@@ -110,10 +110,7 @@ module ysyx_24080020_LSU(
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;
-    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
     reg [`ysyx_24080020_WIDTH-1:0] maddr_mem;
-    // reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
-    // reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg finish_read;
     reg next_inst;
@@ -128,54 +125,20 @@ module ysyx_24080020_LSU(
     reg state; // 0: idle;   1: wait_ready
 
     wire [31:0] rdata_shift;
-    // wire [31:0] rdata_shift_1, rdata_shift_2, rdata_shift;
-    // wire get_arlen;
-    // wire get_awlen;
     wire [3:0] wstrb_;
-    // wire [3:0] wstrb_1, wstrb_2;
-    // wire [31:0] wdata_1, wdata_2;
     wire [31:0] wdata_;
 
     assign arsize = 'b10;
-    // assign arsize = mrlen_mem == 'b0001 ? 3'b000 :
-    //                 mrlen_mem == 'b0010 ? 3'b001 :
-    //                 mrlen_mem == 'b0100 ? 3'b010 :
-    //                 3'b000;
     assign araddr = maddr_mem;
     assign arburst = 2'b1;
-    // assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
     assign rdata_shift = maddr_mem[1:0] == 2'b00 ? rdata :
                         maddr_mem[1:0] == 2'b01 ? rdata >> 8 :
                         maddr_mem[1:0] == 2'b10 ? rdata >> 16 :
                         maddr_mem[1:0] == 2'b11 ? rdata >> 24 :
                         32'b0;
-    // assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata :
-    //                     araddr[1:0] == 2'b01 ? rdata1 >> 8 :
-    //                     araddr[1:0] == 2'b10 ? rdata1 >> 16 :
-    //                     araddr[1:0] == 2'b11 ? rdata1 >> 24 :
-    //                     32'b0;
-    // assign rdata_shift_2 =  araddr[1:0] == 2'b01 ?
-    //                             mrlen_mem == 4'b100 ? rdata2 << 24 :
-    //                             32'b0 :
-    //                         araddr[1:0] == 2'b10 ?
-    //                             mrlen_mem == 4'b100 ? rdata2 << 16 :
-    //                             32'b0 :
-    //                         araddr[1:0] == 2'b11 ?
-    //                             mrlen_mem == 4'b100 ? rdata2 << 24 :
-    //                             mrlen_mem == 4'b010 ? rdata2 << 8 :
-    //                             32'b0 :
-    //                         32'b0;
-
-    // assign rdata_shift = rdata_shift_1 | rdata_shift_2;
-
 
     assign awburst = 2'b1;
     assign awsize = 'b10 ;
-    // assign awsize = mwmask_mem == 'b0001 ? 3'b000 :
-    //                 mwaddr_mem == 'b0010 ? 3'b001 :
-    //                 mwaddr_mem == 'b0100 ? 3'b010 :
-    //                 3'b000;
-    // assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem) > 4'b100 ? 1'b1 : 1'b0;
     assign awaddr = maddr_mem;
     assign wdata_ =  wstrb_ == 4'b1111 ? mwdata_mem :
                     wstrb_ == 4'b0011 ? mwdata_mem :
@@ -187,37 +150,6 @@ module ysyx_24080020_LSU(
                     wstrb_ == 4'b0100 ? mwdata_mem << 16 :
                     wstrb_ == 4'b1000 ? mwdata_mem << 24 :
                     32'b0;
-    // assign wdata_1 =  wstrb_1 == 4'b1111 ? mwdata_mem :
-    //                 wstrb_1 == 4'b0011 ? mwdata_mem :
-    //                 wstrb_1 == 4'b0001 ? mwdata_mem :
-    //                 wstrb_1 == 4'b1110 ? mwdata_mem << 8 :
-    //                 wstrb_1 == 4'b0110 ? mwdata_mem << 8 :
-    //                 wstrb_1 == 4'b0010 ? mwdata_mem << 8 :
-    //                 wstrb_1 == 4'b1100 ? mwdata_mem << 16 :
-    //                 wstrb_1 == 4'b0100 ? mwdata_mem << 16 :
-    //                 wstrb_1 == 4'b1000 ? mwdata_mem << 24 :
-    //                 32'b0;
-    //assign wstrb_1 = mwaddr_mem[1:0] == 2'b00 ?
-    //                    mwmask_mem == 4'b100 ? 4'b1111 :
-    //                    mwmask_mem == 4'b010 ? 4'b0011 :
-    //                    mwmask_mem == 4'b001 ? 4'b0001 :
-    //                    4'b0000 :
-    //               mwaddr_mem[1:0] == 2'b01 ?
-    //                    mwmask_mem == 4'b100 ? 4'b1110 :
-    //                    mwmask_mem == 4'b010 ? 4'b0110 :
-    //                    mwmask_mem == 4'b001 ? 4'b0010 :
-    //                    4'b0000 :
-    //               mwaddr_mem[1:0] == 2'b10 ?
-    //                    mwmask_mem == 4'b100 ? 4'b1100 :
-    //                    mwmask_mem == 4'b010 ? 4'b1100 :
-    //                    mwmask_mem == 4'b001 ? 4'b0100 :
-    //                    4'b0000 :
-    //               mwaddr_mem[1:0] == 2'b11 ?
-    //                    mwmask_mem == 4'b100 ? 4'b1000 :
-    //                    mwmask_mem == 4'b010 ? 4'b1000 :
-    //                    mwmask_mem == 4'b001 ? 4'b1000 :
-    //                    4'b0000 :
-    //                4'b0000;
 
     assign wstrb_ = maddr_mem[1:0] == 2'b00 ?
                         mwmask_mem == 4'b100 ? 4'b1111 :
@@ -238,33 +170,6 @@ module ysyx_24080020_LSU(
                         4'b1000 :
                     4'b0000;
 
-
-    // assign wdata_2 =  wstrb_2 == 4'b1111 ? mwdata_mem :
-    //                 wstrb_2 == 4'b0001 ? mwdata_mem >> 24 :
-    //                 wstrb_2 == 4'b0011 ? mwdata_mem >> 16 :
-    //                 wstrb_2 == 4'b0111 ? mwdata_mem >> 24 :
-    //                 32'b0;
-    // assign wstrb_2 = mwaddr_mem[1:0] == 2'b00 ?
-    //                     mwmask_mem == 4'b100 ? 4'b0000 :
-    //                     mwmask_mem == 4'b010 ? 4'b0000 :
-    //                     mwmask_mem == 4'b001 ? 4'b0000 :
-    //                     4'b0000 :
-    //                mwaddr_mem[1:0] == 2'b01 ?
-    //                     mwmask_mem == 4'b100 ? 4'b0001 :
-    //                     mwmask_mem == 4'b010 ? 4'b0000 :
-    //                     mwmask_mem == 4'b001 ? 4'b0000 :
-    //                     4'b0000 :
-    //                mwaddr_mem[1:0] == 2'b10 ?
-    //                     mwmask_mem == 4'b100 ? 4'b0011 :
-    //                     mwmask_mem == 4'b010 ? 4'b0000 :
-    //                     mwmask_mem == 4'b001 ? 4'b0000 :
-    //                     4'b0000 :
-    //                mwaddr_mem[1:0] == 2'b11 ?
-    //                     mwmask_mem == 4'b100 ? 4'b0111 :
-    //                     mwmask_mem == 4'b010 ? 4'b0001 :
-    //                     mwmask_mem == 4'b001 ? 4'b0000 :
-    //                     4'b0000 :
-    //                 4'b0000;
 
     assign rd_data_mem = is_load_mem ? mrdata_mem : alu_out_mem;
 
@@ -295,12 +200,12 @@ module ysyx_24080020_LSU(
             // dnpc_mem <= 'b0;
 
             mren_mem <= 'b0;
-            mrtype_mem <= 'b0;
-            mrlen_mem <= 'b0;
-            maddr_mem <= 'b0;
+            // mrtype_mem <= 'b0;
+            // mrlen_mem <= 'b0;
+            // maddr_mem <= 'b0;
             mwen_mem <= 'b0;
-            mwmask_mem <= 'b0;
-            mwdata_mem <= 'b0;
+            // mwmask_mem <= 'b0;
+            // mwdata_mem <= 'b0;
 
             // alu_out_mem <= 'b0;
 
