@@ -3,7 +3,7 @@
 VERILATOR=verilator
 VERILATOR_CFLAGS += -MMD -cc \
 					-j 16 --threads 1  \
-					-O3 --x-assign fast --x-initial random --noassert --trace \
+					-O3 --x-assign fast --x-initial unique --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
 
 
