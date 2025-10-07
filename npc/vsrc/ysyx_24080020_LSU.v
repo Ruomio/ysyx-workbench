@@ -479,7 +479,7 @@ module ysyx_24080020_LSU(
         else if(mwen_mem) begin
             wvalid <= 1'b1;
             wlast <= 1'b1;
-            wdata <= mwdata_mem;
+            wdata <= wdata_;
             wstrb <= wstrb_;
         end
     end
