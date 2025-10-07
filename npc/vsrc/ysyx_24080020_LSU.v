@@ -245,6 +245,7 @@ module ysyx_24080020_LSU(
         if(!rst) begin
             mem_exu_ready <= 1'b0;
             next_inst <= 'b1;
+
             waddr_mem <= 'b0;
 
             wen_mem <= 'b0;
@@ -461,6 +462,7 @@ module ysyx_24080020_LSU(
         end
     end
 
+    // R
     always @(posedge clk) begin
         if(!rst) begin
             rready <= 1'b0;
@@ -552,20 +554,20 @@ module ysyx_24080020_LSU(
 
     end
 
-
+    // W
     always @(posedge clk) begin
         if(!rst) begin
-            awlen_cnt <= 1'b0;
-            wlast <= 1'b0;
-            wstrb <= 'b0;
-            wdata <= 'b0;
+            // awlen_cnt <= 1'b0;
+            // wlast <= 1'b0;
+            // wstrb <= 'b0;
+            // wdata <= 'b0;
             wvalid <= 'b0;
         end
-        else if(awlen_cnt == awlen[0] && awlen_cnt == 1'b0 && mwen_mem) begin
+        else if(mwen_mem) begin
             // just once write
             wvalid <= 1'b1;
             wlast <= 1'b1;
-            wdata <= wdata_1;
+            wdata <= mwdata_mem;
             wstrb <= wstrb_1;
         end
         else if(!awlen_cnt && awlen[0] && mwen_mem) begin
@@ -598,25 +600,22 @@ module ysyx_24080020_LSU(
         end
     end
 
-
+    // B
     always @(posedge clk) begin
         if(!rst) begin
             bready <= 1'b0;
-            // mem_wb_valid <= 'b0;
         end
         else if(bvalid && bready) begin
             bready <= 'b0;
-            // mem_wb_valid <= 1'b1;
         end
         else if(bvalid) begin
             bready <= 1'b1;
 
-            // b_fin <= 1'b1;
+            `ifdef CONFIG_DPIC
             if(bresp != 2'b0) begin
-                `ifdef CONFIG_DPIC
                 $error("the bresp are not 2'b0");
-                `endif
             end
+            `endif
         end
     end
 
