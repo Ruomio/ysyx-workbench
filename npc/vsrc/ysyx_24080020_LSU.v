@@ -424,6 +424,10 @@ module ysyx_24080020_LSU(
             awid <= 4'b0;
             awlen <= {{7{1'b0}}, get_awlen};
 
+            `ifdef CONFIG_DPIC
+            $display("awlen: 0x%d", get_awlen);
+            `endif
+
             // mwen_mem <= 1'b0;
             `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
