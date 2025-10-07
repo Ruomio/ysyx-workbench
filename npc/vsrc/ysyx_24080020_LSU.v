@@ -425,7 +425,8 @@ module ysyx_24080020_LSU(
             awlen <= {{7{1'b0}}, get_awlen};
 
             `ifdef CONFIG_DPIC
-            $display("awlen: 0x%d", get_awlen);
+            if(get_awlen == 'b1)
+                $error("awlen is high");
             `endif
 
             // mwen_mem <= 1'b0;
