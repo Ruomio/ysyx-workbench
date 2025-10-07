@@ -28,19 +28,19 @@ module ysyx_24080020_REG
 
 
     //csr
-    input wcsren_mem,
-    input [2:0] wcsraddr_mem,
-    input [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
-    input wcsren2_mem,
-    input [2:0] wcsraddr2_mem,
-    input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
-    input [2:0] rcsraddr,
+    // input wcsren_mem,
+    // input [2:0] wcsraddr_mem,
+    // input [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
+    // input wcsren2_mem,
+    // input [2:0] wcsraddr2_mem,
+    // input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
+    // input [2:0] rcsraddr,
 
     // out src1 & src2
     output [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     output [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     // out csr
-    output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
+    // output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
     input mem_wb_valid,
     output reg wb_mem_ready
@@ -56,7 +56,7 @@ module ysyx_24080020_REG
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
     // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec, csrs[4] = MVENDORID, csrs[5] = MARCHID
-    reg [`ysyx_24080020_WIDTH-1:0] csrs[0:5];
+    // reg [`ysyx_24080020_WIDTH-1:0] csrs[0:5];
 
 
     reg cnt;
@@ -143,17 +143,17 @@ module ysyx_24080020_REG
     end
 
     // csrs write
-    always @(posedge clk) begin
-        if(!rst) begin
-            csrs[1] <= 32'h1800;
-            csrs[4] <= 32'h79737978;
-            csrs[5] <= 32'h16f6e94;
-        end
-        else  begin
-            if(wcsren_wb) csrs[wcsraddr_wb] <= wcsrdata_wb;
-            if(wcsren2_wb) csrs[wcsraddr2_wb] <= wcsrdata2_wb;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         csrs[1] <= 32'h1800;
+    //         csrs[4] <= 32'h79737978;
+    //         csrs[5] <= 32'h16f6e94;
+    //     end
+    //     else  begin
+    //         if(wcsren_wb) csrs[wcsraddr_wb] <= wcsrdata_wb;
+    //         if(wcsren2_wb) csrs[wcsraddr2_wb] <= wcsrdata2_wb;
+    //     end
+    // end
 
     // regs read
     // assign val_raddr1 = regs[raddr1];
@@ -162,5 +162,5 @@ module ysyx_24080020_REG
     assign val_raddr2 = raddr2 == 'b0 ? 'b0 : regs[raddr2];
 
     // csrs read
-    assign rcsrdata = csrs[rcsraddr];
+    // assign rcsrdata = csrs[rcsraddr];
 endmodule

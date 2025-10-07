@@ -538,6 +538,26 @@ module ysyx_24080020_NPC(
         .rd_data_wb(rd_data_wb),
         .wen_wb(wen_wb),
 
+        // .wcsren_mem(wcsren_mem),
+        // .wcsraddr_mem(wcsraddr_mem),
+        // .wcsrdata_mem(wcsrdata_mem),
+        // .wcsren2_mem(wcsren2_mem),
+        // .wcsraddr2_mem(wcsraddr2_mem),
+        // .wcsrdata2_mem(wcsrdata2_mem),
+
+        .val_raddr1(val_raddr1),
+        .val_raddr2(val_raddr2),
+        // .rcsraddr(rcsraddr),
+        // .rcsrdata(rcsrdata),
+
+        .mem_wb_valid(mem_wb_valid),
+        .wb_mem_ready(wb_mem_ready)
+    );
+
+    ysyx_24080020_CSR u_csr(
+        .clk(clk),
+        .rst(rst),
+
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
         .wcsrdata_mem(wcsrdata_mem),
@@ -545,8 +565,6 @@ module ysyx_24080020_NPC(
         .wcsraddr2_mem(wcsraddr2_mem),
         .wcsrdata2_mem(wcsrdata2_mem),
 
-        .val_raddr1(val_raddr1),
-        .val_raddr2(val_raddr2),
         .rcsraddr(rcsraddr),
         .rcsrdata(rcsrdata),
 
