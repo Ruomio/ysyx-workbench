@@ -141,7 +141,7 @@ module ysyx_24080020_LSU(
     //                 mrlen_mem == 'b0010 ? 3'b001 :
     //                 mrlen_mem == 'b0100 ? 3'b010 :
     //                 3'b000;
-    assign araddr = mraddr_mem;
+    assign araddr = maddr_mem;
     assign arburst = 2'b1;
     // assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
     assign rdata_shift = mraddr_mem[1:0] == 2'b00 ? rdata :
@@ -300,7 +300,6 @@ module ysyx_24080020_LSU(
             maddr_mem <= 'b0;
             mwen_mem <= 'b0;
             mwmask_mem <= 'b0;
-            mwaddr_mem <= 'b0;
             mwdata_mem <= 'b0;
 
             // alu_out_mem <= 'b0;
