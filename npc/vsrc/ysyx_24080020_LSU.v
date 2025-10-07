@@ -126,47 +126,56 @@ module ysyx_24080020_LSU(
 
     reg state; // 0: idle;   1: wait_ready
 
-    wire [31:0] rdata_shift_1, rdata_shift_2, rdata_shift;
-    wire get_arlen;
-    wire get_awlen;
+    wire [31:0] rdata_shift;
+    // wire [31:0] rdata_shift_1, rdata_shift_2, rdata_shift;
+    // wire get_arlen;
+    // wire get_awlen;
+    wire [3:0] wstrb_;
     wire [3:0] wstrb_1, wstrb_2;
     wire [31:0] wdata_1, wdata_2;
 
-    assign arsize = mrlen_mem == 'b0001 ? 3'b000 :
-                    mrlen_mem == 'b0010 ? 3'b001 :
-                    mrlen_mem == 'b0100 ? 3'b010 :
-                    3'b000;
+    assign arsize = 'b10;
+    // assign arsize = mrlen_mem == 'b0001 ? 3'b000 :
+    //                 mrlen_mem == 'b0010 ? 3'b001 :
+    //                 mrlen_mem == 'b0100 ? 3'b010 :
+    //                 3'b000;
     assign araddr = mraddr_mem;
     assign arburst = 2'b1;
-    assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
-    assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata1 :
-                        araddr[1:0] == 2'b01 ? rdata1 >> 8 :
-                        araddr[1:0] == 2'b10 ? rdata1 >> 16 :
-                        araddr[1:0] == 2'b11 ? rdata1 >> 24 :
+    // assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
+    assign rdata_shift = mraddr_mem[1:0] == 2'b00 ? rdata :
+                        mraddr_mem[1:0] == 2'b01 ? rdata >> 8 :
+                        mraddr_mem[1:0] == 2'b10 ? rdata >> 16 :
+                        mraddr_mem[1:0] == 2'b11 ? rdata >> 24 :
                         32'b0;
-    assign rdata_shift_2 =  araddr[1:0] == 2'b01 ?
-                                mrlen_mem == 4'b100 ? rdata2 << 24 :
-                                32'b0 :
-                            araddr[1:0] == 2'b10 ?
-                                mrlen_mem == 4'b100 ? rdata2 << 16 :
-                                32'b0 :
-                            araddr[1:0] == 2'b11 ?
-                                mrlen_mem == 4'b100 ? rdata2 << 24 :
-                                mrlen_mem == 4'b010 ? rdata2 << 8 :
-                                32'b0 :
-                            32'b0;
+    // assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata :
+    //                     araddr[1:0] == 2'b01 ? rdata1 >> 8 :
+    //                     araddr[1:0] == 2'b10 ? rdata1 >> 16 :
+    //                     araddr[1:0] == 2'b11 ? rdata1 >> 24 :
+    //                     32'b0;
+    // assign rdata_shift_2 =  araddr[1:0] == 2'b01 ?
+    //                             mrlen_mem == 4'b100 ? rdata2 << 24 :
+    //                             32'b0 :
+    //                         araddr[1:0] == 2'b10 ?
+    //                             mrlen_mem == 4'b100 ? rdata2 << 16 :
+    //                             32'b0 :
+    //                         araddr[1:0] == 2'b11 ?
+    //                             mrlen_mem == 4'b100 ? rdata2 << 24 :
+    //                             mrlen_mem == 4'b010 ? rdata2 << 8 :
+    //                             32'b0 :
+    //                         32'b0;
 
-    assign rdata_shift = rdata_shift_1 | rdata_shift_2;
+    // assign rdata_shift = rdata_shift_1 | rdata_shift_2;
 
 
     assign awburst = 2'b1;
-    assign awsize = mwmask_mem == 'b0001 ? 3'b000 :
-                    mwaddr_mem == 'b0010 ? 3'b001 :
-                    mwaddr_mem == 'b0100 ? 3'b010 :
-                    3'b000;
-    assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem) > 4'b100 ? 1'b1 : 1'b0;
-    assign awaddr = mwaddr_mem;
-    assign wdata_1 =  wstrb_1 == 4'b1111 ? mwdata_mem :
+    assign awsize = 'b10 ;
+    // assign awsize = mwmask_mem == 'b0001 ? 3'b000 :
+    //                 mwaddr_mem == 'b0010 ? 3'b001 :
+    //                 mwaddr_mem == 'b0100 ? 3'b010 :
+    //                 3'b000;
+    // assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem) > 4'b100 ? 1'b1 : 1'b0;
+    assign awaddr = {mwaddr_mem, 2'b0};
+    assign wdata_ =  wstrb_1 == 4'b1111 ? mwdata_mem :
                     wstrb_1 == 4'b0011 ? mwdata_mem :
                     wstrb_1 == 4'b0001 ? mwdata_mem :
                     wstrb_1 == 4'b1110 ? mwdata_mem << 8 :
@@ -176,6 +185,16 @@ module ysyx_24080020_LSU(
                     wstrb_1 == 4'b0100 ? mwdata_mem << 16 :
                     wstrb_1 == 4'b1000 ? mwdata_mem << 24 :
                     32'b0;
+    // assign wdata_1 =  wstrb_1 == 4'b1111 ? mwdata_mem :
+    //                 wstrb_1 == 4'b0011 ? mwdata_mem :
+    //                 wstrb_1 == 4'b0001 ? mwdata_mem :
+    //                 wstrb_1 == 4'b1110 ? mwdata_mem << 8 :
+    //                 wstrb_1 == 4'b0110 ? mwdata_mem << 8 :
+    //                 wstrb_1 == 4'b0010 ? mwdata_mem << 8 :
+    //                 wstrb_1 == 4'b1100 ? mwdata_mem << 16 :
+    //                 wstrb_1 == 4'b0100 ? mwdata_mem << 16 :
+    //                 wstrb_1 == 4'b1000 ? mwdata_mem << 24 :
+    //                 32'b0;
     assign wstrb_1 = mwaddr_mem[1:0] == 2'b00 ?
                         mwmask_mem == 4'b100 ? 4'b1111 :
                         mwmask_mem == 4'b010 ? 4'b0011 :
@@ -197,6 +216,29 @@ module ysyx_24080020_LSU(
                         mwmask_mem == 4'b001 ? 4'b1000 :
                         4'b0000 :
                     4'b0000;
+
+    assign wstrb_ = mwaddr_mem[1:0] == 2'b00 ?
+                        mwmask_mem == 4'b100 ? 4'b1111 :
+                        mwmask_mem == 4'b010 ? 4'b0011 :
+                        mwmask_mem == 4'b001 ? 4'b0001 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b01 ?
+                        mwmask_mem == 4'b100 ? 4'b1110 :
+                        mwmask_mem == 4'b010 ? 4'b0110 :
+                        mwmask_mem == 4'b001 ? 4'b0010 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b10 ?
+                        mwmask_mem == 4'b100 ? 4'b1100 :
+                        mwmask_mem == 4'b010 ? 4'b1100 :
+                        mwmask_mem == 4'b001 ? 4'b0100 :
+                        4'b0000 :
+                   mwaddr_mem[1:0] == 2'b11 ?
+                        mwmask_mem == 4'b100 ? 4'b1000 :
+                        mwmask_mem == 4'b010 ? 4'b1000 :
+                        mwmask_mem == 4'b001 ? 4'b1000 :
+                        4'b0000 :
+                    4'b0000;
+
 
     assign wdata_2 =  wstrb_2 == 4'b1111 ? mwdata_mem :
                     wstrb_2 == 4'b0001 ? mwdata_mem >> 24 :
@@ -246,14 +288,12 @@ module ysyx_24080020_LSU(
             mem_exu_ready <= 1'b0;
             next_inst <= 'b1;
 
-            waddr_mem <= 'b0;
-
             wen_mem <= 'b0;
             waddr_mem <= 'b0;
 
             is_load_mem <= 'b0;
-            is_dnpc_mem <= 'b0;
-            dnpc_mem <= 'b0;
+            // is_dnpc_mem <= 'b0;
+            // dnpc_mem <= 'b0;
 
             mren_mem <= 'b0;
             mrtype_mem <= 'b0;
@@ -264,14 +304,14 @@ module ysyx_24080020_LSU(
             mwaddr_mem <= 'b0;
             mwdata_mem <= 'b0;
 
-            alu_out_mem <= 'b0;
+            // alu_out_mem <= 'b0;
 
-            wcsren_mem <= 'b0;
-            wcsraddr_mem <= 'b0;
-            wcsrdata_mem <= 'b0;
-            wcsren2_mem <= 'b0;
-            wcsraddr2_mem <= 'b0;
-            wcsrdata2_mem <= 'b0;
+            // wcsren_mem <= 'b0;
+            // wcsraddr_mem <= 'b0;
+            // wcsrdata_mem <= 'b0;
+            // wcsren2_mem <= 'b0;
+            // wcsraddr2_mem <= 'b0;
+            // wcsrdata2_mem <= 'b0;
 
             fencei_mem <= 'b0;
 
@@ -280,7 +320,7 @@ module ysyx_24080020_LSU(
             // mem_wb_valid <= 'b0;
 
 
-            is_ebreak_lsu <= 'b0;
+            // is_ebreak_lsu <= 'b0;
             exu_mem_shake_hands <= 1'b0;
 
         end
@@ -360,7 +400,7 @@ module ysyx_24080020_LSU(
         else if(mem_wb_valid && wb_mem_ready && state) begin
             mem_wb_valid <= 1'b0;
         end
-        else if(exu_mem_shake_hands && !mwen_exu && !mren_exu) begin
+        else if(exu_mem_shake_hands && !mwen_mem && !mren_mem) begin
 
             mem_wb_valid <= 1'b1;
         end
@@ -375,17 +415,10 @@ module ysyx_24080020_LSU(
 
 
 
+    // AR
     always @(posedge clk) begin
         if(!rst) begin
             arvalid <= 1'b0;
-            arlen <= 'b0;
-            arid <= 'b0;
-
-            awvalid <= 1'b0;
-            awlen <= 'b0;
-            awid <= 'b0;
-
-            skip_ref_mem <= 'b0;
         end
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
@@ -393,72 +426,7 @@ module ysyx_24080020_LSU(
         else if(mren_mem) begin
             arvalid <= 1'b1;
             arid <= 4'b0;
-            arlen <= {{7{1'b0}},get_arlen};
-
-            `ifdef CONFIG_DPIC
-            if(get_arlen == 'b1)
-                $error("arlen is high");
-            `endif
-
-            `ifdef ysyxSoCFull
-            if(araddr >= 32'h10000000 && araddr < 32'h10001000
-                || araddr >= 32'h10011000 && araddr < 32'h10011008
-                || araddr >= 32'h21000000 && araddr < 32'h21200000
-                || araddr >= 32'h02000000 && araddr < 32'h02000008
-                || araddr >= 32'hc0000000 && araddr < 32'hffffffff
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
-                || araddr >= 32'ha0000048 && araddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-            `endif
-
-            // end
-        end
-        else if(awvalid_reg && awready) begin
-            awvalid <= 1'b0;
-
-        end
-        else if(mwen_mem) begin
-            awvalid <= 1'b1;
-            awid <= 4'b0;
-            awlen <= {{7{1'b0}}, get_awlen};
-
-            `ifdef CONFIG_DPIC
-            if(get_awlen == 'b1)
-                $error("awlen is high");
-            `endif
-
-            // mwen_mem <= 1'b0;
-            `ifdef ysyxSoCFull
-            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
-                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
-                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
-                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
-                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
-                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-
-
-            `endif
-
+            arlen <= 'b0;
         end
     end
 
@@ -466,62 +434,83 @@ module ysyx_24080020_LSU(
     always @(posedge clk) begin
         if(!rst) begin
             rready <= 1'b0;
-            arlen_cnt <= 1'b0;
-            rdata1 <= 'b0;
-            rdata2 <= 'b0;
+            // arlen_cnt <= 1'b0;
+            // rdata1 <= 'b0;
+            // rdata2 <= 'b0;
             // mem_wb_valid <= 'b0;
         end
         else if(rvalid && rready) begin
             rready <= 1'b0;
-        end
-        else if(rvalid && rlast) begin
-            // finish all read
-            rready <= 1'b1;
+
+            `ifdef CONFIG_DPIC
             if(rresp != 2'b0) begin
                 // rresp fault;
-                `ifdef CONFIG_DPIC
                 $display("rresp not be 0b00, ERROR");
-                `endif
             end
-            else begin
-                if(arlen_cnt == 1'b0) begin
-                    // just read once
-                    rdata1 <= rdata;
-                    rdata2 <= 32'b0;
-                end
-                else begin
-                    // second read
-                    rdata2 <= rdata;
-                end
-
-                arlen_cnt <= 1'b0;
-            end
-            `ifdef CONFIG_DPIC
-            if(rready)
-              statistics_lsu_get_data();
+            statistics_lsu_get_data();
             `endif
         end
-        else if(rvalid && !rlast) begin
-            // muti read, and the first read
+        else if(rvalid) begin
             rready <= 1'b1;
-            if(rresp == 2'b0) begin
-                rdata1 <= rdata;
-                rdata2 <= 32'b0;
-                arlen_cnt <= 1'b1;
-            end
-            else begin
-                // read error
-                `ifdef CONFIG_DPIC
-                $error("rresp not be 0b00, ERROR");
-                `endif
-            end
         end
     end
 
+
+    // AW
+    always @(posedge clk) begin
+        if(!rst) begin
+            awvalid <= 'b0;
+        end
+        else if(awvalid_reg && awready) begin
+            awvalid <= 1'b0;
+        end
+        else if(mwen_mem) begin
+            awvalid <= 1'b1;
+            awlen <= 'b0;
+
+        end
+    end
+
+    // W
+    always @(posedge clk) begin
+        if(!rst) begin
+            wvalid <= 'b0;
+        end
+        else if(wvalid_reg && wready) begin
+            wvalid <= 1'b0;
+        end
+        else if(mwen_mem) begin
+            wvalid <= 1'b1;
+            wlast <= 1'b1;
+            wdata <= mwdata_mem;
+            wstrb <= wstrb_;
+        end
+    end
+
+    // B
+    always @(posedge clk) begin
+        if(!rst) begin
+            bready <= 1'b0;
+        end
+        else if(bvalid && bready) begin
+            bready <= 'b0;
+        end
+        else if(bvalid) begin
+            bready <= 1'b1;
+
+            `ifdef CONFIG_DPIC
+            if(bresp != 2'b0) begin
+                $error("the bresp are not 2'b0");
+            end
+            `endif
+        end
+    end
+
+    // process rdata
     always @(posedge clk) begin
         if(!rst) begin
             finish_read <= 1'b0;
-            mrdata_mem <= 'b0;
+            // mrdata_mem <= 'b0;
             // mem_wb_valid <= 'b0;
         end
         else if(finish_read) begin
@@ -548,72 +537,58 @@ module ysyx_24080020_LSU(
             // mem_wb_valid <= 1'b1;
             finish_read <= 1'b0;
         end
-        else if(rvalid && rlast) begin
+        else if(rvalid && rready && rlast) begin
             finish_read <= 1'b1;
         end
-
     end
 
-    // W
+    // skip ref
     always @(posedge clk) begin
         if(!rst) begin
-            // awlen_cnt <= 1'b0;
-            // wlast <= 1'b0;
-            // wstrb <= 'b0;
-            // wdata <= 'b0;
-            wvalid <= 'b0;
+            skip_ref_mem <= 'b0;
+        end
+        else if(mem_wb_valid && wb_mem_ready) begin
+            skip_ref_mem <= 'b0;
+        end
+        else if(mren_mem) begin
+            `ifdef ysyxSoCFull
+            if(araddr >= 32'h10000000 && araddr < 32'h10001000
+                || araddr >= 32'h10011000 && araddr < 32'h10011008
+                || araddr >= 32'h21000000 && araddr < 32'h21200000
+                || araddr >= 32'h02000000 && araddr < 32'h02000008
+                || araddr >= 32'hc0000000 && araddr < 32'hffffffff
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+            end
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
+                || araddr >= 32'ha0000048 && araddr < 32'ha0000050
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+            end
+            `endif
         end
         else if(mwen_mem) begin
-            // just once write
-            wvalid <= 1'b1;
-            wlast <= 1'b1;
-            wdata <= mwdata_mem;
-            wstrb <= wstrb_1;
-        end
-        else if(!awlen_cnt && awlen[0] && mwen_mem) begin
-            // muti write, the first write
-            wvalid <= 1'b1;
-            awlen_cnt <= 1'b1;
-            wdata <= wdata_1;
-            wstrb <= wstrb_1;
-            wlast <= 1'b0;
-            // $display("first write");
-        end
-        else if(wvalid_reg && wready && wlast && !awlen[0]) begin
-            // finish once
-            wvalid <= 1'b0;
-        end
-        else if(wvalid_reg && wready && wlast && awlen[0]) begin
-            // finish all
-            wvalid <= 1'b0;
-            // wlast <= 1'b0;
-            awlen_cnt <= 1'b0;
-        end
-        else if(wvalid_reg && wready && awlen_cnt && awlen[0]) begin
-            // next W
-            // muti write, the second write
-            wlast <= 1'b1;
-            wvalid <= 1'b1;
-            wdata <= wdata_2;
-            wstrb <= wstrb_2;
-            // $display("second write");
-        end
-    end
-
-    // B
-    always @(posedge clk) begin
-        if(!rst) begin
-            bready <= 1'b0;
-        end
-        else if(bvalid && bready) begin
-            bready <= 'b0;
-        end
-        else if(bvalid) begin
-            bready <= 1'b1;
-
-            `ifdef CONFIG_DPIC
-            if(bresp != 2'b0) begin
-                $error("the bresp are not 2'b0");
+            `ifdef ysyxSoCFull
+            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
+                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
+                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
+                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
+                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
+            end
+            `endif
+            `ifdef ysyx_24080020_NPC
+            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
+                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
+                ) begin
+                // skip uart keyboard etc.
+                skip_ref_mem <= 'b1;
             end
             `endif
         end
