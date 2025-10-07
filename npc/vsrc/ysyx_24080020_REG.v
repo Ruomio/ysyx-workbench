@@ -130,7 +130,7 @@ module ysyx_24080020_REG
         end
     end
 
-    always @(posedge clk or negedge rst) begin
+    always @(posedge clk) begin
         if(!rst) begin
             wen_wb <= 'b0;
         end
