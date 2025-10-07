@@ -61,8 +61,9 @@ module ysyx_24080020_EXU
     output reg mren_exu,
     output reg mrtype_exu,
     output reg [3:0] mrlen_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] mraddr_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] maddr_exu,
+    // output reg [`ysyx_24080020_WIDTH-1:0] mraddr_exu,
+    // output reg [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
 
     //csrs
@@ -126,23 +127,24 @@ module ysyx_24080020_EXU
 
 
     // memory
-    // always @(alu_out or src2_exu or mwen_exu or mren_exu) begin
-    always @(*) begin
-        if(mwen_exu) begin
-            mwaddr_exu = alu_out;
-            mwdata_exu = src2_exu;
-        end
-        else begin
-            mwaddr_exu = 32'b0;
-            mwdata_exu = src2_exu;
-        end
-        if(mren_exu) begin
-            mraddr_exu = alu_out;
-        end
-        else begin
-            mraddr_exu = 32'b0;
-        end
-    end
+    assign maddr_exu = alu_out;
+    assign mwdata_exu = src2_exu;
+    // always @(*) begin
+    //     if(mwen_exu) begin
+    //         mwaddr_exu = alu_out;
+    //         mwdata_exu = src2_exu;
+    //     end
+    //     else begin
+    //         mwaddr_exu = 32'b0;
+    //         mwdata_exu = src2_exu;
+    //     end
+    //     if(mren_exu) begin
+    //         mraddr_exu = alu_out;
+    //     end
+    //     else begin
+    //         mraddr_exu = 32'b0;
+    //     end
+    // end
 
 
     // branch

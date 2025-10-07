@@ -119,7 +119,7 @@ module ysyx_24080020_NPC(
   wire mrtype_idu, mrtype_exu, mrtype_mem;
   wire [3:0] mrlen_idu, mrlen_exu, mrlen_mem, mrlen_wb;
   wire [3:0] mwmask_idu, mwmask_exu, mwmask_mem, mwmask_wb;
-  wire [`ysyx_24080020_WIDTH-1:0] mraddr_exu, mraddr_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] maddr_exu;
   wire [`ysyx_24080020_WIDTH-1:0] mwaddr_exu, mwaddr_mem;
   wire [`ysyx_24080020_WIDTH-1:0] mwdata_exu, mwdata_mem;
   wire [`ysyx_24080020_WIDTH-1:0] rd_data_mem, mrdata_mem;
@@ -637,8 +637,9 @@ module ysyx_24080020_NPC(
         .mren_exu(mren_exu),
         .mrtype_exu(mrtype_exu),
         .mrlen_exu(mrlen_exu),
-        .mraddr_exu(mraddr_exu),
-        .mwaddr_exu(mwaddr_exu),
+        .maddr_exu(maddr_exu),
+        // .mraddr_exu(mraddr_exu),
+        // .mwaddr_exu(mwaddr_exu),
         .mwdata_exu(mwdata_exu),
 
         // csrs
@@ -679,8 +680,9 @@ module ysyx_24080020_NPC(
         .mrlen_exu(mrlen_exu),
         .mwen_exu(mwen_exu),
         .mwmask_exu(mwmask_exu),
-        .mraddr_exu(mraddr_exu),
-        .mwaddr_exu(mwaddr_exu),
+        .maddr_exu(maddr_exu),
+        // .mraddr_exu(mraddr_exu),
+        // .mwaddr_exu(mwaddr_exu),
         .mwdata_exu(mwdata_exu),
         .mrdata_mem(mrdata_mem),
         .exu_mem_shake_hands(exu_mem_shake_hands),

@@ -8,8 +8,8 @@ module ysyx_24080020_LSU(
     input [3:0] mrlen_exu,
     input mwen_exu,
     input [3:0] mwmask_exu,
-    input [`ysyx_24080020_WIDTH-1:0] mraddr_exu,
-    input [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
+    input [`ysyx_24080020_WIDTH-1:0] maddr_exu,
+    // input [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
 
@@ -111,8 +111,9 @@ module ysyx_24080020_LSU(
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;
     // reg [`ysyx_24080020_WIDTH-1:0] mrdata_tmp;
-    reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
+    reg [`ysyx_24080020_WIDTH-1:0] maddr_mem;
+    // reg [`ysyx_24080020_WIDTH-1:0] mraddr_mem;
+    // reg [`ysyx_24080020_WIDTH-1:0] mwaddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg finish_read;
     reg next_inst;
@@ -131,8 +132,9 @@ module ysyx_24080020_LSU(
     // wire get_arlen;
     // wire get_awlen;
     wire [3:0] wstrb_;
-    wire [3:0] wstrb_1, wstrb_2;
-    wire [31:0] wdata_1, wdata_2;
+    // wire [3:0] wstrb_1, wstrb_2;
+    // wire [31:0] wdata_1, wdata_2;
+    wire [31:0] wdata_;
 
     assign arsize = 'b10;
     // assign arsize = mrlen_mem == 'b0001 ? 3'b000 :
@@ -174,16 +176,16 @@ module ysyx_24080020_LSU(
     //                 mwaddr_mem == 'b0100 ? 3'b010 :
     //                 3'b000;
     // assign get_awlen = ({{2{1'b0}},mwaddr_mem[1:0]} + mwmask_mem) > 4'b100 ? 1'b1 : 1'b0;
-    assign awaddr = {mwaddr_mem, 2'b0};
-    assign wdata_ =  wstrb_1 == 4'b1111 ? mwdata_mem :
-                    wstrb_1 == 4'b0011 ? mwdata_mem :
-                    wstrb_1 == 4'b0001 ? mwdata_mem :
-                    wstrb_1 == 4'b1110 ? mwdata_mem << 8 :
-                    wstrb_1 == 4'b0110 ? mwdata_mem << 8 :
-                    wstrb_1 == 4'b0010 ? mwdata_mem << 8 :
-                    wstrb_1 == 4'b1100 ? mwdata_mem << 16 :
-                    wstrb_1 == 4'b0100 ? mwdata_mem << 16 :
-                    wstrb_1 == 4'b1000 ? mwdata_mem << 24 :
+    assign awaddr = maddr_mem;
+    assign wdata_ =  wstrb_ == 4'b1111 ? mwdata_mem :
+                    wstrb_ == 4'b0011 ? mwdata_mem :
+                    wstrb_ == 4'b0001 ? mwdata_mem :
+                    wstrb_ == 4'b1110 ? mwdata_mem << 8 :
+                    wstrb_ == 4'b0110 ? mwdata_mem << 8 :
+                    wstrb_ == 4'b0010 ? mwdata_mem << 8 :
+                    wstrb_ == 4'b1100 ? mwdata_mem << 16 :
+                    wstrb_ == 4'b0100 ? mwdata_mem << 16 :
+                    wstrb_ == 4'b1000 ? mwdata_mem << 24 :
                     32'b0;
     // assign wdata_1 =  wstrb_1 == 4'b1111 ? mwdata_mem :
     //                 wstrb_1 == 4'b0011 ? mwdata_mem :
@@ -195,77 +197,74 @@ module ysyx_24080020_LSU(
     //                 wstrb_1 == 4'b0100 ? mwdata_mem << 16 :
     //                 wstrb_1 == 4'b1000 ? mwdata_mem << 24 :
     //                 32'b0;
-    assign wstrb_1 = mwaddr_mem[1:0] == 2'b00 ?
+    //assign wstrb_1 = mwaddr_mem[1:0] == 2'b00 ?
+    //                    mwmask_mem == 4'b100 ? 4'b1111 :
+    //                    mwmask_mem == 4'b010 ? 4'b0011 :
+    //                    mwmask_mem == 4'b001 ? 4'b0001 :
+    //                    4'b0000 :
+    //               mwaddr_mem[1:0] == 2'b01 ?
+    //                    mwmask_mem == 4'b100 ? 4'b1110 :
+    //                    mwmask_mem == 4'b010 ? 4'b0110 :
+    //                    mwmask_mem == 4'b001 ? 4'b0010 :
+    //                    4'b0000 :
+    //               mwaddr_mem[1:0] == 2'b10 ?
+    //                    mwmask_mem == 4'b100 ? 4'b1100 :
+    //                    mwmask_mem == 4'b010 ? 4'b1100 :
+    //                    mwmask_mem == 4'b001 ? 4'b0100 :
+    //                    4'b0000 :
+    //               mwaddr_mem[1:0] == 2'b11 ?
+    //                    mwmask_mem == 4'b100 ? 4'b1000 :
+    //                    mwmask_mem == 4'b010 ? 4'b1000 :
+    //                    mwmask_mem == 4'b001 ? 4'b1000 :
+    //                    4'b0000 :
+    //                4'b0000;
+
+    assign wstrb_ = maddr_mem[1:0] == 2'b00 ?
                         mwmask_mem == 4'b100 ? 4'b1111 :
                         mwmask_mem == 4'b010 ? 4'b0011 :
                         mwmask_mem == 4'b001 ? 4'b0001 :
                         4'b0000 :
-                   mwaddr_mem[1:0] == 2'b01 ?
+                   maddr_mem[1:0] == 2'b01 ?
                         mwmask_mem == 4'b100 ? 4'b1110 :
                         mwmask_mem == 4'b010 ? 4'b0110 :
                         mwmask_mem == 4'b001 ? 4'b0010 :
                         4'b0000 :
-                   mwaddr_mem[1:0] == 2'b10 ?
+                   maddr_mem[1:0] == 2'b10 ?
                         mwmask_mem == 4'b100 ? 4'b1100 :
                         mwmask_mem == 4'b010 ? 4'b1100 :
                         mwmask_mem == 4'b001 ? 4'b0100 :
                         4'b0000 :
-                   mwaddr_mem[1:0] == 2'b11 ?
-                        mwmask_mem == 4'b100 ? 4'b1000 :
-                        mwmask_mem == 4'b010 ? 4'b1000 :
-                        mwmask_mem == 4'b001 ? 4'b1000 :
-                        4'b0000 :
-                    4'b0000;
-
-    assign wstrb_ = mwaddr_mem[1:0] == 2'b00 ?
-                        mwmask_mem == 4'b100 ? 4'b1111 :
-                        mwmask_mem == 4'b010 ? 4'b0011 :
-                        mwmask_mem == 4'b001 ? 4'b0001 :
-                        4'b0000 :
-                   mwaddr_mem[1:0] == 2'b01 ?
-                        mwmask_mem == 4'b100 ? 4'b1110 :
-                        mwmask_mem == 4'b010 ? 4'b0110 :
-                        mwmask_mem == 4'b001 ? 4'b0010 :
-                        4'b0000 :
-                   mwaddr_mem[1:0] == 2'b10 ?
-                        mwmask_mem == 4'b100 ? 4'b1100 :
-                        mwmask_mem == 4'b010 ? 4'b1100 :
-                        mwmask_mem == 4'b001 ? 4'b0100 :
-                        4'b0000 :
-                   mwaddr_mem[1:0] == 2'b11 ?
-                        mwmask_mem == 4'b100 ? 4'b1000 :
-                        mwmask_mem == 4'b010 ? 4'b1000 :
-                        mwmask_mem == 4'b001 ? 4'b1000 :
-                        4'b0000 :
+                   maddr_mem[1:0] == 2'b11 ?
+                        4'b1000 :
                     4'b0000;
 
 
-    assign wdata_2 =  wstrb_2 == 4'b1111 ? mwdata_mem :
-                    wstrb_2 == 4'b0001 ? mwdata_mem >> 24 :
-                    wstrb_2 == 4'b0011 ? mwdata_mem >> 16 :
-                    wstrb_2 == 4'b0111 ? mwdata_mem >> 24 :
-                    32'b0;
-    assign wstrb_2 = mwaddr_mem[1:0] == 2'b00 ?
-                        mwmask_mem == 4'b100 ? 4'b0000 :
-                        mwmask_mem == 4'b010 ? 4'b0000 :
-                        mwmask_mem == 4'b001 ? 4'b0000 :
-                        4'b0000 :
-                   mwaddr_mem[1:0] == 2'b01 ?
-                        mwmask_mem == 4'b100 ? 4'b0001 :
-                        mwmask_mem == 4'b010 ? 4'b0000 :
-                        mwmask_mem == 4'b001 ? 4'b0000 :
-                        4'b0000 :
-                   mwaddr_mem[1:0] == 2'b10 ?
-                        mwmask_mem == 4'b100 ? 4'b0011 :
-                        mwmask_mem == 4'b010 ? 4'b0000 :
-                        mwmask_mem == 4'b001 ? 4'b0000 :
-                        4'b0000 :
-                   mwaddr_mem[1:0] == 2'b11 ?
-                        mwmask_mem == 4'b100 ? 4'b0111 :
-                        mwmask_mem == 4'b010 ? 4'b0001 :
-                        mwmask_mem == 4'b001 ? 4'b0000 :
-                        4'b0000 :
-                    4'b0000;
+    // assign wdata_2 =  wstrb_2 == 4'b1111 ? mwdata_mem :
+    //                 wstrb_2 == 4'b0001 ? mwdata_mem >> 24 :
+    //                 wstrb_2 == 4'b0011 ? mwdata_mem >> 16 :
+    //                 wstrb_2 == 4'b0111 ? mwdata_mem >> 24 :
+    //                 32'b0;
+    // assign wstrb_2 = mwaddr_mem[1:0] == 2'b00 ?
+    //                     mwmask_mem == 4'b100 ? 4'b0000 :
+    //                     mwmask_mem == 4'b010 ? 4'b0000 :
+    //                     mwmask_mem == 4'b001 ? 4'b0000 :
+    //                     4'b0000 :
+    //                mwaddr_mem[1:0] == 2'b01 ?
+    //                     mwmask_mem == 4'b100 ? 4'b0001 :
+    //                     mwmask_mem == 4'b010 ? 4'b0000 :
+    //                     mwmask_mem == 4'b001 ? 4'b0000 :
+    //                     4'b0000 :
+    //                mwaddr_mem[1:0] == 2'b10 ?
+    //                     mwmask_mem == 4'b100 ? 4'b0011 :
+    //                     mwmask_mem == 4'b010 ? 4'b0000 :
+    //                     mwmask_mem == 4'b001 ? 4'b0000 :
+    //                     4'b0000 :
+    //                mwaddr_mem[1:0] == 2'b11 ?
+    //                     mwmask_mem == 4'b100 ? 4'b0111 :
+    //                     mwmask_mem == 4'b010 ? 4'b0001 :
+    //                     mwmask_mem == 4'b001 ? 4'b0000 :
+    //                     4'b0000 :
+    //                 4'b0000;
 
     assign rd_data_mem = is_load_mem ? mrdata_mem : alu_out_mem;
 
