@@ -5,7 +5,7 @@ VERILATOR_CFLAGS += -MMD -cc \
 					-j 16 --threads 1  \
 					-O3 --x-assign fast --x-initial fast --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
-VERILATOR_RUNTIME_ARGS += +verilator+rand+reset+1
+VERILATOR_RUNTIME_ARGS += +verilator+rand+reset+1 +verilator+version
 
 NXDC_FILES = constr/top.nxdc
 
