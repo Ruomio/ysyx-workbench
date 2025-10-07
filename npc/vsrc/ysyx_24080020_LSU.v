@@ -144,10 +144,10 @@ module ysyx_24080020_LSU(
     assign araddr = maddr_mem;
     assign arburst = 2'b1;
     // assign get_arlen = (({{2{1'b0}}, mraddr_mem[1:0]} + mrlen_mem) > 4'b100) ? 1'b1 : 1'b0;
-    assign rdata_shift = mraddr_mem[1:0] == 2'b00 ? rdata :
-                        mraddr_mem[1:0] == 2'b01 ? rdata >> 8 :
-                        mraddr_mem[1:0] == 2'b10 ? rdata >> 16 :
-                        mraddr_mem[1:0] == 2'b11 ? rdata >> 24 :
+    assign rdata_shift = maddr_mem[1:0] == 2'b00 ? rdata :
+                        maddr_mem[1:0] == 2'b01 ? rdata >> 8 :
+                        maddr_mem[1:0] == 2'b10 ? rdata >> 16 :
+                        maddr_mem[1:0] == 2'b11 ? rdata >> 24 :
                         32'b0;
     // assign rdata_shift_1 = araddr[1:0] == 2'b00 ? rdata :
     //                     araddr[1:0] == 2'b01 ? rdata1 >> 8 :
