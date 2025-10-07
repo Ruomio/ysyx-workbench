@@ -325,7 +325,7 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
-	@$^ $(VERILATOR_RUNTIME_ARGS) $(ARGS) $(IMG)
+	@$^ $(ARGS) $(IMG) $(VERILATOR_RUNTIME_ARGS)
 	$(call git_commit, "run NPC")
 
 gdb: $(BIN)
