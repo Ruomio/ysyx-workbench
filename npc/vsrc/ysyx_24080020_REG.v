@@ -115,20 +115,20 @@ module ysyx_24080020_REG
     end
 
     // regs write
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         regs[0] <= 'b0;
-    //     end
-    //     else if(wen_wb) begin
-    //         regs[waddr_wb] <= rd_data_wb;
-    //         regs[0] <= 'b0;
-    //     end
-    // end
     always @(posedge clk) begin
-        if(wen_wb && |waddr_wb) begin
+        if(!rst) begin
+            regs[0] <= 'b0;
+        end
+        else if(wen_wb) begin
             regs[waddr_wb] <= rd_data_wb;
+            regs[0] <= 'b0;
         end
     end
+    // always @(posedge clk) begin
+    //     if(wen_wb && |waddr_wb) begin
+    //         regs[waddr_wb] <= rd_data_wb;
+    //     end
+    // end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -156,10 +156,10 @@ module ysyx_24080020_REG
     // end
 
     // regs read
-    // assign val_raddr1 = regs[raddr1];
-    // assign val_raddr2 = regs[raddr2];
-    assign val_raddr1 = raddr1 == 'b0 ? 'b0 : regs[raddr1];
-    assign val_raddr2 = raddr2 == 'b0 ? 'b0 : regs[raddr2];
+    assign val_raddr1 = regs[raddr1];
+    assign val_raddr2 = regs[raddr2];
+    // assign val_raddr1 = raddr1 == 'b0 ? 'b0 : regs[raddr1];
+    // assign val_raddr2 = raddr2 == 'b0 ? 'b0 : regs[raddr2];
 
     // csrs read
     // assign rcsrdata = csrs[rcsraddr];
