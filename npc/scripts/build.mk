@@ -3,9 +3,9 @@
 VERILATOR=verilator
 VERILATOR_CFLAGS += -MMD -cc \
 					-j 16 --threads 1  \
-					-O3 --x-assign fast --x-initial 1 --noassert --trace \
+					-O3 --x-assign fast --x-initial fast --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
-
+VERILATOR_RUNTIME_ARGS += +verilator+rand+reset=1
 
 NXDC_FILES = constr/top.nxdc
 
@@ -325,7 +325,7 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
-	@$^ $(ARGS) $(IMG)
+	@$^ $(VERILATOR_RUNTIME_ARGS) $(ARGS) $(IMG)
 	$(call git_commit, "run NPC")
 
 gdb: $(BIN)
