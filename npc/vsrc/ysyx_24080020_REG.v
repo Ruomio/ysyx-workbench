@@ -93,13 +93,13 @@ module ysyx_24080020_REG
             waddr_wb <= waddr_mem;
             rd_data_wb <= rd_data_mem;
 
-            wcsren_wb <= wcsren_mem;
-            wcsraddr_wb <= wcsraddr_mem;
-            wcsrdata_wb <= wcsrdata_mem;
+            // wcsren_wb <= wcsren_mem;
+            // wcsraddr_wb <= wcsraddr_mem;
+            // wcsrdata_wb <= wcsrdata_mem;
 
-            wcsren2_wb <= wcsren2_mem;
-            wcsraddr2_wb <= wcsraddr2_mem;
-            wcsrdata2_wb <= wcsrdata2_mem;
+            // wcsren2_wb <= wcsren2_mem;
+            // wcsraddr2_wb <= wcsraddr2_mem;
+            // wcsrdata2_wb <= wcsrdata2_mem;
 
             `ifdef CONFIG_DPIC
             pc_wbu <= pc_lsu;
