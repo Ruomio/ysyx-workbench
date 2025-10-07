@@ -512,6 +512,12 @@ module ysyx_24080020_LSU(
         end
         else if(finish_read) begin
             // finish all read
+            // mem_wb_valid <= 1'b1;
+            finish_read <= 1'b0;
+        end
+        else if(rvalid && rready && rlast) begin
+            finish_read <= 1'b1;
+
             if(mrtype_mem) begin
                 // zero extension
                 case(mrlen_mem)
@@ -531,11 +537,6 @@ module ysyx_24080020_LSU(
                 endcase
             end
 
-            // mem_wb_valid <= 1'b1;
-            finish_read <= 1'b0;
-        end
-        else if(rvalid && rready && rlast) begin
-            finish_read <= 1'b1;
         end
     end
 
