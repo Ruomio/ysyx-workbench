@@ -297,7 +297,7 @@ module ysyx_24080020_LSU(
             mren_mem <= 'b0;
             mrtype_mem <= 'b0;
             mrlen_mem <= 'b0;
-            mraddr_mem <= 'b0;
+            maddr_mem <= 'b0;
             mwen_mem <= 'b0;
             mwmask_mem <= 'b0;
             mwaddr_mem <= 'b0;
@@ -352,10 +352,9 @@ module ysyx_24080020_LSU(
                 mren_mem <= mren_exu;
                 mrtype_mem <= mrtype_exu;
                 mrlen_mem <= mrlen_exu;
-                mraddr_mem <= mraddr_exu;
+                maddr_mem <= maddr_exu;
                 mwen_mem <= mwen_exu;
                 mwmask_mem <= mwmask_exu;
-                mwaddr_mem <= mwaddr_exu;
                 mwdata_mem <= mwdata_exu;
 
                 alu_out_mem <= alu_out_exu;
