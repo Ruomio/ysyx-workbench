@@ -393,6 +393,12 @@ module ysyx_24080020_LSU(
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= {{7{1'b0}},get_arlen};
+
+            `ifdef CONFIG_DPIC
+            if(get_arlen == 'b1)
+                $error("arlen is high");
+            `endif
+
             `ifdef ysyxSoCFull
             if(araddr >= 32'h10000000 && araddr < 32'h10001000
                 || araddr >= 32'h10011000 && araddr < 32'h10011008
