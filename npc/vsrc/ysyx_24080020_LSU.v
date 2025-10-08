@@ -55,8 +55,8 @@ module ysyx_24080020_LSU(
     output reg wen_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
 
-    input reg is_load_exu,
-    output reg is_load_mem,
+    // input reg is_load_exu,
+    // output reg is_load_mem,
     output reg mwen_mem,
 
     // input fencei_exu,
@@ -178,7 +178,7 @@ module ysyx_24080020_LSU(
                     4'b0000;
 
 
-    assign rd_data_mem = is_load_mem ? mrdata_mem : alu_out_mem;
+    assign rd_data_mem = mren_mem ? mrdata_mem : alu_out_mem;
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -202,7 +202,7 @@ module ysyx_24080020_LSU(
             wen_mem <= 'b0;
             waddr_mem <= 'b0;
 
-            is_load_mem <= 'b0;
+            // is_load_mem <= 'b0;
             // is_dnpc_mem <= 'b0;
             // dnpc_mem <= 'b0;
 
@@ -237,7 +237,8 @@ module ysyx_24080020_LSU(
         else if(mem_wb_valid && wb_mem_ready && state) begin
 
             waddr_mem <= 'b0;
-            is_load_mem <= 'b0;
+            mren_mem <= 'b0;
+            // is_load_mem <= 'b0;
             // fencei_mem <= 'b0;
 
             next_inst <= 'b1;
@@ -256,7 +257,7 @@ module ysyx_24080020_LSU(
                 wen_mem <= wen_exu;
                 waddr_mem <= waddr_exu;
 
-                is_load_mem <= is_load_exu;
+                // is_load_mem <= is_load_exu;
 
                 mren_mem <= mren_exu;
                 mrtype_mem <= mrtype_exu;

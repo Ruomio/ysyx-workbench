@@ -4,23 +4,26 @@ module ysyx_24080020_EXU
     input clk,
     input rst,
 
+    `ifdef CONFIG_DPIC
+    input is_ebreak_idu,
+    output reg is_ebreak_exu,
+    `endif
+
     input [`ysyx_24080020_WIDTH-1:0] pc_idu,
-    input is_load_idu,
-    output reg is_load_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_exu,
+
+    // input is_load_idu,
+    // output reg is_load_exu,
 
     input [`ysyx_24080020_WIDTH-1:0] imm_idu,
     input alu_src2_con_idu,
 
-    input is_ebreak_idu,
-    output reg is_ebreak_exu,
 
     // branch
     input is_btype_idu,
     input is_jal_idu,
     input is_jalr_idu,
     input is_dnpc_idu,
-    // input is_btype_idu,
     input [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg is_dnpc_exu,
@@ -201,7 +204,7 @@ module ysyx_24080020_EXU
                 mrtype_exu <= mrtype_idu;
                 mrlen_exu <= mrlen_idu;
 
-                is_load_exu <= is_load_idu;
+                // is_load_exu <= is_load_idu;
                 is_dnpc_exu <= is_dnpc_idu;
                 branch_src1_exu <= branch_src1_idu;
 
@@ -211,7 +214,6 @@ module ysyx_24080020_EXU
 
                 src1_exu <= src1_idu;
                 src2_exu <= src2_idu;
-                pc_exu <= pc_idu;
                 dnpc_exu <= dnpc_idu;
                 is_jalr_exu <= is_jalr_idu;
                 is_jal_exu <= is_jal_idu;
@@ -231,10 +233,11 @@ module ysyx_24080020_EXU
                 fencei_exu <= fencei_idu;
 
 
-                is_ebreak_exu <= is_ebreak_idu;
 
                 `ifdef CONFIG_DPIC
-                if(is_load_idu) statistics_idu_load_type();
+                is_ebreak_exu <= is_ebreak_idu;
+                pc_exu <= pc_idu;
+                if(mren_idu) statistics_idu_load_type();
                 else if(mwen_idu) statistics_idu_store_type();
                 else if(is_csrtype_idu) statistics_idu_csr_type();
                 else if(is_dnpc_idu) statistics_idu_jump_type();

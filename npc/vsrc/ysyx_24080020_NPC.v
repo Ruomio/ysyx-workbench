@@ -574,17 +574,19 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-
+        `ifdef CONFIG_DPIC
         .is_ebreak_idu(is_ebreak_idu),
         .is_ebreak_exu(is_ebreak_exu),
+        `endif
+
+        .pc_idu(pc_idu),
+        .pc_exu(pc_exu),
 
         .imm_idu(imm_idu),
         .alu_src2_con_idu(alu_src2_con_idu),
 
-        .pc_idu(pc_idu),
-        .is_load_idu(is_load_idu),
-        .is_load_exu(is_load_exu),
-        .pc_exu(pc_exu),
+        // .is_load_idu(is_load_idu),
+        // .is_load_exu(is_load_exu),
 
         .is_btype_idu(is_btype_idu),
         .is_jal_idu(is_jal_idu),
@@ -709,8 +711,8 @@ module ysyx_24080020_NPC(
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
 
-        .is_load_exu(is_load_exu),
-        .is_load_mem(is_load_mem),
+        // .is_load_exu(is_load_exu),
+        // .is_load_mem(is_load_mem),
         .mwen_mem(mwen_mem),
 
 
