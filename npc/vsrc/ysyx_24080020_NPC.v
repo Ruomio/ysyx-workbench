@@ -456,10 +456,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        `ifdef CONFIG_DPIC
         .is_ebreak(is_ebreak_idu),
-        `endif
-
 
         .need_stall(need_stall),
         .rs1_conflict(rs1_conflict),
