@@ -547,7 +547,7 @@ module ysyx_24080020_IDU (
                                 wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
                                 // wcsrdata2_idu <= val_raddr1;
                                 wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                                wcsren2_idu <= is_load1'b1;
+                                wcsren2_idu <= 1'b1;
 
                                 // dnpc <= csrs[mtvec];
                                 rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
