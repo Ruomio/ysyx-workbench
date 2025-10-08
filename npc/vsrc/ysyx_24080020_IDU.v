@@ -71,17 +71,6 @@ module ysyx_24080020_IDU (
     output idu_exu_valid_reg
 
 );
-`ifdef CONFIG_DPIC
-    // import "DPI-C" function void invalid_inst();
-    // import "DPI-C" function void halt();
-    // import "DPI-C" function void update_ftrace_dpi();
-    // import "DPI-C" function void statistics_idu_calculate_type();
-    // import "DPI-C" function void statistics_idu_load_type();
-    // import "DPI-C" function void statistics_idu_store_type();
-    // import "DPI-C" function void statistics_idu_csr_type();
-    // import "DPI-C" function void statistics_idu_jump_type();
-`endif
-
     wire [6:0] opcode, funct7;
     wire [2:0] funct3;
     wire [`ysyx_24080020_REG_WIDTH-1:0] rd;
@@ -225,18 +214,6 @@ module ysyx_24080020_IDU (
                        rcsraddr == `ysyx_24080020_MVENDORID_ADDR ? 3'd4 :
                        rcsraddr == `ysyx_24080020_MARCHID_ADDR ? 3'd5 :
                        'b0;
-    // always @(*) begin
-    //     rcsraddr_ = 'b0;
-    //     case(rcsraddr)
-    //         `ysyx_24080020_MEPC_ADDR:     rcsraddr_ = 3'd0;
-    //         `ysyx_24080020_MSTATUS_ADDR:  rcsraddr_ = 3'd1;
-    //         `ysyx_24080020_MCAUSE_ADDR:   rcsraddr_ = 3'd2;
-    //         `ysyx_24080020_MTVEC_ADDR:    rcsraddr_ = 3'd3;
-    //         `ysyx_24080020_MVENDORID_ADDR: rcsraddr_ = 3'd4;
-    //         `ysyx_24080020_MARCHID_ADDR: rcsraddr_ = 3'd5;
-    //         default: rcsraddr_ = 3'd0;
-    //     endcase
-    // end
     assign wcsraddr_idu_ = wcsraddr_idu == `ysyx_24080020_MEPC_ADDR ? 3'd0 :
                             wcsraddr_idu == `ysyx_24080020_MSTATUS_ADDR ? 3'd1 :
                             wcsraddr_idu == `ysyx_24080020_MCAUSE_ADDR ? 3'd2 :
@@ -244,19 +221,6 @@ module ysyx_24080020_IDU (
                             wcsraddr_idu == `ysyx_24080020_MVENDORID_ADDR ? 3'd4 :
                             wcsraddr_idu == `ysyx_24080020_MARCHID_ADDR ? 3'd5 :
                             'b0;
-    // always @(*) begin
-    //     wcsraddr_idu_ = 'b0;
-    //     case(wcsraddr_idu)
-    //         `ysyx_24080020_MEPC_ADDR:     wcsraddr_idu_ = 3'd0;
-    //         `ysyx_24080020_MSTATUS_ADDR:  wcsraddr_idu_ = 3'd1;
-    //         `ysyx_24080020_MCAUSE_ADDR:   wcsraddr_idu_ = 3'd2;
-    //         `ysyx_24080020_MTVEC_ADDR:    wcsraddr_idu_ = 3'd3;
-    //         `ysyx_24080020_MVENDORID_ADDR: wcsraddr_idu_ = 3'd4;
-    //         `ysyx_24080020_MARCHID_ADDR: wcsraddr_idu_ = 3'd5;
-    //         default: wcsraddr_idu_ = 3'd0;
-    //     endcase
-    // end
-
     assign wcsraddr2_idu_ = wcsraddr2_idu == `ysyx_24080020_MEPC_ADDR ? 3'd0 :
                             wcsraddr2_idu == `ysyx_24080020_MSTATUS_ADDR ? 3'd1 :
                             wcsraddr2_idu == `ysyx_24080020_MCAUSE_ADDR ? 3'd2 :
@@ -264,18 +228,6 @@ module ysyx_24080020_IDU (
                             wcsraddr2_idu == `ysyx_24080020_MVENDORID_ADDR ? 3'd4 :
                             wcsraddr2_idu == `ysyx_24080020_MARCHID_ADDR ? 3'd5 :
                             'b0;
-    // always @(*) begin
-    //     wcsraddr2_idu_ = 'b0;
-    //     case(wcsraddr2_idu)
-    //         `ysyx_24080020_MEPC_ADDR:     wcsraddr2_idu_ = 3'd0;
-    //         `ysyx_24080020_MSTATUS_ADDR:  wcsraddr2_idu_ = 3'd1;
-    //         `ysyx_24080020_MCAUSE_ADDR:   wcsraddr2_idu_ = 3'd2;
-    //         `ysyx_24080020_MTVEC_ADDR:    wcsraddr2_idu_ = 3'd3;
-    //         `ysyx_24080020_MVENDORID_ADDR: wcsraddr2_idu_ = 3'd4;
-    //         `ysyx_24080020_MARCHID_ADDR: wcsraddr2_idu_ = 3'd5;
-    //         default: wcsraddr2_idu_ = 3'd0;
-    //     endcase
-    // end
 
     // always @(inst_idu or rs1 or rs2 or rcsrdata or val_raddr1 or val_raddr2 or ifu_idu_valid or rd_data1_forward or rd_data2_forward) begin
     always @(posedge clk) begin
