@@ -14,7 +14,7 @@ module ysyx_24080020_CSR
 
     // out csr
     input [2:0] rcsraddr,
-    output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
+    output reg [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
     input mem_wb_valid,
     input wb_mem_ready
