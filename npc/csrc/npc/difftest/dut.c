@@ -159,6 +159,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
+  update_npc_cpu();
   CPU_state ref_r;
 
   if (skip_dut_nr_inst > 0) {
@@ -176,7 +177,6 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   if (is_skip_ref) {
     // to skip the checking of an instruction, just copy the reg state to reference design
-    update_npc_cpu();
     ref_difftest_regcpy(&npc_cpu, DIFFTEST_TO_REF);
     is_skip_ref = false;
     return;
