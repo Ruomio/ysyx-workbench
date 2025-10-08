@@ -133,31 +133,9 @@ module ysyx_24080020_EXU
     // memory
     assign maddr_exu = alu_out;
     assign mwdata_exu = src2_exu;
-    // always @(*) begin
-    //     if(mwen_exu) begin
-    //         mwaddr_exu = alu_out;
-    //         mwdata_exu = src2_exu;
-    //     end
-    //     else begin
-    //         mwaddr_exu = 32'b0;
-    //         mwdata_exu = src2_exu;
-    //     end
-    //     if(mren_exu) begin
-    //         mraddr_exu = alu_out;
-    //     end
-    //     else begin
-    //         mraddr_exu = 32'b0;
-    //     end
-    // end
-
 
     // branch
     assign dnpc = is_jalr_exu == 1'b1 ? (branch_dnpc & (~32'b1)) : branch_dnpc;
-    // always @(dnpc or alu_out or wdata_exu or is_csrtype_exu) begin
-    // always @(*) begin
-    //     dnpc_new_exu = dnpc;
-    //     alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
-    // end
     assign dnpc_new_exu = dnpc;
     assign alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
 
