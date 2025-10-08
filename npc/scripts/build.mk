@@ -182,7 +182,7 @@ ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --set-val CONFIG_SDRAM_SIZE 0x02000000
 	@scripts/config --set-val CONFIG_SRAM_BASE 0x0f000000
 	@scripts/config --set-val CONFIG_SRAM_SIZE 0x00002000
-	@scripts/config --enable CONFIG_DIFFTEST
+	@scripts/config --disable CONFIG_DIFFTEST
 endif
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 
