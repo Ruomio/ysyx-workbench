@@ -280,7 +280,7 @@ module ysyx_24080020_EXU
     assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
 
     // assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
-    assign branch_src1 = (is_jalr_exu | is_csrtype) ? src1_exu : pc_exu;
+    assign branch_src1 = (is_jalr_exu | is_csrtype_exu) ? src1_exu : pc_exu;
     assign branch_src2 = is_csrtype_exu ? 32'b0 : imm_exu;
 
     assign branch_dnpc = branch_src1 + branch_src2;
