@@ -166,7 +166,7 @@ ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --disable CONFIG_SRAM
 	@scripts/config --disable CONFIG_SRAM_BASE
 	@scripts/config --disable CONFIG_SRAM_SIZE
-	@scripts/config --enable CONFIG_DIFFTEST
+	@scripts/config --disable CONFIG_DIFFTEST
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --enable CONFIG_ISA_riscv32=y
@@ -286,7 +286,6 @@ iverilog-netlist: $(VVP_NETLIST_FILE)
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
 	@vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst
-
 
 # CI TEST
 VVP_CI_FILE = $(BUILD_DIR)/ci_sim_top.v

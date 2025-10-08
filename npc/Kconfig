@@ -18,14 +18,17 @@ config ISA
   default "loongarch32r" if ISA_loongarch32r
   default "none"
 
-config E_EXTENSION
-    bool "enable RISCV E EXTENSION"
-    default yes
 
-config REGS_NUM
-    int "Number of registers"
-    default "32" if !E_EXTENSION
-    default "16" if E_EXTENSION
+menu "ISA options"
+    config E_EXTENSION
+        bool "enable RISCV E EXTENSION"
+        default yes
+
+    config REGS_NUM
+        int "Number of registers"
+        default "32" if !E_EXTENSION
+        default "16" if E_EXTENSION
+endmenu
 
 menu "Build options"
     config DEBUG
