@@ -13,8 +13,6 @@ module ysyx_24080020_REG
     input [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 `endif
 
-
-
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr1,
     input [`ysyx_24080020_REG_WIDTH-1:0] raddr2,
 
@@ -27,20 +25,9 @@ module ysyx_24080020_REG
     output reg wen_wb,
 
 
-    //csr
-    // input wcsren_mem,
-    // input [2:0] wcsraddr_mem,
-    // input [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
-    // input wcsren2_mem,
-    // input [2:0] wcsraddr2_mem,
-    // input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
-    // input [2:0] rcsraddr,
-
     // out src1 & src2
     output [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     output [`ysyx_24080020_WIDTH-1:0] val_raddr2,
-    // out csr
-    // output [`ysyx_24080020_WIDTH-1:0] rcsrdata,
 
     input mem_wb_valid,
     output reg wb_mem_ready
@@ -55,9 +42,6 @@ module ysyx_24080020_REG
 `endif
 
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
-    // csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec, csrs[4] = MVENDORID, csrs[5] = MARCHID
-    // reg [`ysyx_24080020_WIDTH-1:0] csrs[0:5];
-
 
     reg cnt;
 
@@ -92,14 +76,6 @@ module ysyx_24080020_REG
             // shake hands successfully
             waddr_wb <= waddr_mem;
             rd_data_wb <= rd_data_mem;
-
-            // wcsren_wb <= wcsren_mem;
-            // wcsraddr_wb <= wcsraddr_mem;
-            // wcsrdata_wb <= wcsrdata_mem;
-
-            // wcsren2_wb <= wcsren2_mem;
-            // wcsraddr2_wb <= wcsraddr2_mem;
-            // wcsrdata2_wb <= wcsrdata2_mem;
 
             `ifdef CONFIG_DPIC
             pc_wbu <= pc_lsu;

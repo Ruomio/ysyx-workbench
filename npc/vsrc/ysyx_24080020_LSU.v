@@ -2,6 +2,24 @@
 module ysyx_24080020_LSU(
     input clk,
     input rst,
+
+    `ifdef CONFIG_DPIC
+
+    output reg skip_ref_mem,
+
+    input is_ebreak_exu,
+    output reg is_ebreak_lsu,
+
+    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] pc_mem,
+
+    input is_dnpc_exu,
+    output reg is_dnpc_mem,
+
+    input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
+    `endif
+
     // memory
     input mren_exu,
     input mrtype_exu,
@@ -17,10 +35,6 @@ module ysyx_24080020_LSU(
     output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     output reg exu_mem_shake_hands,
 
-    output reg skip_ref_mem,
-
-    input is_ebreak_exu,
-    output reg is_ebreak_lsu,
 
     // csrs
     input wcsren_exu,
@@ -44,13 +58,6 @@ module ysyx_24080020_LSU(
     input reg is_load_exu,
     output reg is_load_mem,
     output reg mwen_mem,
-
-    input is_dnpc_exu,
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
-    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
-    output reg is_dnpc_mem,
-    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_mem,
 
     input fencei_exu,
     output reg fencei_mem,
@@ -250,8 +257,6 @@ module ysyx_24080020_LSU(
                 waddr_mem <= waddr_exu;
 
                 is_load_mem <= is_load_exu;
-                is_dnpc_mem <= is_dnpc_exu;
-                dnpc_mem <= dnpc_new_exu;
 
                 mren_mem <= mren_exu;
                 mrtype_mem <= mrtype_exu;
@@ -272,12 +277,14 @@ module ysyx_24080020_LSU(
 
                 fencei_mem <= fencei_exu;
 
-                pc_mem <= pc_exu;
-
-
-                is_ebreak_lsu <= is_ebreak_exu;
-
                 next_inst <= 'b0;
+
+                `ifdef CONFIG_DPIC
+                is_ebreak_lsu <= is_ebreak_exu;
+                pc_mem <= pc_exu;
+                is_dnpc_mem <= is_dnpc_exu;
+                dnpc_mem <= dnpc_new_exu;
+                `endif
 
             end
             else if(next_inst) begin
