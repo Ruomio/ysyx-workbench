@@ -20,9 +20,9 @@ module sim_top;
 
 
     initial begin
-        $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
+        // $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
         // #200000;
-        $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
+        // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
         // #200 $finish;
     end
 
@@ -455,7 +455,8 @@ module sim_top;
     always @(posedge clock) begin
         if(reset) begin
         end
-        else if(u_cpu.u_npc.is_ebreak_lsu ) begin
+        else if(u_cpu.u_npc.idu_exu_valid_reg && u_cpu.u_npc.exu_idu_ready &&
+        u_cpu.u_npc.inst_idu == 32'h00100073) begin
             $display("ebreak inst!");
             $finish;
         end
