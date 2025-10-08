@@ -17,7 +17,7 @@ module ysyx_24080020_BTB(
     output reg flush_pipeline,
 
     // fence.i
-    input fencei_exu,
+    // input fencei_exu,
     // input fencei_mem,
 
     // bus
@@ -229,20 +229,20 @@ module ysyx_24080020_BTB(
             end
         end
         // flush btb
-        else if(fencei_exu && 1'b0) begin
-            // need flush pipeline
-            btb_hit <= 'b0;
+        // else if(fencei_exu && 1'b0) begin
+        //     // need flush pipeline
+        //     btb_hit <= 'b0;
 
-            predict_pc <= n_dnpc;
-            // pc <= n_dnpc;
-            correct_pc <= n_dnpc;
+        //     predict_pc <= n_dnpc;
+        //     // pc <= n_dnpc;
+        //     correct_pc <= n_dnpc;
 
-            // update_en <= 'b1;
-            // out_valid <= 'b0;
-            next_special_pc <= 'b1;
+        //     // update_en <= 'b1;
+        //     // out_valid <= 'b0;
+        //     next_special_pc <= 'b1;
 
-            flush_pipeline <= 'b1;
-        end
+        //     flush_pipeline <= 'b1;
+        // end
         // update btb
         else if(is_dnpc_tmp) begin
             is_dnpc_tmp <= 'b0;
@@ -515,9 +515,9 @@ module ysyx_24080020_BTB(
         else if(is_dnpc && is_dnpc_next && !is_btype) begin
             update_en <= 'b1;
         end
-        else if(fencei_exu) begin
-            update_en <= 'b1;
-        end
+        // else if(fencei_exu) begin
+        //     update_en <= 'b1;
+        // end
     end
 
 
