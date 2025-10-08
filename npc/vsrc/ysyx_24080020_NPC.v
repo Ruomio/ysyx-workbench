@@ -365,7 +365,7 @@ module ysyx_24080020_NPC(
         .update_pc(arvalid_ifu && arready_ifu),
 
         // fence.i
-        .fencei_exu(fencei_exu),
+        // .fencei_exu(fencei_exu),
         // .fencei_mem(fencei_mem),
 
         // bus
