@@ -324,8 +324,10 @@ module ysyx_24080020_NPC(
   wire btype_n_jump_btb;
 
 
+  `ifdef CONFIG_DPIC
   // skip difftest ref
   wire skip_ref_mem;
+  `endif
 
   wire is_ebreak_idu, is_ebreak_exu, is_ebreak_lsu;
 
@@ -1303,11 +1305,11 @@ module ysyx_24080020_NPC(
 
 		.rd_exu(waddr_exu),
 		.rd_data_exu(alu_out_exu),
-		.rd_en_exu(wen_exu),
+		// .rd_en_exu(wen_exu),
 
 		.rd_lsu(waddr_mem),
 		.rd_data_lsu(rd_data_mem),
-		.rd_en_lsu(wen_mem),
+		// .rd_en_lsu(wen_mem),
 		// .rd_data_lsu(alu_out_mem),
 		.is_load(mren_mem),
 		// .mrdata(mrdata_mem),
@@ -1315,7 +1317,7 @@ module ysyx_24080020_NPC(
 
 		.rd_wbu(waddr_wb),
 		.rd_data_wbu(rd_data_wb),
-		.rd_en_wbu(wen_wb),
+		// .rd_en_wbu(wen_wb),
 
 		.need_stall(need_stall),
 		.rd_data1_forward(rd_data1_forward),
