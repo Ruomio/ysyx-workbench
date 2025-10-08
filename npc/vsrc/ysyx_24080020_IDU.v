@@ -4,10 +4,10 @@ module ysyx_24080020_IDU (
     input rst,
 
 `ifdef CONFIG_DPIC
+    output reg is_ebreak,
 
 `endif
 
-    output reg is_ebreak,
 
     // input data_adventure,
     input need_stall,
@@ -17,22 +17,18 @@ module ysyx_24080020_IDU (
     input [`ysyx_24080020_WIDTH-1:0] rd_data2_forward,
 
     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
-    input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
-    input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
     input flush_pipeline,
-
-    output [`ysyx_24080020_WIDTH-1:0] imm_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
-    output reg alu_src2_con_idu,
 
     // reg
     output reg wen_idu,
     output [`ysyx_24080020_REG_WIDTH-1:0] rs1,
     output [`ysyx_24080020_REG_WIDTH-1:0] rs2,
+    input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
+    input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
-    output reg is_load_idu,
+    // output reg is_load_idu,
     output reg is_dnpc_idu,
     output reg is_jal_idu,
     output reg is_btype_idu,
@@ -56,6 +52,10 @@ module ysyx_24080020_IDU (
     output reg [`ysyx_24080020_WIDTH-1:0] pc_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] src1_idu,
     output reg [`ysyx_24080020_WIDTH-1:0] src2_idu,
+    output [`ysyx_24080020_WIDTH-1:0] imm_idu,
+    // output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
+    output reg alu_src2_con_idu,
+
 
     // memory
     output reg mren_idu,
@@ -238,12 +238,12 @@ module ysyx_24080020_IDU (
 
             // pc
             is_dnpc_idu <= 1'b0;
-            is_load_idu <= 1'b0;
+            // is_load_idu <= 1'b0;
             is_jal_idu <= 1'b0;
             is_jalr_idu <= 1'b0;
             is_btype_idu <= 1'b0;
             dnpc_idu <= 'b0;
-            branch_src1_idu <= 'b0;
+            // branch_src1_idu <= 'b0;
 
             // mem
             mren_idu <= 1'b0;
@@ -267,7 +267,6 @@ module ysyx_24080020_IDU (
             wcsrdata_idu <= 'b0;
             wcsraddr2_idu <= 'b0;
             wcsrdata2_idu <= 'b0;
-            is_ebreak <= 'b0;
 
             // alu
             alu_src2_con_idu <= 'b0;
@@ -278,6 +277,10 @@ module ysyx_24080020_IDU (
             // other
             fencei_idu <= 'b0;
             // imm_idu <= 'd0;
+
+            `ifdef CONFIG_DPIC
+                is_ebreak <= 1'b0;
+            `endif
         end
         else if(cnt == 'b1) begin
             // step 1 assignment for B-type
@@ -350,7 +353,7 @@ module ysyx_24080020_IDU (
                     src2_idu <= 32'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
-                    is_load_idu <= 1'b1;
+                    // is_load_idu <= 1'b1;
 
                     mren_idu <= 1'b1;
 
@@ -529,10 +532,9 @@ module ysyx_24080020_IDU (
                     case(funct3)
                         `ysyx_24080020_ECALL_EBREAK: begin
                             if(inst_idu[`ysyx_24080020_IMM_I] == 'b1) begin
+                                `ifdef CONFIG_DPIC
                                 is_ebreak <= 1;
-                                // `ifdef CONFIG_DPIC
-                                // ebreak();
-                                // `endif
+                                `endif
                             end
                             else if(inst_idu[`ysyx_24080020_IMM_I] == 'b0) begin
                                 // ecall
@@ -545,7 +547,7 @@ module ysyx_24080020_IDU (
                                 wcsraddr2_idu <= `ysyx_24080020_MCAUSE_ADDR;
                                 // wcsrdata2_idu <= val_raddr1;
                                 wcsrdata2_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
-                                wcsren2_idu <= 1'b1;
+                                wcsren2_idu <= is_load1'b1;
 
                                 // dnpc <= csrs[mtvec];
                                 rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
@@ -649,7 +651,7 @@ module ysyx_24080020_IDU (
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
 
                     // branch_src1_idu <= val_raddr1;
-                    branch_src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
+                    // branch_src1_idu <= rs1_conflict ? rd_data1_forward : val_raddr1;
 
                     is_jalr_idu <= 1'b1;
                 end
