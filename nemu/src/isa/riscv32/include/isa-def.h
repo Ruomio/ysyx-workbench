@@ -16,6 +16,7 @@
 #ifndef __ISA_RISCV32_H__
 #define __ISA_RISCV32_H__
 
+#include "difftest-def.h"
 #include <common.h>
 
 #define MEPC_ADDR 0x341
@@ -41,11 +42,7 @@ enum {
 };
 
 typedef struct {
-#ifdef CONFIG_E_EXTENSION
-  word_t gpr[16];
-#else
-  word_t gpr[32];
-#endif
+  word_t gpr[CONFIG_REGS_NUM];
   vaddr_t pc;
   word_t csrs[6];   // 0: mepc, 0x341;   1: mstatus, 0x300;   2: mcause, 0x342;  3: mtvec, 0x305; 4: mvendorid, 0xf11;  5: marchid, 0xf12
 } riscv32_CPU_state;

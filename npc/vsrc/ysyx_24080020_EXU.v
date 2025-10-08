@@ -94,6 +94,7 @@ module ysyx_24080020_EXU
 `ifdef CONFIG_DPIC
     import "DPI-C" function void statistics_exu_complete_calcu();
     import "DPI-C" function void update_ftrace_dpi();
+    import "DPI-C" function void ebreak();
 
     import "DPI-C" function void statistics_idu_calculate_type();
     import "DPI-C" function void statistics_idu_load_type();

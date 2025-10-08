@@ -82,7 +82,7 @@ module ysyx_24080020_REG
             is_dnpc_wb <= is_dnpc_mem;
             dnpc_wb <= dnpc_mem;
             skip_ref_wb <= skip_ref_mem;
-            if(is_ebreak_lsu) ebreak();
+            // if(is_ebreak_lsu) ebreak();
             `endif
         end
         else if(mem_wb_valid) begin

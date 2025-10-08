@@ -8,11 +8,11 @@ module ysyx_24080020_FORWARD(
 
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_exu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_exu,
-    input rd_en_exu,
+    // input rd_en_exu,
 
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_lsu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
-    input rd_en_lsu,
+    // input rd_en_lsu,
 
     input is_load,
     // input [`ysyx_24080020_WIDTH-1:0] mrdata,
@@ -20,7 +20,7 @@ module ysyx_24080020_FORWARD(
 
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_wbu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_wbu,
-    input rd_en_wbu,
+    // input rd_en_wbu,
 
     output need_stall,
     output [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
