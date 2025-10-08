@@ -27,7 +27,7 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
     input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg is_dnpc_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    output [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
     output reg is_jal_exu,
     output reg is_btype_exu,
 
@@ -38,7 +38,7 @@ module ysyx_24080020_EXU
     input [`ysyx_24080020_WIDTH-1:0] src1_idu,
     input [`ysyx_24080020_WIDTH-1:0] src2_idu,
     input [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
+    output [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
 
     output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu,
     output [`ysyx_24080020_WIDTH-1:0] alu_src1,
@@ -154,10 +154,12 @@ module ysyx_24080020_EXU
     // branch
     assign dnpc = is_jalr_exu == 1'b1 ? (branch_dnpc & (~32'b1)) : branch_dnpc;
     // always @(dnpc or alu_out or wdata_exu or is_csrtype_exu) begin
-    always @(*) begin
-        dnpc_new_exu = dnpc;
-        alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
-    end
+    // always @(*) begin
+    //     dnpc_new_exu = dnpc;
+    //     alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
+    // end
+    assign dnpc_new_exu = dnpc;
+    assign alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
 
     // bus
     always @(posedge clk) begin
