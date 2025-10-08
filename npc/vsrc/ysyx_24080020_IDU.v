@@ -627,7 +627,7 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
-                    src1_idu <= pc_idu;
+                    // src1_idu <= pc_idu;
                     src2_idu <= 32'b100;
                     alu_src2_con_idu <= 1'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;
@@ -645,7 +645,7 @@ module ysyx_24080020_IDU (
                     wen_idu <= 1'b1;
                     waddr_idu <= rd;
                     // reg_dst_con_idu <= 1'b0;
-                    src1_idu <= pc_idu;
+                    // src1_idu <= pc_idu;
                     src2_idu <= 32'b100;
                     alu_src2_con_idu <= 1'b0;
                     alu_op_idu <= `ysyx_24080020_ALU_ADD;

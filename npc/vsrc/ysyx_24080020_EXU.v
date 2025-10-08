@@ -276,7 +276,7 @@ module ysyx_24080020_EXU
         end
     end
 
-    assign alu_src1 = src1_exu;
+    assign alu_src1 = (is_jalr_exu | is_jal_exu) ? pc_exu : src1_exu;
     assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
 
     // assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
