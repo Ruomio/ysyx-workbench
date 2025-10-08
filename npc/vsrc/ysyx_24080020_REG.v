@@ -115,20 +115,20 @@ module ysyx_24080020_REG
     end
 
     // regs write
-    always @(posedge clk) begin
-        if(!rst) begin
-            regs[0] <= 'b0;
-        end
-        else if(wen_wb) begin
-            regs[waddr_wb] <= rd_data_wb;
-            regs[0] <= 'b0;
-        end
-    end
     // always @(posedge clk) begin
-    //     if(wen_wb && |waddr_wb) begin
+    //     if(!rst) begin
+    //         regs[0] <= 'b0;
+    //     end
+    //     else if(wen_wb) begin
     //         regs[waddr_wb] <= rd_data_wb;
+    //         regs[0] <= 'b0;
     //     end
     // end
+    always @(posedge clk) begin
+        if(wen_wb && |waddr_wb) begin
+            regs[waddr_wb] <= rd_data_wb;
+        end
+    end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -142,25 +142,10 @@ module ysyx_24080020_REG
         end
     end
 
-    // csrs write
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         csrs[1] <= 32'h1800;
-    //         csrs[4] <= 32'h79737978;
-    //         csrs[5] <= 32'h16f6e94;
-    //     end
-    //     else  begin
-    //         if(wcsren_wb) csrs[wcsraddr_wb] <= wcsrdata_wb;
-    //         if(wcsren2_wb) csrs[wcsraddr2_wb] <= wcsrdata2_wb;
-    //     end
-    // end
 
     // regs read
-    assign val_raddr1 = regs[raddr1];
-    assign val_raddr2 = regs[raddr2];
-    // assign val_raddr1 = raddr1 == 'b0 ? 'b0 : regs[raddr1];
-    // assign val_raddr2 = raddr2 == 'b0 ? 'b0 : regs[raddr2];
-
-    // csrs read
-    // assign rcsrdata = csrs[rcsraddr];
+    // assign val_raddr1 = regs[raddr1];
+    // assign val_raddr2 = regs[raddr2];
+    assign val_raddr1 = raddr1 == 'b0 ? 'b0 : regs[raddr1];
+    assign val_raddr2 = raddr2 == 'b0 ? 'b0 : regs[raddr2];
 endmodule
