@@ -125,7 +125,6 @@ module ysyx_24080020_IDU (
                      opcode == `ysyx_24080020_JALR ? {{20{inst_idu[31]}}, inst_idu[`ysyx_24080020_IMM_I]} :
                      opcode == `ysyx_24080020_AUIPC ? {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}} :
                      opcode == `ysyx_24080020_LUI ? {inst_idu[`ysyx_24080020_IMM_U], {12{1'b0}}} :
-                     opcode == `ysyx_24080020_CSR_TYPE ? {{20{1'b0}}, inst_idu[`ysyx_24080020_IMM_I]} :
                      'b0;
 
     assign idu_exu_valid_reg = idu_exu_valid && !need_stall;
