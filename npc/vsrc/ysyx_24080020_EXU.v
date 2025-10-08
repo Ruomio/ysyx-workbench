@@ -232,11 +232,10 @@ module ysyx_24080020_EXU
 
                 fencei_exu <= fencei_idu;
 
-
+                pc_exu <= pc_idu;
 
                 `ifdef CONFIG_DPIC
                 is_ebreak_exu <= is_ebreak_idu;
-                pc_exu <= pc_idu;
                 if(mren_idu) statistics_idu_load_type();
                 else if(mwen_idu) statistics_idu_store_type();
                 else if(is_csrtype_idu) statistics_idu_csr_type();
