@@ -124,7 +124,7 @@ const char *regs_name[] = {
 };
 
 const char *csrs_name[] = {
-    "mepc", "mstatus", "mcause", "mtvec"
+    "mepc", "mstatus", "mcause", "mtvec", "mvendorid", "marchid"
 };
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
