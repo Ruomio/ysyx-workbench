@@ -456,7 +456,7 @@ module sim_top;
         if(reset) begin
         end
         else if(u_cpu.u_npc.idu_exu_valid && u_cpu.u_npc.exu_idu_ready &&
-        u_cpu.u_npc.inst_idu == 32'h00100073) begin
+        u_cpu.u_npc.u_idu.inst_idu == 32'h00100073) begin
             $display("ebreak inst!");
             $finish;
         end

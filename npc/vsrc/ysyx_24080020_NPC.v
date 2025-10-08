@@ -83,7 +83,7 @@ module ysyx_24080020_NPC(
   wire is_jalr_idu, is_btype_idu, is_btype_exu, is_jal_idu, is_jal_exu;
 
   // inst
-  wire [`ysyx_24080020_WIDTH-1:0] inst_ifu, inst_idu;
+  wire [`ysyx_24080020_WIDTH-1:0] inst_ifu;
   wire [`ysyx_24080020_WIDTH-1:0] imm_idu, imm_exu;
 
   wire is_load_idu, is_load_exu, is_load_mem, is_load_wb;
