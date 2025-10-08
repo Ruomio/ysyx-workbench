@@ -523,7 +523,6 @@ module ysyx_24080020_NPC(
 
         `ifdef CONFIG_DPIC
         .skip_ref_mem(skip_ref_mem),
-        .is_ebreak_lsu(is_ebreak_lsu),
         .pc_lsu(pc_lsu),
         .pc_wbu(pc_wbu),
         .is_dnpc_mem(is_dnpc_mem),
@@ -666,9 +665,6 @@ module ysyx_24080020_NPC(
 
         `ifdef CONFIG_DPIC
         .skip_ref_mem(skip_ref_mem),
-
-        .is_ebreak_exu(is_ebreak_exu),
-        .is_ebreak_lsu(is_ebreak_lsu),
 
         .pc_exu(pc_exu),
         .pc_mem(pc_lsu),

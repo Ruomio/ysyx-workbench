@@ -7,9 +7,6 @@ module ysyx_24080020_LSU(
 
     output reg skip_ref_mem,
 
-    input is_ebreak_exu,
-    output reg is_ebreak_lsu,
-
     input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_mem,
 
@@ -232,7 +229,6 @@ module ysyx_24080020_LSU(
             // mem_wb_valid <= 'b0;
 
 
-            // is_ebreak_lsu <= 'b0;
             exu_mem_shake_hands <= 1'b0;
 
         end
@@ -283,7 +279,6 @@ module ysyx_24080020_LSU(
                 next_inst <= 'b0;
 
                 `ifdef CONFIG_DPIC
-                is_ebreak_lsu <= is_ebreak_exu;
                 pc_mem <= pc_exu;
                 is_dnpc_mem <= is_dnpc_exu;
                 dnpc_mem <= dnpc_new_exu;

@@ -6,7 +6,6 @@ module ysyx_24080020_REG
 
 `ifdef CONFIG_DPIC
     input skip_ref_mem,
-    input is_ebreak_lsu,
     input [`ysyx_24080020_WIDTH-1:0] pc_lsu,
     output reg [`ysyx_24080020_WIDTH-1:0] pc_wbu,
     input is_dnpc_mem,
@@ -33,7 +32,6 @@ module ysyx_24080020_REG
     output reg wb_mem_ready
 );
 `ifdef CONFIG_DPIC
-    import "DPI-C" function void ebreak();
     import "DPI-C" function void npc_difftest_skip_ref();
 
     reg is_dnpc_wb;
@@ -82,7 +80,6 @@ module ysyx_24080020_REG
             is_dnpc_wb <= is_dnpc_mem;
             dnpc_wb <= dnpc_mem;
             skip_ref_wb <= skip_ref_mem;
-            // if(is_ebreak_lsu) ebreak();
             `endif
         end
         else if(mem_wb_valid) begin
