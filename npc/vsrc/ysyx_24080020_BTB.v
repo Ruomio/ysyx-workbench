@@ -229,7 +229,7 @@ module ysyx_24080020_BTB(
             end
         end
         // flush btb
-        else if(fencei_mem || fencei_exu) begin
+        else if(fencei_exu) begin
             // need flush pipeline
             btb_hit <= 'b0;
 
