@@ -187,7 +187,7 @@ module ysyx_24080020_EXU
 
                 // is_load_exu <= is_load_idu;
                 is_dnpc_exu <= is_dnpc_idu;
-                branch_src1_exu <= branch_src1_idu;
+                // branch_src1_exu <= branch_src1_idu;
 
                 alu_op_exu <= alu_op_idu;
                 alu_src2_con_exu <= alu_src2_con_idu;
