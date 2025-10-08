@@ -294,12 +294,6 @@ module ysyx_24080020_LSU(
 
             end
         end
-        else if(mren_mem) begin
-            mren_mem <= 'b0;
-        end
-        else if(mwen_mem) begin
-            mwen_mem <= 'b0;
-        end
     end
 
     always @(posedge clk) begin
@@ -333,7 +327,7 @@ module ysyx_24080020_LSU(
         else if(arvalid && arready) begin
             arvalid <= 1'b0;
         end
-        else if(mren_mem) begin
+        else if(mren_mem && exu_mem_shake_hands) begin
             arvalid <= 1'b1;
             arid <= 4'b0;
             arlen <= 'b0;
@@ -374,7 +368,7 @@ module ysyx_24080020_LSU(
         else if(awvalid_reg && awready) begin
             awvalid <= 1'b0;
         end
-        else if(mwen_mem) begin
+        else if(mwen_mem && exu_mem_shake_hands) begin
             awvalid <= 1'b1;
             awlen <= 'b0;
 
@@ -389,7 +383,7 @@ module ysyx_24080020_LSU(
         else if(wvalid_reg && wready) begin
             wvalid <= 1'b0;
         end
-        else if(mwen_mem) begin
+        else if(mwen_mem && exu_mem_shake_hands) begin
             wvalid <= 1'b1;
             wlast <= 1'b1;
             wdata <= wdata_;
@@ -462,7 +456,7 @@ module ysyx_24080020_LSU(
         else if(mem_wb_valid && wb_mem_ready) begin
             skip_ref_mem <= 'b0;
         end
-        else if(mren_mem) begin
+        else if(mren_mem && exu_mem_shake_hands) begin
             `ifdef ysyxSoCFull
             if(araddr >= 32'h10000000 && araddr < 32'h10001000
                 || araddr >= 32'h10011000 && araddr < 32'h10011008
@@ -483,7 +477,7 @@ module ysyx_24080020_LSU(
             end
             `endif
         end
-        else if(mwen_mem) begin
+        else if(mwen_mem && exu_mem_shake_hands) begin
             `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
                 || awaddr >= 32'h10011000 && awaddr < 32'h10011008
