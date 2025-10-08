@@ -2,7 +2,7 @@
 module ysyx_24080020_ICACHE(
   input clk,
   input rst,
-  input fencei_mem,
+  input fencei_exu,
 
   output reg [`ysyx_24080020_WIDTH-1:0] raddr,
 
@@ -662,7 +662,7 @@ module ysyx_24080020_ICACHE(
       cache_valid[num_index[cache_num_bits-1:0]] <= {cache_way{1'b0}};
       num_index <= num_index + 'b1;
     end
-    else if(fencei_mem && !flush_cache) begin
+    else if(fencei_exu && !flush_cache) begin
       flush_cache <= 'b1;
       num_index <= 'b0;
     end

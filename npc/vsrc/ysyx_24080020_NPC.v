@@ -1227,7 +1227,7 @@ module ysyx_24080020_NPC(
     ysyx_24080020_ICACHE u_icache(
       .clk(clk),
       .rst(rst),
-      .fencei_mem(fencei_exu),
+      .fencei_exu(fencei_exu),
 
       .raddr(raddr_icache),
       .special_pc_i(special_pc_ir_o),
