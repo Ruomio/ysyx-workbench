@@ -24,10 +24,17 @@ config ISA
   default "loongarch32r" if ISA_loongarch32r
   default "none"
 
-config E_EXTENSION
-  depends on ISA_riscv32 || ISA_riscv64
-  bool "enable e extension"
-  default n
+menu "ISA options"
+    config E_EXTENSION
+        depends on ISA_riscv32 || ISA_riscv64
+        bool "enable e extension"
+        default n
+
+    config REGS_NUM
+        int "Number of registers"
+        default "32" if !E_EXTENSION
+        default "16" if E_EXTENSION
+endmenu
 
 config ADAPT_SOC
   bool "enable adapt soc, only for cachesim"

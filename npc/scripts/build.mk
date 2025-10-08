@@ -5,7 +5,7 @@ VERILATOR_CFLAGS += -MMD -cc \
 					-j 16 --threads 1  \
 					-O3 --x-assign fast --x-initial fast --noassert --trace \
 					--timescale "1ns/1ns" --no-timing
-
+VERILATOR_RUNTIME_ARGS += +verilator+rand+reset+2
 
 NXDC_FILES = constr/top.nxdc
 
@@ -88,8 +88,8 @@ VVP_FILE += $(BUILD_DIR)/iverilog_top.vvp
 VVP_NETLIST_FILE += $(BUILD_DIR)/iverilog_netlist_top.vvp
 TB_FILE += $(shell find . -type f -name "iverilog_top.v")
 TB_NETLIST_FILE += $(shell find . -type f -name "iverilog_netlist_top.v")
-# NETLIST_FILE += $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "*.netlist.fixed.v")
-# CLEES_FILE += $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
+NETLIST = $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "ysyx_24080020.netlist.fixed.v")
+CELLS = $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
 
 
 # verilator system files
@@ -324,7 +324,7 @@ $(VCD_FILE):
 	@$(ELF_FILE_NAME)
 
 run: $(BIN)
-	@$^ $(ARGS) $(IMG)
+	@$^ $(ARGS) $(IMG) $(VERILATOR_RUNTIME_ARGS)
 	$(call git_commit, "run NPC")
 
 gdb: $(BIN)

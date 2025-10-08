@@ -41,7 +41,7 @@ enum {
 };
 
 typedef struct {
-  word_t gpr[32];
+  word_t gpr[CONFIG_REGS_NUM];
   vaddr_t pc;
   word_t csrs[6];   // 0: mepc, 0x341;   1: mstatus, 0x300;   2: mcause, 0x342;  3: mtvec, 0x305
 } riscv32_CPU_state;

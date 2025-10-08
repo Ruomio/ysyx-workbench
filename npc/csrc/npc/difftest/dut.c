@@ -124,22 +124,22 @@ const char *regs_name[] = {
 };
 
 const char *csrs_name[] = {
-    "mepc", "mstatus", "mcause", "mtvec"
+    "mepc", "mstatus", "mcause", "mtvec", "mvendorid", "marchid"
 };
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   bool flag = true;
   if(g_pc != ref_r->pc) { printf("pc is diff, should be: 0x%x, but get: 0x%x\n", ref_r->pc, g_pc); flag = false;}
   for(int i=0; i<sizeof(ref_r->gpr)/sizeof(ref_r->gpr[0]); i++) {
-    if(ref_r->gpr[i] != g_get_reg(i)) {
+    if(ref_r->gpr[i] != npc_cpu.gpr[i]) {
       printf("The %s reg is diff, shoud be %#x  but get %#x.\n", regs_name[i], ref_r->gpr[i], g_get_reg(i));
       flag = false;
       // break;
     }
   }
   for(int i=0; i<sizeof(ref_r->csrs)/sizeof(ref_r->csrs[0]); i++) {
-    if(ref_r->csrs[i] != g_get_csrs(i)) {
-      printf("The %s reg is diff, shoud be %#x  but get %#x.\n", csrs_name[i], ref_r->csrs[i], g_get_csrs(i));
+    if(ref_r->csrs[i] != npc_cpu.csrs[i]) {
+      printf("The %s csr is diff, shoud be %#x  but get %#x.\n", csrs_name[i], ref_r->csrs[i], g_get_csrs(i));
       flag = false;
       // break;
     }
@@ -159,6 +159,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
+  update_npc_cpu();
   CPU_state ref_r;
 
   if (skip_dut_nr_inst > 0) {
@@ -176,7 +177,6 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   if (is_skip_ref) {
     // to skip the checking of an instruction, just copy the reg state to reference design
-    update_npc_cpu();
     ref_difftest_regcpy(&npc_cpu, DIFFTEST_TO_REF);
     is_skip_ref = false;
     return;

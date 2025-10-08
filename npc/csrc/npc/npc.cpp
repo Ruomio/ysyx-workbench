@@ -528,9 +528,9 @@ uint32_t g_get_reg(int i) {
 }
 uint32_t g_get_csrs(int i) {
 #if defined (ysyxSoCFull)
-  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__csrs[i]);
+  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_csr__DOT__csrs[i]);
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__csrs[i];
+  return top->rootp->ysyx_24080020_NPC__DOT__u_csr__DOT__csrs[i];
 #else
   return 0;
 #endif
@@ -542,16 +542,19 @@ uint32_t g_get_snpc() {
 
 uint32_t g_get_dnpc() {
 #if defined (ysyxSoCFull)
-  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__is_dnpc_wb) {
-    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__dnpc_wb;
+  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__is_dnpc_wb) {
+    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__dnpc_wb;
   }
   else
     g_dnpc = g_pc + 4;
   return g_dnpc;
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__is_dnpc_wb;
-#else
-  return 0;
+  if(top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__is_dnpc_wb) {
+    g_dnpc = top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__dnpc_wb;
+  }
+  else
+    g_dnpc = g_pc + 4;
+  return g_dnpc;
 #endif
 }
 
@@ -576,17 +579,22 @@ uint32_t g_get_rd() {
 
 
 void update_npc_cpu() {
-  for(int i=0; i<32; i++) {
+  for(int i=0; i<CONFIG_REGS_NUM; i++) {
     npc_cpu.gpr[i] = g_get_reg(i);
-    if(i<6) {
+    if(i<4) {
       npc_cpu.csrs[i] = g_get_csrs(i);
     }
   }
+  // assign csr_mvendorid = 32'h79737978;
+  // assign csr_marchid = 32'h16f6e94;
+  npc_cpu.csrs[4] = 0x79737978;
+  npc_cpu.csrs[5] = 0x16f6e94;
+
   npc_cpu.pc = g_pc;
 }
 
 void update_dut() {
-  for(int i=0; i<32; i++) {
+  for(int i=0; i<CONFIG_REGS_NUM; i++) {
 #if defined (ysyxSoCFull)
     top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #elif defined (ysyx_24080020_NPC)
