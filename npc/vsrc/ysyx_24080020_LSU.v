@@ -57,7 +57,8 @@ module ysyx_24080020_LSU(
 
     // input reg is_load_exu,
     // output reg is_load_mem,
-    output reg mwen_mem,
+    output reg mren_mem,
+    // output reg mwen_mem,
 
     // input fencei_exu,
     // output reg fencei_mem,
@@ -113,7 +114,8 @@ module ysyx_24080020_LSU(
     assign awvalid_reg = awvalid;
     assign wvalid_reg = wvalid;
 
-    reg mren_mem;
+    // reg mren_mem;
+    reg mwen_mem;
     reg mrtype_mem;
     reg [3:0] mrlen_mem;
     reg [3:0] mwmask_mem;

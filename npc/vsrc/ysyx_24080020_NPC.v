@@ -714,6 +714,7 @@ module ysyx_24080020_NPC(
         // .is_load_exu(is_load_exu),
         // .is_load_mem(is_load_mem),
         .mwen_mem(mwen_mem),
+        .mren_mem(mren_mem),
 
 
         // .fencei_exu(fencei_exu),
@@ -1308,7 +1309,7 @@ module ysyx_24080020_NPC(
 		.rd_data_lsu(rd_data_mem),
 		.rd_en_lsu(wen_mem),
 		// .rd_data_lsu(alu_out_mem),
-		.is_load(is_load_mem),
+		.is_load(mren_mem),
 		// .mrdata(mrdata_mem),
 		.fin_load(mem_wb_valid),
 
