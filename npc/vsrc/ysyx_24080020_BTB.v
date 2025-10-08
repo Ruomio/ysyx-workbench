@@ -18,7 +18,7 @@ module ysyx_24080020_BTB(
 
     // fence.i
     input fencei_exu,
-    input fencei_mem,
+    // input fencei_mem,
 
     // bus
     output reg out_valid,
@@ -86,7 +86,7 @@ module ysyx_24080020_BTB(
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next, fencei_mem_next;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next; // , fencei_mem_next;
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
@@ -520,17 +520,17 @@ module ysyx_24080020_BTB(
         end
     end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            fencei_mem_next <= 'b0;
-        end
-        else if(fencei_mem) begin
-            fencei_mem_next <= 'b1;
-        end
-        else begin
-            fencei_mem_next <= 'b0;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         fencei_mem_next <= 'b0;
+    //     end
+    //     else if(fencei_mem) begin
+    //         fencei_mem_next <= 'b1;
+    //     end
+    //     else begin
+    //         fencei_mem_next <= 'b0;
+    //     end
+    // end
 
 
 endmodule

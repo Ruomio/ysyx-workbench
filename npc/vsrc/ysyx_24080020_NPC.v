@@ -364,7 +364,7 @@ module ysyx_24080020_NPC(
 
         // fence.i
         .fencei_exu(fencei_exu),
-        .fencei_mem(fencei_mem),
+        // .fencei_mem(fencei_mem),
 
         // bus
         .out_valid(valid_btb),
@@ -714,8 +714,8 @@ module ysyx_24080020_NPC(
         .mwen_mem(mwen_mem),
 
 
-        .fencei_exu(fencei_exu),
-        .fencei_mem(fencei_mem),
+        // .fencei_exu(fencei_exu),
+        // .fencei_mem(fencei_mem),
 
         // axi-lite
         .arvalid_reg(arvalid_mem),

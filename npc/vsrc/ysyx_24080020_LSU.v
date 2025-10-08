@@ -59,8 +59,8 @@ module ysyx_24080020_LSU(
     output reg is_load_mem,
     output reg mwen_mem,
 
-    input fencei_exu,
-    output reg fencei_mem,
+    // input fencei_exu,
+    // output reg fencei_mem,
 
     // axi-full
     output arvalid_reg,
@@ -223,7 +223,7 @@ module ysyx_24080020_LSU(
             // wcsraddr2_mem <= 'b0;
             // wcsrdata2_mem <= 'b0;
 
-            fencei_mem <= 'b0;
+            // fencei_mem <= 'b0;
 
             pc_mem <= 'b0;
 
@@ -238,7 +238,7 @@ module ysyx_24080020_LSU(
 
             waddr_mem <= 'b0;
             is_load_mem <= 'b0;
-            fencei_mem <= 'b0;
+            // fencei_mem <= 'b0;
 
             next_inst <= 'b1;
 
@@ -275,7 +275,7 @@ module ysyx_24080020_LSU(
                 wcsraddr2_mem <= wcsraddr2_exu;
                 wcsrdata2_mem <= wcsrdata2_exu;
 
-                fencei_mem <= fencei_exu;
+                // fencei_mem <= fencei_exu;
 
                 next_inst <= 'b0;
 
