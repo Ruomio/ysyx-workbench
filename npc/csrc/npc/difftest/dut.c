@@ -139,7 +139,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   }
   for(int i=0; i<sizeof(ref_r->csrs)/sizeof(ref_r->csrs[0]); i++) {
     if(ref_r->csrs[i] != g_get_csrs(i)) {
-      printf("The %s reg is diff, shoud be %#x  but get %#x.\n", csrs_name[i], ref_r->csrs[i], g_get_csrs(i));
+      printf("The %s csr is diff, shoud be %#x  but get %#x.\n", csrs_name[i], ref_r->csrs[i], g_get_csrs(i));
       flag = false;
       // break;
     }

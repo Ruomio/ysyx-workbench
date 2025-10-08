@@ -586,11 +586,11 @@ void update_npc_cpu() {
     }
   }
 
+  npc_cpu.pc = g_pc;
   // assign csr_mvendorid = 32'h79737978;
   // assign csr_marchid = 32'h16f6e94;
   npc_cpu.csrs[4] = 0x79737978;
   npc_cpu.csrs[5] = 0x16f6e94;
-  npc_cpu.pc = g_pc;
 }
 
 void update_dut() {
