@@ -225,7 +225,7 @@ module ysyx_24080020_LSU(
 
             // fencei_mem <= 'b0;
 
-            pc_mem <= 'b0;
+            // pc_mem <= 'b0;
 
             // mem_wb_valid <= 'b0;
 
@@ -453,6 +453,7 @@ module ysyx_24080020_LSU(
     end
 
     // skip ref
+    `ifdef CONFIG_DPIC
     always @(posedge clk) begin
         if(!rst) begin
             skip_ref_mem <= 'b0;
@@ -503,5 +504,6 @@ module ysyx_24080020_LSU(
             `endif
         end
     end
+    `endif
 
 endmodule
