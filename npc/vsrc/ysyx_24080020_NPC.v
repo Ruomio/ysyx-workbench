@@ -489,7 +489,7 @@ module ysyx_24080020_NPC(
         .is_btype_idu(is_btype_idu),
         .is_jal_idu(is_jal_idu),
         .is_csrtype_idu(is_csrtype_idu),
-        .dnpc_idu(dnpc_idu),
+        // .dnpc_idu(dnpc_idu),
         .fencei_idu(fencei_idu),
 
         .rcsrdata(rcsrdata),
@@ -594,7 +594,7 @@ module ysyx_24080020_NPC(
         .is_jalr_idu(is_jalr_idu),
         .is_dnpc_idu(is_dnpc_idu),
         // .branch_src1_idu(branch_src1_idu),
-        .dnpc_idu(dnpc_idu),
+        // .dnpc_idu(dnpc_idu),
         .is_dnpc_exu(is_dnpc_exu),
         .is_btype_exu(is_btype_exu),
         .is_jal_exu(is_jal_exu),

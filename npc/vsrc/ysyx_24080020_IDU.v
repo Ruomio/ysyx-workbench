@@ -34,7 +34,7 @@ module ysyx_24080020_IDU (
     output reg is_btype_idu,
     output reg is_jalr_idu,
     output reg is_csrtype_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
+    // output reg [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg fencei_idu,
 
     // csrs
@@ -551,7 +551,8 @@ module ysyx_24080020_IDU (
 
                                 // dnpc <= csrs[mtvec];
                                 rcsraddr <= `ysyx_24080020_MTVEC_ADDR;
-                                dnpc_idu <= rcsrdata;
+                                // dnpc_idu <= rcsrdata;
+                                src1_idu <= rcsrdata;
 
                                 is_dnpc_idu <= 1'b1;
 
@@ -559,7 +560,8 @@ module ysyx_24080020_IDU (
                             else if(inst_idu[`ysyx_24080020_IMM_I] == 'b1100000010) begin
                                 // mret
                                 rcsraddr <= `ysyx_24080020_MEPC_ADDR;
-                                dnpc_idu <= rcsrdata;
+                                // dnpc_idu <= rcsrdata;
+                                src1_idu <= rcsrdata;
                                 is_dnpc_idu <= 1'b1;
 
                                 // only M mode

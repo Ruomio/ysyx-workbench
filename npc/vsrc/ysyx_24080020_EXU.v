@@ -25,7 +25,7 @@ module ysyx_24080020_EXU
     input is_jalr_idu,
     input is_dnpc_idu,
     // input [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
+    // input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
     output reg is_dnpc_exu,
     output [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
     output reg is_jal_exu,
@@ -115,7 +115,7 @@ module ysyx_24080020_EXU
     reg is_jalr_exu;
     reg is_csrtype_exu;
     reg alu_src2_con_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
+    // reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
     reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
     reg [`ysyx_24080020_WIDTH-1:0] src2_exu;
@@ -195,7 +195,7 @@ module ysyx_24080020_EXU
 
                 src1_exu <= src1_idu;
                 src2_exu <= src2_idu;
-                dnpc_exu <= dnpc_idu;
+                // dnpc_exu <= dnpc_idu;
                 is_jalr_exu <= is_jalr_idu;
                 is_jal_exu <= is_jal_idu;
                 is_btype_exu <= is_btype_idu;
@@ -280,9 +280,8 @@ module ysyx_24080020_EXU
     assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
 
     // assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
-    assign branch_src1 = is_jalr_exu == 1'b1 ? src1_exu :
-                            is_csrtype_exu == 1'b1 ? dnpc_exu : pc_exu;
-    assign branch_src2 = imm_exu;
+    assign branch_src1 = (is_jalr_exu | is_cstrype) ? src1_exu : pc_exu;
+    assign branch_src2 = is_csrtype_exu ? 32'b0 : imm_exu;
 
     assign branch_dnpc = branch_src1 + branch_src2;
 
