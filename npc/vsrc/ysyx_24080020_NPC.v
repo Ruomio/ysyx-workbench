@@ -713,7 +713,7 @@ module ysyx_24080020_NPC(
 
         // .is_load_exu(is_load_exu),
         // .is_load_mem(is_load_mem),
-        .mwen_mem(mwen_mem),
+        // .mwen_mem(mwen_mem),
         .mren_mem(mren_mem),
 
 
