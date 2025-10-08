@@ -51,8 +51,8 @@ module ysyx_24080020_CSR
         if(!rst) begin
             csrs[1] <= 32'h1800;        // mstatus
         end else begin
-            if(csr1_wen_wb) csrs[csr1_addr_wb] <= csr1_data_wb;
-            if(csr2_wen_wb) csrs[csr2_addr_wb] <= csr2_data_wb;
+            if(csr1_wen_wb) csrs[csr1_addr_wb[1:0]] <= csr1_data_wb;
+            if(csr2_wen_wb) csrs[csr2_addr_wb[1:0]] <= csr2_data_wb;
         end
     end
 
