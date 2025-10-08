@@ -30,8 +30,10 @@ module ysyx_24080020_FORWARD(
 );
     // reg is_load_next;
 
-    assign rs1_conflict = (((rs1_idu == rd_exu) && (rd_en_exu)) || ((rs1_idu == rd_lsu) && (rd_en_lsu)) || ((rs1_idu == rd_wbu) && (rd_en_wbu))) && (rs1_idu != 'b0);
-    assign rs2_conflict = (((rs2_idu == rd_exu) && (rd_en_exu)) || ((rs2_idu == rd_lsu) && (rd_en_lsu)) || ((rs2_idu == rd_wbu) && (rd_en_wbu))) && (rs2_idu != 'b0);
+    // assign rs1_conflict = (((rs1_idu == rd_exu) && (rd_en_exu)) || ((rs1_idu == rd_lsu) && (rd_en_lsu)) || ((rs1_idu == rd_wbu) && (rd_en_wbu))) && (rs1_idu != 'b0);
+    // assign rs2_conflict = (((rs2_idu == rd_exu) && (rd_en_exu)) || ((rs2_idu == rd_lsu) && (rd_en_lsu)) || ((rs2_idu == rd_wbu) && (rd_en_wbu))) && (rs2_idu != 'b0);
+    assign rs1_conflict = (((rs1_idu == rd_exu) ) || ((rs1_idu == rd_lsu) ) || ((rs1_idu == rd_wbu) )) && (rs1_idu != 'b0);
+    assign rs2_conflict = (((rs2_idu == rd_exu) ) || ((rs2_idu == rd_lsu) ) || ((rs2_idu == rd_wbu) )) && (rs2_idu != 'b0);
 
     assign rd_data1_forward = rs1_conflict ?
                                 rs1_idu == rd_exu ? rd_data_exu :
