@@ -237,6 +237,7 @@ module ysyx_24080020_EXU
 
                 `ifdef CONFIG_DPIC
                 is_ebreak_exu <= is_ebreak_idu;
+                if(is_ebreak_idu) ebreak();
                 if(mren_idu) statistics_idu_load_type();
                 else if(mwen_idu) statistics_idu_store_type();
                 else if(is_csrtype_idu) statistics_idu_csr_type();
