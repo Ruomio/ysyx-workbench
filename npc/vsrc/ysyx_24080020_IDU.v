@@ -242,7 +242,7 @@ module ysyx_24080020_IDU (
             is_jal_idu <= 1'b0;
             is_jalr_idu <= 1'b0;
             is_btype_idu <= 1'b0;
-            dnpc_idu <= 'b0;
+            // dnpc_idu <= 'b0;
             // branch_src1_idu <= 'b0;
 
             // mem
