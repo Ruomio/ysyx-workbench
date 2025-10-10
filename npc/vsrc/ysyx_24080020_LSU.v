@@ -213,7 +213,7 @@ module ysyx_24080020_LSU(
         end
         else if(mem_wb_valid && wb_mem_ready && state) begin
 
-            // waddr_mem <= 'b0;
+            waddr_mem <= 'b0;
             mren_mem <= 'b0;
             // is_load_mem <= 'b0;
             // fencei_mem <= 'b0;
