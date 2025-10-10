@@ -133,7 +133,7 @@ always @(*) begin
                                                                         `ysyx_24080020_ALU_SRL) :
                                              `ysyx_24080020_ALU_SLTU;
         `ysyx_24080020_LOAD_TYPE,
-        `ysyx_24080020_S_TYPE,
+        `ysyx_24080020_S_TYPE: alu_op_comb = `ysyx_24080020_ALU_ADD;
         `ysyx_24080020_B_TYPE: alu_op_comb = (funct3 == 3'b100) ? `ysyx_24080020_ALU_BLT :      // BLT
                                              (funct3 == 3'b101) ? `ysyx_24080020_ALU_BLT :      // BGE
                                              (funct3 == 3'b110) ? `ysyx_24080020_ALU_BLTU :     // BLTU
