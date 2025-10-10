@@ -39,24 +39,24 @@ module ysyx_24080020_IFU (
     reg wb_ifu_shake_hands;
     reg btype_n_jump;
 
-    reg state; // 0: idle  ;  1: wait_ready
+    // reg state; // 0: idle  ;  1: wait_ready
     reg [`ysyx_24080020_WIDTH-1:0] correct_pc;
 
     assign inst_fin = inst_fin_valid & inst_fin_ready;
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            state <= 1'b0;
-        end
-        else if(!state) begin
-            if(ifu_idu_valid) state <= 1'b1;
-            else state <= 1'b0;
-        end
-        else begin
-            if(idu_ifu_ready) state <= 1'b0;
-            else state <= 1'b1;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         state <= 1'b0;
+    //     end
+    //     else if(!state) begin
+    //         if(ifu_idu_valid) state <= 1'b1;
+    //         else state <= 1'b0;
+    //     end
+    //     else begin
+    //         if(idu_ifu_ready) state <= 1'b0;
+    //         else state <= 1'b1;
+    //     end
+    // end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -66,7 +66,7 @@ module ysyx_24080020_IFU (
             special_pc <= 'b0;
             inst_ifu <= 'b0;
         end
-        else if(ifu_idu_valid && idu_ifu_ready && state) begin
+        else if(ifu_idu_valid && idu_ifu_ready) begin
             ifu_idu_valid <= 1'b0;
         end
         else if(inst_fin_valid && inst_fin_ready) begin

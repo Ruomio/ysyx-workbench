@@ -182,7 +182,7 @@ assign alu_op_exu    = ctrl_q_reg[4:0];
 assign alu_src1 = (is_jal_exu || is_jalr_exu || is_auipc_exu) ? pc_q_reg : val1_q_reg;
 
 // src2选择：根据指令类型选择立即数或rs2
-wire use_imm = is_load_exu || is_store_exu || is_branch_exu ||
+wire use_imm = is_load_exu || is_store_exu ||
                is_jal_exu || is_jalr_exu || is_auipc_exu || is_i_type_exu;
 
 assign alu_src2 = use_imm ? imm_q_reg : val2_q_reg;
