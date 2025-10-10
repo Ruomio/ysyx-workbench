@@ -81,20 +81,27 @@ module ysyx_24080020_IFU (
             `endif
         end
         else if(inst_fin_valid) begin
-            special_pc <= special_pc_i;
-            if((raddr != correct_pc) && flush_pipeline) begin
+            // special_pc <= special_pc_i;
+            // if((raddr != correct_pc) && flush_pipeline) begin
+            //     inst_fin_ready <= 'b1;
+
+            //     `ifdef CONFIG_DPIC
+            //     statistics_icache_miss_hit_cnt();
+            //     `endif
+            // end
+            // else if(!ifu_idu_valid && idu_ifu_ready) begin
+            //     inst_fin_ready <= 'b1;
+
+            //     // if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
+            //     //     flush_pipeline <= 'b0;
+            //     // end
+            // end
+            if(!ifu_idu_valid && idu_ifu_ready) begin
                 inst_fin_ready <= 'b1;
 
-                `ifdef CONFIG_DPIC
-                statistics_icache_miss_hit_cnt();
-                `endif
-            end
-            else if(!ifu_idu_valid && idu_ifu_ready) begin
-                inst_fin_ready <= 'b1;
-
-                // if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
-                //     flush_pipeline <= 'b0;
-                // end
+                if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
+                    flush_pipeline <= 'b0;
+                end
             end
         end
     end
