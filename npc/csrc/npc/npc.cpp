@@ -169,8 +169,10 @@ void init_npc(int argc, char **argv) {
     toggle_clock;
     top->eval();
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-    tfp->dump(contextp->time());
-    contextp->timeInc(1);
+    if(tfp) {
+        tfp->dump(contextp->time());
+        contextp->timeInc(1);
+    }
 #endif
     if(i++ > 20) {
       set_unreset;
@@ -204,8 +206,10 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_WAVEFILE
     if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
       total_wave_step++;
-      tfp->dump(contextp->time());
-      contextp->timeInc(1);
+      if(tfp) {
+        tfp->dump(contextp->time());
+        contextp->timeInc(1);
+      }
     }
     else
       total_wave_step++;
@@ -213,8 +217,10 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_LIGHTSSS
     if(lightsss.get_flag() && lightsss.get_notgood()) {
       // total_wave_step++;
-      tfp->dump(contextp->time());
-      contextp->timeInc(1);
+      if(tfp) {
+        tfp->dump(contextp->time());
+        contextp->timeInc(1);
+      }
     }
     else {
       // total_wave_step++;
