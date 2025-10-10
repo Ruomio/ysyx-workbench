@@ -626,7 +626,7 @@ module ysyx_24080020_NPC(
         .mrlen_exu(mem_len_exu),
         .mwen_exu(is_store_exu),
         .mwmask_exu(mem_wmask_exu),
-        .maddr_exu(maddr_exu),
+        .maddr_exu(mem_addr_exu),
         .mwdata_exu(store_data_exu),
         .mren_mem(mren_mem),
 
@@ -1270,19 +1270,19 @@ module ysyx_24080020_NPC(
 		.rs2_idu(rs2),
 
 		.rd_exu(waddr_exu),
-		.rd_data_exu(alu_out_exu),
+		.rd_data_exu(wdata_exu),
 		// .rd_en_exu(wen_exu),
 
 		.rd_lsu(waddr_mem),
-		.rd_data_lsu(rd_data_mem),
+		.rd_data_lsu(wdata_mem),
 		// .rd_en_lsu(wen_mem),
 		// .rd_data_lsu(alu_out_mem),
 		.is_load(mren_mem),
 		// .mrdata(mrdata_mem),
-		.fin_load(mem_wb_valid),
+		// .fin_load(mem_wb_valid),
 
 		.rd_wbu(waddr_wb),
-		.rd_data_wbu(rd_data_wb),
+		.rd_data_wbu(wdata_wb),
 		// .rd_en_wbu(wen_wb),
 
 		.val_raddr1(val_raddr1),
