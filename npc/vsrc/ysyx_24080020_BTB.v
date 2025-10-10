@@ -362,9 +362,9 @@ module ysyx_24080020_BTB(
                 end
             end
             else begin
-                `ifdef CONFIG_DPIC
-                    statistics_btb_hit();
-                `endif
+                // `ifdef CONFIG_DPIC
+                //     statistics_btb_hit();
+                // `endif
             end
 
         end
