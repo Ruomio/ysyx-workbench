@@ -49,6 +49,7 @@ module ysyx_24080020_IDU (
     output wire        is_load_idu,
     output wire        is_store_idu,
     output wire        is_csr_idu,
+    output wire        is_auipc_idu,
 
     output wire        fencei_idu,
     output wire [2:0]  mem_len_idu,
@@ -101,6 +102,7 @@ wire is_jr_type= (opcode == `ysyx_24080020_JALR);
 wire is_csr    = (opcode == `ysyx_24080020_CSR_TYPE);
 wire is_fencei = (opcode == `ysyx_24080020_FENCEI_TYPE);
 wire is_load_type = (opcode == `ysyx_24080020_LOAD_TYPE);
+wire is_auipc = (opcode == `ysyx_24080020_AUIPC);
 // 探测 ecall/mret/ebreak
 wire is_ecall  = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 12'h0);
 wire is_mret   = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 12'h302);
@@ -183,6 +185,7 @@ assign wcsren_idu      = (is_csr && (funct3 != 3'b000 && funct3 != 3'b100)) // C
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
 
+assign is_auipc_idu = ctrl_q[49];
 assign is_ecall_idu = ctrl_q[48];
 assign is_branch_idu = ctrl_q[47];
 assign is_jal_idu    = ctrl_q[46];
@@ -216,8 +219,9 @@ assign csr_hold = ecall_phase;
 //=========================================================================
 // 6. 极简流水线握手 & 锁存（）
 //=========================================================================
-localparam PIPE_CTRL_W = 49;
+localparam PIPE_CTRL_W = 50;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
+    is_auipc,
     is_ecall, is_b_type, is_j_type, is_jr_type,
     is_load_type, is_s_type, is_csr, is_fencei, is_ebreak,
     funct3, imm_comb, alu_op_comb
