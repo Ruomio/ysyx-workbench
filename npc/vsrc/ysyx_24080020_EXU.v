@@ -88,7 +88,7 @@ module ysyx_24080020_EXU (
 //=========================================================================
 // 流水线控制与寄存器
 //=========================================================================
-localparam PIPE_CTRL_W = 20;
+localparam PIPE_CTRL_W = 19;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
     is_u_type_idu, is_i_type_idu, is_auipc_idu,
     is_ecall_idu, is_branch_idu, is_jal_idu, is_jalr_idu, is_load_idu, is_store_idu,
@@ -174,21 +174,21 @@ wire        is_auipc_exu;
 wire        is_i_type_exu;
 wire        is_u_type_exu;
 
-assign is_u_type_exu = ctrl_q_reg[19];
-assign is_i_type_exu = ctrl_q_reg[18];
-assign is_auipc_exu = ctrl_q_reg[17];
-assign is_ecall_exu = ctrl_q_reg[16];
-assign is_branch_exu = ctrl_q_reg[15];
-assign is_jal_exu    = ctrl_q_reg[14];
-assign is_jalr_exu   = ctrl_q_reg[13];
-assign is_load_exu   = ctrl_q_reg[12];
-assign is_store_exu  = ctrl_q_reg[11];
-assign is_csr_exu    = ctrl_q_reg[10];
-assign is_ebreak_exu = ctrl_q_reg[9];
-assign fencei_exu    = ctrl_q_reg[8];
-assign mem_len_exu   = ctrl_q_reg[7:5];
+assign is_u_type_exu = ctrl_q_reg[18];
+assign is_i_type_exu = ctrl_q_reg[17];
+assign is_auipc_exu = ctrl_q_reg[16];
+assign is_ecall_exu = ctrl_q_reg[15];
+assign is_branch_exu = ctrl_q_reg[14];
+assign is_jal_exu    = ctrl_q_reg[13];
+assign is_jalr_exu   = ctrl_q_reg[12];
+assign is_load_exu   = ctrl_q_reg[11];
+assign is_store_exu  = ctrl_q_reg[10];
+assign is_csr_exu    = ctrl_q_reg[9];
+assign is_ebreak_exu = ctrl_q_reg[8];
+assign fencei_exu    = ctrl_q_reg[7];
+assign mem_len_exu   = ctrl_q_reg[6:4];
 assign mem_wmask_exu = mem_len_exu;  // store和load使用相同的长度编码
-assign alu_op_exu    = ctrl_q_reg[4:0];
+assign alu_op_exu    = ctrl_q_reg[3:0];
 
 //=========================================================================
 // ALU操作数选择（RISC-V标准）
