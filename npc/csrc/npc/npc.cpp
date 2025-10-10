@@ -458,17 +458,23 @@ void exec_npc(uint64_t n) {
 }
 
 void free_npc() {
+#if defined (CONFIG_LIGHTSSS)
+  if(lightsss.is_child()) {
+    return;
+  }
+#endif
+
   if(top) {
     top->final();
     delete top;
     top = NULL;
   }
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
-  // if(tfp) {
-  //   tfp->close();
-  //   delete tfp;
-  //   tfp = NULL;
-  // }
+  if(tfp) {
+    tfp->close();
+    delete tfp;
+    tfp = NULL;
+  }
 #endif
   if(contextp) {
     delete contextp;
