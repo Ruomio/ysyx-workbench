@@ -19,9 +19,10 @@ module ysyx_24080020_ALU(
             end
             `ysyx_24080020_ALU_SLT: begin
                 alu_out = $signed(alu_src1) < $signed(alu_src2) ? 32'b1 : 32'b0;
+                // alu_out = alu_src1 < alu_src2 ? 32'b1 : 32'b0;
             end
             `ysyx_24080020_ALU_SLTU: begin
-                alu_out = alu_src1 < alu_src2 ? 32'b1 : 32'b0;
+                alu_out = {1'b0, alu_src1} < {1'b0, alu_src2} ? 32'b1 : 32'b0;
             end
             `ysyx_24080020_ALU_OR : begin
                 alu_out = alu_src1 | alu_src2;
