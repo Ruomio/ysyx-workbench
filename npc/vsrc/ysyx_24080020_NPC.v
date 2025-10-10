@@ -80,19 +80,15 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
   wire [`ysyx_24080020_WIDTH-1:0] dnpc_exu, dnpc_mem;
   wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, branch_taken_exu, branch_not_taken_exu;
-  wire is_jalr_idu, is_btype_idu, is_btype_exu, is_jal_idu, is_jal_exu;
 
   // inst
   wire [`ysyx_24080020_WIDTH-1:0] inst_ifu;
   wire [`ysyx_24080020_WIDTH-1:0] imm_idu, imm_exu;
 
-  wire is_load_idu, is_load_exu, is_load_mem, is_load_wb;
   wire alu_src2_con_idu, alu_src2_con_exu;
   wire [`ysyx_24080020_WIDTH-1:0] branch_src1_idu;
   // wire reg_dst_con_idu, reg_dst_con_exu;
 
-  // fence
-  wire fencei_idu, fencei_exu, fencei_mem, fencei_type;
 
   // reg
   wire wen_idu, wen_exu, wen_mem, wen_wb;
@@ -458,6 +454,7 @@ module ysyx_24080020_NPC(
     wire is_branch_idu, is_ecall_idu, is_jalr_idu, is_jal_idu, is_load_idu, is_store_idu,
         is_csr_idu, fencei_idu;
     wire [2:0] mem_len_idu, mem_wmask_idu;
+    wire [31:0] rcsrdata_idu;
 
     ysyx_24080020_IDU u_idu(
 		.clk(clk),
@@ -614,7 +611,7 @@ module ysyx_24080020_NPC(
         .is_dnpc_exu(is_dnpc_exu),
         .is_dnpc_mem(is_dnpc_mem),
 
-        .dnpc_new_exu(dnpc_new_exu),
+        .dnpc_new_exu(dnpc_exu),
         .dnpc_mem(dnpc_mem),
         `endif
 
