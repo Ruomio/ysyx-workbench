@@ -72,6 +72,10 @@ module ysyx_24080020_IFU (
         else if(inst_fin_valid && inst_fin_ready) begin
             inst_fin_ready <= 'b0;
 
+            pc_ifu <= raddr;
+            inst_ifu <= inst;
+            ifu_idu_valid <= 1'b1;
+
             `ifdef CONFIG_DPIC
             statistics_ifu_get_inst();
             `endif
@@ -88,9 +92,6 @@ module ysyx_24080020_IFU (
             else if(!ifu_idu_valid) begin
                 inst_fin_ready <= 'b1;
 
-                pc_ifu <= raddr;
-                inst_ifu <= inst;
-                ifu_idu_valid <= 1'b1;
                 // if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
                 //     flush_pipeline <= 'b0;
                 // end
