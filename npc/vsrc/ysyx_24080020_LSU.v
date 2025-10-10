@@ -385,9 +385,9 @@ module ysyx_24080020_LSU(
                     3'b100:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
                     3'b101:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
                     3'b110:   mrdata_mem <= rdata_shift;
-                    3'd000:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
-                    3'd001:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
-                    3'd010:   mrdata_mem <= rdata_shift;
+                    3'b000:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
+                    3'b001:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
+                    3'b010:   mrdata_mem <= rdata_shift;
                     default: mrdata_mem <= 32'hffffffff;
                 endcase
             end
