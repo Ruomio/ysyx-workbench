@@ -618,7 +618,7 @@ module ysyx_24080020_NPC(
         .exu_mem_valid(exu_mem_valid),
         .wb_mem_ready(wb_mem_ready),
         .mem_exu_ready(mem_exu_ready),
-        .mem_wb_valid(mem_wb_valid)
+        .mem_wb_valid(mem_wb_valid),
 
         // Load Store
         .mren_exu(is_load_exu),
