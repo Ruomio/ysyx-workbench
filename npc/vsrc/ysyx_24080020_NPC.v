@@ -326,8 +326,6 @@ module ysyx_24080020_NPC(
   wire skip_ref_mem;
   `endif
 
-  wire is_ebreak_idu, is_ebreak_exu, is_ebreak_lsu;
-
   // forward
   wire [`ysyx_24080020_WIDTH-1:0] rd_data1_forward;
   wire [`ysyx_24080020_WIDTH-1:0] rd_data2_forward;
