@@ -79,7 +79,8 @@ module ysyx_24080020_NPC(
   // pc
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
   wire [`ysyx_24080020_WIDTH-1:0] dnpc_exu, dnpc_mem;
-  wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, branch_taken_exu, branch_not_taken_exu;
+  wire branch_taken_exu, branch_taken_lsu, branch_taken_wbu,
+        branch_not_taken_exu;
 
   // inst
   wire [`ysyx_24080020_WIDTH-1:0] inst_ifu;
@@ -450,7 +451,7 @@ module ysyx_24080020_NPC(
     );
 
     wire is_branch_idu, is_ecall_idu, is_jalr_idu, is_jal_idu, is_load_idu, is_store_idu,
-        is_csr_idu, fencei_idu, is_ebreak_idu;
+        is_csr_idu, fencei_idu, is_ebreak_idu, is_ecall_idu;
     wire [2:0] mem_len_idu, mem_wmask_idu;
     wire [31:0] rcsrdata_idu;
 
@@ -491,6 +492,7 @@ module ysyx_24080020_NPC(
 		// .wcsrdata2_idu(wcsrdata2_idu),
 
         // other control signal
+        .is_ecall_idu(is_ecall_idu),
 		.is_ebreak_idu(is_ebreak_idu),
 		.alu_op_idu(alu_op_idu),
 		.imm_idu(imm_idu),
@@ -534,6 +536,7 @@ module ysyx_24080020_NPC(
         .pc_idu(pc_idu),
         .imm_idu(imm_idu),
         .alu_op_idu(alu_op_idu),
+        .is_ecall_idu(is_ecall_idu),
         .is_ebreak_idu(is_ebreak_idu),
 		.is_branch_idu(is_branch_idu),
 		.is_jal_idu(is_jal_idu),
@@ -604,54 +607,44 @@ module ysyx_24080020_NPC(
         .pc_exu(pc_exu),
         .pc_mem(pc_lsu),
 
-        .is_dnpc_exu(is_dnpc_exu),
-        .is_dnpc_mem(is_dnpc_mem),
+        .is_dnpc_exu(branch_taken_exu),
+        .is_dnpc_mem(branch_taken_lsu),
 
         .dnpc_new_exu(dnpc_exu),
         .dnpc_mem(dnpc_mem),
         `endif
 
+        // exu <-> lsu
+        .exu_mem_valid(exu_mem_valid),
+        .wb_mem_ready(wb_mem_ready),
+        .mem_exu_ready(mem_exu_ready),
+        .mem_wb_valid(mem_wb_valid)
 
-
-        .mren_exu(mren_exu),
-        .mrtype_exu(mrtype_exu),
-        .mrlen_exu(mrlen_exu),
-        .mwen_exu(mwen_exu),
-        .mwmask_exu(mwmask_exu),
+        // Load Store
+        .mren_exu(is_load_exu),
+        .mrlen_exu(men_len_exu),
+        .mwen_exu(is_store_exu),
+        .mwmask_exu(mem_wmask_exu),
         .maddr_exu(maddr_exu),
-        .mwdata_exu(mwdata_exu),
-        .mrdata_mem(mrdata_mem),
+        .mwdata_exu(store_data_exu),
         .exu_mem_shake_hands(exu_mem_shake_hands),
 
-        .alu_out_exu(alu_out_exu),
-        .rd_data_mem(rd_data_mem),
-
+        // CSR
         .wcsren_exu(wcsren_exu),
         .wcsraddr_exu(wcsraddr_exu),
         .wcsrdata_exu(wcsrdata_exu),
-        .wcsren2_exu(wcsren2_exu),
-        .wcsraddr2_exu(wcsraddr2_exu),
-        .wcsrdata2_exu(wcsrdata2_exu),
+
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
         .wcsrdata_mem(wcsrdata_mem),
-        .wcsren2_mem(wcsren2_mem),
-        .wcsraddr2_mem(wcsraddr2_mem),
-        .wcsrdata2_mem(wcsrdata2_mem),
 
+        // REG
         .wen_exu(wen_exu),
         .waddr_exu(waddr_exu),
+        .wdata_exu(wdata_exu),
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
-
-        // .is_load_exu(is_load_exu),
-        // .is_load_mem(is_load_mem),
-        // .mwen_mem(mwen_mem),
-        .mren_mem(mren_mem),
-
-
-        // .fencei_exu(fencei_exu),
-        // .fencei_mem(fencei_mem),
+        .wdata_mem(wdata_mem),
 
         // axi-lite
         .arvalid_reg(arvalid_mem),
@@ -686,12 +679,7 @@ module ysyx_24080020_NPC(
         .bready(bready_mem),
         .bvalid(bvalid_mem),
         .bid(bid_mem),
-        .bresp(bresp_mem),
-
-        .exu_mem_valid(exu_mem_valid),
-        .wb_mem_ready(wb_mem_ready),
-        .mem_exu_ready(mem_exu_ready),
-        .mem_wb_valid(mem_wb_valid)
+        .bresp(bresp_mem)
     );
 
     ysyx_24080020_REG u_reg(
@@ -702,7 +690,7 @@ module ysyx_24080020_NPC(
         .skip_ref_mem(skip_ref_mem),
         .pc_lsu(pc_lsu),
         .pc_wbu(pc_wbu),
-        .is_dnpc_mem(is_dnpc_mem),
+        .is_dnpc_mem(branch_taken_lsu),
         .dnpc_mem(dnpc_mem),
         `endif
 
@@ -711,9 +699,11 @@ module ysyx_24080020_NPC(
 
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
-        .rd_data_mem(rd_data_mem),
+        .wdata_mem(wdata_mem),
+        // .rd_data_mem(rd_data_mem),
+
         .waddr_wb(waddr_wb),
-        .rd_data_wb(rd_data_wb),
+        .wdata_wb(wdata_wb),
         .wen_wb(wen_wb),
 
         .val_raddr1(val_raddr1),
@@ -730,9 +720,6 @@ module ysyx_24080020_NPC(
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
         .wcsrdata_mem(wcsrdata_mem),
-        .wcsren2_mem(wcsren2_mem),
-        .wcsraddr2_mem(wcsraddr2_mem),
-        .wcsrdata2_mem(wcsrdata2_mem),
 
         .rcsraddr(rcsraddr),
         .rcsrdata(rcsrdata),

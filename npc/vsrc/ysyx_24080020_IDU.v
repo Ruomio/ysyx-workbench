@@ -40,6 +40,7 @@ module ysyx_24080020_IDU (
     // output wire [31:0] wcsrdata2_idu,
     // 其余控制
     output wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
+    output wire        is_ecall_idu,
     output wire        is_ebreak_idu,
     output wire [31:0] imm_idu,
     output wire        is_branch_idu,
@@ -99,10 +100,11 @@ wire is_j_type = (opcode == `ysyx_24080020_JAL);
 wire is_jr_type= (opcode == `ysyx_24080020_JALR);
 wire is_csr    = (opcode == `ysyx_24080020_CSR_TYPE);
 wire is_fencei = (opcode == `ysyx_24080020_FENCEI_TYPE);
-wire is_ebreak = (inst_ifu == `ysyx_24080020_EBREAK);
-// 探测 ecall/mret
+wire is_load_type = (opcode == `ysyx_24080020_LOAD_TYPE);
+// 探测 ecall/mret/ebreak
 wire is_ecall  = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 12'h0);
 wire is_mret   = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 12'h302);
+wire is_ebreak = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 12'h1);
 
 reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_comb;
 always @(*) begin
@@ -148,7 +150,7 @@ assign rs1 = inst_ifu[`ysyx_24080020_RS1];
 assign rs2 = (is_r_type || is_s_type || is_b_type) ? inst_ifu[`ysyx_24080020_RS2] : `ysyx_24080020_REG_WIDTH'd0;
 
 assign waddr_idu = inst_ifu[`ysyx_24080020_RD];
-assign wen_idu   = (is_r_type || is_i_type || is_u_type || is_j_type || is_jr_type || is_load_idu || is_csr_idu) &&
+assign wen_idu   = (is_r_type || is_i_type || is_u_type || is_j_type || is_jr_type || is_csr) &&
                    (inst_ifu[`ysyx_24080020_RD] != `ysyx_24080020_REG_WIDTH'd0);
 
 //=========================================================================
@@ -169,22 +171,19 @@ assign wcsraddr_idu    = (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
                             (csr_imm == `ysyx_24080020_MCAUSE_ADDR) ? 3'd2 :
                             (csr_imm == `ysyx_24080020_MTVEC_ADDR) ? 3'd3 :
                             (csr_imm == `ysyx_24080020_MVENDORID_ADDR) ? 3'd4 :
-                            (csr_imm == `ysyx_24080020_MARCHID_ADDR) ? 3'd5 : 3'd0;
-assign wcsrdata_idu    = val_raddr1;  // CSR写数据来自寄存器文件读取值
-assign wcsren_idu      = is_csr && (funct3 != 3'b000 && funct3 != 3'b100); // CSRRW/CSRRS
-// 写口 2
-// assign wcsraddr2_idu   = (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
-//                             (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd1 :
-//                             (csr_imm == `ysyx_24080020_MCAUSE_ADDR) ? 3'd2 :
-//                             (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd3 :
-//                             (csr_imm == `ysyx_24080020_MVENDORID_ADDR) ? 3'd4 :
-//                             (csr_imm == `ysyx_24080020_MARCHID_ADDR) ? 3'd5 : 3'd0;
-// assign wcsrdata2_idu   = val_raddr1;
-// assign wcsren2_idu     = is_csr && (funct3 == `ysyx_24080020_ECALL_EBREAK); // ecall
+                            (csr_imm == `ysyx_24080020_MARCHID_ADDR) ? 3'd5 :
+                            3'd0;
+assign wcsrdata_idu    = is_ecall ? pc_ifu :
+                         is_mret ? 32'h1800 :
+                            val_raddr1;  // CSR写数据来自寄存器文件读取值
+assign wcsren_idu      = (is_csr && (funct3 != 3'b000 && funct3 != 3'b100)) // CSRRW/CSRRS
+                            || is_ecall || is_mret;                         // ecall/mret
 
 //=========================================================================
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
+
+assign is_ecall_idu = ctrl_q[48];
 assign is_branch_idu = ctrl_q[47];
 assign is_jal_idu    = ctrl_q[46];
 assign is_jalr_idu   = ctrl_q[45];
@@ -217,10 +216,10 @@ assign csr_hold = ecall_phase;
 //=========================================================================
 // 6. 极简流水线握手 & 锁存（）
 //=========================================================================
-localparam PIPE_CTRL_W = 48;
+localparam PIPE_CTRL_W = 49;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
-    is_b_type, is_j_type, is_jr_type,
-    (opcode == `ysyx_24080020_LOAD_TYPE), is_s_type, is_csr, is_fencei, is_ebreak,
+    is_ecall, is_b_type, is_j_type, is_jr_type,
+    is_load_type, is_s_type, is_csr, is_fencei, is_ebreak,
     funct3, imm_comb, alu_op_comb
 };
 

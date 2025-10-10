@@ -31,14 +31,6 @@ module ysyx_24080020_REG
     input mem_wb_valid,
     output reg wb_mem_ready
 );
-`ifdef CONFIG_DPIC
-    import "DPI-C" function void npc_difftest_skip_ref();
-
-    reg is_dnpc_wb;
-    reg [`ysyx_24080020_WIDTH-1:0] dnpc_wb;
-    reg skip_ref_wb;
-`endif
-
     reg [`ysyx_24080020_WIDTH-1:0] regs[0:`ysyx_24080020_REG_NUM-1];
 
     reg cnt;
@@ -59,13 +51,6 @@ module ysyx_24080020_REG
         else if(cnt) begin
             cnt <= 'b0;
             waddr_wb <= 'b0;
-
-            `ifdef CONFIG_DPIC
-            if(skip_ref_wb) begin
-                skip_ref_wb <= 1'b0;
-                npc_difftest_skip_ref();
-            end
-            `endif
         end
         else if(mem_wb_valid && wb_mem_ready) begin
             wb_mem_ready <= 'b0;
@@ -75,12 +60,6 @@ module ysyx_24080020_REG
             waddr_wb <= waddr_mem;
             rd_data_wb <= rd_data_mem;
 
-            `ifdef CONFIG_DPIC
-            pc_wbu <= pc_lsu;
-            is_dnpc_wb <= is_dnpc_mem;
-            dnpc_wb <= dnpc_mem;
-            skip_ref_wb <= skip_ref_mem;
-            `endif
         end
         else if(mem_wb_valid) begin
             wb_mem_ready <= 1'b1;
@@ -121,4 +100,37 @@ module ysyx_24080020_REG
     // assign val_raddr2 = regs[raddr2];
     assign val_raddr1 = raddr1 == 'b0 ? 'b0 : regs[raddr1];
     assign val_raddr2 = raddr2 == 'b0 ? 'b0 : regs[raddr2];
+
+
+    //=========================================================================
+    // DPI-C调试接口（可选）
+    //=========================================================================
+    `ifdef CONFIG_DPIC
+    import "DPI-C" function void npc_difftest_skip_ref();
+
+    reg is_dnpc_wb;
+    reg [`ysyx_24080020_WIDTH-1:0] dnpc_wb;
+    reg skip_ref_wb;
+
+
+
+    always @(posedge clk) begin
+        if(!rst) begin
+        end
+        else if(cnt) begin
+            if(skip_ref_wb) begin
+                skip_ref_wb <= 1'b0;
+                npc_difftest_skip_ref();
+            end
+        end
+        else if(mem_wb_valid && wb_mem_ready) begin
+            pc_wbu <= pc_lsu;
+            is_dnpc_wb <= is_dnpc_mem;
+            dnpc_wb <= dnpc_mem;
+            skip_ref_wb <= skip_ref_mem;
+        end
+    end
+
+    `endif
+
 endmodule

@@ -19,46 +19,42 @@ module ysyx_24080020_LSU(
 
     // memory
     input mren_exu,
-    input mrtype_exu,
-    input [3:0] mrlen_exu,
+    input [2:0] mrlen_exu,
     input mwen_exu,
-    input [3:0] mwmask_exu,
+    input [2:0] mwmask_exu,
     input [`ysyx_24080020_WIDTH-1:0] maddr_exu,
-    // input [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
+    // output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
 
-    input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
-    output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
-    output reg exu_mem_shake_hands,
+    // input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
+    // output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
+    // output reg exu_mem_shake_hands,
 
 
     // csrs
     input wcsren_exu,
     input [2:0] wcsraddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
-    input wcsren2_exu,
-    input [2:0] wcsraddr2_exu,
-    input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
+    // input wcsren2_exu,
+    // input [2:0] wcsraddr2_exu,
+    // input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
     output reg wcsren_mem,
     output reg [2:0] wcsraddr_mem,
     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
-    output reg wcsren2_mem,
-    output reg [2:0] wcsraddr2_mem,
-    output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
+    // output reg wcsren2_mem,
+    // output reg [2:0] wcsraddr2_mem,
+    // output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
+
     // regs
     input wen_exu,
     input [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
+    input [`ysyx_24080020_WIDTH-1:0] wdata_exu,
     output reg wen_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
+    output [`ysyx_24080020_WIDTH-1:0] wdata_mem,
 
-    // input reg is_load_exu,
-    // output reg is_load_mem,
     output reg mren_mem,
-    // output reg mwen_mem,
 
-    // input fencei_exu,
-    // output reg fencei_mem,
 
     // axi-full
     output arvalid_reg,
@@ -102,10 +98,6 @@ module ysyx_24080020_LSU(
     output reg mem_wb_valid
 
 );
-`ifdef CONFIG_DPIC
-    import "DPI-C" function void statistics_lsu_get_data();
-`endif
-
     reg arvalid, awvalid, wvalid;
     assign arvalid_reg = arvalid;
     assign awvalid_reg = awvalid;
@@ -113,9 +105,8 @@ module ysyx_24080020_LSU(
 
     // reg mren_mem;
     reg mwen_mem;
-    reg mrtype_mem;
-    reg [3:0] mrlen_mem;
-    reg [3:0] mwmask_mem;
+    reg [2:0] mrlen_mem;
+    reg [2:0] mwmask_mem;
     reg [`ysyx_24080020_WIDTH-1:0] maddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg finish_read;
@@ -127,6 +118,7 @@ module ysyx_24080020_LSU(
 
     // reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
     reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem;
+    reg [`ysyx_24080020_WIDTH-1:0] wdata_exu_;
 
     reg state; // 0: idle;   1: wait_ready
 
@@ -158,26 +150,26 @@ module ysyx_24080020_LSU(
                     32'b0;
 
     assign wstrb_ = maddr_mem[1:0] == 2'b00 ?
-                        mwmask_mem == 4'b100 ? 4'b1111 :
-                        mwmask_mem == 4'b010 ? 4'b0011 :
-                        mwmask_mem == 4'b001 ? 4'b0001 :
+                        mwmask_mem == 3'b010 ? 4'b1111 :
+                        mwmask_mem == 3'b001 ? 4'b0011 :
+                        mwmask_mem == 3'b000 ? 4'b0001 :
                         4'b0000 :
                    maddr_mem[1:0] == 2'b01 ?
-                        mwmask_mem == 4'b100 ? 4'b1110 :
-                        mwmask_mem == 4'b010 ? 4'b0110 :
-                        mwmask_mem == 4'b001 ? 4'b0010 :
+                        mwmask_mem == 3'b010 ? 4'b1110 :
+                        mwmask_mem == 3'b001 ? 4'b0110 :
+                        mwmask_mem == 3'b000 ? 4'b0010 :
                         4'b0000 :
                    maddr_mem[1:0] == 2'b10 ?
-                        mwmask_mem == 4'b100 ? 4'b1100 :
-                        mwmask_mem == 4'b010 ? 4'b1100 :
-                        mwmask_mem == 4'b001 ? 4'b0100 :
+                        mwmask_mem == 3'b010 ? 4'b1100 :
+                        mwmask_mem == 3'b001 ? 4'b1100 :
+                        mwmask_mem == 3'b000 ? 4'b0100 :
                         4'b0000 :
                    maddr_mem[1:0] == 2'b11 ?
                         4'b1000 :
                     4'b0000;
 
 
-    assign rd_data_mem = mren_mem ? mrdata_mem : alu_out_mem;
+    assign wdata_mem = mren_mem ? mrdata_mem : wdata_exu_;
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -206,7 +198,6 @@ module ysyx_24080020_LSU(
             // dnpc_mem <= 'b0;
 
             mren_mem <= 'b0;
-            // mrtype_mem <= 'b0;
             // mrlen_mem <= 'b0;
             // maddr_mem <= 'b0;
             mwen_mem <= 'b0;
@@ -254,11 +245,10 @@ module ysyx_24080020_LSU(
                 // update reg
                 wen_mem <= wen_exu;
                 waddr_mem <= waddr_exu;
+                wdata_exu_ <= wdata_exu;
 
-                // is_load_mem <= is_load_exu;
 
                 mren_mem <= mren_exu;
-                mrtype_mem <= mrtype_exu;
                 mrlen_mem <= mrlen_exu;
                 maddr_mem <= maddr_exu;
                 mwen_mem <= mwen_exu;
@@ -278,11 +268,6 @@ module ysyx_24080020_LSU(
 
                 next_inst <= 'b0;
 
-                `ifdef CONFIG_DPIC
-                pc_mem <= pc_exu;
-                is_dnpc_mem <= is_dnpc_exu;
-                dnpc_mem <= dnpc_new_exu;
-                `endif
 
             end
             else if(next_inst) begin
@@ -343,13 +328,6 @@ module ysyx_24080020_LSU(
         else if(rvalid && rready) begin
             rready <= 1'b0;
 
-            `ifdef CONFIG_DPIC
-            if(rresp != 2'b0) begin
-                // rresp fault;
-                $display("rresp not be 0b00, ERROR");
-            end
-            statistics_lsu_get_data();
-            `endif
         end
         else if(rvalid) begin
             rready <= 1'b1;
@@ -399,11 +377,6 @@ module ysyx_24080020_LSU(
         else if(bvalid) begin
             bready <= 1'b1;
 
-            `ifdef CONFIG_DPIC
-            if(bresp != 2'b0) begin
-                $error("the bresp are not 2'b0");
-            end
-            `endif
         end
     end
 
@@ -422,21 +395,21 @@ module ysyx_24080020_LSU(
         else if(rvalid && rready && rlast) begin
             finish_read <= 1'b1;
 
-            if(mrtype_mem) begin
+            if(mrlen_mem[2]) begin
                 // zero extension
                 case(mrlen_mem)
-                    4'd1:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
-                    4'd2:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
-                    4'd4:   mrdata_mem <= rdata_shift;
+                    3'd0:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
+                    3'd1:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
+                    3'd2:   mrdata_mem <= rdata_shift;
                     default: mrdata_mem <= 32'hffffffff;
                 endcase
             end
             else begin
                 // signed extension
                 case(mrlen_mem)
-                    4'd1:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
-                    4'd2:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
-                    4'd4:   mrdata_mem <= rdata_shift;
+                    3'd0:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
+                    3'd1:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
+                    3'd2:   mrdata_mem <= rdata_shift;
                     default: mrdata_mem <= 32'hffffffff;
                 endcase
             end
@@ -444,8 +417,48 @@ module ysyx_24080020_LSU(
         end
     end
 
-    // skip ref
+    //=========================================================================
+    // DPI-C调试接口（可选）
+    //=========================================================================
     `ifdef CONFIG_DPIC
+    import "DPI-C" function void statistics_lsu_get_data();
+
+    always @(posedge clk) begin
+        if(!rst) begin
+
+        end
+        else if(exu_mem_valid && mem_exu_ready) begin
+
+            pc_mem <= pc_exu;
+            is_dnpc_mem <= is_dnpc_exu;
+            dnpc_mem <= dnpc_new_exu;
+        end
+    end
+
+
+    always @(posedge clk) begin
+        if(!rst) begin
+        end
+        else if(rvalid && rready) begin
+            if(rresp != 2'b0) begin
+                // rresp fault;
+                $display("rresp not be 0b00, ERROR");
+            end
+            statistics_lsu_get_data();
+        end
+    end
+
+
+    always @(posedge clk) begin
+        if(!rst) begin
+        end
+        else if(bvalid) begin
+            if(bresp != 2'b0) begin
+                $error("the bresp are not 2'b0");
+            end
+        end
+    end
+
     always @(posedge clk) begin
         if(!rst) begin
             skip_ref_mem <= 'b0;
