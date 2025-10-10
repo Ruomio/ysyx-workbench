@@ -379,21 +379,15 @@ module ysyx_24080020_LSU(
         else if(rvalid && rready && rlast) begin
             finish_read <= 1'b1;
 
-            if(mrlen_mem[2]) begin
                 // zero extension
-                case(mrlen_mem)
-                    3'd0:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
-                    3'd1:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
-                    3'd2:   mrdata_mem <= rdata_shift;
-                    default: mrdata_mem <= 32'hffffffff;
-                endcase
-            end
-            else begin
                 // signed extension
                 case(mrlen_mem)
-                    3'd0:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
-                    3'd1:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
-                    3'd2:   mrdata_mem <= rdata_shift;
+                    3'b100:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
+                    3'b101:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
+                    3'b110:   mrdata_mem <= rdata_shift;
+                    3'd000:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
+                    3'd001:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
+                    3'd010:   mrdata_mem <= rdata_shift;
                     default: mrdata_mem <= 32'hffffffff;
                 endcase
             end
