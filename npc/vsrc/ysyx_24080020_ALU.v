@@ -45,7 +45,7 @@ module ysyx_24080020_ALU(
             end
 
             default: begin
-                alu_out = 32'hff;
+                alu_out = 32'hffffffff;
             end
         endcase
 
