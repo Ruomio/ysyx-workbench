@@ -237,7 +237,8 @@ assign wdata_exu = (is_jal_exu || is_jalr_exu) ? pc_plus_4 :
                    alu_result;                // ALU指令写回计算结果
 
 assign waddr_exu = waddr_q_reg;
-assign wen_exu = wen_q_reg && ~is_load_exu;  // load指令不在EXU阶段写回
+// assign wen_exu = wen_q_reg && ~is_load_exu;  // load指令不在EXU阶段写回
+assign wen_exu = wen_q_reg;
 
 //=========================================================================
 // CSR写回
