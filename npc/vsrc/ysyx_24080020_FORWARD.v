@@ -16,7 +16,7 @@ module ysyx_24080020_FORWARD(
 
     input is_load,
     // input [`ysyx_24080020_WIDTH-1:0] mrdata,
-    input fin_load,
+    // input fin_load,
 
     input [`ysyx_24080020_REG_WIDTH-1:0] rd_wbu,
     input [`ysyx_24080020_WIDTH-1:0] rd_data_wbu,
