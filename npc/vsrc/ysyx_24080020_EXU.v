@@ -116,9 +116,9 @@ reg [31:0]               wcsrdata_q_reg;
 assign exu_idu_ready = ~valid_q_reg || (mem_exu_ready && exu_mem_valid);
 assign exu_mem_valid = valid_q_reg;
 
-always @(posedge clk or negedge rst) begin
+always @(posedge clk) begin
     if (!rst) begin
-        valid_q_reg     <= 1'b0;
+        // valid_q_reg     <= 1'b0;
         pc_q_reg        <= 32'd0;
         imm_q_reg       <= 32'd0;
         val1_q_reg      <= 32'd0;
@@ -131,11 +131,11 @@ always @(posedge clk or negedge rst) begin
         wcsraddr_q_reg  <= 3'd0;
         wcsrdata_q_reg  <= 32'd0;
     end
-    else if ((mem_exu_ready && valid_q_reg)) begin
-        valid_q_reg     <= 1'b0;
-    end
+    // else if ((mem_exu_ready && valid_q_reg)) begin
+    //     valid_q_reg     <= 1'b0;
+    // end
     else if (idu_exu_valid && exu_idu_ready) begin
-        valid_q_reg     <= 1'b1;
+        // valid_q_reg     <= 1'b1;
         pc_q_reg        <= pc_idu;
         imm_q_reg       <= imm_idu;
         val1_q_reg      <= val_raddr1_idu;
@@ -147,6 +147,17 @@ always @(posedge clk or negedge rst) begin
         wcsren_q_reg    <= wcsren_idu;
         wcsraddr_q_reg  <= wcsraddr_idu;
         wcsrdata_q_reg  <= wcsrdata_idu;
+    end
+end
+always @(posedge clk) begin
+    if (!rst) begin
+        valid_q_reg     <= 1'b0;
+    end
+    else if ((mem_exu_ready && valid_q_reg)) begin
+        valid_q_reg     <= 1'b0;
+    end
+    else if (idu_exu_valid && exu_idu_ready) begin
+        valid_q_reg     <= 1'b1;
     end
 end
 
