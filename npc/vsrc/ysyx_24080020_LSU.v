@@ -26,6 +26,7 @@ module ysyx_24080020_LSU(
     input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
     // output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
 
+    output reg mren_mem,
     // input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
     // output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
     // output reg exu_mem_shake_hands,
@@ -53,7 +54,6 @@ module ysyx_24080020_LSU(
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
     output [`ysyx_24080020_WIDTH-1:0] wdata_mem,
 
-    output reg mren_mem,
 
 
     // axi-full
@@ -116,7 +116,8 @@ module ysyx_24080020_LSU(
     reg awlen_cnt;
     reg [31:0] rdata1, rdata2;
 
-    // reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
+    reg exu_mem_shake_hands;
+    reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
     reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem;
     reg [`ysyx_24080020_WIDTH-1:0] wdata_exu_;
 
@@ -206,13 +207,6 @@ module ysyx_24080020_LSU(
 
             // alu_out_mem <= 'b0;
 
-            // wcsren_mem <= 'b0;
-            // wcsraddr_mem <= 'b0;
-            // wcsrdata_mem <= 'b0;
-            // wcsren2_mem <= 'b0;
-            // wcsraddr2_mem <= 'b0;
-            // wcsrdata2_mem <= 'b0;
-
             // fencei_mem <= 'b0;
 
             // pc_mem <= 'b0;
@@ -260,9 +254,6 @@ module ysyx_24080020_LSU(
                 wcsren_mem <= wcsren_exu;
                 wcsraddr_mem <= wcsraddr_exu;
                 wcsrdata_mem <= wcsrdata_exu;
-                wcsren2_mem <= wcsren2_exu;
-                wcsraddr2_mem <= wcsraddr2_exu;
-                wcsrdata2_mem <= wcsrdata2_exu;
 
                 // fencei_mem <= fencei_exu;
 

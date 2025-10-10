@@ -18,9 +18,9 @@ module ysyx_24080020_REG
 
     input wen_mem,
     input [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
-    input [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
+    input [`ysyx_24080020_WIDTH-1:0] wdata_mem,
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_wb,
-    output reg [`ysyx_24080020_WIDTH-1:0] rd_data_wb,
+    output reg [`ysyx_24080020_WIDTH-1:0] wdata_wb,
     output reg wen_wb,
 
 

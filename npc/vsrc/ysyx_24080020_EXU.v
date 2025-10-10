@@ -29,6 +29,7 @@ module ysyx_24080020_EXU (
     input  wire        is_store_idu,
     input  wire        is_csr_idu,
     input  wire        is_ebreak_idu,
+    input  wire        is_ecall_idu,
     input  wire        fencei_idu,
     input  wire [2:0]  mem_len_idu,
     input  wire [2:0]  mem_wmask_idu,
@@ -53,6 +54,7 @@ module ysyx_24080020_EXU (
     output wire        is_load_exu,
     output wire        is_store_exu,
     output wire        is_ebreak_exu,
+    output wire        is_ecall_exu,
     output wire        fencei_exu,
     output wire [2:0]  mem_len_exu,
     output wire [2:0]  mem_wmask_exu,
@@ -83,9 +85,9 @@ module ysyx_24080020_EXU (
 //=========================================================================
 // 流水线控制与寄存器
 //=========================================================================
-localparam PIPE_CTRL_W = 16;
+localparam PIPE_CTRL_W = 17;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
-    is_branch_idu, is_jal_idu, is_jalr_idu, is_load_idu, is_store_idu,
+    is_ecall_idu, is_branch_idu, is_jal_idu, is_jalr_idu, is_load_idu, is_store_idu,
     is_csr_idu, is_ebreak_idu, fencei_idu,
     mem_len_idu, alu_op_idu
 };
@@ -153,6 +155,7 @@ wire        is_branch_exu;
 wire        is_jal_exu;
 wire        is_jalr_exu;
 
+assign is_ecall_exu = ctrl_q_reg[16];
 assign is_branch_exu = ctrl_q_reg[15];
 assign is_jal_exu    = ctrl_q_reg[14];
 assign is_jalr_exu   = ctrl_q_reg[13];

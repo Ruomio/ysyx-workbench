@@ -451,7 +451,7 @@ module ysyx_24080020_NPC(
     );
 
     wire is_branch_idu, is_ecall_idu, is_jalr_idu, is_jal_idu, is_load_idu, is_store_idu,
-        is_csr_idu, fencei_idu, is_ebreak_idu, is_ecall_idu;
+        is_csr_idu, fencei_idu, is_ebreak_idu;
     wire [2:0] mem_len_idu, mem_wmask_idu;
     wire [31:0] rcsrdata_idu;
 
@@ -622,12 +622,13 @@ module ysyx_24080020_NPC(
 
         // Load Store
         .mren_exu(is_load_exu),
-        .mrlen_exu(men_len_exu),
+        .mrlen_exu(mem_len_exu),
         .mwen_exu(is_store_exu),
         .mwmask_exu(mem_wmask_exu),
         .maddr_exu(maddr_exu),
         .mwdata_exu(store_data_exu),
         .exu_mem_shake_hands(exu_mem_shake_hands),
+        .mren_mem(mren_mem),
 
         // CSR
         .wcsren_exu(wcsren_exu),
