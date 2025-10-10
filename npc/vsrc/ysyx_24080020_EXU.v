@@ -180,8 +180,8 @@ assign alu_src1 = (is_jal_exu || is_jalr_exu || is_auipc_exu) ? pc_q_reg : val1_
 
 // src2选择：根据指令类型选择立即数或rs2
 wire use_imm = is_load_exu || is_store_exu || is_branch_exu ||
-               is_jal_exu || is_jalr_exu ||
-               (alu_op_exu != `ysyx_24080020_ALU_ADD || ctrl_q_reg[12:11] == 2'b00); // I-type指令
+               is_jal_exu || is_jalr_exu;
+              // (alu_op_exu != `ysyx_24080020_ALU_ADD || ctrl_q_reg[12:11] == 2'b00); // I-type指令
 
 assign alu_src2 = use_imm ? imm_q_reg : val2_q_reg;
 
