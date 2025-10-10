@@ -59,24 +59,24 @@
 `define ysyx_24080020_FUNCT7 31:25
 
 // ALU OP code
-`define ysyx_24080020_ALU_OP_WIDTH 5
-`define ysyx_24080020_ALU_ADD 5'b00000
-`define ysyx_24080020_ALU_SUB 5'b00001
-`define ysyx_24080020_ALU_SLT 5'b00010
-`define ysyx_24080020_ALU_SLTU 5'b00011
-`define ysyx_24080020_ALU_OR 5'b00100
-`define ysyx_24080020_ALU_XOR 5'b00101
-`define ysyx_24080020_ALU_AND 5'b00110
-`define ysyx_24080020_ALU_SLL 5'b00111
-`define ysyx_24080020_ALU_SRL 5'b01000
-`define ysyx_24080020_ALU_SRA 5'b01001
-`define ysyx_24080020_ALU_BEQ 5'b01010
-`define ysyx_24080020_ALU_BNE 5'b01011
-`define ysyx_24080020_ALU_BLT 5'b01100
-`define ysyx_24080020_ALU_BLTU 5'b01101
-`define ysyx_24080020_ALU_BGE 5'b01110
-`define ysyx_24080020_ALU_BGEU 5'b01111
-`define ysyx_24080020_ALU_JALR 5'b10000
+`define ysyx_24080020_ALU_OP_WIDTH 4
+`define ysyx_24080020_ALU_ADD 4'b0000
+`define ysyx_24080020_ALU_SUB 4'b0001
+`define ysyx_24080020_ALU_SLT 4'b0010
+`define ysyx_24080020_ALU_SLTU 4'b0011
+`define ysyx_24080020_ALU_OR 4'b0100
+`define ysyx_24080020_ALU_XOR 4'b0101
+`define ysyx_24080020_ALU_AND 4'b0110
+`define ysyx_24080020_ALU_SLL 4'b0111
+`define ysyx_24080020_ALU_SRL 4'b1000
+`define ysyx_24080020_ALU_SRA 4'b1001
+// `define ysyx_24080020_ALU_BEQ 5'b01010
+// `define ysyx_24080020_ALU_BNE 5'b01011
+// `define ysyx_24080020_ALU_BLT 5'b01100
+// `define ysyx_24080020_ALU_BLTU 5'b01101
+// `define ysyx_24080020_ALU_BGE 5'b01110
+// `define ysyx_24080020_ALU_BGEU 5'b01111
+// `define ysyx_24080020_ALU_JALR 5'b10000
 
 
 

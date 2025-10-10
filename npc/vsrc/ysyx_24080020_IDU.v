@@ -134,10 +134,10 @@ always @(*) begin
                                              `ysyx_24080020_ALU_SLTU;
         `ysyx_24080020_LOAD_TYPE,
         `ysyx_24080020_S_TYPE: alu_op_comb = `ysyx_24080020_ALU_ADD;
-        `ysyx_24080020_B_TYPE: alu_op_comb = (funct3 == 3'b100) ? `ysyx_24080020_ALU_BLT :      // BLT
-                                             (funct3 == 3'b101) ? `ysyx_24080020_ALU_BLT :      // BGE
-                                             (funct3 == 3'b110) ? `ysyx_24080020_ALU_BLTU :     // BLTU
-                                             (funct3 == 3'b111) ? `ysyx_24080020_ALU_BLTU :     // BLTU
+        `ysyx_24080020_B_TYPE: alu_op_comb = (funct3 == 3'b100) ? `ysyx_24080020_ALU_SLT :      // BLT
+                                             (funct3 == 3'b101) ? `ysyx_24080020_ALU_SLT :      // BGE
+                                             (funct3 == 3'b110) ? `ysyx_24080020_ALU_SLTU :     // BLTU
+                                             (funct3 == 3'b111) ? `ysyx_24080020_ALU_SLTU :     // BGEU
                                              `ysyx_24080020_ALU_SUB;
         `ysyx_24080020_LUI,
         `ysyx_24080020_AUIPC:  alu_op_comb = `ysyx_24080020_ALU_ADD;
@@ -187,25 +187,25 @@ assign wcsren_idu      = (is_csr && (funct3 != 3'b000 && funct3 != 3'b100)) // C
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
 
-assign is_u_type_idu = ctrl_q[51];
-assign is_i_type_idu = ctrl_q[50];
-assign is_auipc_idu = ctrl_q[49];
-assign is_ecall_idu = ctrl_q[48];
-assign is_branch_idu = ctrl_q[47];
-assign is_jal_idu    = ctrl_q[46];
-assign is_jalr_idu   = ctrl_q[45];
-assign is_load_idu   = ctrl_q[44];
-assign is_store_idu  = ctrl_q[43];
-assign is_csr_idu    = ctrl_q[42];
-assign fencei_idu    = ctrl_q[41];
-assign is_ebreak_idu = ctrl_q[40];
+assign is_u_type_idu = ctrl_q[50];
+assign is_i_type_idu = ctrl_q[49];
+assign is_auipc_idu = ctrl_q[48];
+assign is_ecall_idu = ctrl_q[47];
+assign is_branch_idu = ctrl_q[46];
+assign is_jal_idu    = ctrl_q[45];
+assign is_jalr_idu   = ctrl_q[44];
+assign is_load_idu   = ctrl_q[43];
+assign is_store_idu  = ctrl_q[42];
+assign is_csr_idu    = ctrl_q[41];
+assign fencei_idu    = ctrl_q[40];
+assign is_ebreak_idu = ctrl_q[39];
 
 // 存储控制
-assign mem_len_idu   = ctrl_q[39:37];   // funct3 for load
-assign mem_wmask_idu = ctrl_q[39:37];   // funct3 for store (same as mem_len)
+assign mem_len_idu   = ctrl_q[38:36];   // funct3 for load
+assign mem_wmask_idu = ctrl_q[38:36];   // funct3 for store (same as mem_len)
 
 // 立即数
-assign imm_idu = ctrl_q[36:5];
+assign imm_idu = ctrl_q[35:4];
 
 //=========================================================================
 // ecall/mret 拆 2 拍：状态机 + 自动 hold
@@ -223,7 +223,7 @@ assign csr_hold = ecall_phase;
 //=========================================================================
 // 6. 极简流水线握手 & 锁存（）
 //=========================================================================
-localparam PIPE_CTRL_W = 52;
+localparam PIPE_CTRL_W = 51;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
     is_u_type, is_i_type, is_auipc,
     is_ecall, is_b_type, is_j_type, is_jr_type,
@@ -284,7 +284,7 @@ always @(posedge clk) begin
     end
 end
 
-assign alu_op_idu = ctrl_q[4:0];
+assign alu_op_idu = ctrl_q[`ysyx_24080020_ALU_OP_WIDTH-1:0];
 assign val_raddr1_idu = val1_q;
 assign val_raddr2_idu = val2_q;
 assign rcsrdata_idu = rcsr_q;
