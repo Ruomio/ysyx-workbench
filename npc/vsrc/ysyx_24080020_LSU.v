@@ -24,12 +24,8 @@ module ysyx_24080020_LSU(
     input [2:0] mwmask_exu,
     input [`ysyx_24080020_WIDTH-1:0] maddr_exu,
     input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
-    // output reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem,
 
     output reg mren_mem,
-    // input [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
-    // output [`ysyx_24080020_WIDTH-1:0] rd_data_mem,
-    // output reg exu_mem_shake_hands,
 
 
     // csrs
@@ -118,7 +114,6 @@ module ysyx_24080020_LSU(
 
     reg exu_mem_shake_hands;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] alu_out_mem;
     reg [`ysyx_24080020_WIDTH-1:0] wdata_exu_;
 
     reg state; // 0: idle;   1: wait_ready
@@ -205,7 +200,6 @@ module ysyx_24080020_LSU(
             // mwmask_mem <= 'b0;
             // mwdata_mem <= 'b0;
 
-            // alu_out_mem <= 'b0;
 
             // fencei_mem <= 'b0;
 
@@ -249,7 +243,6 @@ module ysyx_24080020_LSU(
                 mwmask_mem <= mwmask_exu;
                 mwdata_mem <= mwdata_exu;
 
-                alu_out_mem <= alu_out_exu;
 
                 wcsren_mem <= wcsren_exu;
                 wcsraddr_mem <= wcsraddr_exu;

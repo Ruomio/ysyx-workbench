@@ -516,7 +516,7 @@ module ysyx_24080020_NPC(
     );
 
     wire is_jal_exu, is_jalr_exu, is_store_exu, is_load_exu
-         , is_ebreak_exu, fencei_exu;
+         , is_ebreak_exu, is_ecall_exu, fencei_exu;
     wire [2:0] mem_len_exu, mem_wmask_exu;
     wire [31:0] store_data_exu, mem_addr_exu;
 
@@ -564,6 +564,7 @@ module ysyx_24080020_NPC(
         .branch_taken_exu(branch_taken_exu),
         .branch_not_taken_exu(branch_not_taken_exu),
         .is_ebreak_exu(is_ebreak_exu),
+        .is_ecall_exu(is_ecall_exu),
 		.is_load_exu(is_load_exu),
 		.is_store_exu(is_store_exu),
 		// .is_csr_exu(is_csr_exu),
@@ -627,7 +628,6 @@ module ysyx_24080020_NPC(
         .mwmask_exu(mem_wmask_exu),
         .maddr_exu(maddr_exu),
         .mwdata_exu(store_data_exu),
-        .exu_mem_shake_hands(exu_mem_shake_hands),
         .mren_mem(mren_mem),
 
         // CSR

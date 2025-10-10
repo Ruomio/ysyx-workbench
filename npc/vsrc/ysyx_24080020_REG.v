@@ -58,7 +58,7 @@ module ysyx_24080020_REG
             cnt <= 'b1;
             // shake hands successfully
             waddr_wb <= waddr_mem;
-            rd_data_wb <= rd_data_mem;
+            wdata_wb <= wdata_mem;
 
         end
         else if(mem_wb_valid) begin
@@ -78,7 +78,7 @@ module ysyx_24080020_REG
     // end
     always @(posedge clk) begin
         if(wen_wb && |waddr_wb) begin
-            regs[waddr_wb] <= rd_data_wb;
+            regs[waddr_wb] <= wdata_wb;
         end
     end
 
