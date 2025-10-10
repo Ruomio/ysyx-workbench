@@ -169,4 +169,4 @@
 `define ysyx_24080020_JALR 7'b1100111
 
 
-`define ysyx_24080020_EBREAK 7'b1110011
+// `define ysyx_24080020_EBREAK 7'b1110011

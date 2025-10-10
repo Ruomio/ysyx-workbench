@@ -78,8 +78,8 @@ module ysyx_24080020_NPC(
 
   // pc
   wire [`ysyx_24080020_WIDTH-1:0] pc_ifu, pc_idu, pc_exu, pc_lsu, pc_wbu;
-  wire [`ysyx_24080020_WIDTH-1:0] dnpc_idu, dnpc_new_exu, dnpc_mem;
-  wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem;
+  wire [`ysyx_24080020_WIDTH-1:0] dnpc_exu, dnpc_mem;
+  wire is_dnpc_idu, is_dnpc_exu, is_dnpc_mem, branch_taken_exu, branch_not_taken_exu;
   wire is_jalr_idu, is_btype_idu, is_btype_exu, is_jal_idu, is_jal_exu;
 
   // inst
@@ -100,7 +100,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] wdata_idu, wdata_exu, wdata_mem, wdata_wb;
   wire [`ysyx_24080020_WIDTH-1:0] src1_idu, src1_exu;
   wire [`ysyx_24080020_WIDTH-1:0] src2_idu, src2_exu, src2_mem;
-  wire [`ysyx_24080020_WIDTH-1:0] val_raddr1, val_raddr2;
+  wire [`ysyx_24080020_WIDTH-1:0] val_raddr1, val_raddr2, val_raddr1_idu, val_raddr2_idu;
   wire [`ysyx_24080020_WIDTH-1:0] rd_data_wb;
   // csrs
   wire is_csrtype_idu;
@@ -455,6 +455,10 @@ module ysyx_24080020_NPC(
         .ifu_idu_valid(ifu_idu_valid)
     );
 
+    wire is_branch_idu, is_ecall_idu, is_jalr_idu, is_jal_idu, is_load_idu, is_store_idu,
+        is_csr_idu, fencei_idu;
+    wire [2:0] mem_len_idu, mem_wmask_idu;
+
     ysyx_24080020_IDU u_idu(
 		.clk(clk),
 		.rst(rst),
@@ -468,7 +472,7 @@ module ysyx_24080020_NPC(
 		.exu_idu_ready(exu_idu_ready),
 		.flush_pipeline(flush_pipeline),
 		.need_stall(need_stall),
-		.pc_q(pc_idu),
+		.pc_idu(pc_idu),
 
         // REGFILE 2 read 1 write
 		.rs1(rs1),
@@ -486,7 +490,7 @@ module ysyx_24080020_NPC(
 		.wcsren_idu(wcsren_idu),
 		.wcsraddr_idu(wcsraddr_idu),
 		.wcsrdata_idu(wcsrdata_idu),
-		.csr_hold(csr_hold),
+		.rcsrdata_idu(rcsrdata_idu),
 		// .wcsren2_idu(wcsren2_idu),
 		// .wcsraddr2_idu(wcsraddr2_idu),
 		// .wcsrdata2_idu(wcsrdata2_idu),
@@ -513,6 +517,11 @@ module ysyx_24080020_NPC(
         .alu_out(alu_out),
         .alu_zero(alu_zero)
     );
+
+    wire is_jal_exu, is_jalr_exu, is_store_exu, is_load_exu
+         , is_ebreak_exu, fencei_exu;
+    wire [2:0] mem_len_exu, mem_wmask_exu;
+    wire [31:0] store_data_exu, mem_addr_exu;
 
     ysyx_24080020_EXU u_exu(
         .clk(clk),
@@ -552,8 +561,7 @@ module ysyx_24080020_NPC(
         .wcsrdata_idu(wcsrdata_idu),
 
 
-        .pc_exu(pc_exu),
-        .alu_result_exu(alu_result_exu),
+        // .alu_result_exu(alu_result_exu),
         .dnpc_exu(dnpc_exu),
         .branch_taken_exu(branch_taken_exu),
         .branch_not_taken_exu(branch_not_taken_exu),
@@ -584,7 +592,7 @@ module ysyx_24080020_NPC(
         .alu_op_exu(alu_op_exu),
         .alu_src1(alu_src1),
         .alu_src2(alu_src2),
-        .alu_out(alu_out),
+        .alu_result(alu_out),
         .alu_zero(alu_zero)
 
 

@@ -35,7 +35,6 @@ module ysyx_24080020_IDU (
     output wire [2:0]  wcsraddr_idu,
     output wire [31:0] wcsrdata_idu,
     output wire [31:0] rcsrdata_idu,
-    output wire         csr_hold,
     // output wire        wcsren2_idu,
     // output wire [2:0]  wcsraddr2_idu,
     // output wire [31:0] wcsrdata2_idu,
@@ -212,6 +211,7 @@ wire       do_ecall  = is_ecall;   // 需要拆 2 拍的指令
 wire       last_phase = ecall_phase;
 
 // 对外通知：正在拆第 2 拍，请保持 CSR 写口
+wire         csr_hold;
 assign csr_hold = ecall_phase;
 
 //=========================================================================

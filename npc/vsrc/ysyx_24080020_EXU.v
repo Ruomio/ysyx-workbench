@@ -43,17 +43,15 @@ module ysyx_24080020_EXU (
     input  wire        wcsren_idu,
     input  wire [2:0]  wcsraddr_idu,
     input  wire [31:0] wcsrdata_idu,
-    input  wire        csr_hold,
 
     // 输出到MEM/WB的信号
     output wire [`ysyx_24080020_WIDTH-1:0] pc_exu,
-    output wire [`ysyx_24080020_WIDTH-1:0] alu_result_exu,
+    // output wire [`ysyx_24080020_WIDTH-1:0] alu_result_exu,
     output wire [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
     output wire        branch_taken_exu,
     output wire        branch_not_taken_exu,
     output wire        is_load_exu,
     output wire        is_store_exu,
-    output wire        is_csr_exu,
     output wire        is_ebreak_exu,
     output wire        fencei_exu,
     output wire [2:0]  mem_len_exu,
@@ -150,6 +148,11 @@ end
 //=========================================================================
 // 控制信号解析（全部使用assign）
 //=========================================================================
+wire        is_csr_exu;
+wire        is_branch_exu;
+wire        is_jal_exu;
+wire        is_jalr_exu;
+
 assign is_branch_exu = ctrl_q_reg[15];
 assign is_jal_exu    = ctrl_q_reg[14];
 assign is_jalr_exu   = ctrl_q_reg[13];
@@ -226,6 +229,7 @@ assign wcsrdata_exu = wcsrdata_q_reg;
 // 输出信号
 //=========================================================================
 assign pc_exu = pc_q_reg;
+wire alu_result_exu;
 assign alu_result_exu = alu_result;
 
 //=========================================================================

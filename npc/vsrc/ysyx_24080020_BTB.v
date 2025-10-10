@@ -339,7 +339,7 @@ module ysyx_24080020_BTB(
             `endif
         end
         // else if(!is_dnpc && is_btype && !is_btype_next ) begin
-        else if(branch_not_taken_exu && !branch_not_taken_exu_next_next ) begin
+        else if(branch_not_taken_exu && !branch_not_taken_exu_next ) begin
             // error hit: should not jump, but jump
             if(btb_hit) begin
                 btb_hit <= 'b0;
