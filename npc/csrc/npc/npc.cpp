@@ -464,11 +464,11 @@ void free_npc() {
     top = NULL;
   }
 #if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
-  if(tfp) {
-    tfp->close();
-    delete tfp;
-    tfp = NULL;
-  }
+  // if(tfp) {
+  //   tfp->close();
+  //   delete tfp;
+  //   tfp = NULL;
+  // }
 #endif
   if(contextp) {
     delete contextp;
