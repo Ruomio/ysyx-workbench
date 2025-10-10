@@ -235,13 +235,13 @@ reg [31:0]               val1_q;
 reg [31:0]               val2_q;
 reg [31:0]               rcsr_q;
 
-assign idu_ifu_ready = ~valid_q;
+assign idu_ifu_ready = ~valid_q && !need_stall;
 assign idu_exu_valid = valid_q;
 
 // 写 CSR 第 1 拍信号（组合）
 wire ecall_write1 = do_ecall && !ecall_phase;
 
-always @(posedge clk or negedge rst) begin
+always @(posedge clk) begin
     if (!rst) begin
         valid_q     <= 1'b0;
         pc_idu        <= 32'd0;
