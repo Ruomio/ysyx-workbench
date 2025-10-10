@@ -22,7 +22,8 @@ module ysyx_24080020_ALU(
                 // alu_out = alu_src1 < alu_src2 ? 32'b1 : 32'b0;
             end
             `ysyx_24080020_ALU_SLTU: begin
-                alu_out = $unsigned(alu_src1) < $unsigned(alu_src2) ? 32'b1 : 32'b0;
+                alu_out = alu_src1 < alu_src2 ? 32'b1 : 32'b0;
+                // alu_out = $unsigned(alu_src1) < $unsigned(alu_src2) ? 32'b1 : 32'b0;
             end
             `ysyx_24080020_ALU_OR : begin
                 alu_out = alu_src1 | alu_src2;
@@ -44,7 +45,7 @@ module ysyx_24080020_ALU(
             end
 
             default: begin
-                alu_out = 32'b0;
+                alu_out = 32'hff;
             end
         endcase
 
