@@ -154,10 +154,10 @@ void init_npc(int argc, char **argv) {
   top = new Vysyx_24080020_NPC(contextp);
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-  tfp = new VerilatedVcdC;
-  contextp->traceEverOn(true);
-  top->trace(tfp, 0);
-  tfp->open("build/wave.vcd");
+  // tfp = new VerilatedVcdC;
+  // contextp->traceEverOn(true);
+  // top->trace(tfp, 0);
+  // tfp->open("build/wave.vcd");
 #endif
 #if NVBOARD_ENABLE
   nvboard_bind_all_pins(top);
@@ -403,6 +403,14 @@ void exec_npc(uint64_t n) {
     if (elapsed_seconds >= snapshot_interval_seconds && !lightsss.is_child()) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
+    }
+    if(lightsss.is_child()) {
+        if(!tfp) {
+            tfp = new VerilatedVcdC;
+            contextp->traceEverOn(true);
+            top->trace(tfp, 0);
+            tfp->open("build/wave.vcd");
+        }
     }
 #endif
 
