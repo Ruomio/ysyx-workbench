@@ -450,7 +450,7 @@ module ysyx_24080020_BTB(
         else if(is_dnpc) begin
             is_dnpc_next <= 'b1;
         end
-        else begin
+        else if(!is_dnpc || (pc_exu == dnpc_tmp)) begin     // muti dnpc
             is_dnpc_next <= 'b0;
         end
     end
