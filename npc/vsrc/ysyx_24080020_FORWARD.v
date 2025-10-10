@@ -22,6 +22,9 @@ module ysyx_24080020_FORWARD(
     input [`ysyx_24080020_WIDTH-1:0] rd_data_wbu,
     // input rd_en_wbu,
 
+    input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
+    input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
+
     output need_stall,
     output [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
     output [`ysyx_24080020_WIDTH-1:0] rd_data2_forward,
@@ -40,14 +43,14 @@ module ysyx_24080020_FORWARD(
                                 rs1_idu == rd_lsu ? rd_data_lsu :
                                 rs1_idu == rd_wbu ? rd_data_wbu :
                                 'b0
-                            : 'b0;
+                            : val_raddr1;
 
     assign rd_data2_forward = rs2_conflict ?
                                 rs2_idu == rd_exu ? rd_data_exu :
                                 rs2_idu == rd_lsu ? rd_data_lsu :
                                 rs2_idu == rd_wbu ? rd_data_wbu :
                                 'b0
-                            : 'b0;
+                            : val_raddr2;
 
 
     assign need_stall = is_load;

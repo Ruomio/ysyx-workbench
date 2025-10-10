@@ -128,6 +128,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu, alu_op_exu;
   wire [`ysyx_24080020_WIDTH-1:0] alu_out_exu, alu_out_mem;
   wire [`ysyx_24080020_WIDTH-1:0] alu_src1, alu_src2, alu_out;
+  wire alu_zero;
 
   // bus control
   wire ifu_idu_valid;
@@ -353,9 +354,11 @@ module ysyx_24080020_NPC(
         .rst(rst),
 
         .pc_exu(pc_exu),
-        .is_dnpc(is_dnpc_exu),
-        .dnpc(dnpc_new_exu),
-        .is_btype(is_btype_exu),
+        // .is_dnpc(is_dnpc_exu),
+        .is_dnpc(branch_taken_exu),
+        .dnpc(dnpc_exu),
+        // .is_btype(is_btype_exu),
+        .branch_not_taken_exu(branch_not_taken_exu),
 
         .pc(pc_btb),
         .correct_pc(correct_pc_btb),
@@ -453,206 +456,140 @@ module ysyx_24080020_NPC(
     );
 
     ysyx_24080020_IDU u_idu(
-        .clk(clk),
-        .rst(rst),
+		.clk(clk),
+		.rst(rst),
+        // IFU <---> IDU
+		.inst_ifu(inst_ifu),
+		.pc_ifu(pc_ifu),
+		.ifu_idu_valid(ifu_idu_valid),
+		.idu_ifu_ready(idu_ifu_ready),
+        // IDU <---> EXU
+		.idu_exu_valid(idu_exu_valid),
+		.exu_idu_ready(exu_idu_ready),
+		.flush_pipeline(flush_pipeline),
+		.need_stall(need_stall),
+		.pc_q(pc_idu),
 
-        .is_ebreak(is_ebreak_idu),
+        // REGFILE 2 read 1 write
+		.rs1(rs1),
+		.rs2(rs2),
+		.val_raddr1(rd_data1_forward),
+		.val_raddr2(rd_data2_forward),
+		.waddr_idu(waddr_idu),
+		.wen_idu(wen_idu),
+		.val_raddr1_idu(val_raddr1_idu),
+		.val_raddr2_idu(val_raddr2_idu),
 
-        .need_stall(need_stall),
-        .rs1_conflict(rs1_conflict),
-        .rs2_conflict(rs2_conflict),
-        .rd_data1_forward(rd_data1_forward),
-        .rd_data2_forward(rd_data2_forward),
-        // .data_adventure(data_adventure),
-        .flush_pipeline(flush_pipeline),
+        // CSR 1 read 1 write
+		.rcsraddr(rcsraddr),
+		.rcsrdata(rcsrdata),
+		.wcsren_idu(wcsren_idu),
+		.wcsraddr_idu(wcsraddr_idu),
+		.wcsrdata_idu(wcsrdata_idu),
+		.csr_hold(csr_hold),
+		// .wcsren2_idu(wcsren2_idu),
+		// .wcsraddr2_idu(wcsraddr2_idu),
+		// .wcsrdata2_idu(wcsrdata2_idu),
 
-        .imm_idu(imm_idu),
-        .alu_src2_con_idu(alu_src2_con_idu),
-        .pc_idu(pc_idu),
-
-        .inst_ifu(inst_ifu),
-        .rs1(rs1),
-        .rs2(rs2),
-        .val_raddr1(val_raddr1),
-        .val_raddr2(val_raddr2),
-        .pc_ifu(pc_ifu),
-        // .branch_src1_idu(branch_src1_idu),
-        .wen_idu(wen_idu),
-        .waddr_idu(waddr_idu),
-        .wdata_idu(wdata_idu),
-        // .is_load_idu(is_load_idu),
-        .is_dnpc_idu(is_dnpc_idu),
-        .is_jalr_idu(is_jalr_idu),
-        .is_btype_idu(is_btype_idu),
-        .is_jal_idu(is_jal_idu),
-        .is_csrtype_idu(is_csrtype_idu),
-        // .dnpc_idu(dnpc_idu),
-        .fencei_idu(fencei_idu),
-
-        .rcsrdata(rcsrdata),
-        .rcsraddr_(rcsraddr),
-        .wcsren_idu(wcsren_idu),
-        .wcsraddr_idu_(wcsraddr_idu),
-        .wcsrdata_idu(wcsrdata_idu),
-        .wcsren2_idu(wcsren2_idu),
-        .wcsraddr2_idu_(wcsraddr2_idu),
-        .wcsrdata2_idu(wcsrdata2_idu),
-
-        .alu_op_idu(alu_op_idu),
-        .src1_idu(src1_idu),
-        .src2_idu(src2_idu),
-
-        .mren_idu(mren_idu),
-        .mrtype_idu(mrtype_idu),
-        .mrlen_idu(mrlen_idu),
-        .mwen_idu(mwen_idu),
-        .mwmask_idu(mwmask_idu),
-
-        .ifu_idu_valid(ifu_idu_valid),
-        .exu_idu_ready(exu_idu_ready),
-        .idu_exu_valid_reg(idu_exu_valid),
-        .idu_ifu_ready(idu_ifu_ready)
-    );
-
-    ysyx_24080020_REG u_reg(
-        .clk(clk),
-        .rst(rst),
-
-        `ifdef CONFIG_DPIC
-        .skip_ref_mem(skip_ref_mem),
-        .pc_lsu(pc_lsu),
-        .pc_wbu(pc_wbu),
-        .is_dnpc_mem(is_dnpc_mem),
-        .dnpc_mem(dnpc_mem),
-        `endif
-
-        .raddr1(rs1),
-        .raddr2(rs2),
-
-        .wen_mem(wen_mem),
-        .waddr_mem(waddr_mem),
-        .rd_data_mem(rd_data_mem),
-        .waddr_wb(waddr_wb),
-        .rd_data_wb(rd_data_wb),
-        .wen_wb(wen_wb),
-
-        .val_raddr1(val_raddr1),
-        .val_raddr2(val_raddr2),
-
-        .mem_wb_valid(mem_wb_valid),
-        .wb_mem_ready(wb_mem_ready)
-    );
-
-    ysyx_24080020_CSR u_csr(
-        .clk(clk),
-        .rst(rst),
-
-        .wcsren_mem(wcsren_mem),
-        .wcsraddr_mem(wcsraddr_mem),
-        .wcsrdata_mem(wcsrdata_mem),
-        .wcsren2_mem(wcsren2_mem),
-        .wcsraddr2_mem(wcsraddr2_mem),
-        .wcsrdata2_mem(wcsrdata2_mem),
-
-        .rcsraddr(rcsraddr),
-        .rcsrdata(rcsrdata),
-
-        .mem_wb_valid(mem_wb_valid),
-        .wb_mem_ready(wb_mem_ready)
+        // other control signal
+		.is_ebreak_idu(is_ebreak_idu),
+		.alu_op_idu(alu_op_idu),
+		.imm_idu(imm_idu),
+		.is_branch_idu(is_branch_idu),
+		.is_jal_idu(is_jal_idu),
+		.is_jalr_idu(is_jalr_idu),
+		.is_load_idu(is_load_idu),
+		.is_store_idu(is_store_idu),
+		.is_csr_idu(is_csr_idu),
+		.fencei_idu(fencei_idu),
+		.mem_len_idu(mem_len_idu),
+		.mem_wmask_idu(mem_wmask_idu)
     );
 
     ysyx_24080020_ALU u_alu(
         .alu_op(alu_op_exu),
         .alu_src1(alu_src1),
         .alu_src2(alu_src2),
-        .alu_out(alu_out)
+        .alu_out(alu_out),
+        .alu_zero(alu_zero)
     );
 
     ysyx_24080020_EXU u_exu(
         .clk(clk),
         .rst(rst),
 
-        `ifdef CONFIG_DPIC
-        .is_ebreak_idu(is_ebreak_idu),
-        .is_ebreak_exu(is_ebreak_exu),
-        `endif
+        // idu <-> exu
+        .idu_exu_valid(idu_exu_valid),
+        .mem_exu_ready(mem_exu_ready),
+        // exu <-> lsu
+        .pc_exu(pc_exu),
+        .exu_mem_valid(exu_mem_valid),
+        .exu_idu_ready(exu_idu_ready),
+
 
         .pc_idu(pc_idu),
-        .pc_exu(pc_exu),
-
         .imm_idu(imm_idu),
-        .alu_src2_con_idu(alu_src2_con_idu),
+        .alu_op_idu(alu_op_idu),
+        .is_ebreak_idu(is_ebreak_idu),
+		.is_branch_idu(is_branch_idu),
+		.is_jal_idu(is_jal_idu),
+		.is_jalr_idu(is_jalr_idu),
+		.is_load_idu(is_load_idu),
+		.is_store_idu(is_store_idu),
+		.is_csr_idu(is_csr_idu),
+		.fencei_idu(fencei_idu),
+		.mem_len_idu(mem_len_idu),
+		.mem_wmask_idu(mem_wmask_idu),
 
-        // .is_load_idu(is_load_idu),
-        // .is_load_exu(is_load_exu),
+		// reg
+        .wen_idu(wen_idu),
+        .waddr_idu(waddr_idu),
+        .val_raddr1_idu(val_raddr1_idu),
+        .val_raddr2_idu(val_raddr2_idu),
+        // csr
+        .wcsren_idu(wcsren_idu),
+        .wcsraddr_idu(wcsraddr_idu),
+        .wcsrdata_idu(wcsrdata_idu),
 
-        .is_btype_idu(is_btype_idu),
-        .is_jal_idu(is_jal_idu),
-        .is_jalr_idu(is_jalr_idu),
-        .is_dnpc_idu(is_dnpc_idu),
-        // .branch_src1_idu(branch_src1_idu),
-        // .dnpc_idu(dnpc_idu),
-        .is_dnpc_exu(is_dnpc_exu),
-        .is_btype_exu(is_btype_exu),
-        .is_jal_exu(is_jal_exu),
-        .dnpc_new_exu(dnpc_new_exu),
+
+        .pc_exu(pc_exu),
+        .alu_result_exu(alu_result_exu),
+        .dnpc_exu(dnpc_exu),
+        .branch_taken_exu(branch_taken_exu),
+        .branch_not_taken_exu(branch_not_taken_exu),
+        .is_ebreak_exu(is_ebreak_exu),
+		.is_jal_exu(is_jal_exu),
+		.is_jalr_exu(is_jalr_exu),
+		.is_load_exu(is_load_exu),
+		.is_store_exu(is_store_exu),
+		// .is_csr_exu(is_csr_exu),
+		.fencei_exu(fencei_exu),
+		.mem_len_exu(mem_len_exu),
+		.mem_wmask_exu(mem_wmask_exu),
+		.store_data_exu(store_data_exu),
+		.mem_addr_exu(mem_addr_exu),
+
+        .wen_exu(wen_exu),
+        .waddr_exu(waddr_exu),
+        .wdata_exu(wdata_exu),
+
+        // csrs
+        .wcsren_exu(wcsren_exu),
+        .wcsraddr_exu(wcsraddr_exu),
+        .wcsrdata_exu(wcsrdata_exu),
+        // .wcsren2_exu(wcsren2_exu),
+        // .wcsraddr2_exu(wcsraddr2_exu),
+        // .wcsrdata2_exu(wcsrdata2_exu),
 
         .alu_op_exu(alu_op_exu),
         .alu_src1(alu_src1),
         .alu_src2(alu_src2),
         .alu_out(alu_out),
-
-        .src1_idu(src1_idu),
-        .src2_idu(src2_idu),
-        .alu_op_idu(alu_op_idu),
-        .alu_out_exu(alu_out_exu),
-
-        // reg
-        .wen_idu(wen_idu),
-        .waddr_idu(waddr_idu),
-        .wdata_idu(wdata_idu),
-        .wen_exu(wen_exu),
-        .waddr_exu(waddr_exu),
-
-        .fencei_idu(fencei_idu),
-        .fencei_exu(fencei_exu),
-
-        //memory
-        .mwen_idu(mwen_idu),
-        .mwmask_idu(mwmask_idu),
-        .mren_idu(mren_idu),
-        .mrtype_idu(mrtype_idu),
-        .mrlen_idu(mrlen_idu),
-        .mwen_exu(mwen_exu),
-        .mwmask_exu(mwmask_exu),
-        .mren_exu(mren_exu),
-        .mrtype_exu(mrtype_exu),
-        .mrlen_exu(mrlen_exu),
-        .maddr_exu(maddr_exu),
-        // .mraddr_exu(mraddr_exu),
-        // .mwaddr_exu(mwaddr_exu),
-        .mwdata_exu(mwdata_exu),
-
-        // csrs
-        .is_csrtype_idu(is_csrtype_idu),
-        .wcsren_idu(wcsren_idu),
-        .wcsraddr_idu(wcsraddr_idu),
-        .wcsrdata_idu(wcsrdata_idu),
-        .wcsren2_idu(wcsren2_idu),
-        .wcsraddr2_idu(wcsraddr2_idu),
-        .wcsrdata2_idu(wcsrdata2_idu),
-        .wcsren_exu(wcsren_exu),
-        .wcsraddr_exu(wcsraddr_exu),
-        .wcsrdata_exu(wcsrdata_exu),
-        .wcsren2_exu(wcsren2_exu),
-        .wcsraddr2_exu(wcsraddr2_exu),
-        .wcsrdata2_exu(wcsrdata2_exu),
+        .alu_zero(alu_zero)
 
 
-        .idu_exu_valid(idu_exu_valid),
-        .mem_exu_ready(mem_exu_ready),
-        .exu_mem_valid(exu_mem_valid),
-        .exu_idu_ready(exu_idu_ready)
+        // other control signal idu -> exu
+
     );
 
 
@@ -754,6 +691,53 @@ module ysyx_24080020_NPC(
         .wb_mem_ready(wb_mem_ready),
         .mem_exu_ready(mem_exu_ready),
         .mem_wb_valid(mem_wb_valid)
+    );
+
+    ysyx_24080020_REG u_reg(
+        .clk(clk),
+        .rst(rst),
+
+        `ifdef CONFIG_DPIC
+        .skip_ref_mem(skip_ref_mem),
+        .pc_lsu(pc_lsu),
+        .pc_wbu(pc_wbu),
+        .is_dnpc_mem(is_dnpc_mem),
+        .dnpc_mem(dnpc_mem),
+        `endif
+
+        .raddr1(rs1),
+        .raddr2(rs2),
+
+        .wen_mem(wen_mem),
+        .waddr_mem(waddr_mem),
+        .rd_data_mem(rd_data_mem),
+        .waddr_wb(waddr_wb),
+        .rd_data_wb(rd_data_wb),
+        .wen_wb(wen_wb),
+
+        .val_raddr1(val_raddr1),
+        .val_raddr2(val_raddr2),
+
+        .mem_wb_valid(mem_wb_valid),
+        .wb_mem_ready(wb_mem_ready)
+    );
+
+    ysyx_24080020_CSR u_csr(
+        .clk(clk),
+        .rst(rst),
+
+        .wcsren_mem(wcsren_mem),
+        .wcsraddr_mem(wcsraddr_mem),
+        .wcsrdata_mem(wcsrdata_mem),
+        .wcsren2_mem(wcsren2_mem),
+        .wcsraddr2_mem(wcsraddr2_mem),
+        .wcsrdata2_mem(wcsrdata2_mem),
+
+        .rcsraddr(rcsraddr),
+        .rcsrdata(rcsrdata),
+
+        .mem_wb_valid(mem_wb_valid),
+        .wb_mem_ready(wb_mem_ready)
     );
 
     ysyx_24080020_ARBITER u_arbiter(
@@ -1311,6 +1295,9 @@ module ysyx_24080020_NPC(
 		.rd_wbu(waddr_wb),
 		.rd_data_wbu(rd_data_wb),
 		// .rd_en_wbu(wen_wb),
+
+		.val_raddr1(val_raddr1),
+		.val_raddr2(val_raddr2),
 
 		.need_stall(need_stall),
 		.rd_data1_forward(rd_data1_forward),

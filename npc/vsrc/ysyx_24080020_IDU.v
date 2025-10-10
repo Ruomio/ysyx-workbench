@@ -1,76 +1,3 @@
-// `include "ysyx_24080020_DEFINE.v"
-// module ysyx_24080020_IDU (
-//     input clk,
-//     input rst,
-//
-// `ifdef CONFIG_DPIC
-//     output reg is_ebreak,
-//
-// `endif
-//
-//
-//     // input data_adventure,
-//     input need_stall,
-//     input rs1_conflict,
-//     input rs2_conflict,
-//     input [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
-//     input [`ysyx_24080020_WIDTH-1:0] rd_data2_forward,
-//
-//     input [`ysyx_24080020_WIDTH-1:0] inst_ifu,
-//     input [`ysyx_24080020_WIDTH-1:0] pc_ifu,
-//     input flush_pipeline,
-//
-//     // reg
-//     output reg wen_idu,
-//     output [`ysyx_24080020_REG_WIDTH-1:0] rs1,
-//     output [`ysyx_24080020_REG_WIDTH-1:0] rs2,
-//     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
-//     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
-//     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
-//     output reg [`ysyx_24080020_WIDTH-1:0] wdata_idu,
-//     // output reg is_load_idu,
-//     output reg is_dnpc_idu,
-//     output reg is_jal_idu,
-//     output reg is_btype_idu,
-//     output reg is_jalr_idu,
-//     output reg is_csrtype_idu,
-//     // output reg [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
-//     output reg fencei_idu,
-//
-//     // csrs
-//     input [`ysyx_24080020_WIDTH-1:0] rcsrdata,
-//     output [2:0] rcsraddr_,
-//     output reg wcsren_idu,
-//     output [2:0] wcsraddr_idu_,
-//     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu,
-//     output reg wcsren2_idu,
-//     output [2:0] wcsraddr2_idu_,
-//     output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu,
-//
-//     // alu control
-//     output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
-//     output reg [`ysyx_24080020_WIDTH-1:0] pc_idu,
-//     output reg [`ysyx_24080020_WIDTH-1:0] src1_idu,
-//     output reg [`ysyx_24080020_WIDTH-1:0] src2_idu,
-//     output [`ysyx_24080020_WIDTH-1:0] imm_idu,
-//     // output reg [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
-//     output reg alu_src2_con_idu,
-//
-//
-//     // memory
-//     output reg mren_idu,
-//     output reg mrtype_idu,
-//     output reg mwen_idu,
-//     output reg [3:0] mwmask_idu,
-//     output reg [3:0] mrlen_idu,
-//
-//
-//     input ifu_idu_valid,
-//     input exu_idu_ready,
-//     output reg idu_ifu_ready,
-//     output idu_exu_valid_reg
-//
-// );
 //==============================================================
 //  ysyx_24080020_IDU_2w1r.sv
 //  REGFILE  2 读 1 写（保持）
@@ -91,26 +18,30 @@ module ysyx_24080020_IDU (
     input  wire        exu_idu_ready,
     input  wire        flush_pipeline,
     input  wire        need_stall,
+    output reg [`ysyx_24080020_WIDTH-1:0]  pc_idu,
     // REGFILE 2 读 1 写（端口不变）
     output wire [`ysyx_24080020_REG_WIDTH-1:0] rs1,
     output wire [`ysyx_24080020_REG_WIDTH-1:0] rs2,
     input  wire [`ysyx_24080020_WIDTH-1:0]     val_raddr1,
     input  wire [`ysyx_24080020_WIDTH-1:0]     val_raddr2,
     output wire [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
-    output wire [`ysyx_24080020_WIDTH-1:0]     wdata_idu,
     output wire                                wen_idu,
-    // CSR 1 读 2 写（恢复双写口）
+    output wire [`ysyx_24080020_WIDTH-1:0]     val_raddr1_idu,
+    output wire [`ysyx_24080020_WIDTH-1:0]     val_raddr2_idu,
+    // CSR 1 读 1 写
     output wire [2:0]  rcsraddr,
     input  wire [31:0] rcsrdata,
     output wire        wcsren_idu,
     output wire [2:0]  wcsraddr_idu,
     output wire [31:0] wcsrdata_idu,
-    output wire        wcsren2_idu,
-    output wire [2:0]  wcsraddr2_idu,
-    output wire [31:0] wcsrdata2_idu,
+    output wire [31:0] rcsrdata_idu,
+    output wire         csr_hold,
+    // output wire        wcsren2_idu,
+    // output wire [2:0]  wcsraddr2_idu,
+    // output wire [31:0] wcsrdata2_idu,
     // 其余控制
-    output wire        is_ebreak_idu,
     output wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
+    output wire        is_ebreak_idu,
     output wire [31:0] imm_idu,
     output wire        is_branch_idu,
     output wire        is_jal_idu,
@@ -118,21 +49,22 @@ module ysyx_24080020_IDU (
     output wire        is_load_idu,
     output wire        is_store_idu,
     output wire        is_csr_idu,
+
     output wire        fencei_idu,
     output wire [2:0]  mem_len_idu,
     output wire [2:0]  mem_wmask_idu
 );
 
 //=========================================================================
-// 1. 立即数 2 级选择（与上一版相同）
+// 1. 立即数 2 级选择
 //=========================================================================
-localparam IMM_I = {{20{inst_ifu[31]}}, inst_ifu[31:20]};
-localparam IMM_S = {{20{inst_ifu[31]}}, inst_ifu[31:25], inst_ifu[11:7]};
-localparam IMM_B = {{20{inst_ifu[31]}}, inst_ifu[7], inst_ifu[30:25], inst_ifu[11:8], 1'b0};
-localparam IMM_U = {inst_ifu[31:12], 12'b0};
-localparam IMM_J = {{12{inst_ifu[31]}}, inst_ifu[19:12], inst_ifu[20], inst_ifu[30:21], 1'b0};
+wire [31:0] IMM_I = {{20{inst_ifu[31]}}, inst_ifu[31:20]};
+wire [31:0] IMM_S = {{20{inst_ifu[31]}}, inst_ifu[31:25], inst_ifu[11:7]};
+wire [31:0] IMM_B = {{20{inst_ifu[31]}}, inst_ifu[7], inst_ifu[30:25], inst_ifu[11:8], 1'b0};
+wire [31:0] IMM_U = {inst_ifu[31:12], 12'b0};
+wire [31:0] IMM_J = {{12{inst_ifu[31]}}, inst_ifu[19:12], inst_ifu[20], inst_ifu[30:21], 1'b0};
 
-wire [1:0] imm_type;
+reg [1:0] imm_type;
 always @(*) begin
     case (inst_ifu[6:0])
         `ysyx_24080020_JALR,
@@ -147,10 +79,10 @@ always @(*) begin
     endcase
 end
 
-assign imm_idu = (imm_type == 2'b00) ? IMM_I :
-                 (imm_type == 2'b01) ? IMM_S :
-                 (imm_type == 2'b10) ? IMM_B :
-                                       IMM_U;          // U/J 共用
+wire [31:0] imm_comb = (imm_type == 2'b00) ? IMM_I :
+                       (imm_type == 2'b01) ? IMM_S :
+                       (imm_type == 2'b10) ? IMM_B :
+                       (opcode == `ysyx_24080020_JAL) ? IMM_J : IMM_U;
 
 //=========================================================================
 // 2. opcode 译码（同上一版）
@@ -169,8 +101,11 @@ wire is_jr_type= (opcode == `ysyx_24080020_JALR);
 wire is_csr    = (opcode == `ysyx_24080020_CSR_TYPE);
 wire is_fencei = (opcode == `ysyx_24080020_FENCEI_TYPE);
 wire is_ebreak = (inst_ifu == `ysyx_24080020_EBREAK);
+// 探测 ecall/mret
+wire is_ecall  = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 20'h0);
+wire is_mret   = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 20'h302);
 
-wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_comb;
+reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_comb;
 always @(*) begin
     case (opcode)
         `ysyx_24080020_R_TYPE: alu_op_comb = (funct7[5] && funct3 == 3'b000) ? `ysyx_24080020_ALU_SUB :
@@ -194,7 +129,11 @@ always @(*) begin
                                              `ysyx_24080020_ALU_SLTU;
         `ysyx_24080020_LOAD_TYPE,
         `ysyx_24080020_S_TYPE,
-        `ysyx_24080020_B_TYPE: alu_op_comb = `ysyx_24080020_ALU_ADD;
+        `ysyx_24080020_B_TYPE: alu_op_comb = (funct3 == 3'b100) ? `ysyx_24080020_ALU_BLT :      // BLT
+                                             (funct3 == 3'b101) ? `ysyx_24080020_ALU_BLT :      // BGE
+                                             (funct3 == 3'b110) ? `ysyx_24080020_ALU_BLTU :     // BLTU
+                                             (funct3 == 3'b111) ? `ysyx_24080020_ALU_BLTU :     // BLTU
+                                             `ysyx_24080020_ALU_SUB;
         `ysyx_24080020_LUI,
         `ysyx_24080020_AUIPC:  alu_op_comb = `ysyx_24080020_ALU_ADD;
         `ysyx_24080020_JAL,
@@ -210,78 +149,138 @@ assign rs1 = inst_ifu[`ysyx_24080020_RS1];
 assign rs2 = (is_r_type || is_s_type || is_b_type) ? inst_ifu[`ysyx_24080020_RS2] : 5'd0;
 
 assign waddr_idu = inst_ifu[`ysyx_24080020_RD];
-assign wdata_idu = (is_load_idu) ? val_raddr2 :      // LSU 回写
-                   (is_csr_idu)   ? csr_rdata :      // CSR 回写
-                                    val_raddr1;       // ALU/PC+4
 assign wen_idu   = (is_r_type || is_i_type || is_u_type || is_j_type || is_jr_type || is_load_idu || is_csr_idu) &&
                    (inst_ifu[`ysyx_24080020_RD] != 5'd0);
 
 //=========================================================================
-// 4. CSR 1 读 2 写：地址/数据复用，写优先
+// 4. CSR 1 读 1 写：地址/数据复用，写优先
 //=========================================================================
-wire [2:0] csr_imm = inst_ifu[`ysyx_24080020_IMM_I][2:0];
+wire [11:0] csr_imm = inst_ifu[`ysyx_24080020_IMM_I];
 
-assign rcsraddr        = csr_imm;                     // 读口直接连
+// 读口直接连
+assign rcsraddr        = (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
+                            (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd1 :
+                            (csr_imm == `ysyx_24080020_MCAUSE_ADDR) ? 3'd2 :
+                            (csr_imm == `ysyx_24080020_MTVEC_ADDR) ? 3'd3 :
+                            (csr_imm == `ysyx_24080020_MVENDORID_ADDR) ? 3'd4 :
+                            (csr_imm == `ysyx_24080020_MARCHID_ADDR) ? 3'd5 : 3'd0;
 // 写口 1
-assign wcsraddr_idu    = csr_imm;
-assign wcsrdata_idu    = val_raddr1;
-assign wcsren_idu      = is_csr && (funct3 == 3'b001 || funct3 == 3'b101); // CSRRW/CSRRS
+assign wcsraddr_idu    = (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
+                            (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd1 :
+                            (csr_imm == `ysyx_24080020_MCAUSE_ADDR) ? 3'd2 :
+                            (csr_imm == `ysyx_24080020_MTVEC_ADDR) ? 3'd3 :
+                            (csr_imm == `ysyx_24080020_MVENDORID_ADDR) ? 3'd4 :
+                            (csr_imm == `ysyx_24080020_MARCHID_ADDR) ? 3'd5 : 3'd0;
+assign wcsrdata_idu    = val_raddr1;  // CSR写数据来自寄存器文件读取值
+assign wcsren_idu      = is_csr && (funct3 != 3'b000 && funct3 != 3'b100); // CSRRW/CSRRS
 // 写口 2
-assign wcsraddr2_idu   = csr_imm;
-assign wcsrdata2_idu   = val_raddr1;
-assign wcsren2_idu     = is_csr && (funct3 == 3'b010 || funct3 == 3'b110); // CSRRC/CSRRWI
+// assign wcsraddr2_idu   = (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
+//                             (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd1 :
+//                             (csr_imm == `ysyx_24080020_MCAUSE_ADDR) ? 3'd2 :
+//                             (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd3 :
+//                             (csr_imm == `ysyx_24080020_MVENDORID_ADDR) ? 3'd4 :
+//                             (csr_imm == `ysyx_24080020_MARCHID_ADDR) ? 3'd5 : 3'd0;
+// assign wcsrdata2_idu   = val_raddr1;
+// assign wcsren2_idu     = is_csr && (funct3 == `ysyx_24080020_ECALL_EBREAK); // ecall
 
 //=========================================================================
-// 5. 其余控制信号（极简）
+// 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
-assign is_branch_idu = is_b_type;
-assign is_jal_idu    = is_j_type;
-assign is_jalr_idu   = is_jr_type;
-assign is_load_idu   = (opcode == `ysyx_24080020_LOAD_TYPE);
-assign is_store_idu  = is_s_type;
-assign is_csr_idu    = is_csr;
-assign fencei_idu    = is_fencei;
-assign is_ebreak_idu = is_ebreak;
+assign is_branch_idu = ctrl_q[47];
+assign is_jal_idu    = ctrl_q[46];
+assign is_jalr_idu   = ctrl_q[45];
+assign is_load_idu   = ctrl_q[44];
+assign is_store_idu  = ctrl_q[43];
+assign is_csr_idu    = ctrl_q[42];
+assign fencei_idu    = ctrl_q[41];
+assign is_ebreak_idu = ctrl_q[40];
 
 // 存储控制
-assign mem_len_idu  = (is_load_idu) ?
-                      funct3 : 'b0;
-assign mem_wmask_idu = (is_store_idu) ?
-                      funct3 : 'b0;
+assign mem_len_idu   = ctrl_q[39:37];   // funct3 for load
+assign mem_wmask_idu = ctrl_q[39:37];   // funct3 for store (same as mem_len)
+
+// 立即数
+assign imm_idu = ctrl_q[36:5];
+
+//=========================================================================
+// ecall/mret 拆 2 拍：状态机 + 自动 hold
+//=========================================================================
+reg        ecall_phase;      // 0: 第 1 拍（mepc） 1: 第 2 拍（mcause）
+reg [31:0] mcause_hold;      // 暂存 mcause 值
+// wire       do_ecall  = is_ecall || is_mret;   // 需要拆 2 拍的指令
+wire       do_ecall  = is_ecall;   // 需要拆 2 拍的指令
+wire       last_phase = ecall_phase;
+
+// 对外通知：正在拆第 2 拍，请保持 CSR 写口
+assign csr_hold = ecall_phase;
 
 //=========================================================================
 // 6. 极简流水线握手 & 锁存（）
 //=========================================================================
-localparam PIPE_CTRL_W = 19;
+localparam PIPE_CTRL_W = 48;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
-    is_branch_idu, is_jal_idu, is_jalr_idu,
-    is_load_idu, is_store_idu, is_csr_idu, fencei_idu, is_ebreak_idu,
-    mem_len_idu, mem_wmask_idu, alu_op_comb
+    is_b_type, is_j_type, is_jr_type,
+    (opcode == `ysyx_24080020_LOAD_TYPE), is_s_type, is_csr, is_fencei, is_ebreak,
+    funct3, imm_comb, alu_op_comb
 };
 
-reg [31:0]               pc_q;
 reg [PIPE_CTRL_W-1:0]    ctrl_q;
 reg                      valid_q;
+reg [31:0]               val1_q;
+reg [31:0]               val2_q;
+reg [31:0]               rcsr_q;
 
 assign idu_ifu_ready = ~valid_q;
 assign idu_exu_valid = valid_q;
 
-always @(posedge clk) begin
+// 写 CSR 第 1 拍信号（组合）
+wire ecall_write1 = do_ecall && !ecall_phase;
+
+always @(posedge clk or negedge rst) begin
     if (!rst) begin
-        valid_q <= 1'b0;
-        pc_q    <= 32'd0;
-        ctrl_q  <= '0;
+        valid_q     <= 1'b0;
+        pc_idu        <= 32'd0;
+        ctrl_q      <= '0;
+        // val1_q      <= 32'd0;
+        // val2_q      <= 32'd0;
+        ecall_phase <= 1'b0;
+        mcause_hold <= 32'd0;
     end
-    else if (exu_idu_ready || flush_pipeline) begin
-        valid_q <= 1'b0;
+    else if ((exu_idu_ready && valid_q) || flush_pipeline) begin
+        valid_q     <= 1'b0;
+        ecall_phase <= 1'b0;
     end
-    else if (ifu_idu_valid && !valid_q && !need_stall) begin
-        valid_q <= 1'b1;
-        pc_q    <= pc_ifu;
-        ctrl_q  <= ctrl_comb;
+    else if (valid_q && do_ecall && !ecall_phase) begin
+        // ecall/mret 第 1 拍完成，进入第 2 拍
+        ecall_phase <= 1'b1;
+    end
+    else if (valid_q && ecall_phase) begin
+        // 第 2 拍：写 mcause 完成
+        ecall_phase <= 1'b0;
+    end
+    else if (ifu_idu_valid && idu_ifu_ready && !need_stall) begin
+        // 新指令进入
+        valid_q     <= 1'b1;
+        pc_idu      <= pc_ifu;
+        ctrl_q      <= ctrl_comb;
+        val1_q      <= val_raddr1;
+        val2_q      <= val_raddr2;
+        rcsr_q      <= rcsrdata;
+
+        if (do_ecall) begin
+            ecall_phase <= 1'b0;          // 开始第 1 拍
+            mcause_hold <= (is_ecall) ? 32'd11 : 32'd3;   // ecall=11, mret=3
+        end
+        else begin
+            ecall_phase <= 1'b0;
+        end
     end
 end
 
-assign alu_op_idu = ctrl_q[`ysyx_24080020_ALU_OP_WIDTH-1:0];
+assign alu_op_idu = ctrl_q[4:0];
+assign val_raddr1_idu = val1_q;
+assign val_raddr2_idu = val2_q;
+assign rcsrdata_idu = rcsr_q;
+
 
 endmodule

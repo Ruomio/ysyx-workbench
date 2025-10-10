@@ -57,13 +57,16 @@ static vaddr_t *get_csr_reg(word_t csr) {
   else { Assert(0, "Unknown csr reg."); }
 }
 static void ecall(Decode *s) {
-  bool success;
+  // mcause: U:8  S:9 M:11
+  // bool success;
 #ifdef CONFIG_E_EXTENSION
-  s->dnpc =  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);
-  Assert(success, "isa_reg_str2val error.");
+  // s->dnpc =  isa_raise_intr(isa_reg_str2val("a5", &success), s->pc);
+  s->dnpc =  isa_raise_intr(0xb, s->pc);
+  // Assert(success, "isa_reg_str2val error.");
 #else
-  s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
-  Assert(success, "isa_reg_str2val error.");
+  // s->dnpc = isa_raise_intr(isa_reg_str2val("a7", &success), s->pc);
+  s->dnpc = isa_raise_intr(0xb, s->pc);
+  // Assert(success, "isa_reg_str2val error.");
 #endif
 }
 
@@ -87,7 +90,7 @@ static void mret(Decode *s) {
    * bool flag = (tmp_mstatus & 0x80) == 0x80 ? 1 : 0;
    * tmp_mstatus |= flag << 3;
    * tmp_mstatus |= 0x80;
-  */ 
+  */
 
   CSR(MSTATUS_ADDR) = tmp_mstatus;
 }

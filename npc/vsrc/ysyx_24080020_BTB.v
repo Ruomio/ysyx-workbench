@@ -5,7 +5,8 @@ module ysyx_24080020_BTB(
 
     input update_pc,
 
-    input is_btype,
+    // input is_btype,
+    input branch_not_taken_exu,
     input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
@@ -86,7 +87,7 @@ module ysyx_24080020_BTB(
 
     reg in_valid;
     reg in_ready;
-    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit, is_btype_next; // , fencei_mem_next;
+    reg is_dnpc_tmp, is_dnpc_next, is_hit, update_en, first, skip_once, btb_hit; // , fencei_mem_next;
     reg [2:0] current_state;
     reg [`ysyx_24080020_WIDTH-1:0] pc_new, pc_tmp, predict_pc, dnpc_tmp, hit_pc, hit_target_pc;
 
@@ -269,41 +270,41 @@ module ysyx_24080020_BTB(
             branch_valid[branch_index_new] <= branch_valid[branch_index_new] | (1 << fifo_index[branch_index_new]);
 
         end
-        else if(is_dnpc && !is_dnpc_next && is_btype) begin
-            // btytpe
-            if(btb_hit) begin
-                btb_hit <= 'b0;
-                if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
-                    // lack hit before this hit, need update btb
-                    pc_new <= pc_exu;
-                    dnpc_tmp <= dnpc;
-                    is_dnpc_tmp <= 'b1;
-                    correct_pc <= dnpc;
+        // else if(is_dnpc && !is_dnpc_next && is_btype) begin
+        //     // btytpe
+        //     if(btb_hit) begin
+        //         btb_hit <= 'b0;
+        //         if((hit_pc != pc_exu) || (dnpc != hit_target_pc)) begin
+        //             // lack hit before this hit, need update btb
+        //             pc_new <= pc_exu;
+        //             dnpc_tmp <= dnpc;
+        //             is_dnpc_tmp <= 'b1;
+        //             correct_pc <= dnpc;
 
-                    flush_pipeline <= 'b1;
-                end
-                else if((hit_pc == pc_exu) && (dnpc == hit_target_pc)) begin
-                `ifdef CONFIG_DPIC
-                    statistics_btb_hit();
-                `endif
-                end
-            end
-            else begin
-                pc_new <= pc_exu;
-                dnpc_tmp <= dnpc;
-                is_dnpc_tmp <= 'b1;
-                correct_pc <= dnpc;
+        //             flush_pipeline <= 'b1;
+        //         end
+        //         else if((hit_pc == pc_exu) && (dnpc == hit_target_pc)) begin
+        //         `ifdef CONFIG_DPIC
+        //             statistics_btb_hit();
+        //         `endif
+        //         end
+        //     end
+        //     else begin
+        //         pc_new <= pc_exu;
+        //         dnpc_tmp <= dnpc;
+        //         is_dnpc_tmp <= 'b1;
+        //         correct_pc <= dnpc;
 
-                flush_pipeline <= 'b1;
-            end
+        //         flush_pipeline <= 'b1;
+        //     end
 
-            `ifdef CONFIG_DPIC
-            statistics_btb_total();
-            `endif
+        //     `ifdef CONFIG_DPIC
+        //     statistics_btb_total();
+        //     `endif
 
-        end
-        else if(is_dnpc && !is_dnpc_next && !is_btype) begin
-            // jal or jalr
+        // end
+        else if(is_dnpc && !is_dnpc_next) begin
+            // jal or jalr or b-type
 
             if(btb_hit) begin
                 btb_hit <= 'b0;
@@ -323,11 +324,6 @@ module ysyx_24080020_BTB(
                     statistics_btb_hit();
                 end
                 `endif
-
-                `ifdef CONFIG_DPIC
-                statistics_btb_total();
-                `endif
-
             end
             else begin
                 pc_new <= pc_exu;
@@ -337,12 +333,13 @@ module ysyx_24080020_BTB(
 
                 flush_pipeline <= 'b1;
 
-                `ifdef CONFIG_DPIC
-                statistics_btb_total();
-                `endif
             end
+            `ifdef CONFIG_DPIC
+            statistics_btb_total();
+            `endif
         end
-        else if(!is_dnpc && is_btype && !is_btype_next /* && (pc_tmp < pc_exu) */) begin
+        // else if(!is_dnpc && is_btype && !is_btype_next ) begin
+        else if(branch_not_taken_exu && !branch_not_taken_exu_next_next ) begin
             // error hit: should not jump, but jump
             if(btb_hit) begin
                 btb_hit <= 'b0;
@@ -457,17 +454,17 @@ module ysyx_24080020_BTB(
             is_dnpc_next <= 'b0;
         end
     end
-    always @(posedge clk) begin
-         if(!rst) begin
-             is_btype_next <= 'b0;
-         end
-         else if(is_btype) begin
-             is_btype_next <= 'b1;
-         end
-         else begin
-             is_btype_next <= 'b0;
-         end
-     end
+    // always @(posedge clk) begin
+    //      if(!rst) begin
+    //          is_btype_next <= 'b0;
+    //      end
+    //      else if(is_btype) begin
+    //          is_btype_next <= 'b1;
+    //      end
+    //      else begin
+    //          is_btype_next <= 'b0;
+    //      end
+    // end
 
     always @(posedge clk) begin
         if(!rst) begin
@@ -509,10 +506,11 @@ module ysyx_24080020_BTB(
         else if(is_dnpc_tmp) begin
             update_en <= 'b1;
         end
-        else if(!is_dnpc && is_btype && !is_btype_next && btb_hit) begin
+        // else if(!is_dnpc && is_btype && !is_btype_next && btb_hit) begin
+        else if(branch_not_taken_exu && !branch_not_taken_exu_next && btb_hit) begin
             update_en <= 'b1;
         end
-        else if(is_dnpc && is_dnpc_next && !is_btype) begin
+        else if(is_dnpc && is_dnpc_next /* && !is_btype */) begin
             update_en <= 'b1;
         end
         // else if(fencei_exu) begin
@@ -520,5 +518,17 @@ module ysyx_24080020_BTB(
         // end
     end
 
+    reg branch_not_taken_exu_next;
+    always @(posedge clk) begin
+        if(!rst) begin
+            branch_not_taken_exu_next <= 'b0;
+        end
+        else if(branch_not_taken_exu) begin
+            branch_not_taken_exu_next <= 'b1;
+        end
+        else begin
+            branch_not_taken_exu_next <= 'b0;
+        end
+    end
 
 endmodule

@@ -3,8 +3,11 @@ module ysyx_24080020_ALU(
     input [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op,
     input [`ysyx_24080020_WIDTH-1:0] alu_src1,
     input [`ysyx_24080020_WIDTH-1:0] alu_src2,
-    output reg [`ysyx_24080020_WIDTH-1:0] alu_out
+    output reg [`ysyx_24080020_WIDTH-1:0] alu_out,
+    output alu_zero
 );
+
+    assign alu_zero = alu_out == 32'b0;
 
     always @(*) begin
         case(alu_op)

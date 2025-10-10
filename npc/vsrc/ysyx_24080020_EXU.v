@@ -1,289 +1,261 @@
+//==============================================================
+//  ysyx_24080020_EXU.sv
+//  执行单元 - 面积优化版本
+//  设计目标：减少always块，多用assign，遵循RISC-V规范
+//  面积目标：≈ 2.0 k μm² (@28 nm)
+//==============================================================
 `include "ysyx_24080020_DEFINE.v"
-module ysyx_24080020_EXU
-(
-    input clk,
-    input rst,
+module ysyx_24080020_EXU (
+    input  wire        clk,
+    input  wire        rst,          // 低电平复位
 
+    // IDU <---> EXU 流水线握手
+    input  wire        idu_exu_valid,
+    output wire        exu_idu_ready,
+    // input  wire        flush_pipeline,
+
+    // EXU <---> MEM 流水线握手
+    output wire        exu_mem_valid,
+    input  wire        mem_exu_ready,
+
+    // 来自IDU的控制信号
+    input  wire [`ysyx_24080020_WIDTH-1:0] pc_idu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] imm_idu,
+    input  wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
+    input  wire        is_branch_idu,
+    input  wire        is_jal_idu,
+    input  wire        is_jalr_idu,
+    input  wire        is_load_idu,
+    input  wire        is_store_idu,
+    input  wire        is_csr_idu,
+    input  wire        is_ebreak_idu,
+    input  wire        fencei_idu,
+    input  wire [2:0]  mem_len_idu,
+    input  wire [2:0]  mem_wmask_idu,
+
+    // 寄存器读写
+    input  wire [`ysyx_24080020_WIDTH-1:0] val_raddr1_idu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] val_raddr2_idu,
+    input  wire [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
+    input  wire        wen_idu,
+
+    // CSR读写
+    input  wire        wcsren_idu,
+    input  wire [2:0]  wcsraddr_idu,
+    input  wire [31:0] wcsrdata_idu,
+    input  wire        csr_hold,
+
+    // 输出到MEM/WB的信号
+    output wire [`ysyx_24080020_WIDTH-1:0] pc_exu,
+    output wire [`ysyx_24080020_WIDTH-1:0] alu_result_exu,
+    output wire [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
+    output wire        branch_taken_exu,
+    output wire        branch_not_taken_exu,
+    output wire        is_load_exu,
+    output wire        is_store_exu,
+    output wire        is_csr_exu,
+    output wire        is_ebreak_exu,
+    output wire        fencei_exu,
+    output wire [2:0]  mem_len_exu,
+    output wire [2:0]  mem_wmask_exu,
+    output wire [`ysyx_24080020_WIDTH-1:0] store_data_exu,
+    output wire [`ysyx_24080020_WIDTH-1:0] mem_addr_exu,
+
+    // 寄存器写回
+    output wire [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
+    output wire [`ysyx_24080020_WIDTH-1:0] wdata_exu,
+    output wire        wen_exu,
+
+    // CSR写回
+    output wire        wcsren_exu,
+    output wire [2:0]  wcsraddr_exu,
+    output wire [31:0] wcsrdata_exu,
+
+    // ALU接口
+    output wire [`ysyx_24080020_WIDTH-1:0] alu_src1,
+    output wire [`ysyx_24080020_WIDTH-1:0] alu_src2,
+    output wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] alu_result,
+    input  wire        alu_zero
     `ifdef CONFIG_DPIC
-    input is_ebreak_idu,
-    output reg is_ebreak_exu,
+    // DPI-C调试接口
     `endif
-
-    input [`ysyx_24080020_WIDTH-1:0] pc_idu,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_exu,
-
-    // input is_load_idu,
-    // output reg is_load_exu,
-
-    input [`ysyx_24080020_WIDTH-1:0] imm_idu,
-    input alu_src2_con_idu,
-
-
-    // branch
-    input is_btype_idu,
-    input is_jal_idu,
-    input is_jalr_idu,
-    input is_dnpc_idu,
-    // input [`ysyx_24080020_WIDTH-1:0] branch_src1_idu,
-    // input [`ysyx_24080020_WIDTH-1:0] dnpc_idu,
-    output reg is_dnpc_exu,
-    output [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
-    output reg is_jal_exu,
-    output reg is_btype_exu,
-
-    input fencei_idu,
-    output reg fencei_exu,
-
-    // alu
-    input [`ysyx_24080020_WIDTH-1:0] src1_idu,
-    input [`ysyx_24080020_WIDTH-1:0] src2_idu,
-    input [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
-    output [`ysyx_24080020_WIDTH-1:0] alu_out_exu,
-
-    output reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_exu,
-    output [`ysyx_24080020_WIDTH-1:0] alu_src1,
-    output [`ysyx_24080020_WIDTH-1:0] alu_src2,
-    input [`ysyx_24080020_WIDTH-1:0] alu_out,
-
-    // reg
-    input wen_idu,
-    input [`ysyx_24080020_REG_WIDTH-1:0] waddr_idu,
-    input [`ysyx_24080020_WIDTH-1:0] wdata_idu,
-    output reg wen_exu,
-    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
-    // output reg[`ysyx_24080020_WIDTH-1:0] wdata_exu,
-
-    // memory
-    input mwen_idu,
-    input [3:0] mwmask_idu,
-    input mren_idu,
-    input mrtype_idu,
-    input [3:0] mrlen_idu,
-    output reg mwen_exu,
-    output reg [3:0] mwmask_exu,
-    output reg mren_exu,
-    output reg mrtype_exu,
-    output reg [3:0] mrlen_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] maddr_exu,
-    // output reg [`ysyx_24080020_WIDTH-1:0] mraddr_exu,
-    // output reg [`ysyx_24080020_WIDTH-1:0] mwaddr_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
-
-    //csrs
-    input is_csrtype_idu,
-    input wcsren_idu,
-    input [2:0] wcsraddr_idu,
-    input [`ysyx_24080020_WIDTH-1:0] wcsrdata_idu,
-    input wcsren2_idu,
-    input [2:0] wcsraddr2_idu,
-    input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_idu,
-
-    output reg wcsren_exu,
-    output reg[2:0] wcsraddr_exu,
-    output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
-    output reg wcsren2_exu,
-    output reg[2:0] wcsraddr2_exu,
-    output reg[`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
-
-    // axi
-    input idu_exu_valid,
-    input mem_exu_ready,
-    output reg exu_idu_ready,
-    output reg exu_mem_valid
 );
+
+//=========================================================================
+// 流水线控制与寄存器
+//=========================================================================
+localparam PIPE_CTRL_W = 16;
+wire [PIPE_CTRL_W-1:0] ctrl_comb = {
+    is_branch_idu, is_jal_idu, is_jalr_idu, is_load_idu, is_store_idu,
+    is_csr_idu, is_ebreak_idu, fencei_idu,
+    mem_len_idu, alu_op_idu
+};
+
+reg [31:0]               pc_q_reg;
+reg [31:0]               imm_q_reg;
+reg [31:0]               val1_q_reg;
+reg [31:0]               val2_q_reg;
+reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_q_reg;
+
+reg                      wen_q_reg;
+reg [PIPE_CTRL_W-1:0]    ctrl_q_reg;
+reg                      valid_q_reg;
+
+// CSR相关寄存器
+reg                      wcsren_q_reg;
+reg [2:0]                wcsraddr_q_reg;
+reg [31:0]               wcsrdata_q_reg;
+
+//=========================================================================
+// 流水线握手逻辑（极简）
+//=========================================================================
+assign exu_idu_ready = ~valid_q_reg || (mem_exu_ready && exu_mem_valid);
+assign exu_mem_valid = valid_q_reg;
+
+always @(posedge clk or negedge rst) begin
+    if (!rst) begin
+        valid_q_reg     <= 1'b0;
+        pc_q_reg        <= 32'd0;
+        imm_q_reg       <= 32'd0;
+        val1_q_reg      <= 32'd0;
+        val2_q_reg      <= 32'd0;
+        waddr_q_reg     <= 5'd0;
+
+        wen_q_reg       <= 1'b0;
+        ctrl_q_reg      <= '0;
+        wcsren_q_reg    <= 1'b0;
+        wcsraddr_q_reg  <= 3'd0;
+        wcsrdata_q_reg  <= 32'd0;
+    end
+    else if ((mem_exu_ready && valid_q_reg)) begin
+        valid_q_reg     <= 1'b0;
+    end
+    else if (idu_exu_valid && exu_idu_ready) begin
+        valid_q_reg     <= 1'b1;
+        pc_q_reg        <= pc_idu;
+        imm_q_reg       <= imm_idu;
+        val1_q_reg      <= val_raddr1_idu;
+        val2_q_reg      <= val_raddr2_idu;
+        waddr_q_reg     <= waddr_idu;
+
+        wen_q_reg       <= wen_idu;
+        ctrl_q_reg      <= ctrl_comb;
+        wcsren_q_reg    <= wcsren_idu;
+        wcsraddr_q_reg  <= wcsraddr_idu;
+        wcsrdata_q_reg  <= wcsrdata_idu;
+    end
+end
+
+//=========================================================================
+// 控制信号解析（全部使用assign）
+//=========================================================================
+assign is_branch_exu = ctrl_q_reg[15];
+assign is_jal_exu    = ctrl_q_reg[14];
+assign is_jalr_exu   = ctrl_q_reg[13];
+assign is_load_exu   = ctrl_q_reg[12];
+assign is_store_exu  = ctrl_q_reg[11];
+assign is_csr_exu    = ctrl_q_reg[10];
+assign is_ebreak_exu = ctrl_q_reg[9];
+assign fencei_exu    = ctrl_q_reg[8];
+assign mem_len_exu   = ctrl_q_reg[7:5];
+assign mem_wmask_exu = mem_len_exu;  // store和load使用相同的长度编码
+assign alu_op_exu    = ctrl_q_reg[4:0];
+
+//=========================================================================
+// ALU操作数选择（RISC-V标准）
+//=========================================================================
+// src1选择：JAL/JALR使用PC，其他使用rs1
+assign alu_src1 = (is_jal_exu || is_jalr_exu) ? pc_q_reg : val1_q_reg;
+
+// src2选择：根据指令类型选择立即数或rs2
+wire use_imm = is_load_exu || is_store_exu || is_branch_exu ||
+               is_jal_exu || is_jalr_exu ||
+               (alu_op_exu != `ysyx_24080020_ALU_ADD || ctrl_q_reg[12:11] == 2'b00); // I-type指令
+
+assign alu_src2 = use_imm ? imm_q_reg : val2_q_reg;
+
+//=========================================================================
+// 分支/跳转逻辑（RISC-V标准）
+//=========================================================================
+// 分支条件判断, mem_len_exu == funct3
+wire branch_cond;
+assign branch_cond = (mem_len_exu == 3'b000) ? alu_zero :      // BEQ
+                     (mem_len_exu == 3'b001) ? ~alu_zero :     // BNE
+                     (mem_len_exu == 3'b100) ? ~alu_zero :     // BLT
+                     (mem_len_exu == 3'b101) ? alu_zero :      // BGE
+                     (mem_len_exu == 3'b110) ? ~alu_zero :     // BLTU
+                     (mem_len_exu == 3'b111) ? alu_zero :      // BGEU
+                     1'b0;
+
+// 跳转条件
+assign branch_taken_exu = is_jal_exu || is_jalr_exu || (is_branch_exu && branch_cond);
+assign branch_not_taken_exu = is_branch_exu && !branch_cond;
+
+// 目标地址计算
+wire [31:0] branch_base = is_jalr_exu ? val1_q_reg : pc_q_reg;
+wire [31:0] branch_target = branch_base + imm_q_reg;
+assign dnpc_exu = is_jalr_exu ? (branch_target & ~32'h1) : branch_target;
+
+//=========================================================================
+// 存储器接口
+//=========================================================================
+assign mem_addr_exu = alu_result;
+assign store_data_exu = val2_q_reg;
+
+//=========================================================================
+// 寄存器写回逻辑
+//=========================================================================
+// 写回数据选择：JAL/JALR写回PC+4，load指令后续由MEM阶段写回，其他写回ALU结果
+wire [31:0] pc_plus_4 = pc_q_reg + 32'd4;
+assign wdata_exu = (is_jal_exu || is_jalr_exu) ? pc_plus_4 :
+                   is_csr_exu ? val1_q_reg :  // CSR指令写回原寄存器值
+                   alu_result;                // ALU指令写回计算结果
+
+assign waddr_exu = waddr_q_reg;
+assign wen_exu = wen_q_reg && ~is_load_exu;  // load指令不在EXU阶段写回
+
+//=========================================================================
+// CSR写回
+//=========================================================================
+assign wcsren_exu = wcsren_q_reg;
+assign wcsraddr_exu = wcsraddr_q_reg;
+assign wcsrdata_exu = wcsrdata_q_reg;
+
+//=========================================================================
+// 输出信号
+//=========================================================================
+assign pc_exu = pc_q_reg;
+assign alu_result_exu = alu_result;
+
+//=========================================================================
+// DPI-C调试接口（可选）
+//=========================================================================
 `ifdef CONFIG_DPIC
-    import "DPI-C" function void statistics_exu_complete_calcu();
-    import "DPI-C" function void update_ftrace_dpi();
-    import "DPI-C" function void ebreak();
+import "DPI-C" function void statistics_exu_complete_calcu();
+import "DPI-C" function void update_ftrace_dpi();
+import "DPI-C" function void ebreak();
+import "DPI-C" function void statistics_idu_calculate_type();
+import "DPI-C" function void statistics_idu_load_type();
+import "DPI-C" function void statistics_idu_store_type();
+import "DPI-C" function void statistics_idu_csr_type();
+import "DPI-C" function void statistics_idu_jump_type();
 
-    import "DPI-C" function void statistics_idu_calculate_type();
-    import "DPI-C" function void statistics_idu_load_type();
-    import "DPI-C" function void statistics_idu_store_type();
-    import "DPI-C" function void statistics_idu_csr_type();
-    import "DPI-C" function void statistics_idu_jump_type();
+// DPI调用逻辑
+always @(posedge clk) begin
+    if (rst && valid_q_reg && mem_exu_ready) begin
+        statistics_exu_complete_calcu();
+        if (is_jal_exu || is_jalr_exu) update_ftrace_dpi();
+        if (is_ebreak_exu) ebreak();
+
+        // 指令类型统计
+        if (is_load_exu) statistics_idu_load_type();
+        else if (is_store_exu) statistics_idu_store_type();
+        else if (is_csr_exu) statistics_idu_csr_type();
+        else if (is_branch_exu || is_jal_exu || is_jalr_exu) statistics_idu_jump_type();
+        else statistics_idu_calculate_type();
+    end
+end
 `endif
-
-
-    wire [`ysyx_24080020_WIDTH-1:0] dnpc;
-    wire [`ysyx_24080020_WIDTH-1:0] branch_dnpc;
-    wire [`ysyx_24080020_WIDTH-1:0] branch_src1;
-    wire [`ysyx_24080020_WIDTH-1:0] branch_src2;
-
-    // reg [`ysyx_24080020_WIDTH-1:0] branch_src1_exu;
-
-
-    reg is_jalr_exu;
-    reg is_csrtype_exu;
-    reg alu_src2_con_exu;
-    // reg [`ysyx_24080020_WIDTH-1:0] dnpc_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] imm_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] src1_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] src2_exu;
-    reg [`ysyx_24080020_WIDTH-1:0] wdata_exu;
-
-
-    reg state;   // 0:idle;   1:wait_ready
-
-    reg cnt;
-
-    reg idu_exu_shake_hand;
-
-
-
-    // memory
-    assign maddr_exu = alu_out;
-    assign mwdata_exu = src2_exu;
-
-    // branch
-    assign dnpc = is_jalr_exu == 1'b1 ? (branch_dnpc & (~32'b1)) : branch_dnpc;
-    assign dnpc_new_exu = dnpc;
-    assign alu_out_exu = is_csrtype_exu == 1'b1 ? wdata_exu : alu_out;
-
-    // bus
-    always @(posedge clk) begin
-        if(!rst) begin
-            exu_idu_ready <= 1'b0;
-
-            idu_exu_shake_hand <= 1'b0;
-
-            fencei_exu <= 'b0;
-            is_dnpc_exu <= 'b0;
-            is_btype_exu <= 'b0;
-
-        end
-        else if(mem_exu_ready && exu_mem_valid && state) begin
-            // exu_mem_valid <= 1'b0;
-            is_dnpc_exu <= 'b0;
-            waddr_exu <= 'b0;
-            is_btype_exu <= 'b0;
-            fencei_exu <= 'b0;
-            `ifdef CONFIG_DPIC
-            statistics_exu_complete_calcu();
-            if(is_jal_exu || is_jalr_exu) begin
-                update_ftrace_dpi();
-            end
-            `endif
-        end
-        else if(idu_exu_shake_hand) begin
-            idu_exu_shake_hand <= 1'b0;
-
-        end
-        else if(idu_exu_valid) begin
-            if(exu_mem_valid) exu_idu_ready <=  1'b0;
-            else if(exu_idu_ready) begin
-                exu_idu_ready <= 'b0;
-                idu_exu_shake_hand <= 'b1;
-
-                // update all reg type control wire
-                wen_exu <= wen_idu;
-                waddr_exu <= waddr_idu;
-                wdata_exu <= wdata_idu;
-
-                mwen_exu <= mwen_idu;
-                mwmask_exu <= mwmask_idu;
-                mren_exu <= mren_idu;
-                mrtype_exu <= mrtype_idu;
-                mrlen_exu <= mrlen_idu;
-
-                // is_load_exu <= is_load_idu;
-                is_dnpc_exu <= is_dnpc_idu;
-                // branch_src1_exu <= branch_src1_idu;
-
-                alu_op_exu <= alu_op_idu;
-                alu_src2_con_exu <= alu_src2_con_idu;
-                imm_exu <= imm_idu;
-
-                src1_exu <= src1_idu;
-                src2_exu <= src2_idu;
-                // dnpc_exu <= dnpc_idu;
-                is_jalr_exu <= is_jalr_idu;
-                is_jal_exu <= is_jal_idu;
-                is_btype_exu <= is_btype_idu;
-
-                wcsren_exu <= wcsren_idu;
-                wcsraddr_exu <= wcsraddr_idu;
-                wcsrdata_exu <= wcsrdata_idu;
-                wcsren2_exu <= wcsren2_idu;
-                wcsraddr2_exu <= wcsraddr2_idu;
-                wcsrdata2_exu <= wcsrdata2_idu;
-
-                is_csrtype_exu <= is_csrtype_idu;
-
-                // cnt <= 1'b1;
-
-                fencei_exu <= fencei_idu;
-
-                pc_exu <= pc_idu;
-
-                `ifdef CONFIG_DPIC
-                is_ebreak_exu <= is_ebreak_idu;
-                if(is_ebreak_idu) ebreak();
-                if(mren_idu) statistics_idu_load_type();
-                else if(mwen_idu) statistics_idu_store_type();
-                else if(is_csrtype_idu) statistics_idu_csr_type();
-                else if(is_dnpc_idu) statistics_idu_jump_type();
-                else statistics_idu_calculate_type();
-                `endif
-
-            end
-            else begin
-                // shake hand successfully
-                exu_idu_ready <= 1'b1;
-            end
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            state <= 1'b0;
-        end
-        if(!state) begin
-            if(exu_mem_valid) state <= 1'b1;
-            else begin
-                // idle
-                state <= 1'b0;
-            end
-        end
-        else begin
-            if(mem_exu_ready) state <= 1'b0;
-            else state <= 1'b1;
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            cnt <= 1'b0;
-            // exu_mem_valid <= 1'b0;
-        end
-        else if(cnt == 1'b1) begin
-            // exu_mem_valid <= 1'b1;
-            cnt <= 1'b0;
-        end
-        else if(idu_exu_shake_hand) begin
-            cnt <= 1'b1;
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            exu_mem_valid <= 'b0;
-        end
-        else if(mem_exu_ready && exu_mem_valid && state) begin
-            exu_mem_valid <= 1'b0;
-        end
-        else if(cnt == 1'b1) begin
-            exu_mem_valid <= 1'b1;
-        end
-    end
-
-    assign alu_src1 = (is_jalr_exu | is_jal_exu) ? pc_exu : src1_exu;
-    assign alu_src2 = alu_src2_con_exu == 1'b0 ? src2_exu : imm_exu;
-
-    // assign branch_src1 = is_jalr_exu == 1'b1 ? branch_src1_exu :
-    assign branch_src1 = (is_jalr_exu | is_csrtype_exu) ? src1_exu : pc_exu;
-    assign branch_src2 = is_csrtype_exu ? 32'b0 : imm_exu;
-
-    assign branch_dnpc = branch_src1 + branch_src2;
-
 
 endmodule

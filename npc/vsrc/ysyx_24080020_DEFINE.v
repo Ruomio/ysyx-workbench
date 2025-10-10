@@ -36,13 +36,6 @@
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
 `define ysyx_24080020_MEM 10
-`define ysyx_24080020_CSR_WIDTH 12
-`define ysyx_24080020_MEPC_ADDR 12'h341
-`define ysyx_24080020_MSTATUS_ADDR 12'h300
-`define ysyx_24080020_MCAUSE_ADDR 12'h342
-`define ysyx_24080020_MTVEC_ADDR 12'h305
-`define ysyx_24080020_MVENDORID_ADDR 12'hf11
-`define ysyx_24080020_MARCHID_ADDR 12'hf12
 
 // reg
 `define ysyx_24080020_E_EXTERN
@@ -160,6 +153,14 @@
 `define ysyx_24080020_CSRRWI 3'b101
 `define ysyx_24080020_CSRRSI 3'b110
 `define ysyx_24080020_CSRRCI 3'b111
+
+`define ysyx_24080020_CSR_WIDTH 12
+`define ysyx_24080020_MEPC_ADDR 12'h341
+`define ysyx_24080020_MSTATUS_ADDR 12'h300
+`define ysyx_24080020_MCAUSE_ADDR 12'h342
+`define ysyx_24080020_MTVEC_ADDR 12'h305
+`define ysyx_24080020_MVENDORID_ADDR 12'hf11
+`define ysyx_24080020_MARCHID_ADDR 12'hf12
 
 // OTHER
 `define ysyx_24080020_LUI 7'b0110111
