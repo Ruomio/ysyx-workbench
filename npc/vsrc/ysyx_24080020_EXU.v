@@ -32,6 +32,7 @@ module ysyx_24080020_EXU (
     input  wire        is_ecall_idu,
     input  wire        is_auipc_idu,
     input  wire        is_i_type_idu,
+    input  wire        is_u_type_idu,
     input  wire        fencei_idu,
     input  wire [2:0]  mem_len_idu,
     input  wire [2:0]  mem_wmask_idu,
@@ -87,9 +88,9 @@ module ysyx_24080020_EXU (
 //=========================================================================
 // 流水线控制与寄存器
 //=========================================================================
-localparam PIPE_CTRL_W = 19;
+localparam PIPE_CTRL_W = 20;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
-    is_i_type_idu, is_auipc_idu,
+    is_u_type_idu, is_i_type_idu, is_auipc_idu,
     is_ecall_idu, is_branch_idu, is_jal_idu, is_jalr_idu, is_load_idu, is_store_idu,
     is_csr_idu, is_ebreak_idu, fencei_idu,
     mem_len_idu, alu_op_idu
@@ -171,7 +172,9 @@ wire        is_jal_exu;
 wire        is_jalr_exu;
 wire        is_auipc_exu;
 wire        is_i_type_exu;
+wire        is_u_type_exu;
 
+assign is_u_type_exu = ctrl_q_reg[19];
 assign is_i_type_exu = ctrl_q_reg[18];
 assign is_auipc_exu = ctrl_q_reg[17];
 assign is_ecall_exu = ctrl_q_reg[16];
@@ -194,7 +197,7 @@ assign alu_op_exu    = ctrl_q_reg[4:0];
 assign alu_src1 = (is_jal_exu || is_jalr_exu || is_auipc_exu) ? pc_q_reg : val1_q_reg;
 
 // src2选择：根据指令类型选择立即数或rs2
-wire use_imm = is_load_exu || is_store_exu ||
+wire use_imm = is_load_exu || is_store_exu || is_u_type_exu ||
                is_jal_exu || is_jalr_exu || is_auipc_exu || is_i_type_exu;
 
 assign alu_src2 = use_imm ? imm_q_reg : val2_q_reg;
