@@ -158,6 +158,7 @@ wire        is_jal_exu;
 wire        is_jalr_exu;
 wire        is_auipc_exu;
 
+assign is_auipc_exu = ctrl_q_reg[17];
 assign is_ecall_exu = ctrl_q_reg[16];
 assign is_branch_exu = ctrl_q_reg[15];
 assign is_jal_exu    = ctrl_q_reg[14];
