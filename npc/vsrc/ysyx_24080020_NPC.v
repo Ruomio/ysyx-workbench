@@ -450,7 +450,7 @@ module ysyx_24080020_NPC(
     );
 
     wire is_branch_idu, is_ecall_idu, is_jalr_idu, is_jal_idu, is_load_idu, is_store_idu,
-        is_csr_idu, fencei_idu;
+        is_csr_idu, fencei_idu, is_ebreak_idu;
     wire [2:0] mem_len_idu, mem_wmask_idu;
     wire [31:0] rcsrdata_idu;
 
@@ -561,8 +561,6 @@ module ysyx_24080020_NPC(
         .branch_taken_exu(branch_taken_exu),
         .branch_not_taken_exu(branch_not_taken_exu),
         .is_ebreak_exu(is_ebreak_exu),
-		.is_jal_exu(is_jal_exu),
-		.is_jalr_exu(is_jalr_exu),
 		.is_load_exu(is_load_exu),
 		.is_store_exu(is_store_exu),
 		// .is_csr_exu(is_csr_exu),
