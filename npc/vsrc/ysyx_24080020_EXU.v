@@ -132,9 +132,9 @@ always @(posedge clk) begin
         wcsraddr_q_reg  <= 3'd0;
         wcsrdata_q_reg  <= 32'd0;
     end
-    // else if ((mem_exu_ready && valid_q_reg)) begin
-    //     valid_q_reg     <= 1'b0;
-    // end
+    else if ((mem_exu_ready && valid_q_reg)) begin
+        waddr_q_reg     <= 'b0;
+    end
     else if (idu_exu_valid && exu_idu_ready) begin
         // valid_q_reg     <= 1'b1;
         pc_q_reg        <= pc_idu;
