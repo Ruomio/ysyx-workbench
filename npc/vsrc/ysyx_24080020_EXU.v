@@ -113,7 +113,8 @@ reg [31:0]               wcsrdata_q_reg;
 //=========================================================================
 // 流水线握手逻辑（极简）
 //=========================================================================
-assign exu_idu_ready = ~valid_q_reg || (mem_exu_ready && exu_mem_valid);
+// assign exu_idu_ready = ~valid_q_reg || (mem_exu_ready && exu_mem_valid);
+assign exu_idu_ready = ~valid_q_reg;
 assign exu_mem_valid = valid_q_reg;
 
 always @(posedge clk) begin
