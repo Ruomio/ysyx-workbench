@@ -101,8 +101,8 @@ wire is_csr    = (opcode == `ysyx_24080020_CSR_TYPE);
 wire is_fencei = (opcode == `ysyx_24080020_FENCEI_TYPE);
 wire is_ebreak = (inst_ifu == `ysyx_24080020_EBREAK);
 // 探测 ecall/mret
-wire is_ecall  = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 20'h0);
-wire is_mret   = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 20'h302);
+wire is_ecall  = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 12'h0);
+wire is_mret   = is_csr && (inst_ifu[`ysyx_24080020_IMM_I] == 12'h302);
 
 reg [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_comb;
 always @(*) begin
@@ -145,7 +145,7 @@ end
 // 3. REGFILE 端口（保持 2 读 1 写）
 //=========================================================================
 assign rs1 = inst_ifu[`ysyx_24080020_RS1];
-assign rs2 = (is_r_type || is_s_type || is_b_type) ? inst_ifu[`ysyx_24080020_RS2] : 5'd0;
+assign rs2 = (is_r_type || is_s_type || is_b_type) ? inst_ifu[`ysyx_24080020_RS2] : `ysyx_24080020_REG_WIDTH'd0;
 
 assign waddr_idu = inst_ifu[`ysyx_24080020_RD];
 assign wen_idu   = (is_r_type || is_i_type || is_u_type || is_j_type || is_jr_type || is_load_idu || is_csr_idu) &&

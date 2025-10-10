@@ -118,7 +118,7 @@ always @(posedge clk or negedge rst) begin
         imm_q_reg       <= 32'd0;
         val1_q_reg      <= 32'd0;
         val2_q_reg      <= 32'd0;
-        waddr_q_reg     <= 5'd0;
+        waddr_q_reg     <= `ysyx_24080020_REG_WIDTH'd0;
 
         wen_q_reg       <= 1'b0;
         ctrl_q_reg      <= '0;
@@ -229,8 +229,8 @@ assign wcsrdata_exu = wcsrdata_q_reg;
 // 输出信号
 //=========================================================================
 assign pc_exu = pc_q_reg;
-wire alu_result_exu;
-assign alu_result_exu = alu_result;
+// wire [31:0] alu_result_exu;
+// assign alu_result_exu = alu_result;
 
 //=========================================================================
 // DPI-C调试接口（可选）
