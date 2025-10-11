@@ -61,7 +61,7 @@ end
 
 assign arvalid = arvalid_q;   // 寄存器输出
 assign if_en_ready = ~arvalid_q;  // 反压信号
-wire ar_done      = arvalid_ifu & arready; // 不再环回
+wire ar_done      = arvalid & arready; // 不再环回
 
 
 // AXI 边带：单 beat，完全组合（与原文件一致）
