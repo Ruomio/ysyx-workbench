@@ -207,6 +207,7 @@ wire rdone = rvalid & rlast;
 // 5. 读数据写回（组合路径，不锁）
 //=========================================================================
 // 读数据：同一周期直接写回 mem_result_q
+reg [31:0] mrdata_mem;
 always @(*) begin
     case (mem_len_q)
         3'b000: mrdata_mem = {{24{rdata_shift[7]}},  rdata_shift[7:0]};   // LB
