@@ -664,7 +664,7 @@ module ysyx_24080020_NPC(
         .is_ecall_lsu(is_ecall_lsu),
 
         // axi-lite
-        .arvalid_reg(arvalid_mem),
+        .arvalid(arvalid_mem),
         .araddr(araddr_mem),
         .arid(arid_mem),
         .arlen(arlen_mem),
@@ -679,7 +679,7 @@ module ysyx_24080020_NPC(
         .rlast(rlast_mem),
         .rdata(rdata_mem),
 
-        .awvalid_reg(awvalid_mem),
+        .awvalid(awvalid_mem),
         .awid(awid_mem),
         .awlen(awlen_mem),
         .awsize(awsize_mem),
