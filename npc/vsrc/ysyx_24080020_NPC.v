@@ -451,7 +451,7 @@ module ysyx_24080020_NPC(
     );
 
     wire is_branch_idu, is_ecall_idu, is_jalr_idu, is_jal_idu, is_load_idu, is_store_idu,
-        is_csr_idu, fencei_idu, is_ebreak_idu, is_auipc_idu, is_i_type_idu, is_u_type_idu
+        is_csr_idu, fencei_idu, is_ebreak_idu, is_auipc_idu, is_i_type_idu, is_u_type_idu,
         is_mret_idu;
     wire [2:0] mem_len_idu, mem_wmask_idu;
     wire [31:0] rcsrdata_idu;
