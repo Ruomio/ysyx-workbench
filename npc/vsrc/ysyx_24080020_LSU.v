@@ -89,7 +89,11 @@ module ysyx_24080020_LSU (
 // 反压：本级空就能收
 assign mem_exu_ready = ~mem_valid_q;
 // 向下游：有数据就 valid
-assign mem_wb_valid  = mem_valid_q;
+assign mem_wb_valid  = mem_valid_q & all_done;
+
+wire w_done = !mwen_mem ? 1'b1 : (bvalid & bready);
+wire r_done = !mren_mem ? 1'b1 : (rvalid & rready & rlast);
+wire all_done = w_done | r_done;
 
 //=========================================================================
 // 2. 只锁 72 bit 控制向量（位宽已砍半）
@@ -181,35 +185,70 @@ end
 // 4. AXI-Full：单 beat，完全组合（不锁 valid）
 //=========================================================================
 // VALID 用组合逻辑（不锁）
-// assign arvalid = mren_exu & mem_exu_ready;
-assign arvalid = mren_exu & exu_mem_valid;
-assign awvalid = mwen_exu & mem_exu_ready;
-assign wvalid  = mwen_exu & mem_exu_ready;
-
-// 边带信号：只锁必要位（≤ 20 bit）
-reg [7:0]  arlen_q, awlen_q;
-reg        wlast_q;
-reg [3:0]  wstrb_q;
+reg arvalid_reg, awvalid_reg, wvalid_reg;
+reg [1:0] axi_state;
 
 always @(posedge clk) begin
-    if (!rst) begin
-        arlen_q <= 8'd0;
-        awlen_q <= 8'd0;
-        wlast_q <= 1'b0;
-        wstrb_q <= 4'd0;
+    if(rst) begin
+        arvalid_reg <= 'b0;
+        awvalid_reg <= 'b0;
+        wvalid_reg <= 'b0;
+        axi_state <= 'b0;
     end
-    else if (wb_mem_ready) begin
-        arlen_q <= 8'd0;      // 单 beat
-        awlen_q <= 8'd0;
-        wlast_q <= 1'b1;
-        wstrb_q <= mwmask_mem;
+    else begin
+        case(axi_state)
+            2'b00: begin
+                if(mem_exu_ready&(mren_mem | mwen_mem)) begin
+                    if(mren_mem) begin
+                        arvalid_reg <= 'b1;
+                        axi_state <= 'b01;
+                    end
+                    else begin
+                        awvalid_reg <= 'b1;
+                        wvalid_reg <= 'b1;
+                        axi_state <= 'b10;
+                    end
+                end
+            end
+            2'b01: begin
+                if(arvalid & arready) begin
+                    arvalid_reg <= 'b0;
+                    axi_state <= 'b11;
+                end
+            end
+            2'b10: begin
+                if(~(awvalid_reg | wvalid_reg)) begin
+                    axi_state <= 'b11;
+                end
+                else if(awvalid & awready) begin
+                    awvalid_reg <= 'b0;
+                end
+                else if(wvalid & wready) begin
+                    wvalid <= 'b0;
+                end
+            end
+            2'b11: begin
+                if(mem_wb_valid & wb_mem_ready) begin
+                    axi_state <= 'b00;
+                end
+            end
+        endcase
     end
 end
 
-assign arlen = arlen_q;
-assign awlen = awlen_q;
-assign wlast = wlast_q;
-assign wstrb = wstrb_q;
+
+// assign arvalid = mren_exu & mem_exu_ready;
+// assign awvalid = mwen_exu & mem_exu_ready;
+// assign wvalid  = mwen_exu & mem_exu_ready;
+assign arvalid = arvalid_reg;
+assign awvalid = awvalid_reg;
+assign wvalid  = wvalid_reg;
+
+
+assign arlen = 'b0;
+assign awlen = 'b0;
+assign wlast = 'b1;
+assign wstrb = mwmask_mem;
 
 // 其余 AXI 信号直接连组合
 assign arid   = 4'd0;
@@ -232,8 +271,6 @@ wire [31:0] rdata_shift = (maddr_mem[1:0] == 2'b00) ? rdata :
                           (maddr_mem[1:0] == 2'b10) ? rdata >> 16 :
                           rdata >> 24;
 
-// 读完成组合标志（不锁）
-wire rdone = rvalid & rlast;
 
 //=========================================================================
 // 5. 读数据写回（组合路径，不锁）
