@@ -13,11 +13,11 @@ module ysyx_24080020_IR(
     output reg inst_fin_valid,
     output reg [`ysyx_24080020_WIDTH-1:0] inst,
     input inst_fin_ready,
+    output reg [`ysyx_24080020_WIDTH-1:0] raddr_ir,
 
     // icache -> ir
     input special_pc_icache,
     input [`ysyx_24080020_WIDTH-1:0] raddr_icache,
-    output reg [`ysyx_24080020_WIDTH-1:0] raddr_ir,
     output reg special_pc_ir,
 
     output reg special_pc_o,

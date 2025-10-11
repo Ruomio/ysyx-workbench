@@ -96,7 +96,7 @@ module ysyx_24080020_IFU (
             //     //     flush_pipeline <= 'b0;
             //     // end
             // end
-            if(!ifu_idu_valid && idu_ifu_ready) begin
+            if(!ifu_idu_valid /*&& idu_ifu_ready*/) begin
                 inst_fin_ready <= 'b1;
 
                 if((raddr == correct_pc) && flush_pipeline && special_pc_i) begin
