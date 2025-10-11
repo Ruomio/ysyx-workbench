@@ -275,10 +275,10 @@ end
 
 always @(posedge clk) begin
     if(!rst) begin
-        skip_ref_mem <= 'b0;
+        mem_skip_ref_q <= 'b0;
     end
     else if(mem_wb_valid && wb_mem_ready) begin
-        skip_ref_mem <= 'b0;
+        mem_skip_ref_q <= 'b0;
     end
     else if(arvalid && arready) begin
         `ifdef ysyxSoCFull
@@ -289,7 +289,7 @@ always @(posedge clk) begin
             || araddr >= 32'hc0000000 && araddr < 32'hffffffff
             ) begin
             // skip uart keyboard etc.
-            skip_ref_mem <= 'b1;
+            mem_skip_ref_q <= 'b1;
         end
         `endif
         `ifdef ysyx_24080020_NPC
@@ -297,7 +297,7 @@ always @(posedge clk) begin
             || araddr >= 32'ha0000048 && araddr < 32'ha0000050
             ) begin
             // skip uart keyboard etc.
-            skip_ref_mem <= 'b1;
+            mem_skip_ref_q <= 'b1;
         end
         `endif
 
@@ -312,7 +312,7 @@ always @(posedge clk) begin
             || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
             ) begin
             // skip uart keyboard etc.
-            skip_ref_mem <= 'b1;
+            mem_skip_ref_q <= 'b1;
         end
         `endif
         `ifdef ysyx_24080020_NPC
@@ -320,7 +320,7 @@ always @(posedge clk) begin
             || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
             ) begin
             // skip uart keyboard etc.
-            skip_ref_mem <= 'b1;
+            mem_skip_ref_q <= 'b1;
         end
         `endif
 
