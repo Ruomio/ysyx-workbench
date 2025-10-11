@@ -1,29 +1,37 @@
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_LSU (
     input  wire        clk,
-    input  wire        rst_n,
-    // EXU <---> LSU
-    input  wire        exu_mem_valid,
-    output wire        mem_exu_ready,
-    output wire        mem_wb_valid,
-    input  wire        wb_mem_ready,
+    input  wire        rst,
+
+    `ifdef CONFIG_DPIC
+    output wire skip_ref_mem,
+
     input  wire [`ysyx_24080020_WIDTH-1:0] pc_exu,
     output wire [`ysyx_24080020_WIDTH-1:0] pc_mem,
     input  wire        is_dnpc_exu,
     output wire        is_dnpc_mem,
     input  wire [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
     output wire [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
+
+    `endif
+
+    // EXU <---> LSU
+    input  wire        exu_mem_valid,
+    output wire        mem_exu_ready,
+    output wire        mem_wb_valid,
+    input  wire        wb_mem_ready,
+
+    // LOAD STORE
     input  wire        mren_exu,
     input  wire [2:0]  mrlen_exu,
+
     input  wire        mwen_exu,
     input  wire [2:0]  mwmask_exu,
     input  wire [`ysyx_24080020_WIDTH-1:0] maddr_exu,
     input  wire [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
-    output wire        mren_mem,
-    output wire [2:0]  mrlen_mem,
-    output wire [3:0]  mwmask_mem,
-    output wire [`ysyx_24080020_WIDTH-1:0] maddr_mem,
-    output wire [`ysyx_24080020_WIDTH-1:0] mwdata_mem,
+
+    output wire mren_mem,
+
     // CSR 1 写口（单口）
     input  wire        wcsren_exu,
     input  wire [2:0]  wcsraddr_exu,
@@ -31,6 +39,7 @@ module ysyx_24080020_LSU (
     output wire        wcsren_mem,
     output wire [2:0]  wcsraddr_mem,
     output wire [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
+
     // REGFILE 回写
     input  wire        wen_exu,
     input  wire [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
@@ -38,9 +47,11 @@ module ysyx_24080020_LSU (
     output wire        wen_mem,
     output wire [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
     output wire [`ysyx_24080020_WIDTH-1:0] wdata_mem,
-    // 边带
+
+    // other
     input  wire        is_ecall_exu,
     output wire        is_ecall_lsu,
+
     // AXI-Full（单 beat，完全组合）
     output wire        arvalid,
     output wire [3:0]  arid,
@@ -114,8 +125,8 @@ assign is_dnpc_mem = mem_valid_q & mem_ecall_q; // 只有 ecall 才跳转
 //=========================================================================
 // 3. 一级寄存器更新（经典 valid-ready）
 //=========================================================================
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
+always @(posedge clk) begin
+    if (!rst) begin
         mem_valid_q    <= 1'b0;
         mem_pc_q       <= 32'd0;
         mem_result_q   <= 32'd0;
@@ -149,7 +160,7 @@ reg        wlast_q;
 reg [3:0]  wstrb_q;
 
 always @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rst) begin
         arlen_q <= 8'd0;
         awlen_q <= 8'd0;
         wlast_q <= 1'b0;
