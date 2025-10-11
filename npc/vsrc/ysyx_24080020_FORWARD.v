@@ -14,7 +14,6 @@ module ysyx_24080020_FORWARD(
     input [`ysyx_24080020_WIDTH-1:0] rd_data_lsu,
     // input rd_en_lsu,
 
-    input is_load,
     // input [`ysyx_24080020_WIDTH-1:0] mrdata,
     // input fin_load,
 
@@ -25,7 +24,8 @@ module ysyx_24080020_FORWARD(
     input [`ysyx_24080020_WIDTH-1:0] val_raddr1,
     input [`ysyx_24080020_WIDTH-1:0] val_raddr2,
 
-    output need_stall,
+    // input is_load,
+    // output need_stall,
     output [`ysyx_24080020_WIDTH-1:0] rd_data1_forward,
     output [`ysyx_24080020_WIDTH-1:0] rd_data2_forward,
     output rs1_conflict,
@@ -53,7 +53,7 @@ module ysyx_24080020_FORWARD(
                             : val_raddr2;
 
 
-    assign need_stall = is_load;
+    // assign need_stall = is_load;
     // assign need_stall_imme = is_load;
 
     // always @(posedge clk) begin

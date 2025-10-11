@@ -29,7 +29,7 @@ module ysyx_24080020_LSU (
     // input  wire [2:0]  mwmask_exu,
     // input  wire [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
 
-    output wire mren_mem,
+    output wire wait_load,
 
     // CSR 1 写口（单口）
     input  wire        wcsren_exu,
@@ -112,7 +112,9 @@ reg                                mem_mwen_q;
 reg [2:0]                          mem_len_q;        // 3 bit mwlen is same as mrlen
 reg [31:0]                         mem_maddr_q;     // 32 bit（读数据或写数据）
 reg [31:0]                         mem_result_q;     // 32 bit（读数据或写数据）
-// 总锁存位宽 x bit
+
+// stall_pipeline
+reg                                mem_wait_load_q;
 
 wire mwen_mem  ; 
 wire [2:0] mrlen_mem ; 
@@ -121,6 +123,7 @@ wire [31:0] maddr_mem ;
 wire [31:0] mwdata_mem; 
 
 // 组合输出：直接连 Q
+assign wait_load  = mem_wait_load_q;
 assign mren_mem   = mem_mren_q;
 assign mwen_mem   = mem_mwen_q;
 assign mrlen_mem  = mem_len_q;
@@ -162,9 +165,10 @@ always @(posedge clk) begin
     end
     else if(mem_wb_valid && wb_mem_ready) begin
         mem_valid_q    <= 1'b0;
-        mem_mren_q     <= 'b0;
+        mem_wait_load_q<= 1'b0;
     end
     else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
+        mem_wait_load_q<= mren_exu;
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
         mem_mren_q     <= mren_exu;
         mem_mwen_q     <= mwen_exu;
