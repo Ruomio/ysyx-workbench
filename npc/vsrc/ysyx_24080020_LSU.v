@@ -169,6 +169,8 @@ always @(posedge clk) begin
     end
     else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
+        mem_mren_q     <= mren_exu;
+        mem_mwen_q     <= mwen_exu;
         mem_maddr_q    <= maddr_exu;
         mem_result_q   <= wdata_exu; // 读/写结果
         mem_len_q      <= mem_len_exu;
