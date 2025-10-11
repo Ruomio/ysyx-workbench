@@ -154,8 +154,8 @@ end
 assign rs1 = (is_u_type) ? 'b0 : inst_ifu[`ysyx_24080020_RS1];
 assign rs2 = (is_r_type || is_s_type || is_b_type) ? inst_ifu[`ysyx_24080020_RS2] : `ysyx_24080020_REG_WIDTH'd0;
 
-assign waddr_idu = (is_s_type || is_b_type) ? 'h0 : inst_ifu[`ysyx_24080020_RD]; // b-type and s-type are no rd;
-assign wen_idu   = (is_r_type || is_i_type || is_u_type || is_j_type || is_jr_type || is_csr) &&
+assign waddr_idu = (is_store_idu || is_branch_idu) ? 'h0 : inst_ifu[`ysyx_24080020_RD]; // b-type and s-type are no rd;
+assign wen_idu   = (is_r_type_idu || is_i_type_idu || is_u_type_idu || is_jal_idu || is_jalr_idu || is_csr_idu) &&
                    (inst_ifu[`ysyx_24080020_RD] != `ysyx_24080020_REG_WIDTH'd0);
 
 //=========================================================================
@@ -194,7 +194,9 @@ assign wcsren_idu      = is_csr;         // csrrw/csrrs/ecall/mret
 //=========================================================================
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
+wire is_r_type_idu;
 
+assign is_r_type_idu = ctrl_q[52];
 assign is_mret_idu = ctrl_q[51];
 assign is_u_type_idu = ctrl_q[50];
 assign is_i_type_idu = ctrl_q[49];
@@ -219,22 +221,22 @@ assign imm_idu = ctrl_q[35:4];
 //=========================================================================
 // ecall/mret 拆 2 拍：状态机 + 自动 hold
 //=========================================================================
-reg        ecall_phase;      // 0: 第 1 拍（mepc） 1: 第 2 拍（mcause）
-reg [31:0] mcause_hold;      // 暂存 mcause 值
+// reg        ecall_phase;      // 0: 第 1 拍（mepc） 1: 第 2 拍（mcause）
+// reg [31:0] mcause_hold;      // 暂存 mcause 值
 // wire       do_ecall  = is_ecall || is_mret;   // 需要拆 2 拍的指令
-wire       do_ecall  = is_ecall;   // 需要拆 2 拍的指令
-wire       last_phase = ecall_phase;
+// wire       do_ecall  = is_ecall;   // 需要拆 2 拍的指令
+// wire       last_phase = ecall_phase;
 
 // 对外通知：正在拆第 2 拍，请保持 CSR 写口
-wire         csr_hold;
-assign csr_hold = ecall_phase;
+// wire         csr_hold;
+// assign csr_hold = ecall_phase;
 
 //=========================================================================
 // 6. 极简流水线握手 & 锁存（）
 //=========================================================================
-localparam PIPE_CTRL_W = 52;
+localparam PIPE_CTRL_W = 53;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
-    is_mret, is_u_type, is_i_type, is_auipc,
+    is_r_type_idu, is_mret, is_u_type, is_i_type, is_auipc,
     is_ecall, is_b_type, is_j_type, is_jr_type,
     is_load_type, is_s_type, is_csr, is_fencei, is_ebreak,
     funct3, imm_comb, alu_op_comb
@@ -250,7 +252,7 @@ assign idu_ifu_ready = ~valid_q && !need_stall;
 assign idu_exu_valid = valid_q && !flush_pipeline;
 
 // 写 CSR 第 1 拍信号（组合）
-wire ecall_write1 = do_ecall && !ecall_phase;
+// wire ecall_write1 = do_ecall && !ecall_phase;
 
 always @(posedge clk) begin
     if (!rst) begin
@@ -259,21 +261,21 @@ always @(posedge clk) begin
         ctrl_q      <= '0;
         // val1_q      <= 32'd0;
         // val2_q      <= 32'd0;
-        ecall_phase <= 1'b0;
+        // ecall_phase <= 1'b0;
         mcause_hold <= 32'd0;
     end
     else if ((exu_idu_ready && valid_q) || flush_pipeline) begin
         valid_q     <= 1'b0;
-        ecall_phase <= 1'b0;
+        // ecall_phase <= 1'b0;
     end
-    else if (valid_q && do_ecall && !ecall_phase) begin
-        // ecall/mret 第 1 拍完成，进入第 2 拍
-        ecall_phase <= 1'b1;
-    end
-    else if (valid_q && ecall_phase) begin
-        // 第 2 拍：写 mcause 完成
-        ecall_phase <= 1'b0;
-    end
+    // else if (valid_q && do_ecall && !ecall_phase) begin
+    //     // ecall/mret 第 1 拍完成，进入第 2 拍
+    //     ecall_phase <= 1'b1;
+    // end
+    // else if (valid_q && ecall_phase) begin
+    //     // 第 2 拍：写 mcause 完成
+    //     ecall_phase <= 1'b0;
+    // end
     else if (ifu_idu_valid && idu_ifu_ready && !need_stall) begin
         // 新指令进入
         valid_q     <= 1'b1;
@@ -283,13 +285,13 @@ always @(posedge clk) begin
         val2_q      <= val_raddr2;
         rcsr_q      <= rcsrdata;
 
-        if (do_ecall) begin
-            ecall_phase <= 1'b0;          // 开始第 1 拍
-            mcause_hold <= (is_ecall) ? 32'd11 : 32'd3;   // ecall=11, mret=3
-        end
-        else begin
-            ecall_phase <= 1'b0;
-        end
+        // if (do_ecall) begin
+        //     ecall_phase <= 1'b0;          // 开始第 1 拍
+        //     mcause_hold <= (is_ecall) ? 32'd11 : 32'd3;   // ecall=11, mret=3
+        // end
+        // else begin
+        //     ecall_phase <= 1'b0;
+        // end
     end
 end
 
