@@ -262,7 +262,7 @@ always @(posedge clk) begin
         // val1_q      <= 32'd0;
         // val2_q      <= 32'd0;
         // ecall_phase <= 1'b0;
-        mcause_hold <= 32'd0;
+        // mcause_hold <= 32'd0;
     end
     else if ((exu_idu_ready && valid_q) || flush_pipeline) begin
         valid_q     <= 1'b0;
