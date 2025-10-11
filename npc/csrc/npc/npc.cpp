@@ -458,11 +458,6 @@ void exec_npc(uint64_t n) {
 }
 
 void free_npc() {
-#if defined (CONFIG_LIGHTSSS)
-  if(lightsss.is_child()) {
-    // return;
-  }
-#endif
 
   if(top) {
     top->final();
@@ -474,6 +469,11 @@ void free_npc() {
     tfp->close();
     delete tfp;
     tfp = NULL;
+  }
+#endif
+#if defined (CONFIG_LIGHTSSS)
+  if(lightsss.is_child()) {
+    return;
   }
 #endif
   if(contextp) {
