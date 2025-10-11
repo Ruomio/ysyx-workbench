@@ -1,5 +1,5 @@
 `include "ysyx_24080020_DEFINE.v"
-module ysyx_24080020_CLINT_opt (
+module ysyx_24080020_CLINT (
     input  wire        clk,
     input  wire        rst_n,
     // AXI-Full（单 beat，完全组合）
