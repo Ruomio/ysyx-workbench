@@ -451,7 +451,8 @@ module ysyx_24080020_NPC(
     );
 
     wire is_branch_idu, is_ecall_idu, is_jalr_idu, is_jal_idu, is_load_idu, is_store_idu,
-        is_csr_idu, fencei_idu, is_ebreak_idu, is_auipc_idu, is_i_type_idu, is_u_type_idu;
+        is_csr_idu, fencei_idu, is_ebreak_idu, is_auipc_idu, is_i_type_idu, is_u_type_idu
+        is_mret_idu;
     wire [2:0] mem_len_idu, mem_wmask_idu;
     wire [31:0] rcsrdata_idu;
 
@@ -492,6 +493,7 @@ module ysyx_24080020_NPC(
 		// .wcsrdata2_idu(wcsrdata2_idu),
 
         // other control signal
+        .is_mret_idu(is_mret_idu),
         .is_ecall_idu(is_ecall_idu),
 		.is_ebreak_idu(is_ebreak_idu),
 		.alu_op_idu(alu_op_idu),
@@ -539,6 +541,7 @@ module ysyx_24080020_NPC(
         .pc_idu(pc_idu),
         .imm_idu(imm_idu),
         .alu_op_idu(alu_op_idu),
+        .is_mret_idu(is_mret_idu),
         .is_ecall_idu(is_ecall_idu),
         .is_ebreak_idu(is_ebreak_idu),
 		.is_branch_idu(is_branch_idu),
@@ -563,6 +566,7 @@ module ysyx_24080020_NPC(
         .wcsren_idu(wcsren_idu),
         .wcsraddr_idu(wcsraddr_idu),
         .wcsrdata_idu(wcsrdata_idu),
+		.rcsrdata_idu(rcsrdata_idu),
 
 
         // .alu_result_exu(alu_result_exu),
@@ -603,6 +607,7 @@ module ysyx_24080020_NPC(
 
     );
 
+    wire is_ecall_lsu;
 
     ysyx_24080020_LSU u_lsu(
         .clk(clk),
@@ -652,6 +657,10 @@ module ysyx_24080020_NPC(
         .wen_mem(wen_mem),
         .waddr_mem(waddr_mem),
         .wdata_mem(wdata_mem),
+
+        // oter control
+        .is_ecall_exu(is_ecall_exu),
+        .is_ecall_lsu(is_ecall_lsu),
 
         // axi-lite
         .arvalid_reg(arvalid_mem),
@@ -724,6 +733,7 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
+        .is_ecall_lsu(is_ecall_lsu),
         .wcsren_mem(wcsren_mem),
         .wcsraddr_mem(wcsraddr_mem),
         .wcsrdata_mem(wcsrdata_mem),

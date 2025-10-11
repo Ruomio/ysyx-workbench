@@ -50,6 +50,9 @@ module ysyx_24080020_LSU(
     output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
     output [`ysyx_24080020_WIDTH-1:0] wdata_mem,
 
+    // others
+    input wire is_ecall_exu,
+    output reg is_ecall_lsu,
 
 
     // axi-full
@@ -249,6 +252,7 @@ module ysyx_24080020_LSU(
                 wcsrdata_mem <= wcsrdata_exu;
 
                 // fencei_mem <= fencei_exu;
+                is_ecall_lsu <= is_ecall_exu;
 
                 next_inst <= 'b0;
 

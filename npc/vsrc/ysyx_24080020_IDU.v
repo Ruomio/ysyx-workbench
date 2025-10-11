@@ -40,6 +40,7 @@ module ysyx_24080020_IDU (
     // output wire [31:0] wcsrdata2_idu,
     // 其余控制
     output wire [`ysyx_24080020_ALU_OP_WIDTH-1:0] alu_op_idu,
+    output wire        is_mret_idu,
     output wire        is_ecall_idu,
     output wire        is_ebreak_idu,
     output wire [31:0] imm_idu,
@@ -162,15 +163,18 @@ assign wen_idu   = (is_r_type || is_i_type || is_u_type || is_j_type || is_jr_ty
 //=========================================================================
 wire [11:0] csr_imm = inst_ifu[`ysyx_24080020_IMM_I];
 
+// csrs[0] = mepc, csrs[1] = mstatus, csrs[2] = mcause, csrs[3] = mtvec, // csrs[4] = MVENDORID, csrs[5] = MARCHID
 // 读口直接连
-assign rcsraddr        = (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
+assign rcsraddr        = is_ecall ? 3'd3 :
+                            (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
                             (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd1 :
                             (csr_imm == `ysyx_24080020_MCAUSE_ADDR) ? 3'd2 :
                             (csr_imm == `ysyx_24080020_MTVEC_ADDR) ? 3'd3 :
                             (csr_imm == `ysyx_24080020_MVENDORID_ADDR) ? 3'd4 :
                             (csr_imm == `ysyx_24080020_MARCHID_ADDR) ? 3'd5 : 3'd0;
 // 写口 1
-assign wcsraddr_idu    = (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
+assign wcsraddr_idu    =  is_mret ? 3'd1 :
+                            (csr_imm == `ysyx_24080020_MEPC_ADDR) ? 3'd0 :
                             (csr_imm == `ysyx_24080020_MSTATUS_ADDR) ? 3'd1 :
                             (csr_imm == `ysyx_24080020_MCAUSE_ADDR) ? 3'd2 :
                             (csr_imm == `ysyx_24080020_MTVEC_ADDR) ? 3'd3 :
@@ -187,6 +191,7 @@ assign wcsren_idu      = (is_csr && (funct3 != 3'b000 && funct3 != 3'b100)) // C
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
 
+assign is_mret_idu = ctrl_q[51];
 assign is_u_type_idu = ctrl_q[50];
 assign is_i_type_idu = ctrl_q[49];
 assign is_auipc_idu = ctrl_q[48];
@@ -223,9 +228,9 @@ assign csr_hold = ecall_phase;
 //=========================================================================
 // 6. 极简流水线握手 & 锁存（）
 //=========================================================================
-localparam PIPE_CTRL_W = 51;
+localparam PIPE_CTRL_W = 52;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
-    is_u_type, is_i_type, is_auipc,
+    is_mret, is_u_type, is_i_type, is_auipc,
     is_ecall, is_b_type, is_j_type, is_jr_type,
     is_load_type, is_s_type, is_csr, is_fencei, is_ebreak,
     funct3, imm_comb, alu_op_comb

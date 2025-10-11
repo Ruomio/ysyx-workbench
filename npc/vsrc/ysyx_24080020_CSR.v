@@ -5,6 +5,7 @@ module ysyx_24080020_CSR
     input rst,
 
     //csr
+    input is_ecall_lsu,
     input wcsren_mem,
     input [2:0] wcsraddr_mem,
     input [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
@@ -29,9 +30,10 @@ module ysyx_24080020_CSR
     wire [`ysyx_24080020_WIDTH-1:0] csr_mvendorid, csr_marchid;
 
     // 精简的流水线寄存器
-    reg csr1_wen_wb, csr2_wen_wb;
-    reg [2:0] csr1_addr_wb, csr2_addr_wb;
-    reg [`ysyx_24080020_WIDTH-1:0] csr1_data_wb, csr2_data_wb;
+    reg csr1_wen_wb;
+    reg [2:0] csr1_addr_wb;
+    reg [`ysyx_24080020_WIDTH-1:0] csr1_data_wb;
+    reg is_ecall_wbu;
 
     assign csr_mvendorid = 32'h79737978;
     assign csr_marchid = 32'h16f6e94;
@@ -39,14 +41,17 @@ module ysyx_24080020_CSR
     always @(posedge clk) begin
         if(!rst) begin
         end
+        if(is_ecall_wbu) begin
+            is_ecall_wbu <= 'b0;
+            csr1_addr_wb <= 'd2;
+            csr1_data_wb <= 'hb;
+        end
         else if(mem_wb_valid && wb_mem_ready) begin
             // CSR信号
             csr1_wen_wb <= wcsren_mem;
             csr1_addr_wb <= wcsraddr_mem;
             csr1_data_wb <= wcsrdata_mem;
-            // csr2_wen_wb <= wcsren2_mem;
-            // csr2_addr_wb <= wcsraddr2_mem;
-            // csr2_data_wb <= wcsrdata2_mem;
+            is_ecall_wbu <= is_ecall_lsu;
         end
     end
 

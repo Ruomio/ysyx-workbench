@@ -28,6 +28,7 @@ module ysyx_24080020_EXU (
     input  wire        is_load_idu,
     input  wire        is_store_idu,
     input  wire        is_csr_idu,
+    input  wire        is_mret_idu,
     input  wire        is_ebreak_idu,
     input  wire        is_ecall_idu,
     input  wire        is_auipc_idu,
@@ -47,6 +48,7 @@ module ysyx_24080020_EXU (
     input  wire        wcsren_idu,
     input  wire [2:0]  wcsraddr_idu,
     input  wire [31:0] wcsrdata_idu,
+    input  wire [31:0] rcsrdata_idu,
 
     // 输出到MEM/WB的信号
     output wire [`ysyx_24080020_WIDTH-1:0] pc_exu,
@@ -88,9 +90,9 @@ module ysyx_24080020_EXU (
 //=========================================================================
 // 流水线控制与寄存器
 //=========================================================================
-localparam PIPE_CTRL_W = 19;
+localparam PIPE_CTRL_W = 20;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
-    is_u_type_idu, is_i_type_idu, is_auipc_idu,
+    is_mret_idu, is_u_type_idu, is_i_type_idu, is_auipc_idu,
     is_ecall_idu, is_branch_idu, is_jal_idu, is_jalr_idu, is_load_idu, is_store_idu,
     is_csr_idu, is_ebreak_idu, fencei_idu,
     mem_len_idu, alu_op_idu
@@ -110,6 +112,7 @@ reg                      valid_q_reg;
 reg                      wcsren_q_reg;
 reg [2:0]                wcsraddr_q_reg;
 reg [31:0]               wcsrdata_q_reg;
+reg [31:0]               rcsrdata_q_reg;
 
 //=========================================================================
 // 流水线握手逻辑（极简）
@@ -149,6 +152,7 @@ always @(posedge clk) begin
         wcsren_q_reg    <= wcsren_idu;
         wcsraddr_q_reg  <= wcsraddr_idu;
         wcsrdata_q_reg  <= wcsrdata_idu;
+        rcsrdata_q_reg  <= rcsrdata_idu;
     end
 end
 always @(posedge clk) begin
@@ -173,7 +177,9 @@ wire        is_jalr_exu;
 wire        is_auipc_exu;
 wire        is_i_type_exu;
 wire        is_u_type_exu;
+wire        is_mret_exu;
 
+assign is_mret_exu = ctrl_q_reg[19];
 assign is_u_type_exu = ctrl_q_reg[18];
 assign is_i_type_exu = ctrl_q_reg[17];
 assign is_auipc_exu = ctrl_q_reg[16];
@@ -216,12 +222,14 @@ assign branch_cond = (mem_len_exu == 3'b000) ? alu_zero :      // BEQ
                      1'b0;
 
 // 跳转条件
-assign branch_taken_exu = is_jal_exu || is_jalr_exu || (is_branch_exu && branch_cond);
+assign branch_taken_exu = is_jal_exu || is_jalr_exu || (is_branch_exu && branch_cond)
+                            || is_ecall_exu || is_mret_exu;
 assign branch_not_taken_exu = is_branch_exu && !branch_cond;
 
 // 目标地址计算
 wire [31:0] branch_base = is_jalr_exu ? val1_q_reg : pc_q_reg;
-wire [31:0] branch_target = branch_base + imm_q_reg;
+wire [31:0] branch_target = (is_mret_exu|is_ecall_exu) ? rcsrdata_q_reg :
+                                (branch_base + imm_q_reg);
 assign dnpc_exu = is_jalr_exu ? (branch_target & ~32'h1) : branch_target;
 
 //=========================================================================
