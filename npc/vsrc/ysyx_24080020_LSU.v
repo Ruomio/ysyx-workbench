@@ -106,11 +106,11 @@ reg        mem_ecall_q;      // 1 bit
 
 // 组合输出：直接连 Q
 assign mren_mem   = mem_valid_q & (mem_len_q != 3'd0);
-assign mwen_mem   = mem_valid_q & (mem_wmask_q != 4'd0);
-assign mrlen_mem  = mem_len_q;
-assign mwmask_mem = mem_wmask_q;
-assign maddr_mem  = mem_result_q;   // 地址来自 ALU
-assign mwdata_mem = mem_result_q;   // 写数据来自 ALU
+wire mwen_mem   = mem_valid_q & (mem_wmask_q != 4'd0);
+wire mrlen_mem  = mem_len_q;
+wire mwmask_mem = mem_wmask_q;
+wire maddr_mem  = mem_result_q;   // 地址来自 ALU
+wire mwdata_mem = mem_result_q;   // 写数据来自 ALU
 assign wcsren_mem = mem_csr_wen_q;
 assign wcsraddr_mem = 3'd0;         // 固定地址，边带区分
 assign wcsrdata_mem = mem_result_q;
