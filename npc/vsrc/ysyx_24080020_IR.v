@@ -46,18 +46,21 @@ assign special_pc_o  = special_pc_i;
 // 2. 经典 valid-ready 握手（零状态机）
 //=========================================================================
 // 反压：本级空就能收
+assign if_en_ready = ~arvalid;
+// AXI valid：组合逻辑，握手后立即拉低
+assign arvalid = if_en_valid & if_en_ready;
 
-reg arvalid_q;
-
-always @(posedge clk) begin
-    if (!rst)
-        arvalid_q <= 1'b0;
-    else if (arready)                       // 握手成功才更新
-        arvalid_q <= if_en_valid & ~arvalid_q; // 请求且未发
-end
-
-assign arvalid = arvalid_q;               // 寄存器输出
-assign if_en_ready = ~arvalid_q;          // 反压信号
+// reg arvalid_q;
+//
+// always @(posedge clk) begin
+//     if (!rst)
+//         arvalid_q <= 1'b0;
+//     else if (arready)                       // 握手成功才更新
+//         arvalid_q <= if_en_valid & ~arvalid_q; // 请求且未发
+// end
+//
+// assign arvalid = arvalid_q;               // 寄存器输出
+// assign if_en_ready = ~arvalid_q;          // 反压信号
 
 // AXI 边带：单 beat，完全组合（与原文件一致）
 assign arburst = 2'b01;   // INCR
