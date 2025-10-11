@@ -68,6 +68,7 @@ module ysyx_24080020_IFU (
         end
         else if(ifu_idu_valid && idu_ifu_ready) begin
             ifu_idu_valid <= 1'b0;
+            inst_fin_ready<= 'b1;
         end
         else if(inst_fin_valid && inst_fin_ready) begin
             inst_fin_ready <= 'b0;
