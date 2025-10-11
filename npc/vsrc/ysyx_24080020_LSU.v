@@ -93,7 +93,7 @@ assign mem_wb_valid  = mem_valid_q & all_done;
 
 wire w_done = (bvalid & bready);
 wire r_done = (rvalid & rready & rlast);
-wire all_done = (mwen_mem & w_done) | (mren_mem & r_done);
+wire all_done = (~(mwen_mem | mren_mem)) ? 'b1 : (mwen_mem & w_done) | (mren_mem & r_done);
 
 //=========================================================================
 // 2. 只锁 72 bit 控制向量（位宽已砍半）
