@@ -62,8 +62,8 @@ module ysyx_24080020_EXU (
     output wire        is_ecall_exu,
     output wire        fencei_exu,
     output wire [2:0]  mem_len_exu,
-    output wire [2:0]  mem_wmask_exu,
-    output wire [`ysyx_24080020_WIDTH-1:0] store_data_exu,
+    // output wire [2:0]  mem_wmask_exu,
+    // output wire [`ysyx_24080020_WIDTH-1:0] store_data_exu,
     output wire [`ysyx_24080020_WIDTH-1:0] mem_addr_exu,
 
     // 寄存器写回
@@ -193,7 +193,7 @@ assign is_csr_exu    = ctrl_q_reg[9];
 assign is_ebreak_exu = ctrl_q_reg[8];
 assign fencei_exu    = ctrl_q_reg[7];
 assign mem_len_exu   = ctrl_q_reg[6:4];
-assign mem_wmask_exu = mem_len_exu;  // store和load使用相同的长度编码
+// assign mem_wmask_exu = mem_len_exu;  // store和load使用相同的长度编码
 assign alu_op_exu    = ctrl_q_reg[3:0];
 
 //=========================================================================
@@ -236,7 +236,8 @@ assign dnpc_exu = is_jalr_exu ? (branch_target & ~32'h1) : branch_target;
 // 存储器接口
 //=========================================================================
 assign mem_addr_exu = alu_result;
-assign store_data_exu = val2_q_reg;
+// store_data pass by wdata_exu
+// assign store_data_exu = val2_q_reg;
 
 //=========================================================================
 // 寄存器写回逻辑
@@ -245,6 +246,7 @@ assign store_data_exu = val2_q_reg;
 wire [31:0] pc_plus_4 = pc_q_reg + 32'd4;
 assign wdata_exu = (is_jal_exu || is_jalr_exu) ? pc_plus_4 :
                    is_csr_exu ? rcsrdata_q_reg :  // CSR指令写回原寄存器值
+                   (is_store_exu) ? val2_q_reg :  // store 
                    alu_result;                // ALU指令写回计算结果
 
 assign waddr_exu = waddr_q_reg;

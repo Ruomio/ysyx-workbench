@@ -581,8 +581,8 @@ module ysyx_24080020_NPC(
 		// .is_csr_exu(is_csr_exu),
 		.fencei_exu(fencei_exu),
 		.mem_len_exu(mem_len_exu),
-		.mem_wmask_exu(mem_wmask_exu),
-		.store_data_exu(store_data_exu),
+		// .mem_wmask_exu(mem_wmask_exu),
+		// .store_data_exu(store_data_exu),
 		.mem_addr_exu(mem_addr_exu),
 
         .wen_exu(wen_exu),
@@ -635,11 +635,11 @@ module ysyx_24080020_NPC(
 
         // Load Store
         .mren_exu(is_load_exu),
-        .mrlen_exu(mem_len_exu),
         .mwen_exu(is_store_exu),
-        .mwmask_exu(mem_wmask_exu),
+        .mem_len_exu(mem_len_exu),
         .maddr_exu(mem_addr_exu),
-        .mwdata_exu(store_data_exu),
+        // .mwmask_exu(mem_wmask_exu),
+        //.mwdata_exu(store_data_exu),
         .mren_mem(mren_mem),
 
         // CSR
