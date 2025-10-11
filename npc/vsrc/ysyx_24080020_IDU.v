@@ -154,9 +154,13 @@ end
 assign rs1 = (is_u_type) ? 'b0 : inst_ifu[`ysyx_24080020_RS1];
 assign rs2 = (is_r_type || is_s_type || is_b_type) ? inst_ifu[`ysyx_24080020_RS2] : `ysyx_24080020_REG_WIDTH'd0;
 
-assign waddr_idu = (is_store_idu || is_branch_idu) ? 'h0 : inst_ifu[`ysyx_24080020_RD]; // b-type and s-type are no rd;
-assign wen_idu   = (is_r_type_idu || is_i_type_idu || is_u_type_idu || is_jal_idu || is_jalr_idu || is_csr_idu) &&
+assign waddr_idu = (is_s_type || is_b_type) ? 'h0 : inst_ifu[`ysyx_24080020_RD]; // b-type and s-type are no rd;
+assign wen_idu   = (is_r_type || is_i_type || is_u_type || is_j_type || is_jr_type || is_csr) &&
                    (inst_ifu[`ysyx_24080020_RD] != `ysyx_24080020_REG_WIDTH'd0);
+
+// assign waddr_idu = (is_store_idu || is_branch_idu) ? 'h0 : inst_ifu[`ysyx_24080020_RD]; // b-type and s-type are no rd;
+// assign wen_idu   = (is_r_type_idu || is_i_type_idu || is_u_type_idu || is_jal_idu || is_jalr_idu || is_csr_idu) &&
+//                    (inst_ifu[`ysyx_24080020_RD] != `ysyx_24080020_REG_WIDTH'd0);
 
 //=========================================================================
 // 4. CSR 1 读 1 写：地址/数据复用，写优先
