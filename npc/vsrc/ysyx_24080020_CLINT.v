@@ -1,7 +1,7 @@
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_CLINT (
     input  wire        clk,
-    input  wire        rst_n,
+    input  wire        rst,
     // AXI-Full（单 beat，完全组合）
     input  wire        arvalid,
     input  wire [31:0] araddr,
@@ -39,8 +39,8 @@ module ysyx_24080020_CLINT (
 //=========================================================================
 reg [31:0] timel_q, timeh_q;
 
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
+always @(posedge clk) begin
+    if (!rst) begin
         timel_q <= 32'd0;
         timeh_q <= 32'd0;
     end
