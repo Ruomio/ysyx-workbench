@@ -687,7 +687,7 @@ module ysyx_24080020_NPC(
         .awaddr(awaddr_mem),
         .awready(awready_mem),
 
-        .wvalid_reg(wvalid_mem),
+        .wvalid(wvalid_mem),
         .wstrb(wstrb_mem),
         .wdata(wdata_axi_mem),
         .wlast(wlast_mem),
