@@ -181,7 +181,8 @@ end
 // 4. AXI-Full：单 beat，完全组合（不锁 valid）
 //=========================================================================
 // VALID 用组合逻辑（不锁）
-assign arvalid = mren_exu & mem_exu_ready;
+// assign arvalid = mren_exu & mem_exu_ready;
+assign arvalid = mren_exu & exu_mem_valid;
 assign awvalid = mwen_exu & mem_exu_ready;
 assign wvalid  = mwen_exu & mem_exu_ready;
 
