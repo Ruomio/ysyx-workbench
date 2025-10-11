@@ -52,8 +52,8 @@ assign special_pc_o  = special_pc_i;
 // wire ar_done  = arvalid & arready;
 
 reg arvalid_q;
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n)
+always @(posedge clk) begin
+    if (!rst)
         arvalid_q <= 1'b0;
     else if (wb_mem_ready)   // 下游能收
         arvalid_q <= if_en_valid & ~ar_done;
