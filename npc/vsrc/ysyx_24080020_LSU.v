@@ -224,7 +224,7 @@ always @(posedge clk) begin
                     awvalid_reg <= 'b0;
                 end
                 else if(wvalid & wready) begin
-                    wvalid <= 'b0;
+                    wvalid_reg <= 'b0;
                 end
             end
             2'b11: begin
