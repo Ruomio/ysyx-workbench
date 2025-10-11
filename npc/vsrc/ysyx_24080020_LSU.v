@@ -204,14 +204,13 @@ always @(posedge clk) begin
         case(axi_state)
             2'b00: begin
                 if((mren_exu | mwen_exu)) begin
+                    axi_state <= 'b01;
                     if(mren_exu) begin
                         arvalid_reg <= 'b1;
-                        axi_state <= 'b01;
                     end
                     else begin
                         awvalid_reg <= 'b1;
                         wvalid_reg <= 'b1;
-                        axi_state <= 'b10;
                     end
                 end
             end
@@ -222,8 +221,7 @@ always @(posedge clk) begin
                 else if(arvalid & arready) begin
                     arvalid_reg <= 'b0;
                 end
-            end
-            2'b10: begin
+
                 if(bvalid & bready) begin
                     axi_state <= 'b11;
                 end
@@ -234,8 +232,13 @@ always @(posedge clk) begin
                     wvalid_reg <= 'b0;
                 end
             end
+            2'b10: begin
+                if(mem_wb_valid_valid & wb_mem_ready_ready) begin
+                    axi_state <= 'b11;
+                end
+            end
             2'b11: begin
-                if(mem_wb_valid & wb_mem_ready) begin
+                if(exu_mem_valid & mem_exu_ready) begin
                     axi_state <= 'b00;
                 end
             end
@@ -245,7 +248,7 @@ end
 
 wire w_done = (bvalid & bready);
 wire r_done = (rvalid & rready & rlast);
-wire all_done = (~(mwen_mem | mren_mem)) ? 'b1 : (axi_state==2'b11);
+wire all_done = (~(mwen_mem | mren_mem)) ? 'b1 : (axi_state==2'b10);
 
 
 // assign arvalid = mren_exu & mem_exu_ready;
