@@ -117,6 +117,7 @@ reg [31:0]                         mem_result_q;     // 32 bit（读数据或写
 reg                                mem_wait_load_q;
 
 wire mwen_mem  ; 
+wire mren_mem  ; 
 wire [2:0] mrlen_mem ; 
 wire [3:0] mwmask_mem; 
 wire [31:0] maddr_mem ; 
