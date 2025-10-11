@@ -10,7 +10,7 @@ module ysyx_24080020_LSU (
     output wire [`ysyx_24080020_WIDTH-1:0] pc_mem,
     input  wire        is_dnpc_exu,
     output wire        is_dnpc_mem,
-    input  wire [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] dnpc_exu,
     output wire [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
 
     `endif
@@ -164,7 +164,7 @@ always @(posedge clk) begin
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
         mem_maddr_q    <= maddr_exu;
         mem_result_q   <= wdata_exu; // 读/写结果
-        mem_len_q      <= mrlen_exu;
+        mem_len_q      <= mem_len_exu;
         mem_ecall_q    <= is_ecall_exu;
         mem_csr_wen_q  <= wcsren_exu;
         mem_wcsraddr_q <= wcsraddr_exu;
@@ -198,7 +198,7 @@ always @(posedge clk) begin
         arlen_q <= 8'd0;      // 单 beat
         awlen_q <= 8'd0;
         wlast_q <= 1'b1;
-        wstrb_q <= mwmask_exu;
+        wstrb_q <= mwmask_mem;
     end
 end
 

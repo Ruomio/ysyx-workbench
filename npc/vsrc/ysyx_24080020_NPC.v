@@ -623,7 +623,7 @@ module ysyx_24080020_NPC(
         .is_dnpc_exu(branch_taken_exu),
         .is_dnpc_mem(branch_taken_lsu),
 
-        .dnpc_new_exu(dnpc_exu),
+        .dnpc_exu(dnpc_exu),
         .dnpc_mem(dnpc_mem),
         `endif
 
