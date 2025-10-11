@@ -146,7 +146,7 @@ assign wcsraddr_mem = mem_wcsraddr_q;
 assign wcsrdata_mem = mem_wcsrdata_q;
 assign wen_mem    = mem_wen_q;
 assign waddr_mem  = mem_waddr_q;
-assign wdata_mem  = mem_result_q;
+assign wdata_mem  = mren_mem ? mrdata_mem : mem_result_q;
 assign is_ecall_lsu = mem_ecall_q;
 
 //=========================================================================
