@@ -470,15 +470,6 @@ module ysyx_24080020_LSU(
         end
 
         else if(mwen_mem && exu_mem_shake_hands) begin
-            awvalid <= 1'b1;
-            awid <= 4'b0;
-            awlen <= {{7{1'b0}}, get_awlen};
-
-            `ifdef CONFIG_DPIC
-            if(get_awlen == 'b1)
-                $error("awlen is high");
-            `endif
-
             // mwen_mem <= 1'b0;
             `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
