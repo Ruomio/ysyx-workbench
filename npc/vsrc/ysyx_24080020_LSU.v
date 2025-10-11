@@ -102,24 +102,31 @@ module ysyx_24080020_LSU(
     assign awvalid_reg = awvalid;
     assign wvalid_reg = wvalid;
 
-    // reg mren_mem;
     reg mwen_mem;
     reg [2:0] mrlen_mem;
     reg [2:0] mwmask_mem;
     reg [`ysyx_24080020_WIDTH-1:0] maddr_mem;
     reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
     reg finish_read;
-    reg next_inst;
 
-    reg arlen_cnt;
-    reg awlen_cnt;
-    reg [31:0] rdata1, rdata2;
-
-    reg exu_mem_shake_hands;
     reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
     reg [`ysyx_24080020_WIDTH-1:0] wdata_exu_;
 
-    reg state; // 0: idle;   1: wait_ready
+    // 一级 valid-ready 寄存器流水线控制（类似 IDU 实现）
+    reg valid_q;
+    reg mren_q;
+    reg mwen_q;
+    reg [2:0] mrlen_q;
+    reg [2:0] mwmask_q;
+    reg [`ysyx_24080020_WIDTH-1:0] maddr_q;
+    reg [`ysyx_24080020_WIDTH-1:0] mwdata_q;
+    reg wen_q;
+    reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_q;
+    reg [`ysyx_24080020_WIDTH-1:0] wdata_q;
+    reg wcsren_q;
+    reg [2:0] wcsraddr_q;
+    reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_q;
+    reg is_ecall_q;
 
     wire [31:0] rdata_shift;
     wire [3:0] wstrb_;
@@ -170,183 +177,129 @@ module ysyx_24080020_LSU(
 
     assign wdata_mem = mren_mem ? mrdata_mem : wdata_exu_;
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            state <= 1'b0;
-        end
-        else if(!state) begin
-            if(mem_wb_valid) state <= 1'b1;
-            else state <= 1'b0;
-        end
-        else begin
-            if(wb_mem_ready) state <= 1'b0;
-            else state <= 1'b1;
-        end
-    end
+    // 一级 valid-ready 寄存器流水线控制（类似 IDU 实现）
+    assign mem_exu_ready = ~valid_q;  // 反压机制：当寄存器为空时才能接收新数据
+    assign mem_wb_valid = valid_q;    // 当寄存器有数据时向下一级发送有效信号
 
     always @(posedge clk) begin
-        if(!rst) begin
-            mem_exu_ready <= 1'b0;
-            next_inst <= 'b1;
-
-            wen_mem <= 'b0;
-            waddr_mem <= 'b0;
-
-            // is_load_mem <= 'b0;
-            // is_dnpc_mem <= 'b0;
-            // dnpc_mem <= 'b0;
-
-            mren_mem <= 'b0;
-            // mrlen_mem <= 'b0;
-            // maddr_mem <= 'b0;
-            mwen_mem <= 'b0;
-            // mwmask_mem <= 'b0;
-            // mwdata_mem <= 'b0;
-
-
-            // fencei_mem <= 'b0;
-
-            // pc_mem <= 'b0;
-
-            // mem_wb_valid <= 'b0;
-
-
-            exu_mem_shake_hands <= 1'b0;
-
+        if (!rst) begin
+            valid_q <= 1'b0;
+            mren_mem <= 1'b0;
+            mwen_mem <= 1'b0;
+            wen_mem <= 1'b0;
+            wcsren_mem <= 1'b0;
+            is_ecall_lsu <= 1'b0;
         end
-        else if(mem_wb_valid && wb_mem_ready && state) begin
-
-            waddr_mem <= 'b0;
-            mren_mem <= 'b0;
-            // is_load_mem <= 'b0;
-            // fencei_mem <= 'b0;
-
-            next_inst <= 'b1;
-
+        else if (wb_mem_ready && valid_q) begin
+            // 下一级准备好且当前有数据，可以传递数据
+            valid_q <= 1'b0;
+            mren_mem <= 1'b0;
+            mwen_mem <= 1'b0;
+            wen_mem <= 1'b0;
+            wcsren_mem <= 1'b0;
+            is_ecall_lsu <= 1'b0;
         end
-        else if(exu_mem_shake_hands) begin
-            exu_mem_shake_hands <= 1'b0;
-        end
-        else if(exu_mem_valid) begin
-            if(mem_wb_valid) mem_exu_ready <= 1'b0;
-            else if(mem_exu_ready) begin
-                mem_exu_ready <= 'b0;
-                exu_mem_shake_hands <= 1'b1;
-
-                // update reg
-                wen_mem <= wen_exu;
-                waddr_mem <= waddr_exu;
-                wdata_exu_ <= wdata_exu;
-
-
-                mren_mem <= mren_exu;
-                mrlen_mem <= mrlen_exu;
-                maddr_mem <= maddr_exu;
-                mwen_mem <= mwen_exu;
-                mwmask_mem <= mwmask_exu;
-                mwdata_mem <= mwdata_exu;
-
-
-                wcsren_mem <= wcsren_exu;
-                wcsraddr_mem <= wcsraddr_exu;
-                wcsrdata_mem <= wcsrdata_exu;
-
-                // fencei_mem <= fencei_exu;
-                is_ecall_lsu <= is_ecall_exu;
-
-                next_inst <= 'b0;
-
-
-            end
-            else if(next_inst) begin
-                mem_exu_ready <= 1'b1;
-
-
-            end
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            mem_wb_valid <= 'b0;
-
-        end
-        else if(mem_wb_valid && wb_mem_ready && state) begin
-            mem_wb_valid <= 1'b0;
-        end
-        else if(exu_mem_shake_hands && !mwen_mem && !mren_mem) begin
-
-            mem_wb_valid <= 1'b1;
-        end
-        else if(finish_read) begin
-            mem_wb_valid <= 1'b1;
-        end
-        else if(bvalid && bready) begin
-            mem_wb_valid <= 1'b1;
+        else if (exu_mem_valid && mem_exu_ready) begin
+            // 上一级有效且当前可以接收，锁存数据
+            valid_q <= 1'b1;
+            
+            // 锁存内存相关信号
+            mren_q <= mren_exu;
+            mwen_q <= mwen_exu;
+            mrlen_q <= mrlen_exu;
+            mwmask_q <= mwmask_exu;
+            maddr_q <= maddr_exu;
+            mwdata_q <= mwdata_exu;
+            
+            // 锁存寄存器写回信号
+            wen_q <= wen_exu;
+            waddr_q <= waddr_exu;
+            wdata_q <= wdata_exu;
+            
+            // 锁存 CSR 信号
+            wcsren_q <= wcsren_exu;
+            wcsraddr_q <= wcsraddr_exu;
+            wcsrdata_q <= wcsrdata_exu;
+            
+            // 锁存其他信号
+            is_ecall_q <= is_ecall_exu;
+            
+            // 更新输出信号
+            mren_mem <= mren_exu;
+            mwen_mem <= mwen_exu;
+            mrlen_mem <= mrlen_exu;
+            mwmask_mem <= mwmask_exu;
+            maddr_mem <= maddr_exu;
+            mwdata_mem <= mwdata_exu;
+            wen_mem <= wen_exu;
+            waddr_mem <= waddr_exu;
+            wdata_exu_ <= wdata_exu;
+            wcsren_mem <= wcsren_exu;
+            wcsraddr_mem <= wcsraddr_exu;
+            wcsrdata_mem <= wcsrdata_exu;
+            is_ecall_lsu <= is_ecall_exu;
         end
     end
 
 
 
 
-    // AR
+    // AXI 总线控制逻辑（与新的流水线控制配合）
+    // AR - 读请求
     always @(posedge clk) begin
-        if(!rst) begin
+        if (!rst) begin
             arvalid <= 1'b0;
         end
-        else if(arvalid && arready) begin
+        else if (arvalid && arready) begin
             arvalid <= 1'b0;
         end
-        else if(mren_mem && exu_mem_shake_hands) begin
+        else if (valid_q && mren_q && !arvalid) begin
+            // 当有有效数据且需要读内存时，发起读请求
             arvalid <= 1'b1;
             arid <= 4'b0;
-            arlen <= 'b0;
+            arlen <= 8'b0;  // 单次传输
         end
     end
 
-    // R
+    // R - 读响应
     always @(posedge clk) begin
-        if(!rst) begin
+        if (!rst) begin
             rready <= 1'b0;
-            // arlen_cnt <= 1'b0;
-            // rdata1 <= 'b0;
-            // rdata2 <= 'b0;
-            // mem_wb_valid <= 'b0;
         end
-        else if(rvalid && rready) begin
+        else if (rvalid && rready) begin
             rready <= 1'b0;
-
         end
-        else if(rvalid) begin
+        else if (rvalid && !rready) begin
             rready <= 1'b1;
         end
     end
 
-
-    // AW
+    // AW - 写地址
     always @(posedge clk) begin
-        if(!rst) begin
-            awvalid <= 'b0;
-        end
-        else if(awvalid_reg && awready) begin
+        if (!rst) begin
             awvalid <= 1'b0;
         end
-        else if(mwen_mem && exu_mem_shake_hands) begin
+        else if (awvalid && awready) begin
+            awvalid <= 1'b0;
+        end
+        else if (valid_q && mwen_q && !awvalid) begin
+            // 当有有效数据且需要写内存时，发起写地址请求
             awvalid <= 1'b1;
-            awlen <= 'b0;
-
+            awid <= 4'b0;
+            awlen <= 8'b0;  // 单次传输
         end
     end
 
-    // W
+    // W - 写数据
     always @(posedge clk) begin
-        if(!rst) begin
-            wvalid <= 'b0;
-        end
-        else if(wvalid_reg && wready) begin
+        if (!rst) begin
             wvalid <= 1'b0;
         end
-        else if(mwen_mem && exu_mem_shake_hands) begin
+        else if (wvalid && wready) begin
+            wvalid <= 1'b0;
+        end
+        else if (valid_q && mwen_q && !wvalid) begin
+            // 当有有效数据且需要写内存时，发起写数据请求
             wvalid <= 1'b1;
             wlast <= 1'b1;
             wdata <= wdata_;
@@ -354,36 +307,31 @@ module ysyx_24080020_LSU(
         end
     end
 
-    // B
+    // B - 写响应
     always @(posedge clk) begin
-        if(!rst) begin
+        if (!rst) begin
             bready <= 1'b0;
         end
-        else if(bvalid && bready) begin
-            bready <= 'b0;
+        else if (bvalid && bready) begin
+            bready <= 1'b0;
         end
-        else if(bvalid) begin
+        else if (bvalid && !bready) begin
             bready <= 1'b1;
-
         end
     end
 
-    // process rdata
+    // 处理读数据
     always @(posedge clk) begin
-        if(!rst) begin
-            finish_read <= 1'b0;
-            // mrdata_mem <= 'b0;
-            // mem_wb_valid <= 'b0;
-        end
-        else if(finish_read) begin
-            // finish all read
-            // mem_wb_valid <= 1'b1;
+        if (!rst) begin
             finish_read <= 1'b0;
         end
-        else if(rvalid && rready && rlast) begin
+        else if (finish_read) begin
+            finish_read <= 1'b0;
+        end
+        else if (rvalid && rready && rlast) begin
             finish_read <= 1'b1;
 
-            // zero or signed extension
+            // 零扩展或有符号扩展
             case(mrlen_mem)
                 3'b100:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
                 3'b101:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
@@ -393,7 +341,6 @@ module ysyx_24080020_LSU(
                 3'b010:   mrdata_mem <= rdata_shift;
                 default: mrdata_mem <= 32'hffffffff;
             endcase
-
         end
     end
 
@@ -446,7 +393,7 @@ module ysyx_24080020_LSU(
         else if(mem_wb_valid && wb_mem_ready) begin
             skip_ref_mem <= 'b0;
         end
-        else if(mren_mem && exu_mem_shake_hands) begin
+        else if(mren_mem && valid_q) begin
             `ifdef ysyxSoCFull
             if(araddr >= 32'h10000000 && araddr < 32'h10001000
                 || araddr >= 32'h10011000 && araddr < 32'h10011008
@@ -467,7 +414,7 @@ module ysyx_24080020_LSU(
             end
             `endif
         end
-        else if(mwen_mem && exu_mem_shake_hands) begin
+        else if(mwen_mem && valid_q) begin
             `ifdef ysyxSoCFull
             if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
                 || awaddr >= 32'h10011000 && awaddr < 32'h10011008
