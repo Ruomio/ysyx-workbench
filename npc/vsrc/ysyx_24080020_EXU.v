@@ -244,7 +244,7 @@ assign store_data_exu = val2_q_reg;
 // 写回数据选择：JAL/JALR写回PC+4，load指令后续由MEM阶段写回，其他写回ALU结果
 wire [31:0] pc_plus_4 = pc_q_reg + 32'd4;
 assign wdata_exu = (is_jal_exu || is_jalr_exu) ? pc_plus_4 :
-                   is_csr_exu ? val1_q_reg :  // CSR指令写回原寄存器值
+                   is_csr_exu ? rcsrdata_q_reg :  // CSR指令写回原寄存器值
                    alu_result;                // ALU指令写回计算结果
 
 assign waddr_exu = waddr_q_reg;
