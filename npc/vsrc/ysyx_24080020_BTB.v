@@ -526,7 +526,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             branch_not_taken_exu_next <= 'b0;
         end
-        else if(branch_not_taken_exu_next && (pc_exu != hit_pc)) begin
+        else if(branch_not_taken_exu_next && (dnpc != dnpc_tmp)) begin
             branch_not_taken_exu_next <= 'b0;
         end
         else if(branch_not_taken_exu) begin
