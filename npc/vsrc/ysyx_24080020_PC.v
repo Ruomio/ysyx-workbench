@@ -19,7 +19,7 @@ module ysyx_24080020_PC (
 
     assign addr = in_pc;
     assign special_pc = in_special_pc;
-    assign if_en_ready = in_valid;
+    assign if_en_valid = in_valid;
     assign in_ready = if_en_ready;
 
     // always @(posedge clk) begin
