@@ -116,19 +116,19 @@ reg [31:0]                         mem_result_q;     // 32 bit（读数据或写
 // stall_pipeline
 reg                                mem_wait_load_q;
 
-wire mwen_mem  ; 
-wire mren_mem  ; 
-wire [2:0] mrlen_mem ; 
-wire [3:0] mwmask_mem; 
-wire [31:0] maddr_mem ; 
-wire [31:0] mwdata_mem; 
+wire mwen_mem  ;
+wire mren_mem  ;
+wire [2:0] mrlen_mem ;
+wire [3:0] mwmask_mem;
+wire [31:0] maddr_mem ;
+wire [31:0] mwdata_mem;
 
 // 组合输出：直接连 Q
 assign wait_load  = mem_wait_load_q;
 assign mren_mem   = mem_mren_q;
 assign mwen_mem   = mem_mwen_q;
 assign mrlen_mem  = mem_len_q;
-assign mwmask_mem = (maddr_mem[1:0] == 2'b00) ? 
+assign mwmask_mem = (maddr_mem[1:0] == 2'b00) ?
                         (mrlen_mem == 3'b000) ? 4'b0001 :
                         (mrlen_mem == 3'b001) ? 4'b0011 :
                         (mrlen_mem == 3'b010) ? 4'b1111 : 4'b000 :
@@ -169,6 +169,9 @@ always @(posedge clk) begin
         mem_wait_load_q<= 1'b0;
         mem_waddr_q    <= 'b0;
     end
+    else if(rvalid & rready) begin
+        mem_result_q   <= rdata; // 读/写结果
+    end
     else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
         mem_wait_load_q<= mren_exu;
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
@@ -193,10 +196,12 @@ end
 reg ar_sent, aw_sent, w_sent;
 reg axi_done;
 
+
+
 // AXI传输完成判断
 wire read_done  = mren_mem && rvalid && rready && rlast;
 wire write_done = mwen_mem && bvalid && bready;
-wire all_done   = (~(mwen_mem | mren_mem)) ? 1'b1 : 
+wire all_done   = (~(mwen_mem | mren_mem)) ? 1'b1 :
                   (mren_mem ? read_done : write_done);
 
 // AXI valid信号生成（握手成功后不再拉高）
@@ -224,7 +229,7 @@ always @(posedge clk) begin
         if (arvalid && arready) ar_sent <= 1'b1;
         if (awvalid && awready) aw_sent <= 1'b1;
         if (wvalid && wready)   w_sent  <= 1'b1;
-        
+
         // 记录传输完成状态
         if (all_done) axi_done <= 1'b1;
     end
@@ -252,10 +257,10 @@ assign bready = 1'b1;        // 永远 ready（单 beat）
 
 // 读数据组合路径（不锁）
 assign rready = 1'b1;        // 永远 ready
-wire [31:0] rdata_shift = (maddr_mem[1:0] == 2'b00) ? rdata :
-                          (maddr_mem[1:0] == 2'b01) ? rdata >> 8 :
-                          (maddr_mem[1:0] == 2'b10) ? rdata >> 16 :
-                          rdata >> 24;
+wire [31:0] rdata_shift = (maddr_mem[1:0] == 2'b00) ? wdata :
+                          (maddr_mem[1:0] == 2'b01) ? wdata >> 8 :
+                          (maddr_mem[1:0] == 2'b10) ? wdata >> 16 :
+                          wdata >> 24;
 
 
 //=========================================================================
