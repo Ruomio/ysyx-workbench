@@ -196,8 +196,8 @@ always @(posedge clk) begin
     else begin
         case(axi_state)
             2'b00: begin
-                if((mren_mem | mwen_mem)) begin
-                    if(mren_mem) begin
+                if((mren_exu | mwen_exu)) begin
+                    if(mren_exu) begin
                         arvalid_reg <= 'b1;
                         axi_state <= 'b01;
                     end
