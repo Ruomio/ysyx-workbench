@@ -48,7 +48,7 @@ assign special_pc_o  = special_pc_i;
 // 反压：本级空就能收
 assign if_en_ready = ~arvalid;
 // AXI valid：组合逻辑，握手后立即拉低
-assign arvalid = if_en_valid & if_en_ready;
+assign arvalid = if_en_valid;
 
 // reg arvalid_q;
 //
