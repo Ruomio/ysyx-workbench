@@ -191,7 +191,7 @@ reg arvalid_reg, awvalid_reg, wvalid_reg;
 reg [1:0] axi_state;
 
 always @(posedge clk) begin
-    if(rst) begin
+    if(!rst) begin
         arvalid_reg <= 'b0;
         awvalid_reg <= 'b0;
         wvalid_reg <= 'b0;
