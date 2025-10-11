@@ -48,7 +48,24 @@ assign special_pc_o  = special_pc_i;
 // 反压：本级空就能收
 assign if_en_ready = ~arvalid;
 // AXI valid：组合逻辑，握手后立即拉低
-assign arvalid = if_en_valid;
+assign arvalid = if_en_valid && !ar_sent;
+
+reg ar_sent;
+
+// AXI传输状态更新
+always @(posedge clk) begin
+    if (!rst) begin
+        ar_sent   <= 1'b0;
+    end
+    else if (inst_fin_valid && inst_fin_ready) begin
+        // 传输完成，重置状态
+        ar_sent   <= 1'b0;
+    end
+    else if (if_en_valid) begin
+        // 记录握手成功状态
+        if (arvalid && arready) ar_sent <= 1'b1;
+    end
+end
 
 // reg arvalid_q;
 //
