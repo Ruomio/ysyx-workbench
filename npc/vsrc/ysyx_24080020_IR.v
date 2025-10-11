@@ -45,10 +45,23 @@ assign special_pc_o  = special_pc_i;
 //=========================================================================
 // 2. 经典 valid-ready 握手（零状态机）
 //=========================================================================
+reg valid_q_reg;
+
+always @(posedge clk) begin
+    if (!rst) begin
+        valid_q_reg     <= 1'b0;
+    end
+    else if ((inst_fin_valid & inst_fin_ready)) begin
+        valid_q_reg     <= 1'b0;
+    end
+    else if (if_en_valid && if_en_ready) begin
+        valid_q_reg     <= 1'b1;
+    end
+end
 // 反压：本级空就能收
-assign if_en_ready = ~arvalid;
+assign if_en_ready = ~valid_q_reg;
 // AXI valid：组合逻辑，握手后立即拉低
-assign arvalid = if_en_valid && !ar_sent;
+assign arvalid = valid_q_reg && !ar_sent;
 
 reg ar_sent;
 
