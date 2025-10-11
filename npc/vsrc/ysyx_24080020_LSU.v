@@ -91,10 +91,6 @@ assign mem_exu_ready = ~mem_valid_q;
 // 向下游：有数据就 valid
 assign mem_wb_valid  = mem_valid_q & all_done;
 
-wire w_done = (bvalid & bready);
-wire r_done = (rvalid & rready & rlast);
-wire all_done = (~(mwen_mem | mren_mem)) ? 'b1 : (mwen_mem & w_done) | (mren_mem & r_done);
-
 //=========================================================================
 // 2. 只锁 72 bit 控制向量（位宽已砍半）
 //=========================================================================
@@ -213,13 +209,15 @@ always @(posedge clk) begin
                 end
             end
             2'b01: begin
-                if(arvalid & arready) begin
-                    arvalid_reg <= 'b0;
+                if(rvalid & rready) begin
                     axi_state <= 'b11;
+                end
+                else if(arvalid & arready) begin
+                    arvalid_reg <= 'b0;
                 end
             end
             2'b10: begin
-                if(~(awvalid_reg | wvalid_reg)) begin
+                if(bvalid & bready) begin
                     axi_state <= 'b11;
                 end
                 else if(awvalid & awready) begin
@@ -237,6 +235,10 @@ always @(posedge clk) begin
         endcase
     end
 end
+
+wire w_done = (bvalid & bready);
+wire r_done = (rvalid & rready & rlast);
+wire all_done = (~(mwen_mem | mren_mem)) ? 'b1 : (axi_state==2'b11);
 
 
 // assign arvalid = mren_exu & mem_exu_ready;
