@@ -460,7 +460,7 @@ void exec_npc(uint64_t n) {
 void free_npc() {
 #if defined (CONFIG_LIGHTSSS)
   if(lightsss.is_child()) {
-    return;
+    // return;
   }
 #endif
 
