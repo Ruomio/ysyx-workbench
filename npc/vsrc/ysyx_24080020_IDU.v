@@ -183,9 +183,13 @@ assign wcsraddr_idu    =  is_mret ? 3'd1 :
                             3'd0;
 assign wcsrdata_idu    = is_ecall ? pc_ifu :
                          is_mret ? 32'h1800 :
+                         (funct3 == 3'b001) ? val_raddr1 :
+                         (funct3 == 3'b010) ? rcsrdata | val_raddr1 :
+                         (funct3 == 3'b011) ? rcsrdata & (~val_raddr1) :
                             val_raddr1;  // CSR写数据来自寄存器文件读取值
-assign wcsren_idu      = (is_csr && (funct3 != 3'b000 && funct3 != 3'b100)) // CSRRW/CSRRS
-                            || is_ecall || is_mret;                         // ecall/mret
+assign wcsren_idu      = is_csr;         // csrrw/csrrs/ecall/mret
+// assign wcsren_idu      = (is_csr && (funct3 != 3'b000 && funct3 != 3'b100)) // CSRRW/CSRRS
+//                             || is_ecall || is_mret;                         // ecall/mret
 
 //=========================================================================
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
