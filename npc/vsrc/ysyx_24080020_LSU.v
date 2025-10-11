@@ -88,8 +88,8 @@ module ysyx_24080020_LSU (
 //=========================================================================
 // 反压：本级空就能收
 assign mem_exu_ready = ~mem_valid_q;
-// 向下游：有数据就 valid
-assign mem_wb_valid  = mem_valid_q & all_done;
+// 向下游：有数据且AXI传输完成就 valid
+assign mem_wb_valid  = mem_valid_q & (all_done | axi_done);
 
 //=========================================================================
 // 2. 只锁 72 bit 控制向量（位宽已砍半）
@@ -187,76 +187,48 @@ always @(posedge clk) begin
 end
 
 //=========================================================================
-// 4. AXI-Full：单 beat，完全组合（不锁 valid）
+// 4. AXI-Full：简化时序逻辑
 //=========================================================================
-// VALID 用组合逻辑（不锁）
-reg arvalid_reg, awvalid_reg, wvalid_reg;
-reg [1:0] axi_state;
+// AXI传输控制寄存器
+reg ar_sent, aw_sent, w_sent;
+reg axi_done;
 
+// AXI传输完成判断
+wire read_done  = mren_mem && rvalid && rready && rlast;
+wire write_done = mwen_mem && bvalid && bready;
+wire all_done   = (~(mwen_mem | mren_mem)) ? 1'b1 : 
+                  (mren_mem ? read_done : write_done);
+
+// AXI valid信号生成（握手成功后不再拉高）
+assign arvalid = mren_mem && mem_valid_q && !ar_sent;
+assign awvalid = mwen_mem && mem_valid_q && !aw_sent;
+assign wvalid  = mwen_mem && mem_valid_q && !w_sent;
+
+// AXI传输状态更新
 always @(posedge clk) begin
-    if(!rst) begin
-        arvalid_reg <= 'b0;
-        awvalid_reg <= 'b0;
-        wvalid_reg <= 'b0;
-        axi_state <= 'b0;
+    if (!rst) begin
+        ar_sent   <= 1'b0;
+        aw_sent   <= 1'b0;
+        w_sent    <= 1'b0;
+        axi_done  <= 1'b0;
     end
-    else begin
-        case(axi_state)
-            2'b00: begin
-                if((mren_exu | mwen_exu)) begin
-                    axi_state <= 'b01;
-                    if(mren_exu) begin
-                        arvalid_reg <= 'b1;
-                    end
-                    else begin
-                        awvalid_reg <= 'b1;
-                        wvalid_reg <= 'b1;
-                    end
-                end
-            end
-            2'b01: begin
-                if(rvalid & rready) begin
-                    axi_state <= 'b11;
-                end
-                else if(arvalid & arready) begin
-                    arvalid_reg <= 'b0;
-                end
-
-                if(bvalid & bready) begin
-                    axi_state <= 'b11;
-                end
-                else if(awvalid & awready) begin
-                    awvalid_reg <= 'b0;
-                end
-                else if(wvalid & wready) begin
-                    wvalid_reg <= 'b0;
-                end
-            end
-            2'b10: begin
-                if(mem_wb_valid & wb_mem_ready) begin
-                    axi_state <= 'b11;
-                end
-            end
-            2'b11: begin
-                if(exu_mem_valid & mem_exu_ready) begin
-                    axi_state <= 'b00;
-                end
-            end
-        endcase
+    else if (mem_wb_valid && wb_mem_ready) begin
+        // 传输完成，重置状态
+        ar_sent   <= 1'b0;
+        aw_sent   <= 1'b0;
+        w_sent    <= 1'b0;
+        axi_done  <= 1'b0;
+    end
+    else if (mem_valid_q) begin
+        // 记录握手成功状态
+        if (arvalid && arready) ar_sent <= 1'b1;
+        if (awvalid && awready) aw_sent <= 1'b1;
+        if (wvalid && wready)   w_sent  <= 1'b1;
+        
+        // 记录传输完成状态
+        if (all_done) axi_done <= 1'b1;
     end
 end
-
-wire w_done = (bvalid & bready);
-wire r_done = (rvalid & rready & rlast);
-wire all_done = (~(mwen_mem | mren_mem)) ? 'b1 : (axi_state==2'b10);
-
-
-// assign arvalid = mren_exu & mem_exu_ready;
-// assign awvalid = mwen_exu & mem_exu_ready;
-// assign wvalid  = mwen_exu & mem_exu_ready;
-assign arvalid = arvalid_reg;
-assign awvalid = awvalid_reg;
-assign wvalid  = wvalid_reg;
 
 
 assign arlen = 'b0;
