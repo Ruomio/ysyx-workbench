@@ -91,9 +91,9 @@ assign mem_exu_ready = ~mem_valid_q;
 // 向下游：有数据就 valid
 assign mem_wb_valid  = mem_valid_q & all_done;
 
-wire w_done = !mwen_mem ? 1'b1 : (bvalid & bready);
-wire r_done = !mren_mem ? 1'b1 : (rvalid & rready & rlast);
-wire all_done = w_done | r_done;
+wire w_done = (bvalid & bready);
+wire r_done = (rvalid & rready & rlast);
+wire all_done = (mwen_mem & w_done) | (mren_mem & r_done);
 
 //=========================================================================
 // 2. 只锁 72 bit 控制向量（位宽已砍半）
