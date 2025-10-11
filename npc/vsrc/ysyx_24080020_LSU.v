@@ -178,8 +178,12 @@ module ysyx_24080020_LSU(
     assign wdata_mem = mren_mem ? mrdata_mem : wdata_exu_;
 
     // 一级 valid-ready 寄存器流水线控制（类似 IDU 实现）
+    // 转发机制：在 AXI R 通道完成之前不能向下传递数据
     assign mem_exu_ready = ~valid_q;  // 反压机制：当寄存器为空时才能接收新数据
-    assign mem_wb_valid = valid_q;    // 当寄存器有数据时向下一级发送有效信号
+    
+    // 当有有效数据且不是内存读取操作，或者内存读取操作已完成时，可以向下传递
+    wire can_pass_through = valid_q && (!mren_q || finish_read);
+    assign mem_wb_valid = can_pass_through;
 
     always @(posedge clk) begin
         if (!rst) begin
@@ -190,8 +194,8 @@ module ysyx_24080020_LSU(
             wcsren_mem <= 1'b0;
             is_ecall_lsu <= 1'b0;
         end
-        else if (wb_mem_ready && valid_q) begin
-            // 下一级准备好且当前有数据，可以传递数据
+        else if (wb_mem_ready && can_pass_through) begin
+            // 下一级准备好且当前可以传递数据
             valid_q <= 1'b0;
             mren_mem <= 1'b0;
             mwen_mem <= 1'b0;
