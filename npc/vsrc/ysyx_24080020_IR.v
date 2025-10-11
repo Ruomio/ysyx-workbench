@@ -37,7 +37,8 @@ module ysyx_24080020_IR (
 //=========================================================================
 // 1. 地址选择与输出（组合，与原文件 100 % 一致）
 //=========================================================================
-assign raddr_ir     = (special_pc_icache) ? raddr_icache : 32'd0;
+// assign raddr_ir     = (special_pc_icache) ? raddr_icache : 32'd0;
+assign raddr_ir     = raddr_icache;
 assign special_pc_ir = special_pc_icache;
 assign special_pc_o  = special_pc_i;
 
