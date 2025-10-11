@@ -1,5 +1,5 @@
 `include "ysyx_24080020_DEFINE.v"
-module ysyx_24080020_IR_opt (
+module ysyx_24080020_IR (
     input  wire        clk,
     input  wire        rst,
 
