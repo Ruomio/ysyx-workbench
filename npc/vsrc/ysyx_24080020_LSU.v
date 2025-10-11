@@ -160,6 +160,9 @@ always @(posedge clk) begin
         mem_csr_wen_q  <= 1'b0;
         mem_ecall_q    <= 1'b0;
     end
+    else if(mem_wb_valid && wb_mem_ready) begin
+        mem_valid_q    <= 1'b0;
+    end
     else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
         mem_maddr_q    <= maddr_exu;
