@@ -354,6 +354,7 @@ module ysyx_24080020_NPC(
         .dnpc(dnpc_exu),
         // .is_btype(is_btype_exu),
         .branch_not_taken_exu(branch_not_taken_exu),
+        .new_inst(idu_exu_valid & exu_idu_ready),
 
         .pc(pc_btb),
         .correct_pc(correct_pc_btb),

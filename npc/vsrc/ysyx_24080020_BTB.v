@@ -10,6 +10,7 @@ module ysyx_24080020_BTB(
     input [`ysyx_24080020_WIDTH-1:0] pc_exu,
     input is_dnpc,
     input [`ysyx_24080020_WIDTH-1:0] dnpc,
+    input new_inst,
 
     output reg out_special_pc,
     output reg [`ysyx_24080020_WIDTH-1:0] pc,
@@ -447,7 +448,7 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             is_dnpc_next <= 'b0;
         end
-        else if( is_dnpc && (dnpc != dnpc_tmp)) begin  // muti jump
+        else if(new_inst) begin  // muti jump
             is_dnpc_next <= 'b0;
         end
         else if(is_dnpc) begin
@@ -526,9 +527,9 @@ module ysyx_24080020_BTB(
         if(!rst) begin
             branch_not_taken_exu_next <= 'b0;
         end
-        // else if(branch_not_taken_exu_next && (dnpc != dnpc_tmp)) begin
-        //     branch_not_taken_exu_next <= 'b0;
-        // end
+        else if(new_inst) begin
+            branch_not_taken_exu_next <= 'b0;
+        end
         else if(branch_not_taken_exu) begin
             branch_not_taken_exu_next <= 'b1;
         end
