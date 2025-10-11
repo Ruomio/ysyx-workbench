@@ -233,7 +233,7 @@ always @(posedge clk) begin
                 end
             end
             2'b10: begin
-                if(mem_wb_valid_valid & wb_mem_ready_ready) begin
+                if(mem_wb_valid_valid & wb_mem_ready) begin
                     axi_state <= 'b11;
                 end
             end
