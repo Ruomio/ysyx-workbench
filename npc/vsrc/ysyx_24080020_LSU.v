@@ -160,7 +160,7 @@ always @(posedge clk) begin
         mem_csr_wen_q  <= 1'b0;
         mem_ecall_q    <= 1'b0;
     end
-    else if (wb_mem_ready) begin        // 下游能收
+    else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
         mem_maddr_q    <= maddr_exu;
         mem_result_q   <= wdata_exu; // 读/写结果
@@ -265,7 +265,7 @@ always @(posedge clk) begin
     if (!rst) begin
         mem_pc_q       <= 32'd0;
     end
-    else if (wb_mem_ready) begin        // 下游能收
+    else if (exu_mem_valid && mem_exu_ready) begin
         mem_pc_q       <= pc_exu;
         mem_is_dnpc_q  <= is_dnpc_exu;
         mem_dnpc_q     <= dnpc_exu;
