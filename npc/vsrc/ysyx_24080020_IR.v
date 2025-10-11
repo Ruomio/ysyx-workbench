@@ -63,9 +63,9 @@ assign araddr  = addr;
 //=========================================================================
 assign rready = 1'b1;     // 永远 ready（单 beat）
 // assign rdata  = rdata;    // 直接连 ICACHE
-assign rresp  = 2'b00;    // OKAY
-assign rid    = rid;
-assign rlast  = 1'b1;     // 单 beat
+// assign rresp  = 2'b00;    // OKAY
+// assign rid    = rid;
+// assign rlast  = 1'b1;     // 单 beat
 
 // 读完成标志：同一拍有效（与原文件一致）
 assign inst_fin_valid = rvalid & rlast & (rresp == 2'b00);
