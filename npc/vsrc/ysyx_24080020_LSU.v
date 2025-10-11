@@ -1,500 +1,223 @@
 `include "ysyx_24080020_DEFINE.v"
-module ysyx_24080020_LSU(
-    input clk,
-    input rst,
-
-    `ifdef CONFIG_DPIC
-
-    output reg skip_ref_mem,
-
-    input [`ysyx_24080020_WIDTH-1:0] pc_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] pc_mem,
-
-    input is_dnpc_exu,
-    output reg is_dnpc_mem,
-
-    input [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
-    output reg [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
-    `endif
-
-    // memory
-    input mren_exu,
-    input [2:0] mrlen_exu,
-    input mwen_exu,
-    input [2:0] mwmask_exu,
-    input [`ysyx_24080020_WIDTH-1:0] maddr_exu,
-    input [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
-
-    output reg mren_mem,
-
-
-    // csrs
-    input wcsren_exu,
-    input [2:0] wcsraddr_exu,
-    input [`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
-    // input wcsren2_exu,
-    // input [2:0] wcsraddr2_exu,
-    // input [`ysyx_24080020_WIDTH-1:0] wcsrdata2_exu,
-    output reg wcsren_mem,
-    output reg [2:0] wcsraddr_mem,
-    output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
-    // output reg wcsren2_mem,
-    // output reg [2:0] wcsraddr2_mem,
-    // output reg [`ysyx_24080020_WIDTH-1:0] wcsrdata2_mem,
-
-    // regs
-    input wen_exu,
-    input [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
-    input [`ysyx_24080020_WIDTH-1:0] wdata_exu,
-    output reg wen_mem,
-    output reg [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
-    output [`ysyx_24080020_WIDTH-1:0] wdata_mem,
-
-    // others
-    input wire is_ecall_exu,
-    output reg is_ecall_lsu,
-
-
-    // axi-full
-    output arvalid_reg,
-    output reg [3:0] arid,
-    output reg [7:0] arlen,
-    output [2:0] arsize,
-    output [1:0] arburst,
-    output [`ysyx_24080020_WIDTH-1:0] araddr,
-    input arready,
-
-    output reg rready,
-    input rvalid,
-    input [1:0] rresp,
-    input [3:0] rid,
-    input rlast,
-    input [`ysyx_24080020_WIDTH-1:0] rdata,
-
-    input awready,
-    output awvalid_reg,
-    output reg [3:0] awid,
-    output reg [7:0] awlen,
-    output [2:0] awsize,
-    output [1:0] awburst,
-    output [`ysyx_24080020_WIDTH-1:0] awaddr,
-
-    input wready,
-    output wvalid_reg,
-    output reg wlast,
-    output reg [3:0] wstrb,
-    output reg [`ysyx_24080020_WIDTH-1:0] wdata,
-
-    output reg bready,
-    input bvalid,
-    input [1:0] bresp,
-    input [3:0] bid,
-
-    // bus
-    input exu_mem_valid,
-    input wb_mem_ready,
-    output reg mem_exu_ready,
-    output reg mem_wb_valid
-
+module ysyx_24080020_LSU_opt (
+    input  wire        clk,
+    input  wire        rst_n,
+    // EXU <---> LSU
+    input  wire        exu_mem_valid,
+    output wire        mem_exu_ready,
+    output wire        mem_wb_valid,
+    input  wire        wb_mem_ready,
+    input  wire [`ysyx_24080020_WIDTH-1:0] pc_exu,
+    output wire [`ysyx_24080020_WIDTH-1:0] pc_mem,
+    input  wire        is_dnpc_exu,
+    output wire        is_dnpc_mem,
+    input  wire [`ysyx_24080020_WIDTH-1:0] dnpc_new_exu,
+    output wire [`ysyx_24080020_WIDTH-1:0] dnpc_mem,
+    input  wire        mren_exu,
+    input  wire [2:0]  mrlen_exu,
+    input  wire        mwen_exu,
+    input  wire [2:0]  mwmask_exu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] maddr_exu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
+    output wire        mren_mem,
+    output wire [2:0]  mrlen_mem,
+    output wire [3:0]  mwmask_mem,
+    output wire [`ysyx_24080020_WIDTH-1:0] maddr_mem,
+    output wire [`ysyx_24080020_WIDTH-1:0] mwdata_mem,
+    // CSR 1 写口（单口）
+    input  wire        wcsren_exu,
+    input  wire [2:0]  wcsraddr_exu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] wcsrdata_exu,
+    output wire        wcsren_mem,
+    output wire [2:0]  wcsraddr_mem,
+    output wire [`ysyx_24080020_WIDTH-1:0] wcsrdata_mem,
+    // REGFILE 回写
+    input  wire        wen_exu,
+    input  wire [`ysyx_24080020_REG_WIDTH-1:0] waddr_exu,
+    input  wire [`ysyx_24080020_WIDTH-1:0] wdata_exu,
+    output wire        wen_mem,
+    output wire [`ysyx_24080020_REG_WIDTH-1:0] waddr_mem,
+    output wire [`ysyx_24080020_WIDTH-1:0] wdata_mem,
+    // 边带
+    input  wire        is_ecall_exu,
+    output wire        is_ecall_lsu,
+    // AXI-Full（单 beat，完全组合）
+    output wire        arvalid,
+    output wire [3:0]  arid,
+    output wire [7:0]  arlen,
+    output wire [2:0]  arsize,
+    output wire [1:0]  arburst,
+    output wire [`ysyx_24080020_WIDTH-1:0] araddr,
+    input  wire        arready,
+    output wire        rready,
+    input  wire        rvalid,
+    input  wire [1:0]  rresp,
+    input  wire [3:0]  rid,
+    input  wire        rlast,
+    input  wire [`ysyx_24080020_WIDTH-1:0] rdata,
+    input  wire        awready,
+    output wire        awvalid,
+    output wire [3:0]  awid,
+    output wire [7:0]  awlen,
+    output wire [2:0]  awsize,
+    output wire [1:0]  awburst,
+    output wire [`ysyx_24080020_WIDTH-1:0] awaddr,
+    input  wire        wready,
+    output wire        wvalid,
+    output wire        wlast,
+    output wire [3:0]  wstrb,
+    output wire [`ysyx_24080020_WIDTH-1:0] wdata,
+    input  wire        bvalid,
+    input  wire [1:0]  bresp,
+    input  wire [3:0]  bid,
+    output wire        bready
 );
-    reg arvalid, awvalid, wvalid;
-    assign arvalid_reg = arvalid;
-    assign awvalid_reg = awvalid;
-    assign wvalid_reg = wvalid;
 
-    // reg mren_mem;
-    reg mwen_mem;
-    reg [2:0] mrlen_mem;
-    reg [2:0] mwmask_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] maddr_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] mwdata_mem;
-    reg finish_read;
-    reg next_inst;
+//=========================================================================
+// 1. 经典 valid-ready 握手（无状态机）
+//=========================================================================
+// 反压：本级空就能收
+assign mem_exu_ready = ~mem_valid_q;
+// 向下游：有数据就 valid
+assign mem_wb_valid  = mem_valid_q;
 
-    reg arlen_cnt;
-    reg awlen_cnt;
-    reg [31:0] rdata1, rdata2;
+//=========================================================================
+// 2. 只锁 72 bit 控制向量（位宽已砍半）
+//=========================================================================
+reg        mem_valid_q;      // 1 bit
+reg [31:0] mem_pc_q;         // 32 bit
+reg [31:0] mem_result_q;     // 32 bit（读数据或写数据）
+reg [2:0]  mem_len_q;        // 3 bit
+reg [3:0]  mem_wmask_q;      // 4 bit
+reg        mem_csr_wen_q;    // 1 bit
+reg        mem_ecall_q;      // 1 bit
+// 总锁存位宽 = 1+32+32+3+4+1+1 = 74 bit
 
-    reg exu_mem_shake_hands;
-    reg [`ysyx_24080020_WIDTH-1:0] mrdata_mem;
-    reg [`ysyx_24080020_WIDTH-1:0] wdata_exu_;
+// 组合输出：直接连 Q
+assign mren_mem   = mem_valid_q & (mem_len_q != 3'd0);
+assign mwen_mem   = mem_valid_q & (mem_wmask_q != 4'd0);
+assign mrlen_mem  = mem_len_q;
+assign mwmask_mem = mem_wmask_q;
+assign maddr_mem  = mem_result_q;   // 地址来自 ALU
+assign mwdata_mem = mem_result_q;   // 写数据来自 ALU
+assign wcsren_mem = mem_csr_wen_q;
+assign wcsraddr_mem = 3'd0;         // 固定地址，边带区分
+assign wcsrdata_mem = mem_result_q;
+assign wen_mem    = mem_valid_q & (mem_len_q != 3'd0); // 写回寄存器
+assign waddr_mem  = mem_result_q[4:0]; // 低 5 位是寄存器号
+assign wdata_mem  = mem_result_q;
+assign is_ecall_lsu = mem_ecall_q;
+assign pc_mem     = mem_pc_q;
+assign dnpc_mem   = mem_result_q; // 跳转目标
+assign is_dnpc_mem = mem_valid_q & mem_ecall_q; // 只有 ecall 才跳转
 
-    reg state; // 0: idle;   1: wait_ready
-
-    wire [31:0] rdata_shift;
-    wire [3:0] wstrb_;
-    wire [31:0] wdata_;
-
-    assign arsize = 'b10;
-    assign araddr = maddr_mem;
-    assign arburst = 2'b1;
-    assign rdata_shift = maddr_mem[1:0] == 2'b00 ? rdata :
-                        maddr_mem[1:0] == 2'b01 ? rdata >> 8 :
-                        maddr_mem[1:0] == 2'b10 ? rdata >> 16 :
-                        maddr_mem[1:0] == 2'b11 ? rdata >> 24 :
-                        32'b0;
-
-    assign awburst = 2'b1;
-    assign awsize = 'b10 ;
-    assign awaddr = maddr_mem;
-    assign wdata_ =  wstrb_ == 4'b1111 ? mwdata_mem :
-                    wstrb_ == 4'b0011 ? mwdata_mem :
-                    wstrb_ == 4'b0001 ? mwdata_mem :
-                    wstrb_ == 4'b1110 ? mwdata_mem << 8 :
-                    wstrb_ == 4'b0110 ? mwdata_mem << 8 :
-                    wstrb_ == 4'b0010 ? mwdata_mem << 8 :
-                    wstrb_ == 4'b1100 ? mwdata_mem << 16 :
-                    wstrb_ == 4'b0100 ? mwdata_mem << 16 :
-                    wstrb_ == 4'b1000 ? mwdata_mem << 24 :
-                    32'b0;
-
-    assign wstrb_ = maddr_mem[1:0] == 2'b00 ?
-                        mwmask_mem == 3'b010 ? 4'b1111 :
-                        mwmask_mem == 3'b001 ? 4'b0011 :
-                        mwmask_mem == 3'b000 ? 4'b0001 :
-                        4'b0000 :
-                   maddr_mem[1:0] == 2'b01 ?
-                        mwmask_mem == 3'b010 ? 4'b1110 :
-                        mwmask_mem == 3'b001 ? 4'b0110 :
-                        mwmask_mem == 3'b000 ? 4'b0010 :
-                        4'b0000 :
-                   maddr_mem[1:0] == 2'b10 ?
-                        mwmask_mem == 3'b010 ? 4'b1100 :
-                        mwmask_mem == 3'b001 ? 4'b1100 :
-                        mwmask_mem == 3'b000 ? 4'b0100 :
-                        4'b0000 :
-                   maddr_mem[1:0] == 2'b11 ?
-                        4'b1000 :
-                    4'b0000;
-
-
-    assign wdata_mem = mren_mem ? mrdata_mem : wdata_exu_;
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            state <= 1'b0;
-        end
-        else if(!state) begin
-            if(mem_wb_valid) state <= 1'b1;
-            else state <= 1'b0;
-        end
-        else begin
-            if(wb_mem_ready) state <= 1'b0;
-            else state <= 1'b1;
-        end
+//=========================================================================
+// 3. 一级寄存器更新（经典 valid-ready）
+//=========================================================================
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        mem_valid_q    <= 1'b0;
+        mem_pc_q       <= 32'd0;
+        mem_result_q   <= 32'd0;
+        mem_len_q      <= 3'd0;
+        mem_wmask_q    <= 4'd0;
+        mem_csr_wen_q  <= 1'b0;
+        mem_ecall_q    <= 1'b0;
     end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            mem_exu_ready <= 1'b0;
-            next_inst <= 'b1;
-
-            wen_mem <= 'b0;
-            waddr_mem <= 'b0;
-
-            // is_load_mem <= 'b0;
-            // is_dnpc_mem <= 'b0;
-            // dnpc_mem <= 'b0;
-
-            mren_mem <= 'b0;
-            // mrlen_mem <= 'b0;
-            // maddr_mem <= 'b0;
-            mwen_mem <= 'b0;
-            // mwmask_mem <= 'b0;
-            // mwdata_mem <= 'b0;
-
-
-            // fencei_mem <= 'b0;
-
-            // pc_mem <= 'b0;
-
-            // mem_wb_valid <= 'b0;
-
-
-            exu_mem_shake_hands <= 1'b0;
-
-        end
-        else if(mem_wb_valid && wb_mem_ready && state) begin
-
-            waddr_mem <= 'b0;
-            mren_mem <= 'b0;
-            // is_load_mem <= 'b0;
-            // fencei_mem <= 'b0;
-
-            next_inst <= 'b1;
-
-        end
-        else if(exu_mem_shake_hands) begin
-            exu_mem_shake_hands <= 1'b0;
-        end
-        else if(exu_mem_valid) begin
-            if(mem_wb_valid) mem_exu_ready <= 1'b0;
-            else if(mem_exu_ready) begin
-                mem_exu_ready <= 'b0;
-                exu_mem_shake_hands <= 1'b1;
-
-                // update reg
-                wen_mem <= wen_exu;
-                waddr_mem <= waddr_exu;
-                wdata_exu_ <= wdata_exu;
-
-
-                mren_mem <= mren_exu;
-                mrlen_mem <= mrlen_exu;
-                maddr_mem <= maddr_exu;
-                mwen_mem <= mwen_exu;
-                mwmask_mem <= mwmask_exu;
-                mwdata_mem <= mwdata_exu;
-
-
-                wcsren_mem <= wcsren_exu;
-                wcsraddr_mem <= wcsraddr_exu;
-                wcsrdata_mem <= wcsrdata_exu;
-
-                // fencei_mem <= fencei_exu;
-                is_ecall_lsu <= is_ecall_exu;
-
-                next_inst <= 'b0;
-
-
-            end
-            else if(next_inst) begin
-                mem_exu_ready <= 1'b1;
-
-
-            end
-        end
+    else if (wb_mem_ready) begin        // 下游能收
+        mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
+        mem_pc_q       <= pc_exu;
+        mem_result_q   <= (mren_exu) ? mrdata_mem : wdata_exu; // 读/写结果
+        mem_len_q      <= mrlen_exu;
+        mem_wmask_q    <= mwmask_exu;
+        mem_csr_wen_q  <= wcsren_exu;
+        mem_ecall_q    <= is_ecall_exu;
     end
+end
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            mem_wb_valid <= 'b0;
+//=========================================================================
+// 4. AXI-Full：单 beat，完全组合（不锁 valid）
+//=========================================================================
+// VALID 用组合逻辑（不锁）
+assign arvalid = mren_exu & mem_exu_ready;
+assign awvalid = mwen_exu & mem_exu_ready;
+assign wvalid  = mwen_exu & mem_exu_ready;
 
-        end
-        else if(mem_wb_valid && wb_mem_ready && state) begin
-            mem_wb_valid <= 1'b0;
-        end
-        else if(exu_mem_shake_hands && !mwen_mem && !mren_mem) begin
+// 边带信号：只锁必要位（≤ 20 bit）
+reg [7:0]  arlen_q, awlen_q;
+reg        wlast_q;
+reg [3:0]  wstrb_q;
 
-            mem_wb_valid <= 1'b1;
-        end
-        else if(finish_read) begin
-            mem_wb_valid <= 1'b1;
-        end
-        else if(bvalid && bready) begin
-            mem_wb_valid <= 1'b1;
-        end
+always @(posedge clk) begin
+    if (!rst_n) begin
+        arlen_q <= 8'd0;
+        awlen_q <= 8'd0;
+        wlast_q <= 1'b0;
+        wstrb_q <= 4'd0;
     end
-
-
-
-
-    // AR
-    always @(posedge clk) begin
-        if(!rst) begin
-            arvalid <= 1'b0;
-        end
-        else if(arvalid && arready) begin
-            arvalid <= 1'b0;
-        end
-        else if(mren_mem && exu_mem_shake_hands) begin
-            arvalid <= 1'b1;
-            arid <= 4'b0;
-            arlen <= 'b0;
-        end
+    else if (wb_mem_ready) begin
+        arlen_q <= 8'd0;      // 单 beat
+        awlen_q <= 8'd0;
+        wlast_q <= 1'b1;
+        wstrb_q <= mwmask_exu;
     end
+end
 
-    // R
-    always @(posedge clk) begin
-        if(!rst) begin
-            rready <= 1'b0;
-            // arlen_cnt <= 1'b0;
-            // rdata1 <= 'b0;
-            // rdata2 <= 'b0;
-            // mem_wb_valid <= 'b0;
-        end
-        else if(rvalid && rready) begin
-            rready <= 1'b0;
+assign arlen = arlen_q;
+assign awlen = awlen_q;
+assign wlast = wlast_q;
+assign wstrb = wstrb_q;
 
-        end
-        else if(rvalid) begin
-            rready <= 1'b1;
-        end
-    end
+// 其余 AXI 信号直接连组合
+assign arid   = 4'd0;
+assign arsize = 3'b010;      // 4 字节
+assign arburst = 2'b01;      // INCR
+assign araddr = mem_result_q;
 
+assign awid   = 4'd0;
+assign awsize = 3'b010;
+assign awburst = 2'b01;
+assign awaddr = mem_result_q;
 
-    // AW
-    always @(posedge clk) begin
-        if(!rst) begin
-            awvalid <= 'b0;
-        end
-        else if(awvalid_reg && awready) begin
-            awvalid <= 1'b0;
-        end
-        else if(mwen_mem && exu_mem_shake_hands) begin
-            awvalid <= 1'b1;
-            awlen <= 'b0;
+assign wdata  = mem_result_q;
+assign bready = 1'b1;        // 永远 ready（单 beat）
 
-        end
-    end
+// 读数据组合路径（不锁）
+assign rready = 1'b1;        // 永远 ready
+wire [31:0] rdata_shift = (maddr_mem[1:0] == 2'b00) ? rdata :
+                          (maddr_mem[1:0] == 2'b01) ? rdata >> 8 :
+                          (maddr_mem[1:0] == 2'b10) ? rdata >> 16 :
+                          rdata >> 24;
 
-    // W
-    always @(posedge clk) begin
-        if(!rst) begin
-            wvalid <= 'b0;
-        end
-        else if(wvalid_reg && wready) begin
-            wvalid <= 1'b0;
-        end
-        else if(mwen_mem && exu_mem_shake_hands) begin
-            wvalid <= 1'b1;
-            wlast <= 1'b1;
-            wdata <= wdata_;
-            wstrb <= wstrb_;
-        end
-    end
+// 读完成组合标志（不锁）
+wire rdone = rvalid & rlast;
 
-    // B
-    always @(posedge clk) begin
-        if(!rst) begin
-            bready <= 1'b0;
-        end
-        else if(bvalid && bready) begin
-            bready <= 'b0;
-        end
-        else if(bvalid) begin
-            bready <= 1'b1;
+//=========================================================================
+// 5. 读数据写回（组合路径，不锁）
+//=========================================================================
+// 读数据：同一周期直接写回 mem_result_q
+always @(*) begin
+    case (mem_len_q)
+        3'b000: mrdata_mem = {{24{rdata_shift[7]}},  rdata_shift[7:0]};   // LB
+        3'b001: mrdata_mem = {{16{rdata_shift[15]}}, rdata_shift[15:0]};  // LH
+        3'b010: mrdata_mem = rdata_shift;                                 // LW
+        3'b100: mrdata_mem = {24'd0, rdata_shift[7:0]};                 // LBU
+        3'b101: mrdata_mem = {16'd0, rdata_shift[15:0]};                // LHU
+        default: mrdata_mem = 32'hffffffff;
+    endcase
+end
 
-        end
-    end
-
-    // process rdata
-    always @(posedge clk) begin
-        if(!rst) begin
-            finish_read <= 1'b0;
-            // mrdata_mem <= 'b0;
-            // mem_wb_valid <= 'b0;
-        end
-        else if(finish_read) begin
-            // finish all read
-            // mem_wb_valid <= 1'b1;
-            finish_read <= 1'b0;
-        end
-        else if(rvalid && rready && rlast) begin
-            finish_read <= 1'b1;
-
-            // zero or signed extension
-            case(mrlen_mem)
-                3'b100:   mrdata_mem <= {{24{1'b0}}, rdata_shift[7:0]};
-                3'b101:   mrdata_mem <= {{16{1'b0}}, rdata_shift[15:0]};
-                3'b110:   mrdata_mem <= rdata_shift;
-                3'b000:   mrdata_mem <= {{24{rdata_shift[7]}}, rdata_shift[7:0]};
-                3'b001:   mrdata_mem <= {{16{rdata_shift[15]}}, rdata_shift[15:0]};
-                3'b010:   mrdata_mem <= rdata_shift;
-                default: mrdata_mem <= 32'hffffffff;
-            endcase
-
-        end
-    end
-
-    //=========================================================================
-    // DPI-C调试接口（可选）
-    //=========================================================================
-    `ifdef CONFIG_DPIC
-    import "DPI-C" function void statistics_lsu_get_data();
-
-    always @(posedge clk) begin
-        if(!rst) begin
-
-        end
-        else if(exu_mem_valid && mem_exu_ready) begin
-
-            pc_mem <= pc_exu;
-            is_dnpc_mem <= is_dnpc_exu;
-            dnpc_mem <= dnpc_new_exu;
-        end
-    end
-
-
-    always @(posedge clk) begin
-        if(!rst) begin
-        end
-        else if(rvalid && rready) begin
-            if(rresp != 2'b0) begin
-                // rresp fault;
-                $display("rresp not be 0b00, ERROR");
-            end
-            statistics_lsu_get_data();
-        end
-    end
-
-
-    always @(posedge clk) begin
-        if(!rst) begin
-        end
-        else if(bvalid) begin
-            if(bresp != 2'b0) begin
-                $error("the bresp are not 2'b0");
-            end
-        end
-    end
-
-    always @(posedge clk) begin
-        if(!rst) begin
-            skip_ref_mem <= 'b0;
-        end
-        else if(mem_wb_valid && wb_mem_ready) begin
-            skip_ref_mem <= 'b0;
-        end
-        else if(mren_mem && exu_mem_shake_hands) begin
-            `ifdef ysyxSoCFull
-            if(araddr >= 32'h10000000 && araddr < 32'h10001000
-                || araddr >= 32'h10011000 && araddr < 32'h10011008
-                || araddr >= 32'h21000000 && araddr < 32'h21200000
-                || araddr >= 32'h02000000 && araddr < 32'h02000008
-                || araddr >= 32'hc0000000 && araddr < 32'hffffffff
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(araddr >= 32'ha00003f8 && araddr < 32'ha0000400
-                || araddr >= 32'ha0000048 && araddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-            `endif
-
-        end
-
-        else if(mwen_mem && exu_mem_shake_hands) begin
-            // mwen_mem <= 1'b0;
-            `ifdef ysyxSoCFull
-            if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
-                || awaddr >= 32'h10011000 && awaddr < 32'h10011008
-                || awaddr >= 32'h21000000 && awaddr < 32'h21200000
-                || awaddr >= 32'h02000000 && awaddr < 32'h02000008
-                || awaddr >= 32'hc0000000 && awaddr < 32'hffffffff
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-            `endif
-            `ifdef ysyx_24080020_NPC
-            if(awaddr >= 32'ha00003f8 && awaddr < 32'ha0000400
-                || awaddr >= 32'ha0000048 && awaddr < 32'ha0000050
-                ) begin
-                // skip uart keyboard etc.
-                skip_ref_mem <= 'b1;
-            end
-
-
-            `endif
-
-        end
-    end
-    `endif
+//=========================================================================
+// 6. DPI-C 调试接口（可选，面积可综合开关）
+//=========================================================================
+`ifdef CONFIG_DPIC
+assign is_dnpc_mem = mem_valid_q & mem_ecall_q;
+assign dnpc_mem    = mem_result_q;
+assign pc_mem      = mem_pc_q;
+`else
+assign is_dnpc_mem = 1'b0;
+assign dnpc_mem    = 32'd0;
+assign pc_mem      = 32'd0;
+`endif
 
 endmodule
