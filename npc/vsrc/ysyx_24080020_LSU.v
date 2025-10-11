@@ -252,15 +252,18 @@ assign awsize = 3'b010;
 assign awburst = 2'b01;
 assign awaddr = mem_maddr_q;
 
-assign wdata  = mem_result_q;
+assign wdata  = (mem_maddr_q[1:0] == 2'b00) ? mem_result_q :
+                (mem_maddr_q[1:0] == 2'b01) ? mem_result_q << 8 :
+                (mem_maddr_q[1:0] == 2'b10) ? mem_result_q << 16 :
+                mem_result_q << 24;
 assign bready = 1'b1;        // 永远 ready（单 beat）
 
 // 读数据组合路径（不锁）
 assign rready = 1'b1;        // 永远 ready
-wire [31:0] rdata_shift = (maddr_mem[1:0] == 2'b00) ? wdata :
-                          (maddr_mem[1:0] == 2'b01) ? wdata >> 8 :
-                          (maddr_mem[1:0] == 2'b10) ? wdata >> 16 :
-                          wdata >> 24;
+wire [31:0] rdata_shift = (maddr_mem[1:0] == 2'b00) ? mem_result_q :
+                          (maddr_mem[1:0] == 2'b01) ? mem_result_q >> 8 :
+                          (maddr_mem[1:0] == 2'b10) ? mem_result_q >> 16 :
+                          mem_result_q >> 24;
 
 
 //=========================================================================
