@@ -12,37 +12,42 @@ module ysyx_24080020_PC (
 
     // pc <-> ir
     input if_en_ready,
-    output reg special_pc,
-    output reg if_en_valid,
-    output reg [`ysyx_24080020_WIDTH-1:0] addr
+    output special_pc,
+    output if_en_valid,
+    output [`ysyx_24080020_WIDTH-1:0] addr
 );
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            addr <= 'b0;
-            in_ready <= 'b0;
-            special_pc <= 'b0;
-        end
-        else if(in_valid && in_ready) begin
-            in_ready <= 'b0;
-            special_pc <= in_special_pc;
-            addr <= in_pc;
-        end
-        else if(in_valid && !if_en_valid) begin
-            in_ready <= 'b1;
-        end
-    end
+    assign addr = in_pc;
+    assign special_pc = in_special_pc;
+    assign if_en_ready = in_valid;
+    assign in_ready = if_en_ready;
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            if_en_valid <= 'b0;
-        end
-        else if(if_en_valid && if_en_ready) begin
-            if_en_valid <= 'b0;
-        end
-        else if(in_valid && in_ready) begin
-            if_en_valid <= 'b1;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         addr <= 'b0;
+    //         in_ready <= 'b0;
+    //         special_pc <= 'b0;
+    //     end
+    //     else if(in_valid && in_ready) begin
+    //         in_ready <= 'b0;
+    //         special_pc <= in_special_pc;
+    //         addr <= in_pc;
+    //     end
+    //     else if(in_valid && !if_en_valid) begin
+    //         in_ready <= 'b1;
+    //     end
+    // end
+
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         if_en_valid <= 'b0;
+    //     end
+    //     else if(if_en_valid && if_en_ready) begin
+    //         if_en_valid <= 'b0;
+    //     end
+    //     else if(in_valid && in_ready) begin
+    //         if_en_valid <= 'b1;
+    //     end
+    // end
 
 endmodule
