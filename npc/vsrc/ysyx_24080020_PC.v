@@ -43,17 +43,27 @@ module ysyx_24080020_PC (
         if (!rst) begin
             pc_q        <= `ysyx_24080020_MBASE;   // 初始 PC
         end
-        else if(update_btb) begin
+        else if(update_btb & (~update_next)) begin
             pc_q        <= pc_base;
             pc_target_q <= pc_target;
             update_q    <= 1'b1;
         end
-        else if (btb_target_valid) begin    // BTB 握手成功
+        else if (btb_target_valid) begin    // BTB hit
             pc_q        <= btb_target_pc;
         end
         else if (pc_btb_valid & btb_pc_ready) begin
             pc_q        <= pc_q + 32'd4;    // 顺序 +4
             update_q    <= 1'b0;
+        end
+    end
+
+    reg update_next;
+    always @(posedge clk) begin
+        if (!rst) begin
+            update_next    <= 1'b0;
+        end
+        else begin
+            update_next    <= update_btb;
         end
     end
 
