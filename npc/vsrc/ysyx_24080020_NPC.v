@@ -405,6 +405,11 @@ module ysyx_24080020_NPC(
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
 
+        // btb -> ir
+        .need_flush_pipeline(need_flush_pipeline),
+        .correct_pc_btb(correct_pc_btb),
+        .flush_pipeline(flush_pipeline),
+
         // icache -> ir
         .raddr_icache(raddr_icache),
         .special_pc_icache(special_pc_icache),
@@ -444,9 +449,9 @@ module ysyx_24080020_NPC(
         // .inst_fin(inst_fin),
 
         // btb -> ifu
-        .need_flush_pipeline(need_flush_pipeline),
-        .correct_pc_btb(correct_pc_btb),
-        .flush_pipeline(flush_pipeline),
+        // .need_flush_pipeline(need_flush_pipeline),
+        // .correct_pc_btb(correct_pc_btb),
+        // .flush_pipeline(flush_pipeline),
 
         // ifu -> idu
         .pc_ifu(pc_ifu),

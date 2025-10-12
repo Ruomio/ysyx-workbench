@@ -13,9 +13,9 @@ module ysyx_24080020_IFU (
     // output wire        inst_fin,
 
     // btb -> ifu
-    input  wire [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
-    input  wire        need_flush_pipeline,
-    output wire        flush_pipeline,
+    // input  wire [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
+    // input  wire        need_flush_pipeline,
+    // output wire        flush_pipeline,
 
     // ifu -> idu
     output wire [`ysyx_24080020_WIDTH-1:0] pc_ifu,
@@ -56,24 +56,24 @@ end
 //=========================================================================
 // jump inst, flush pipeline
 //========================================================================|
-reg flush_pipeline_q;
-reg [31:0] correct_pc_q;
-
-always @(posedge clk) begin
-    if(!rst) begin
-        flush_pipeline_q <= 1'b0;
-    end
-    else if(need_flush_pipeline) begin
-        flush_pipeline_q <= 1'b1;
-        correct_pc_q <= correct_pc_btb;
-    end
-    else if((raddr == correct_pc_q) & special_pc_i) begin
-        flush_pipeline_q <= 1'b0;
-        correct_pc_q <= 32'h0;
-    end
-end
-
-assign flush_pipeline = flush_pipeline_q;
+// reg flush_pipeline_q;
+// reg [31:0] correct_pc_q;
+//
+// always @(posedge clk) begin
+//     if(!rst) begin
+//         flush_pipeline_q <= 1'b0;
+//     end
+//     else if(need_flush_pipeline) begin
+//         flush_pipeline_q <= 1'b1;
+//         correct_pc_q <= correct_pc_btb;
+//     end
+//     else if((raddr == correct_pc_q) & special_pc_i) begin
+//         flush_pipeline_q <= 1'b0;
+//         correct_pc_q <= 32'h0;
+//     end
+// end
+//
+// assign flush_pipeline = flush_pipeline_q;
 //=========================================================================
 // 3. 输出：组合路径（不锁整拍）
 //========================================================================|
