@@ -413,7 +413,7 @@ module ysyx_24080020_NPC(
         // .correct_pc_btb(correct_pc_btb),
         // .flush_pipeline(flush_pipeline),
         // exu -> ir
-        .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & (branch_not_taken_exu | (branch_taken_exu & btb_hit)),
+        .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & (branch_not_taken_exu | (branch_taken_exu & btb_hit))),
         .correct_pc_btb(branch_not_taken_exu ? (pc_exu+32'd4) : dnpc_exu),
         .flush_pipeline(flush_pipeline),
 
