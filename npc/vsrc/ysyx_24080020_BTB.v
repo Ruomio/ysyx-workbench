@@ -35,6 +35,8 @@ localparam branch_size  = `ysyx_24080020_BRANCH_SIZE;
 localparam branch_num_bits   = $clog2(branch_num);
 localparam branch_size_bits  = $clog2(branch_size);
 localparam branch_tag_size   = 32 - branch_num_bits - branch_size_bits;
+localparam branch_tag_group_size = branch_tag_size * branch_way;
+localparam branch_data_group_size = (branch_size << 3) * branch_way;
 
 wire [branch_num_bits-1:0]   index = is_dnpc ? pc_exu[branch_num_bits+branch_size_bits-1 : branch_size_bits] :
                                                pc_addr[branch_num_bits+branch_size_bits-1 : branch_size_bits];
@@ -43,13 +45,12 @@ wire [branch_tag_size-1:0]   tag   = is_dnpc ? pc_exu[31 : branch_num_bits+branc
                                                pc_addr[31 : branch_num_bits+branch_size_bits];
 
 
-
 //=========================================================================
 // 2. BTB 表项（仅锁 64 bit）
 //=========================================================================
-reg [31:0]                      target [0:branch_num-1];   // 32 bit
-reg [branch_tag_size-1:0]       tag_r [0:branch_num-1]; // tag
-reg                             valid [0:branch_num-1];    // valid bit
+reg [branch_data_group_size-1:0]                target [0:branch_num-1];   // 32 bit
+reg [branch_tag_group_size-1:0]                 tag_r [0:branch_num-1];    // tag
+reg [branch_way-1:0]                            valid [0:branch_num-1];    // valid bit
 
 // 写指针（FIFO 替换）
 reg [branch_way-1:0] fifo_ptr [0:branch_num-1];
@@ -65,9 +66,9 @@ wire [31:0] hit_target;
 genvar j;
 generate
     for (j = 0; j < branch_way; j = j + 1) begin : gen_hit
-        assign way_hit[j] = (tag_r[index][j] == tag) & valid[index][j];
-        // assign way_hit[j] = (tag_r[index][(j+1)*branch_tag_size-1:j*branch_tag_size] == tag)
-        //         && ((valid[index] & ({ {(branch_way-1){1'b0}}, 1'b1} << j)) != 'b0);
+        // assign way_hit[j] = (tag_r[index][j] == tag) & valid[index][j];
+        assign way_hit[j] = (tag_r[index][(j+1)*branch_tag_size-1:j*branch_tag_size] == tag)
+                && ((valid[index] & ({ {(branch_way-1){1'b0}}, 1'b1} << j)) != 'b0);
     end
 endgenerate
 
@@ -101,9 +102,9 @@ always @(posedge clk) begin
     end
     else if (is_dnpc) begin
         // 同一拍完成写
-        target[index][way] <= dnpc;
-        tag_r[index][way]  <= tag;
-        valid[index][way]  <= 1'b1;
+        target[index][ (way+1)*32 -1 : way*32 ] <= dnpc;
+        tag_r[index][way*branch_tag_size-1 : way*branch_tag_size]  <= tag;
+        valid[index][1 << way]  <= 1'b1;
         fifo_ptr[index]    <= (fifo_ptr[index] + 1) % branch_way;
 
     end
