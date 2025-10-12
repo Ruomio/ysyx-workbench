@@ -36,7 +36,7 @@ module ysyx_24080020_PC (
     assign pc_addr        = pc_q;              // 当前 PC
 
     assign pc_btb_update  = update_q;
-    assign pc_target      = pc_target_q;
+    assign pc_btb_target  = pc_target_q;
 
     // 2. 更新逻辑：单拍完成
     always @(posedge clk) begin
