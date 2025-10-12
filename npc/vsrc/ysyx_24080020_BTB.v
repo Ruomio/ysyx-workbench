@@ -112,7 +112,7 @@ always @(posedge clk) begin
     else if (is_update_btb) begin
         // 同一拍完成写
         target[index][ (({ {(branch_data_group_bits-branch_way){1'b0}} , way}+ 'b1) << 5 - 1)-:32 ] <= pc_target;
-        tag_r[index][(( { {(branch_tag_size-branch_way){1'b0}}, way} +{ {(branch_tag_size-1){1'b0}}, 1'b1} )*branch_tag_size - 1)-:branch_tag_size]  <= tag;
+        tag_r[index][(( { {(branch_tag_size-branch_way){1'b0}}, way} +{ {(branch_tag_size-1){1'b0}}, 1'b1} )*branch_tag_size - { {(branch_tag_size-1){1'b0}}, 1'b1})-:branch_tag_size]  <= tag;
         valid[index][1 << way]  <= 1'b1;
         fifo_ptr[index]    <= (fifo_ptr[index] + 1) % branch_way;
 
