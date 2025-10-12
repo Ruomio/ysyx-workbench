@@ -62,10 +62,10 @@ assign flush_pipeline = need_flush_pipeline & (~((raddr == correct_pc_btb) & spe
 // 4. DPI-C 调试接口（可选，面积可综合开关）
 //=========================================================================
 `ifdef CONFIG_DPIC
-always @(posedge clk) begin
-    if (inst_fin)
-        $display("IFU: PC=0x%08x", raddr);
-end
+// always @(posedge clk) begin
+//     if (inst_fin)
+//         $display("IFU: PC=0x%08x", raddr);
+// end
 `endif
 
 endmodule

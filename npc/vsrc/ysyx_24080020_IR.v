@@ -52,7 +52,8 @@ always @(posedge clk) begin
     if (!rst) begin
         valid_q_reg     <= 1'b0;
     end
-    else if ((inst_fin_valid & inst_fin_ready)) begin
+    // else if ((inst_fin_valid & inst_fin_ready)) begin
+    else if (arready) begin
         valid_q_reg     <= 1'b0;
     end
     else if (if_en_valid && if_en_ready) begin
