@@ -12,6 +12,7 @@ module ysyx_24080020_PC (
     output pc_btb_update,
 
     // exu -> pc
+    input new_branch,
     input branch_not_taken,
     input branch_taken,
     input [`ysyx_24080020_WIDTH-1:0] pc_base,
@@ -65,7 +66,7 @@ module ysyx_24080020_PC (
         if (!rst) begin
             update_next    <= 1'b0;
         end
-        else if(pc_btb_valid & btb_pc_ready) begin
+        else if(new_branch) begin
             update_next    <= 'b0;
         end
         else if(update_btb) begin
