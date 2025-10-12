@@ -47,7 +47,7 @@ assign special_pc_o  = special_pc_q;
 //=========================================================================
 reg valid_q_reg;
 reg special_pc_q;
-reg [31:0] addr_q, rdata_q, raddr_icache_q;
+reg [31:0] addr_q;
 
 
 always @(posedge clk) begin
@@ -59,8 +59,6 @@ always @(posedge clk) begin
         valid_q_reg     <= 1'b1;
         special_pc_q    <= special_pc_i;
         addr_q          <= addr;
-        rdata_q         <= rdata;
-        raddr_icache_q  <= raddr_icache;
     end
     else if (arready) begin
         valid_q_reg     <= 1'b0;
@@ -122,6 +120,16 @@ assign inst_fin_valid = rvalid & rlast & rready & (rresp == 2'b00);
 //=========================================================================
 // 4. 输出：直接连组合（不锁整拍，与原文件一致）
 //=========================================================================
+reg [31:0] rdata_q, raddr_icache_q;
+
+always @(posedge clk) begin
+    if (!rst) begin
+    end
+    else if (rvalid & rready) begin
+        rdata_q         <= rdata;
+        raddr_icache_q  <= raddr_icache;
+    end
+end
 assign inst       = rdata_q;
 // assign pc_mem     = addr;   // PC 直接连输入
 assign raddr_ir   = raddr_icache_q;   // 地址直接连输入
