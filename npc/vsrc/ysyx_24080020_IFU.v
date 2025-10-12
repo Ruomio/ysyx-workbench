@@ -42,7 +42,7 @@ always @(posedge clk or negedge rst) begin
         special_pc_q <= 1'b0;
         valid_q <= 1'b0;
     end
-    else if(ifu_idu_valid & ifu_idu_ready) begin
+    else if(ifu_idu_valid & idu_ifu_ready) begin
         valid_q <= 1'b0;
     end
     else if(inst_fin_valid & inst_fin_ready) begin
