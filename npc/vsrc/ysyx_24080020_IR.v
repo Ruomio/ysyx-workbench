@@ -40,13 +40,15 @@ module ysyx_24080020_IR (
 // assign raddr_ir     = (special_pc_icache) ? raddr_icache : 32'd0;
 // assign raddr_ir     = raddr_icache;
 assign special_pc_ir = special_pc_icache;
-assign special_pc_o  = special_pc_i;
+assign special_pc_o  = special_pc_q;
 
 //=========================================================================
 // 2. 经典 valid-ready 握手（零状态机）
 //=========================================================================
 reg valid_q_reg;
+reg special_pc_q;
 reg [31:0] addr_q;
+
 
 always @(posedge clk) begin
     if (!rst) begin
@@ -55,7 +57,9 @@ always @(posedge clk) begin
     // else if ((inst_fin_valid & inst_fin_ready)) begin
     else if (if_en_valid && if_en_ready) begin
         valid_q_reg     <= 1'b1;
+        special_pc_q    <= special_pc_i;
         addr_q          <= addr;
+
     end
     else if (arready) begin
         valid_q_reg     <= 1'b0;
