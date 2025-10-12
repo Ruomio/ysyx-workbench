@@ -379,7 +379,7 @@ module ysyx_24080020_NPC(
     );
 
     // BTB
-    wire special_pc_btb, valid_btb, ready_btb;
+    wire special_pc_btb, valid_btb, ready_btb, btb_hit;
     wire [`ysyx_24080020_WIDTH-1:0] pc_btb;
 
 
