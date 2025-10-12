@@ -246,7 +246,7 @@ assign mem_addr_exu = alu_result;
 wire [31:0] pc_plus_4 = pc_q_reg + 32'd4;
 assign wdata_exu = (is_jal_exu || is_jalr_exu) ? pc_plus_4 :
                    is_csr_exu ? rcsrdata_q_reg :  // CSR指令写回原寄存器值
-                   (is_store_exu) ? val2_q_reg :  // store 
+                   (is_store_exu) ? val2_q_reg :  // store
                    alu_result;                // ALU指令写回计算结果
 
 assign waddr_exu = waddr_q_reg;
@@ -282,16 +282,16 @@ import "DPI-C" function void statistics_idu_jump_type();
 
 // DPI调用逻辑
 always @(posedge clk) begin
-    if (rst && valid_q_reg && mem_exu_ready) begin
+    if (idu_exu_valid && exu_idu_ready) begin
         statistics_exu_complete_calcu();
-        if (is_jal_exu || is_jalr_exu) update_ftrace_dpi();
-        if (is_ebreak_exu) ebreak();
+        if (is_jal_idu || is_jalr_idu) update_ftrace_dpi();
+        if (is_ebreak_idu) ebreak();
 
         // 指令类型统计
-        if (is_load_exu) statistics_idu_load_type();
-        else if (is_store_exu) statistics_idu_store_type();
-        else if (is_csr_exu) statistics_idu_csr_type();
-        else if (is_branch_exu || is_jal_exu || is_jalr_exu) statistics_idu_jump_type();
+        if (is_load_idu) statistics_idu_load_type();
+        else if (is_store_idu) statistics_idu_store_type();
+        else if (is_csr_idu) statistics_idu_csr_type();
+        else if (is_branch_idu || is_jal_idu || is_jalr_idu) statistics_idu_jump_type();
         else statistics_idu_calculate_type();
     end
 end
