@@ -1268,8 +1268,13 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
+        `ifdef USE_BTB
         .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & (branch_not_taken_exu | (branch_taken_exu & ~btb_hit))),
         .correct_pc(branch_not_taken_exu ? (pc_exu+32'd4) : dnpc_exu),
+        `else
+        .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & branch_taken_exu),
+        .correct_pc(dnpc_exu),
+        `end
         .flush_pipeline(flush_pipeline),
 
         .raddr_(raddr_icache),

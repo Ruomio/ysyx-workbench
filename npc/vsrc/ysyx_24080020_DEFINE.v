@@ -29,6 +29,7 @@
 `define ysyx_24080020_CACHE_WAY 2
 
 // branch target buffer
+// `define USE_BTB
 `define ysyx_24080020_BRANCH_SIZE 4
 `define ysyx_24080020_BRANCH_NUM 2
 `define ysyx_24080020_BRANCH_WAY 2

@@ -1,5 +1,4 @@
 `include "ysyx_24080020_DEFINE.v"
-// `define USE_BTB
 module ysyx_24080020_BTB (
     input  wire        clk,
     input  wire        rst_n,
