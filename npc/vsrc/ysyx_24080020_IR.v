@@ -108,8 +108,8 @@ assign araddr  = addr_q;
 //=========================================================================
 // 3. 读数据：同一拍返回（不锁 rdata）
 //=========================================================================
-// assign rready = inst_fin_ready;     // 永远 ready（单 beat）
-assign rready = 1'b1;     // 永远 ready（单 beat）
+assign rready = inst_fin_ready;     // 永远 ready（单 beat）
+// assign rready = 1'b1;     // 永远 ready（单 beat）
 // assign rdata  = rdata;    // 直接连 ICACHE
 // assign rresp  = 2'b00;    // OKAY
 // assign rid    = rid;
