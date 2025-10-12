@@ -35,4 +35,4 @@ end
 
 assign flush_pipeline = flush_pipeline_q;
 
-endmodule
+endmodule;
