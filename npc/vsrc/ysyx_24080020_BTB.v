@@ -104,7 +104,7 @@ always @(posedge clk) begin
     end
     else if (is_dnpc) begin
         // 同一拍完成写
-        target[index][ (({ {(branch_data_group_bits-branch_way){1'b0}} , way}+ 'b1) << 5 )-:branch_size ] <= dnpc;
+        target[index][ (({ {(branch_data_group_bits-branch_way){1'b0}} , way}+ 'b1) << 5 )-:(branch_size<<3) ] <= dnpc;
         tag_r[index][( { {(branch_tag_size-branch_way){1'b0}}, way} +'b1 )-:branch_tag_size]  <= tag;
         valid[index][1 << way]  <= 1'b1;
         fifo_ptr[index]    <= (fifo_ptr[index] + 1) % branch_way;
