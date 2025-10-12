@@ -341,7 +341,7 @@ module ysyx_24080020_NPC(
 
     // pc
     wire pc_btb_valid, btb_pc_ready, pc_btb_special, btb_special_pc, pc_btb_update_btb;
-    wire [31:0] pc_btb_addr, pc_btb_target;
+    wire [31:0] pc_btb_addr, pc_btb_target, btb_target_pc;
     wire btb_target_valid;
 
     ysyx_24080020_PC u_pc(
