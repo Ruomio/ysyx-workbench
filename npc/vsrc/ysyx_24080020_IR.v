@@ -73,7 +73,7 @@ always @(posedge clk) begin
     if (!rst) begin
         ar_sent   <= 1'b0;
     end
-    else if (inst_fin_valid && inst_fin_ready) begin
+    else if (if_en_valid_valid && if_en_ready) begin
         // 传输完成，重置状态
         ar_sent   <= 1'b0;
     end
