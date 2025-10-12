@@ -173,7 +173,7 @@ always @(posedge clk) begin
         mem_result_q   <= rdata; // 读/写结果
     end
     else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
-        mem_wait_load_q<= mren_exu;
+        mem_wait_load_q<= mren_exu | mwen_exu;
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
         mem_mren_q     <= mren_exu;
         mem_mwen_q     <= mwen_exu;

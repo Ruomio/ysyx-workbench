@@ -433,6 +433,8 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
+        .need_stall(need_stall),
+
         // ir -> ifu
         .inst(inst_ir),
         .raddr(raddr_ir),
