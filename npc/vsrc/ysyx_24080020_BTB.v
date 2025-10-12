@@ -1,4 +1,5 @@
 `include "ysyx_24080020_DEFINE.v"
+`define USE_BTB
 module ysyx_24080020_BTB (
     input  wire        clk,
     input  wire        rst_n,
@@ -18,13 +19,16 @@ module ysyx_24080020_BTB (
     input  wire [`ysyx_24080020_WIDTH-1:0] pc_exu,
     input  wire [`ysyx_24080020_WIDTH-1:0] dnpc,
 
+    // for flush_control
+    output wire        bit_hit,
+
     // btb -> ir
     output wire        out_special_pc,
     output wire [`ysyx_24080020_WIDTH-1:0] out_pc,
     output wire        out_valid,
     input  wire        out_ready
 );
-
+`ifdef USE_BTB
 //=========================================================================
 // 1. 参数与信号（与原文件一致）
 //=========================================================================
@@ -87,6 +91,8 @@ assign out_pc              = pc_addr;     // 顺序 PC
 assign btb_target_valid = any_hit;
 assign btb_target       = hit_target;
 
+assign btb_hit = any_hit;
+
 //=========================================================================
 // 4. 更新逻辑（单拍完成，不等 B）
 //=========================================================================
@@ -132,6 +138,8 @@ always @(posedge clk) begin
     end
 end
 
+
+
 //=========================================================================
 // 6. DPI-C 调试接口（可选，面积可综合开关）
 //=========================================================================
@@ -140,4 +148,17 @@ end
 // end
 `endif
 
+`else
+
+
+    assign in_ready = out_ready;
+    assign out_valid = in_valid;
+    assign out_pc = pc_addr;
+    assign out_special_pc = in_special;
+
+    assign btb_target_valid = 'b0;
+    assign btb_hit = 'b0;
+
+
+`endif //USE_BTB
 endmodule
