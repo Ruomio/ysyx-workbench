@@ -591,10 +591,10 @@ uint32_t g_get_rs1() {
 uint32_t g_get_rd() {
 #if defined (ysyxSoCFull)
   // return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 7);
-  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__waddr_idu;
+  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_exu__DOT__waddr_q_reg;
 #elif defined (ysyx_24080020_NPC)
   // return BITS(top->rootp->ysyx_24080020_NPC__DOT__inst_ifu, 19, 15);
-  return top->rootp->ysyx_24080020_NPC__DOT__waddr_idu;
+  return top->rootp->ysyx_24080020_NPC__DOT__u_exu__DOT__waddr_q_reg;
 #else
 
 #endif
