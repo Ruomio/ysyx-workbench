@@ -37,6 +37,8 @@ localparam branch_size_bits  = $clog2(branch_size);
 localparam branch_tag_size   = 32 - branch_num_bits - branch_size_bits;
 localparam branch_tag_group_size = branch_tag_size * branch_way;
 localparam branch_data_group_size = (branch_size << 3) * branch_way;
+localparam branch_tag_group_bits = $clog2(branch_tag_group_size);
+localparam branch_data_group_bits = $clog2(branch_data_group_size);
 
 wire [branch_num_bits-1:0]   index = is_dnpc ? pc_exu[branch_num_bits+branch_size_bits-1 : branch_size_bits] :
                                                pc_addr[branch_num_bits+branch_size_bits-1 : branch_size_bits];
@@ -73,7 +75,7 @@ generate
 endgenerate
 
 assign any_hit     = |way_hit;
-assign hit_target  = target[index][(way_hit+1) * 32 -1 : way_hit*32]; // 多路选择器
+assign hit_target  = target[index][( {{(branch_data_group_bits-branch_way){1'b0}}, way_hit}+1) << 5 - : 32]; // 多路选择器
 
 // 输出（组合）
 assign out_special_pc  = in_special;
