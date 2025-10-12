@@ -29,7 +29,7 @@ module ysyx_24080020_PC (
     // 2. 更新逻辑：单拍完成
     always @(posedge clk) begin
         if (!rst) begin
-            pc_q        <= `ysyx24080020_MBASE;   // 初始 PC
+            pc_q        <= `ysyx_24080020_MBASE;   // 初始 PC
         end
         else if (btb_target_valid) begin    // BTB 握手成功
             pc_q        <= btb_target_pc;
