@@ -86,7 +86,7 @@ assign any_hit     = |way_hit;
 assign hit_target  = target[index][(( {{(branch_data_group_bits-branch_way){1'b0}}, way_hit}+1) << 5)-: 32]; // 多路选择器
 
 // 输出（组合）
-assign out_special_pc      = in_special;
+assign out_special_pc      = special_pc_q;
 assign out_pc              = is_update_btb ? pc_target : pc_addr;     // 顺序 PC
 
 assign btb_target_valid = any_hit;
@@ -100,7 +100,6 @@ assign btb_hit = any_hit;
 // wire update_en = is_dnpc;
 wire [branch_way-1:0] way = fifo_ptr[index];
 
-reg special_pc_q;
 
 always @(posedge clk) begin
     if (!rst_n) begin
@@ -128,6 +127,7 @@ assign out_valid = valid_q_reg;   // 有数据就向下传
 assign in_ready  = ~valid_q_reg;
 
 reg                     valid_q_reg;
+reg                     special_pc_q;
 
 always @(posedge clk) begin
     if (!rst_n) begin
@@ -135,9 +135,11 @@ always @(posedge clk) begin
     end
     else if(out_valid & out_ready) begin
         valid_q_reg <= 'b0;
+        special_pc_q <= 'b0;
     end
     else if(in_valid & in_ready) begin
         valid_q_reg <= 'b1;
+        special_pc_q <= in_special;
     end
 end
 
