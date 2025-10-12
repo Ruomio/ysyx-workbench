@@ -402,6 +402,8 @@ module ysyx_24080020_NPC(
         .pc_exu(pc_exu),
         .dnpc(dnpc_exu),
 
+        .btb_hit(btb_hit),
+
         // btb -> ir
         .out_valid(valid_btb),
         .out_ready(ready_btb),
