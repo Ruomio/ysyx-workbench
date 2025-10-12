@@ -25,8 +25,8 @@ module ysyx_24080020_IFU (
 // 1. 经典 valid-ready 握手（零状态机）
 //=========================================================================
 // 反压：本级空就能收
-assign ifu_idu_valid = inst_fin_valid;   // 有数据就向下传
-assign inst_fin_ready = ~ifu_idu_valid;  // 空就能收
+assign ifu_idu_valid = valid_q;   // 有数据就向下传
+assign inst_fin_ready = ~valid_q;  // 空就能收
 
 // 完成标志：组合（与原文件一致）
 assign inst_fin = inst_fin_valid & inst_fin_ready;
@@ -35,12 +35,18 @@ assign inst_fin = inst_fin_valid & inst_fin_ready;
 // 2. 仅锁 1 bit 标志（零整拍缓冲）
 //=========================================================================
 reg special_pc_q;
+reg valid_q;
 
 always @(posedge clk or negedge rst) begin
     if (!rst) begin
         special_pc_q <= 1'b0;
+        valid_q <= 1'b0;
     end
-    else if (inst_fin_ready) begin        // 握手成功才更新
+    else if(ifu_idu_valid & ifu_idu_ready) begin
+        valid_q <= 1'b0;
+    end
+    else if(inst_fin_valid & inst_fin_ready) begin
+        valid_q <= 1'b1;
         special_pc_q <= special_pc_i;
     end
 end
