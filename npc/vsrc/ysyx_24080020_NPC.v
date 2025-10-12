@@ -357,8 +357,8 @@ module ysyx_24080020_NPC(
         .pc_btb_target(pc_btb_target),
 
         // exu -> pc
-        .branch_not_taken(branch_not_taken_exu),
-        .branch_taken(branch_taken_exu),
+        .branch_not_taken(branch_not_taken_exu & exu_mem_valid & mem_exu_ready),
+        .branch_taken(branch_taken_exu & exu_mem_valid & mem_exu_ready),
         .pc_base(pc_exu),
         .pc_target(dnpc_exu),
 
