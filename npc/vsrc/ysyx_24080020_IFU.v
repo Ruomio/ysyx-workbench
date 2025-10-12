@@ -3,20 +3,23 @@ module ysyx_24080020_IFU (
     input  wire        clk,
     input  wire        rst,
 
+    // ir -> ifu
     input  wire [`ysyx_24080020_WIDTH-1:0] inst,
-    output wire [`ysyx_24080020_WIDTH-1:0] pc_ifu,
-    output wire [`ysyx_24080020_WIDTH-1:0] inst_ifu,
     input  wire [`ysyx_24080020_WIDTH-1:0] raddr,
-
-    output wire        flush_pipeline,
-    output wire        inst_fin,
-
-    input  wire        special_pc_i,
-    input  wire [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
-    input  wire        need_flush_pipeline,
-
     input  wire        inst_fin_valid,
     output wire        inst_fin_ready,
+    input  wire        special_pc_i,
+    // output wire        inst_fin,
+
+    // btb -> ifu
+    input  wire [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
+    input  wire        need_flush_pipeline,
+    output wire        flush_pipeline,
+
+    // ifu -> idu
+    output wire [`ysyx_24080020_WIDTH-1:0] pc_ifu,
+    output wire [`ysyx_24080020_WIDTH-1:0] inst_ifu,
+
     input  wire        idu_ifu_ready,
     output wire        ifu_idu_valid
 );
@@ -29,18 +32,15 @@ assign ifu_idu_valid = valid_q;   // 有数据就向下传
 assign inst_fin_ready = ~valid_q;  // 空就能收
 
 // 完成标志：组合（与原文件一致）
-assign inst_fin = inst_fin_valid & inst_fin_ready;
+// assign inst_fin = inst_fin_valid & inst_fin_ready;
 
 //=========================================================================
 // 2. 仅锁 1 bit 标志（零整拍缓冲）
 //=========================================================================
-reg special_pc_q;
 reg valid_q;
-reg flush_pipeline_q;
 
 always @(posedge clk or negedge rst) begin
     if (!rst) begin
-        special_pc_q <= 1'b0;
         valid_q <= 1'b0;
     end
     else if(ifu_idu_valid & idu_ifu_ready) begin
@@ -48,17 +48,37 @@ always @(posedge clk or negedge rst) begin
     end
     else if(inst_fin_valid & inst_fin_ready) begin
         valid_q <= 1'b1;
-        special_pc_q <= special_pc_i;
         flush_pipeline_q <= need_flush_pipeline;
     end
 end
 
+
+//=========================================================================
+// jump inst, flush pipeline
+//========================================================================|
+reg flush_pipeline_q;
+reg [31:0] correct_pc_q;
+
+always @(posedge clk) begin
+    if(!rst) begin
+        flush_pipeline_q <= 1'b0;
+    end
+    else if(need_flush_pipeline) begin
+        flush_pipeline_q <= 1'b1;
+        correct_pc_q <= correct_pc_btb;
+    end
+    else if((raddr == correct_pc_q) & special_pc_i) begin
+        flush_pipeline_q <= 1'b0;
+        correct_pc_q <= 32'h0;
+    end
+end
+
+assign flush_pipeline = flush_pipeline_q;
 //=========================================================================
 // 3. 输出：组合路径（不锁整拍）
 //========================================================================|
 assign pc_ifu     = raddr;          // PC 直接连输入
 assign inst_ifu   = inst;           // 指令直接连输入
-assign flush_pipeline = flush_pipeline_q & (~((raddr == correct_pc_btb) & special_pc_q));
 
 //=========================================================================
 // 4. DPI-C 调试接口（可选，面积可综合开关）

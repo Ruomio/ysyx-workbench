@@ -433,19 +433,22 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
+        // ir -> ifu
         .inst(inst_ir),
-        .pc_ifu(pc_ifu),
-        .inst_ifu(inst_ifu),
-
-        .inst_fin(inst_fin),
-        .flush_pipeline(flush_pipeline),
         .raddr(raddr_ir),
-        .special_pc_i(special_pc_ir),
-        .need_flush_pipeline(need_flush_pipeline),
-
-        .correct_pc_btb(correct_pc_btb),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
+        .special_pc_i(special_pc_ir),
+        // .inst_fin(inst_fin),
+
+        // btb -> ifu
+        .need_flush_pipeline(need_flush_pipeline),
+        .correct_pc_btb(correct_pc_btb),
+        .flush_pipeline(flush_pipeline),
+
+        // ifu -> idu
+        .pc_ifu(pc_ifu),
+        .inst_ifu(inst_ifu),
 
         .idu_ifu_ready(idu_ifu_ready),
         .ifu_idu_valid(ifu_idu_valid)
