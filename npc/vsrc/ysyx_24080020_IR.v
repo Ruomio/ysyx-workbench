@@ -38,7 +38,7 @@ module ysyx_24080020_IR (
 // 1. 地址选择与输出（组合，与原文件 100 % 一致）
 //=========================================================================
 // assign raddr_ir     = (special_pc_icache) ? raddr_icache : 32'd0;
-assign raddr_ir     = raddr_icache;
+// assign raddr_ir     = raddr_icache;
 assign special_pc_ir = special_pc_icache;
 assign special_pc_o  = special_pc_i;
 
@@ -46,6 +46,7 @@ assign special_pc_o  = special_pc_i;
 // 2. 经典 valid-ready 握手（零状态机）
 //=========================================================================
 reg valid_q_reg;
+reg [31:0] addr_q;
 
 always @(posedge clk) begin
     if (!rst) begin
@@ -56,6 +57,7 @@ always @(posedge clk) begin
     end
     else if (if_en_valid && if_en_ready) begin
         valid_q_reg     <= 1'b1;
+        addr_q          <= addr;
     end
 end
 // 反压：本级空就能收
@@ -74,9 +76,8 @@ always @(posedge clk) begin
         // 传输完成，重置状态
         ar_sent   <= 1'b0;
     end
-    else if (if_en_valid) begin
-        // 记录握手成功状态
-        if (arvalid && arready) ar_sent <= 1'b1;
+    else if (arvalid && arready) begin
+        ar_sent <= 1'b1;
     end
 end
 
@@ -97,7 +98,7 @@ assign arburst = 2'b01;   // INCR
 assign arsize  = 3'b010;  // 4 字节
 assign arid    = 4'd0;
 assign arlen   = 8'd0;    // 单 beat
-assign araddr  = addr;
+assign araddr  = addr_q;
 
 //=========================================================================
 // 3. 读数据：同一拍返回（不锁 rdata）
@@ -117,7 +118,7 @@ assign inst_fin_valid = rvalid & rlast & (rresp == 2'b00);
 //=========================================================================
 assign inst       = rdata;
 // assign pc_mem     = addr;   // PC 直接连输入
-assign raddr_ir   = addr;   // 地址直接连输入
+assign raddr_ir   = raddr_icache;   // 地址直接连输入
 
 //=========================================================================
 // 5. DPI-C 调试接口（可选，面积可综合开关）
