@@ -45,7 +45,8 @@ localparam branch_tag_group_bits = $clog2(branch_tag_group_size);
 localparam branch_data_group_bits = $clog2(branch_data_group_size);
 
 wire [branch_num_bits-1:0]   index = pc_addr[branch_num_bits+branch_size_bits-1 : branch_size_bits];
-wire [branch_tag_size-1:0]   tag   = pc_addr[31 : branch_num_bits+branch_size_bits];
+// wire [branch_tag_size-1:0]   tag   = pc_addr[31 : branch_num_bits+branch_size_bits];
+wire [branch_tag_size-1:0]   tag   = pc_addr;
 
 // wire [branch_num_bits-1:0]   index = is_dnpc ? pc_exu[branch_num_bits+branch_size_bits-1 : branch_size_bits] :
 //                                                pc_addr[branch_num_bits+branch_size_bits-1 : branch_size_bits];
