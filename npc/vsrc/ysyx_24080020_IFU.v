@@ -36,6 +36,7 @@ assign inst_fin = inst_fin_valid & inst_fin_ready;
 //=========================================================================
 reg special_pc_q;
 reg valid_q;
+reg flush_pipeline_q;
 
 always @(posedge clk or negedge rst) begin
     if (!rst) begin
@@ -48,6 +49,7 @@ always @(posedge clk or negedge rst) begin
     else if(inst_fin_valid & inst_fin_ready) begin
         valid_q <= 1'b1;
         special_pc_q <= special_pc_i;
+        flush_pipeline_q <= need_flush_pipeline;
     end
 end
 
@@ -56,7 +58,7 @@ end
 //========================================================================|
 assign pc_ifu     = raddr;          // PC 直接连输入
 assign inst_ifu   = inst;           // 指令直接连输入
-assign flush_pipeline = need_flush_pipeline & (~((raddr == correct_pc_btb) & special_pc_q));
+assign flush_pipeline = flush_pipeline_q & (~((raddr == correct_pc_btb) & special_pc_q));
 
 //=========================================================================
 // 4. DPI-C 调试接口（可选，面积可综合开关）
