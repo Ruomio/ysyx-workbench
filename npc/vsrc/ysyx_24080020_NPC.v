@@ -361,8 +361,8 @@ module ysyx_24080020_NPC(
         .btb_target_pc(btb_target_pc),
 
         // fix error jump
-        .fix_valid(fix_valid),
-        .fix_pc(fix_pc),
+        .fix_valid(branch_taken_exu & exu_mem_valid & mem_exu_ready),
+        .fix_pc(dnpc_exu),
         .in_special_pc(in_special_pc)
 
         // // btb <-> pc
@@ -398,7 +398,7 @@ module ysyx_24080020_NPC(
         .btb_target(btb_target_pc),
 
         // update btb while jump inst coming
-        .is_dnpc(branch_taken_exu),
+        .is_dnpc(branch_taken_exu & exu_mem_valid & mem_exu_ready),
         .pc_exu(pc_exu),
         .dnpc(dnpc_exu),
 
