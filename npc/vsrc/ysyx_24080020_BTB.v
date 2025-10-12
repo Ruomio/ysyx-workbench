@@ -9,15 +9,14 @@ module ysyx_24080020_BTB (
     output  wire      in_ready,
     input wire [31:0] pc_addr,
     input wire        in_special,
+    // update btb when exu are jump inst
+    input  wire        is_update_btb,
+    input  wire [`ysyx_24080020_WIDTH-1:0] pc_target,
 
     // btb -> pc
     output wire        btb_target_valid,
     output wire [31:0] btb_target,
 
-    // update btb when exu are jump inst
-    input  wire        is_dnpc,
-    input  wire [`ysyx_24080020_WIDTH-1:0] pc_exu,
-    input  wire [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     // for flush_control
     output wire        btb_hit,
@@ -44,11 +43,14 @@ localparam branch_data_group_size = (branch_size << 3) * branch_way;
 localparam branch_tag_group_bits = $clog2(branch_tag_group_size);
 localparam branch_data_group_bits = $clog2(branch_data_group_size);
 
-wire [branch_num_bits-1:0]   index = is_dnpc ? pc_exu[branch_num_bits+branch_size_bits-1 : branch_size_bits] :
-                                               pc_addr[branch_num_bits+branch_size_bits-1 : branch_size_bits];
+wire [branch_num_bits-1:0]   index = pc_addr[branch_num_bits+branch_size_bits-1 : branch_size_bits];
+wire [branch_tag_size-1:0]   tag   = pc_addr[31 : branch_num_bits+branch_size_bits];
 
-wire [branch_tag_size-1:0]   tag   = is_dnpc ? pc_exu[31 : branch_num_bits+branch_size_bits] :
-                                               pc_addr[31 : branch_num_bits+branch_size_bits];
+// wire [branch_num_bits-1:0]   index = is_dnpc ? pc_exu[branch_num_bits+branch_size_bits-1 : branch_size_bits] :
+//                                                pc_addr[branch_num_bits+branch_size_bits-1 : branch_size_bits];
+//
+// wire [branch_tag_size-1:0]   tag   = is_dnpc ? pc_exu[31 : branch_num_bits+branch_size_bits] :
+//                                                pc_addr[31 : branch_num_bits+branch_size_bits];
 
 
 //=========================================================================
@@ -82,11 +84,8 @@ assign any_hit     = |way_hit;
 assign hit_target  = target[index][(( {{(branch_data_group_bits-branch_way){1'b0}}, way_hit}+1) << 5)-: 32]; // 多路选择器
 
 // 输出（组合）
-assign out_special_pc  = in_special;
-assign out_pc              = pc_addr;     // 顺序 PC
-// assign correct_pc      = hit_target;         // 预测目标
-// assign flush_pipeline  = (any_hit & is_dnpc & (hit_target != pc_exu + 32'd4)) |
-//                           (branch_not_taken_exu & any_hit);
+assign out_special_pc      = in_special;
+assign out_pc              = is_update_btb ? pc_target : pc_addr;     // 顺序 PC
 
 assign btb_target_valid = any_hit;
 assign btb_target       = hit_target;
@@ -99,6 +98,8 @@ assign btb_hit = any_hit;
 // wire update_en = is_dnpc;
 wire [branch_way-1:0] way = fifo_ptr[index];
 
+reg special_pc_q;
+
 always @(posedge clk) begin
     if (!rst_n) begin
         for (integer i = 0; i < branch_num; i = i + 1) begin
@@ -108,10 +109,10 @@ always @(posedge clk) begin
             fifo_ptr[i] <= 'b0;
         end
     end
-    else if (is_dnpc) begin
+    else if (is_update_btb) begin
         // 同一拍完成写
-        target[index][ (({ {(branch_data_group_bits-branch_way){1'b0}} , way}+ 'b1) << 5 )-:32 ] <= dnpc;
-        tag_r[index][( { {(branch_tag_size-branch_way){1'b0}}, way} +'b1 )-:branch_tag_size]  <= tag;
+        target[index][ (({ {(branch_data_group_bits-branch_way){1'b0}} , way}+ 'b1) << 5 - 1)-:32 ] <= dnpc;
+        tag_r[index][(( { {(branch_tag_size-branch_way){1'b0}}, way} +'b1 )*branch_tag_size - 1)-:branch_tag_size]  <= tag;
         valid[index][1 << way]  <= 1'b1;
         fifo_ptr[index]    <= (fifo_ptr[index] + 1) % branch_way;
 
@@ -157,6 +158,7 @@ end
     assign out_special_pc = in_special;
 
     assign btb_target_valid = 'b0;
+    assign btb_target = 'b0;
     assign btb_hit = 'b0;
 
 

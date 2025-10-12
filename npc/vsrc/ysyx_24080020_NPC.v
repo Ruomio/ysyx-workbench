@@ -340,11 +340,9 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] addr_pc, inst_ir;
 
     // pc
-    wire pc_btb_valid, btb_pc_ready, pc_btb_special;
-    wire [31:0] pc_btb_addr, btb_target_pc, fix_pc;
+    wire pc_btb_valid, btb_pc_ready, pc_btb_special, btb_special_pc, pc_btb_update_btb;
+    wire [31:0] pc_btb_addr, pc_btb_target;
     wire btb_target_valid;
-    wire fix_valid;
-    wire in_special_pc;
 
     ysyx_24080020_PC u_pc(
         .clk(clk),
@@ -355,27 +353,18 @@ module ysyx_24080020_NPC(
         .btb_pc_ready(btb_pc_ready),
         .pc_btb_special(pc_btb_special),
         .pc_addr(pc_btb_addr),
+        .pc_btb_update(pc_btb_update_btb),
+        .pc_btb_target(pc_btb_target),
+
+        // exu -> pc
+        .branch_not_taken(branch_not_taken_exu),
+        .branch_taken(branch_taken_exu),
+        .pc_base(pc_exu),
+        .pc_target(dnpc_exu),
 
         // btb -> pc back
         .btb_target_valid(btb_target_valid),
-        .btb_target_pc(btb_target_pc),
-
-        // fix error jump
-        .fix_valid(branch_taken_exu & exu_mem_valid & mem_exu_ready),
-        .fix_pc(dnpc_exu),
-        .in_special_pc(in_special_pc)
-
-        // // btb <-> pc
-        // .in_valid(valid_btb),
-        // .in_ready(ready_btb),
-        // .in_pc(pc_btb),
-        // .in_special_pc(special_pc_btb),
-
-        // // pc <-> ir
-        // .special_pc(special_pc_pc),
-        // .if_en_valid(if_en_valid),
-        // .if_en_ready(if_en_ready),
-        // .addr(addr_pc)
+        .btb_target_pc(btb_target_pc)
     );
 
     // BTB
@@ -392,16 +381,14 @@ module ysyx_24080020_NPC(
         .in_ready(btb_pc_ready),
         .pc_addr(pc_btb_addr),
         .in_special(pc_btb_special),
+        .is_update_btb(is_update_btb),
+        .pc_target(pc_target),
 
         // btb -> pc
         .btb_target_valid(btb_target_valid),
         .btb_target(btb_target_pc),
 
-        // update btb while jump inst coming
-        .is_dnpc(branch_taken_exu & exu_mem_valid & mem_exu_ready),
-        .pc_exu(pc_exu),
-        .dnpc(dnpc_exu),
-
+        // for flush_pipeline control
         .btb_hit(btb_hit),
 
         // btb -> ir
