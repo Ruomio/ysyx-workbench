@@ -1265,8 +1265,8 @@ module ysyx_24080020_NPC(
         .correct_pc(branch_not_taken_exu ? (pc_exu+32'd4) : dnpc_exu),
         .flush_pipeline(flush_pipeline),
 
-        .raddr_icache(raddr_icache),
-        .special_pc_icache(special_pc_icache)
+        .raddr_(raddr_icache),
+        .special_pc_(special_pc_icache)
     );
 
 
