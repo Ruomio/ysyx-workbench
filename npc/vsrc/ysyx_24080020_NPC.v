@@ -348,11 +348,11 @@ module ysyx_24080020_NPC(
         .clk(clk),
         .rst(rst),
 
-        .btb_hit(btb_hit),
+        .btb_hit_(btb_hit),
 
         .pc_exu(pc_exu),
         // .is_dnpc(is_dnpc_exu),
-        .is_dnpc(branch_taken_exu),
+        .is_dnpc((exu_mem_valid & mem_exu_ready) & branch_taken_exu),
         .dnpc(dnpc_exu),
         // .is_btype(is_btype_exu),
         .branch_not_taken_exu(branch_not_taken_exu),
@@ -407,15 +407,6 @@ module ysyx_24080020_NPC(
         .inst(inst_ir),
         .inst_fin_valid(inst_fin_valid),
         .inst_fin_ready(inst_fin_ready),
-
-        // btb -> ir
-        // .need_flush_pipeline(need_flush_pipeline),
-        // .correct_pc_btb(correct_pc_btb),
-        // .flush_pipeline(flush_pipeline),
-        // exu -> ir
-        .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & (branch_not_taken_exu | (branch_taken_exu & ~btb_hit))),
-        .correct_pc_btb(branch_not_taken_exu ? (pc_exu+32'd4) : dnpc_exu),
-        .flush_pipeline(flush_pipeline),
 
         // icache -> ir
         .raddr_icache(raddr_icache),
@@ -1264,6 +1255,18 @@ module ysyx_24080020_NPC(
       .rvalid_o(rvalid_icache),
       .rid_o(rid_icache),
       .rlast_o(rlast_icache)
+    );
+
+    ysyx_24080020_FLUSH u_flush_pipeline (
+        .clk(clk),
+        .rst(rst),
+
+        .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & (branch_not_taken_exu | (branch_taken_exu & ~btb_hit))),
+        .correct_pc(branch_not_taken_exu ? (pc_exu+32'd4) : dnpc_exu),
+        .flush_pipeline(flush_pipeline),
+
+        .raddr_icache(raddr_icache),
+        .special_pc_icache(special_pc_icache)
     );
 
 

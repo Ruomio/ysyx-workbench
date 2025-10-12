@@ -14,11 +14,6 @@ module ysyx_24080020_IR (
     input  wire        inst_fin_ready,
     output wire [`ysyx_24080020_WIDTH-1:0] raddr_ir,
 
-    // btb -> ifu
-    input  wire [`ysyx_24080020_WIDTH-1:0] correct_pc_btb,
-    input  wire        need_flush_pipeline,
-    output wire        flush_pipeline,
-
     // icache -> ir
     input  wire        special_pc_icache,
     input  wire [`ysyx_24080020_WIDTH-1:0] raddr_icache,
@@ -140,28 +135,6 @@ assign inst       = rdata_q;
 // assign pc_mem     = addr;   // PC 直接连输入
 assign raddr_ir   = raddr_icache_q;   // 地址直接连输入
 
-
-//=========================================================================
-// jump inst, flush pipeline
-//========================================================================|
-reg flush_pipeline_q;
-reg [31:0] correct_pc_q;
-
-always @(posedge clk) begin
-    if(!rst) begin
-        flush_pipeline_q <= 1'b0;
-    end
-    else if(need_flush_pipeline) begin
-        flush_pipeline_q <= 1'b1;
-        correct_pc_q <= correct_pc_btb;
-    end
-    else if((raddr_icache == correct_pc_q) & special_pc_icache) begin
-        flush_pipeline_q <= 1'b0;
-        correct_pc_q <= 32'h0;
-    end
-end
-
-assign flush_pipeline = flush_pipeline_q;
 
 //=========================================================================
 // 5. DPI-C 调试接口（可选，面积可综合开关）
