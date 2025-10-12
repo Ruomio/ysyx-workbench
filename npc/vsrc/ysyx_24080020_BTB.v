@@ -5,7 +5,7 @@ module ysyx_24080020_BTB(
 
     input update_pc,
 
-    output btb_bit_,
+    output btb_hit_,
     // input is_btype,
     input branch_not_taken_exu,
     input [`ysyx_24080020_WIDTH-1:0] pc_exu,
