@@ -20,7 +20,7 @@ module ysyx_24080020_BTB (
     input  wire [`ysyx_24080020_WIDTH-1:0] dnpc,
 
     // for flush_control
-    output wire        bit_hit,
+    output wire        btb_hit,
 
     // btb -> ir
     output wire        out_special_pc,
