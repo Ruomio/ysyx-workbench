@@ -480,7 +480,7 @@ module ysyx_24080020_NPC(
 		.idu_exu_valid(idu_exu_valid),
 		.exu_idu_ready(exu_idu_ready),
 		.flush_pipeline(flush_pipeline),
-		.need_stall(need_stall | is_load_exu),
+		.need_stall(need_stall),
 		.pc_idu(pc_idu),
 
         // REGFILE 2 read 1 write
