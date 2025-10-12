@@ -65,8 +65,11 @@ module ysyx_24080020_PC (
         if (!rst) begin
             update_next    <= 1'b0;
         end
-        else begin
-            update_next    <= update_btb;
+        else if(pc_btb_valid & btb_pc_ready) begin
+            update_next    <= 'b0;
+        end
+        else if(update_btb) begin
+            update_next    <= 'b1;
         end
     end
     reg update_q_next;
