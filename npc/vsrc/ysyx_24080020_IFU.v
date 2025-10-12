@@ -39,7 +39,7 @@ assign inst_fin_ready = ~valid_q;  // 空就能收
 //=========================================================================
 reg valid_q;
 
-always @(posedge clk or negedge rst) begin
+always @(posedge clk) begin
     if (!rst) begin
         valid_q <= 1'b0;
     end
@@ -48,7 +48,6 @@ always @(posedge clk or negedge rst) begin
     end
     else if(inst_fin_valid & inst_fin_ready) begin
         valid_q <= 1'b1;
-        flush_pipeline_q <= need_flush_pipeline;
     end
 end
 
