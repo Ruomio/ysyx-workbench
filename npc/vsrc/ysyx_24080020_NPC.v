@@ -1274,7 +1274,7 @@ module ysyx_24080020_NPC(
         `else
         .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & branch_taken_exu),
         .correct_pc(dnpc_exu),
-        `end
+        `endif
         .flush_pipeline(flush_pipeline),
 
         .raddr_(raddr_icache),
