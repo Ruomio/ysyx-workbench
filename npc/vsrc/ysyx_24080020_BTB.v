@@ -97,14 +97,14 @@ always @(posedge clk) begin
     if (!rst_n) begin
         for (integer i = 0; i < branch_num; i = i + 1) begin
             // target[i]   <= 32'd0;
-            tag_r[i]    <= {branch_tag_size{1'b0}};
-            valid[i]    <= 1'b0;
-            fifo_ptr[i] <= {branch_way{1'b0}};
+            tag_r[i]    <= 'b0;
+            valid[i]    <= 'b0;
+            fifo_ptr[i] <= 'b0;
         end
     end
     else if (is_dnpc) begin
         // 同一拍完成写
-        target[index][ (way+1)*32 -1 : way*32 ] <= dnpc;
+        target[index][ (({ {(branch_data_group_bits-branch_way){1'b0}} , way}+ 'b1) << 5 )- : 32 ] <= dnpc;
         tag_r[index][way*branch_tag_size-1 : way*branch_tag_size]  <= tag;
         valid[index][1 << way]  <= 1'b1;
         fifo_ptr[index]    <= (fifo_ptr[index] + 1) % branch_way;
