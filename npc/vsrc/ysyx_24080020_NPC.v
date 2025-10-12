@@ -381,8 +381,8 @@ module ysyx_24080020_NPC(
         .in_ready(btb_pc_ready),
         .pc_addr(pc_btb_addr),
         .in_special(pc_btb_special),
-        .is_update_btb(is_update_btb),
-        .pc_target(pc_target),
+        .is_update_btb(pc_btb_update_btb),
+        .pc_target(pc_btb_target),
 
         // btb -> pc
         .btb_target_valid(btb_target_valid),
