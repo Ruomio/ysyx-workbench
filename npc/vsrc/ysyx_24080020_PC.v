@@ -3,51 +3,43 @@ module ysyx_24080020_PC (
     input clk,
     input rst,
 
-    // btb <-> pc
-    input in_valid,
-    output reg in_ready,
+    // pc -> btb
+    output pc_btb_special,
+    output pc_btb_valid,
+    input btb_pc_ready,
+    output [`ysyx_24080020_WIDTH-1:0] pc_addr,
 
-    input [`ysyx_24080020_WIDTH-1:0] in_pc,
-    input in_special_pc,
+    // btb -> pc
+    input  wire        btb_target_valid,
+    input [`ysyx_24080020_WIDTH-1:0] btb_target_pc,
 
-    // pc <-> ir
-    input if_en_ready,
-    output special_pc,
-    output if_en_valid,
-    output [`ysyx_24080020_WIDTH-1:0] addr
+    // error jump
+    input  wire        fix_valid,
+    input [`ysyx_24080020_WIDTH-1:0] fix_pc,
+    input in_special_pc
 );
 
-    assign addr = in_pc;
-    assign special_pc = in_special_pc;
-    assign if_en_valid = in_valid;
-    assign in_ready = if_en_ready;
+    reg [31:0] pc_q;
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         addr <= 'b0;
-    //         in_ready <= 'b0;
-    //         special_pc <= 'b0;
-    //     end
-    //     else if(in_valid && in_ready) begin
-    //         in_ready <= 'b0;
-    //         special_pc <= in_special_pc;
-    //         addr <= in_pc;
-    //     end
-    //     else if(in_valid && !if_en_valid) begin
-    //         in_ready <= 'b1;
-    //     end
-    // end
+    // 1. 经典 valid-ready：反压 = 「本级空」
+    assign pc_btb_valid   = rst & btb_pc_ready;        // 寄存器输出
+    assign pc_btb_special = in_special_pc;     // 直接连输入
+    assign pc_addr        = pc_q;              // 当前 PC
 
-    // always @(posedge clk) begin
-    //     if(!rst) begin
-    //         if_en_valid <= 'b0;
-    //     end
-    //     else if(if_en_valid && if_en_ready) begin
-    //         if_en_valid <= 'b0;
-    //     end
-    //     else if(in_valid && in_ready) begin
-    //         if_en_valid <= 'b1;
-    //     end
-    // end
+    // 2. 更新逻辑：单拍完成
+    always @(posedge clk) begin
+        if (!rst) begin
+            pc_q        <= `ysyx24080020_MBASE;   // 初始 PC
+        end
+        else if (btb_target_valid) begin    // BTB 握手成功
+            pc_q        <= btb_target_pc;
+        end
+        else if (fix_valid) begin           // 错误刷新握手成功
+            pc_q        <= fix_pc;
+        end
+        else if (pc_btb_valid & btb_pc_ready) begin
+            pc_q        <= pc_q + 32'd4;    // 顺序 +4
+        end
+    end
 
 endmodule

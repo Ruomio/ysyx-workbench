@@ -339,69 +339,87 @@ module ysyx_24080020_NPC(
   wire if_en_valid, if_en_ready;
   wire [`ysyx_24080020_WIDTH-1:0] addr_pc, inst_ir;
 
-  // BTB
-  wire special_pc_btb, valid_btb, ready_btb, btb_hit;
-  wire [`ysyx_24080020_WIDTH-1:0] pc_btb, correct_pc_btb;
-
-
-    ysyx_24080020_BTB u_btb(
-        .clk(clk),
-        .rst(rst),
-
-        .btb_hit_(btb_hit),
-
-        .pc_exu(pc_exu),
-        // .is_dnpc(is_dnpc_exu),
-        .is_dnpc((exu_mem_valid & mem_exu_ready) & branch_taken_exu),
-        .dnpc(dnpc_exu),
-        // .is_btype(is_btype_exu),
-        .branch_not_taken_exu(branch_not_taken_exu),
-        .new_inst(idu_exu_valid & exu_idu_ready),
-
-        .pc(pc_btb),
-
-        .correct_pc(correct_pc_btb),
-        .out_special_pc(special_pc_btb),
-        .flush_pipeline(need_flush_pipeline),
-
-        .update_pc(arvalid_ifu && arready_ifu),
-
-        // fence.i
-        // .fencei_exu(fencei_exu),
-        // .fencei_mem(fencei_mem),
-
-        // bus
-        .out_valid(valid_btb),
-        .out_ready(ready_btb)
-    );
+    // pc
+    wire pc_btb_valid, btb_pc_ready;
+    wire [31:0] pc_btb_addr, btb_target_pc, fix_pc;
+    wire btb_target_valid;
+    wire fix_valid;
+    wire in_special_pc;
 
     ysyx_24080020_PC u_pc(
         .clk(clk),
         .rst(rst),
 
-        // btb <-> pc
-        .in_valid(valid_btb),
-        .in_ready(ready_btb),
-        .in_pc(pc_btb),
-        .in_special_pc(special_pc_btb),
+        // pc -> btb
+        .pc_btb_valid(pc_btb_valid),
+        .btb_pc_ready(btb_pc_ready),
+        .pc_btb_special(pc_btb_special),
+        .pc_btb_addr(pc_btb_addr),
 
+        // btb -> pc back
+        .btb_target_valid(btb_target_valid),
+        .btb_target_pc(btb_target_pc),
 
-        // pc <-> ir
-        .special_pc(special_pc_pc),
-        .if_en_valid(if_en_valid),
-        .if_en_ready(if_en_ready),
-        .addr(addr_pc)
+        // fix error jump
+        .fix_valid(fix_valid),
+        .fix_pc(fix_pc),
+        .in_special_pc(in_special_pc)
+
+        // // btb <-> pc
+        // .in_valid(valid_btb),
+        // .in_ready(ready_btb),
+        // .in_pc(pc_btb),
+        // .in_special_pc(special_pc_btb),
+
+        // // pc <-> ir
+        // .special_pc(special_pc_pc),
+        // .if_en_valid(if_en_valid),
+        // .if_en_ready(if_en_ready),
+        // .addr(addr_pc)
     );
+
+    // BTB
+    wire special_pc_btb, valid_btb, ready_btb, special_pc_btb;
+    wire [`ysyx_24080020_WIDTH-1:0] pc_btb;
+
+
+    ysyx_24080020_BTB u_btb(
+        .clk(clk),
+        .rst_n(rst),
+
+        // pc -> btb
+        .in_valid(pc_btb_valid),
+        .in_ready(btb_pc_ready),
+        .pc_addr(pc_btb_addr),
+        .in_special(pc_btb_special),
+
+        // btb -> pc
+        .btb_target_valid(btb_target_valid),
+        .btb_target(btb_target_pc),
+
+        // update btb while jump inst coming
+        .is_dnpc(branch_taken_exu),
+        .pc_exu(pc_exu),
+        .dnpc(dnpc_exu),
+
+        // btb -> ir
+        .out_valid(valid_btb),
+        .out_ready(ready_btb),
+        .out_pc(pc_btb),
+        .out_special_pc(special_pc_btb)
+
+    );
+
 
     ysyx_24080020_IR u_ir(
         .clk(clk),
         .rst(rst),
 
-        // pc <-> ir
-        .special_pc_i(special_pc_pc),
-        .if_en_valid(if_en_valid),
-        .if_en_ready(if_en_ready),
-        .addr(addr_pc),
+        // btb <-> ir
+        .special_pc_i(special_pc_btb),
+        .if_en_valid(valid_btb),
+        .if_en_ready(ready_btb),
+        .addr(pc_btb),
 
         // ir <-> ifu
         .inst(inst_ir),

@@ -3,7 +3,7 @@ module ysyx_24080020_IR (
     input  wire        clk,
     input  wire        rst,
 
-    // pc <-> ir
+    // btb <-> ir
     input  wire        special_pc_i,
     input  wire [`ysyx_24080020_WIDTH-1:0] addr,
     input  wire        if_en_valid,
