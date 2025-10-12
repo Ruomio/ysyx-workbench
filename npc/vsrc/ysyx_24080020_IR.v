@@ -103,15 +103,15 @@ assign araddr  = addr_q;
 //=========================================================================
 // 3. 读数据：同一拍返回（不锁 rdata）
 //=========================================================================
-assign rready = inst_fin_ready;     // 永远 ready（单 beat）
-// assign rready = 1'b1;     // 永远 ready（单 beat）
+// assign rready = inst_fin_ready;     // 永远 ready（单 beat）
+assign rready = 1'b1;     // 永远 ready（单 beat）
 // assign rdata  = rdata;    // 直接连 ICACHE
 // assign rresp  = 2'b00;    // OKAY
 // assign rid    = rid;
 // assign rlast  = 1'b1;     // 单 beat
 
 // 读完成标志：同一拍有效（与原文件一致）
-assign inst_fin_valid = rvalid & rlast & (rresp == 2'b00);
+assign inst_fin_valid = rvalid & rlast & rready & (rresp == 2'b00);
 
 //=========================================================================
 // 4. 输出：直接连组合（不锁整拍，与原文件一致）
