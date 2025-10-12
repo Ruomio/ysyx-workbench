@@ -8,7 +8,7 @@ module ysyx_24080020_FLUSH (
     output          flush_pipeline,
 
     input           special_pc_,
-    input [31:0]    raddr_,
+    input [31:0]    raddr_
 
 );
 
@@ -35,4 +35,4 @@ end
 
 assign flush_pipeline = flush_pipeline_q;
 
-endmodule;
+endmodule
