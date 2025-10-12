@@ -52,7 +52,7 @@ module ysyx_24080020_PC (
             pc_q        <= btb_target_pc;
         end
         else if (pc_btb_valid & btb_pc_ready) begin
-            pc_q        <= pc_q + 32'd4;    // 顺序 +4
+            pc_q        <= update_q ? btb_target_pc :  pc_q + 32'd4;    // 顺序 +4
             update_q    <= 1'b0;
         end
     end
