@@ -340,7 +340,7 @@ module ysyx_24080020_NPC(
   wire [`ysyx_24080020_WIDTH-1:0] addr_pc, inst_ir;
 
     // pc
-    wire pc_btb_valid, btb_pc_ready;
+    wire pc_btb_valid, btb_pc_ready, pc_btb_special;
     wire [31:0] pc_btb_addr, btb_target_pc, fix_pc;
     wire btb_target_valid;
     wire fix_valid;
@@ -354,7 +354,7 @@ module ysyx_24080020_NPC(
         .pc_btb_valid(pc_btb_valid),
         .btb_pc_ready(btb_pc_ready),
         .pc_btb_special(pc_btb_special),
-        .pc_btb_addr(pc_btb_addr),
+        .pc_addr(pc_btb_addr),
 
         // btb -> pc back
         .btb_target_valid(btb_target_valid),
@@ -379,7 +379,7 @@ module ysyx_24080020_NPC(
     );
 
     // BTB
-    wire special_pc_btb, valid_btb, ready_btb, special_pc_btb;
+    wire special_pc_btb, valid_btb, ready_btb;
     wire [`ysyx_24080020_WIDTH-1:0] pc_btb;
 
 
