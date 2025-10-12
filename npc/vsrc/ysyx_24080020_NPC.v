@@ -357,6 +357,7 @@ module ysyx_24080020_NPC(
         .new_inst(idu_exu_valid & exu_idu_ready),
 
         .pc(pc_btb),
+
         .correct_pc(correct_pc_btb),
         .out_special_pc(special_pc_btb),
         .flush_pipeline(need_flush_pipeline),
@@ -406,8 +407,12 @@ module ysyx_24080020_NPC(
         .inst_fin_ready(inst_fin_ready),
 
         // btb -> ir
-        .need_flush_pipeline(need_flush_pipeline),
-        .correct_pc_btb(correct_pc_btb),
+        // .need_flush_pipeline(need_flush_pipeline),
+        // .correct_pc_btb(correct_pc_btb),
+        // .flush_pipeline(flush_pipeline),
+        // exu -> ir
+        .need_flush_pipeline(branch_not_taken_exu),
+        .correct_pc_btb(pc_exu+32'd4),
         .flush_pipeline(flush_pipeline),
 
         // icache -> ir
@@ -447,11 +452,6 @@ module ysyx_24080020_NPC(
         .inst_fin_ready(inst_fin_ready),
         .special_pc_i(special_pc_ir),
         // .inst_fin(inst_fin),
-
-        // btb -> ifu
-        // .need_flush_pipeline(need_flush_pipeline),
-        // .correct_pc_btb(correct_pc_btb),
-        // .flush_pipeline(flush_pipeline),
 
         // ifu -> idu
         .pc_ifu(pc_ifu),
