@@ -32,7 +32,7 @@ module ysyx_24080020_PC (
 
     // 1. 经典 valid-ready：反压 = 「本级空」
     assign pc_btb_valid   = rst & btb_pc_ready;        // 寄存器输出
-    assign pc_btb_special = update_q;     // 直接连输入
+    assign pc_btb_special = update_q_next;     // 直接连输入
     assign pc_addr        = pc_q;              // 当前 PC
 
     assign pc_btb_update  = update_q;
@@ -53,7 +53,10 @@ module ysyx_24080020_PC (
         end
         else if (pc_btb_valid & btb_pc_ready) begin
             pc_q        <= update_q ? pc_target :  pc_q + 32'd4;    // 顺序 +4
-            update_q    <= 1'b0;
+            if(update_q) begin
+                update_q    <= 1'b0;
+                pc_q        <= pc_target;
+            end
         end
     end
 
@@ -64,6 +67,15 @@ module ysyx_24080020_PC (
         end
         else begin
             update_next    <= update_btb;
+        end
+    end
+    reg update_q_next;
+    always @(posedge clk) begin
+        if (!rst) begin
+            update_q_next    <= 1'b0;
+        end
+        else if(pc_btb_valid & btb_pc_ready) begin
+            update_q_next    <= update_q;
         end
     end
 
