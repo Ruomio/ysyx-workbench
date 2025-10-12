@@ -27,7 +27,7 @@ module ysyx_24080020_PC (
     reg [31:0] pc_q, pc_target_q;
 
 
-    wire update_btb = (branch_taken & (~btb_target_valid)) :
+    wire update_btb = (branch_taken & (~btb_target_valid)) |
                         (branch_not_taken & btb_target_valid);
 
     // 1. 经典 valid-ready：反压 = 「本级空」
