@@ -73,7 +73,7 @@ generate
 endgenerate
 
 assign any_hit     = |way_hit;
-assign hit_target  = target[index][way_hit]; // 多路选择器
+assign hit_target  = target[index][(way_hit+1) * 32 -1 : way_hit*32]; // 多路选择器
 
 // 输出（组合）
 assign out_special_pc  = in_special;
