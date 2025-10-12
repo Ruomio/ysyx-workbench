@@ -97,7 +97,7 @@ module ysyx_24080020_BTB(
     wire total_hits [0 : branch_way - 1];
     reg [branch_way-1:0] tmp_tag_index;
 
-    assign btb_bit_ = btb_hit;
+    assign btb_hit_ = btb_hit;
 
     assign branch_tag_tmp = pc_tmp[31 : branch_num_bits+branch_size_bits];
     assign branch_index_tmp = pc_tmp[branch_num_bits+branch_size_bits-1 : branch_size_bits];
