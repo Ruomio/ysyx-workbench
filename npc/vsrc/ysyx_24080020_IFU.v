@@ -25,8 +25,8 @@ module ysyx_24080020_IFU (
 //=========================================================================
 // 反压：本级空就能收
 assign ifu_idu_valid = valid_q;   // 有数据就向下传
-assign inst_fin_ready = (~valid_q);    // 空就能收
-// assign inst_fin_ready = (~valid_q) & (~need_stall);  // 空就能收
+// assign inst_fin_ready = (~valid_q);    // 空就能收
+assign inst_fin_ready = (~valid_q) & (~need_stall);  // 空就能收
 
 // 完成标志：组合（与原文件一致）
 // assign inst_fin = inst_fin_valid & inst_fin_ready;
