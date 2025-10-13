@@ -52,7 +52,7 @@ wire exu_is_mem = l_s_exu | l_s_lsu;
 wire mem_done = lsu_done;
 
 // 3. 最终 stall：「已发出」且「未完成」
-wire stall = exu_is_mem & ~mem_done;
+assign stall = exu_is_mem & ~mem_done;
 
 
 endmodule
