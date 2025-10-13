@@ -1289,7 +1289,7 @@ module ysyx_24080020_NPC(
         // stall pipeline
         .l_s_exu(is_load_exu | is_store_exu),
         .l_s_lsu(mren_mem | mwen_mem),
-        .lsu_done(mem_wb_valid & mem_wb_ready),
+        .lsu_done(mem_wb_valid & wb_mem_ready),
         .stall(need_stall)
     );
 
