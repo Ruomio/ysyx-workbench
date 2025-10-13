@@ -29,7 +29,10 @@ module ysyx_24080020_LSU (
     // input  wire [2:0]  mwmask_exu,
     // input  wire [`ysyx_24080020_WIDTH-1:0] mwdata_exu,
 
+    // for pipeline control
     output wire wait_load,
+    output wire mwen_mem  ,
+    output wire mren_mem  ,
 
     // CSR 1 写口（单口）
     input  wire        wcsren_exu,
@@ -116,8 +119,6 @@ reg [31:0]                         mem_result_q;     // 32 bit（读数据或写
 // stall_pipeline
 reg                                mem_wait_load_q;
 
-wire mwen_mem  ;
-wire mren_mem  ;
 wire [2:0] mrlen_mem ;
 wire [3:0] mwmask_mem;
 wire [31:0] maddr_mem ;

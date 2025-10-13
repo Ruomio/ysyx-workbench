@@ -651,7 +651,11 @@ module ysyx_24080020_NPC(
         .maddr_exu(mem_addr_exu),
         // .mwmask_exu(mem_wmask_exu),
         //.mwdata_exu(store_data_exu),
-        .wait_load(need_stall),
+
+        // pipeline control
+        .wait_load(),
+        .mwen_mem(mwen_mem),
+        .mren_mem(mren_mem),
 
         // CSR
         .wcsren_exu(wcsren_exu),
@@ -1265,10 +1269,11 @@ module ysyx_24080020_NPC(
       .rlast_o(rlast_icache)
     );
 
-    ysyx_24080020_FLUSH u_flush_pipeline (
+    ysyx_24080020_PIPE_CONTROL u_pipe_control (
         .clk(clk),
         .rst(rst),
 
+        // flush pipeline
         `ifdef USE_BTB
         .need_flush_pipeline((exu_mem_valid & mem_exu_ready) & (branch_not_taken_exu | (branch_taken_exu & ~btb_hit))),
         .correct_pc(branch_not_taken_exu ? (pc_exu+32'd4) : dnpc_exu),
@@ -1279,7 +1284,13 @@ module ysyx_24080020_NPC(
         .flush_pipeline(flush_pipeline),
 
         .raddr_(raddr_icache),
-        .special_pc_(special_pc_icache)
+        .special_pc_(special_pc_icache),
+
+        // stall pipeline
+        .l_s_exu(is_load_exu | is_store_exu),
+        .l_s_lsu(mren_mem | mwen_mem),
+        .lsu_done(mem_wb_valid & mem_wb_ready),
+        .stall(need_stall)
     );
 
 

@@ -1,14 +1,22 @@
 `include "ysyx_24080020_DEFINE.v"
-module ysyx_24080020_FLUSH (
+module ysyx_24080020_PIPE_CONTROL (
     input clk,
     input rst,
 
+    // flush
     input           need_flush_pipeline,
     input [31:0]    correct_pc,
     output          flush_pipeline,
 
     input           special_pc_,
-    input [31:0]    raddr_
+    input [31:0]    raddr_,
+
+    // stall
+    input           l_s_exu,
+    input           l_s_lsu,
+    input           lsu_done,
+    output          stall
+
 
 );
 
@@ -34,5 +42,17 @@ always @(posedge clk) begin
 end
 
 assign flush_pipeline = flush_pipeline_q;
+
+//=========================================================================
+//  stall pipeline
+//========================================================================|
+wire exu_is_mem = l_s_exu | l_s_lsu;
+
+// 2. 检测点 2：LSU→WBU 握手完成
+wire mem_done = lsu_done;
+
+// 3. 最终 stall：「已发出」且「未完成」
+wire need_stall = exu_is_mem & ~mem_done;
+
 
 endmodule
