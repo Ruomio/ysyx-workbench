@@ -62,10 +62,11 @@ always @(posedge clk) begin
         stall_q <= 'b0;
     end
     else if(mem_done) begin
-        stall_q <= 'b0
+        stall_q <= 'b0;
     end
     else if(exu_is_mem) begin
         stall_q <= 'b1;
     end
 end
+
 endmodule
