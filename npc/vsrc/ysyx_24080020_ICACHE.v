@@ -1,10 +1,8 @@
-`define USE_ICACHE
-`define ICACHE_PIPELINE
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_ICACHE(
   input clk,
   input rst,
-  input fencei_mem,
+  input fencei_exu,
 
   output reg [`ysyx_24080020_WIDTH-1:0] raddr,
 
@@ -184,9 +182,9 @@ module ysyx_24080020_ICACHE(
   reg is_hit_s1;
   reg [cache_way-1:0] hit_tag_s1;
 
-  logic has_hit_s1;
-  logic total_hits_s1 [0 : cache_way - 1];
-  logic [cache_way-1:0] tmp_tag_index_s1;
+  reg has_hit_s1;
+  wire total_hits_s1 [0 : cache_way - 1];
+  reg [cache_way-1:0] tmp_tag_index_s1;
 
 
   generate
@@ -377,8 +375,8 @@ module ysyx_24080020_ICACHE(
 
     wire [cache_way-1:0] last_fifo_index_s3;
 
-    logic has_hit_s3;
-    logic total_hits_s3 [0 : cache_way - 1];
+    reg has_hit_s3;
+    wire total_hits_s3 [0 : cache_way - 1];
 
 
     generate
@@ -664,7 +662,7 @@ module ysyx_24080020_ICACHE(
       cache_valid[num_index[cache_num_bits-1:0]] <= {cache_way{1'b0}};
       num_index <= num_index + 'b1;
     end
-    else if(fencei_mem && !flush_cache) begin
+    else if(fencei_exu && !flush_cache) begin
       flush_cache <= 'b1;
       num_index <= 'b0;
     end
@@ -684,8 +682,24 @@ module ysyx_24080020_ICACHE(
 `ifndef USE_ICACHE
 
 
-  assign raddr = araddr_i;
-  assign special_pc_o = 'b1;
+  // assign special_pc_o = special_pc_i;
+  always @(posedge clk) begin
+    if(!rst)
+      special_pc_o <= 'b0;
+    else if(arvalid_o && arready_o) begin
+      special_pc_o <= special_pc_i;
+    end
+  end
+
+  // assign raddr = araddr_i;
+  always @(posedge clk) begin
+      if(!rst) begin
+          raddr <= 'b0;
+      end
+      else if(arvalid_o && arready_o) begin
+          raddr <= araddr_o;
+      end
+  end
 
   // AR
   assign arvalid_o = arvalid_i;

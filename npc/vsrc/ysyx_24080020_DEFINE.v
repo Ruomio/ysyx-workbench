@@ -21,60 +21,67 @@
 `define ysyx_24080020_SERIAL_PORT 32'ha00003f8
 `endif
 
-// cache
-`define ysyx_24080020_CACHE_SIZE 16
-`define ysyx_24080020_CACHE_NUM 4
-`define ysyx_24080020_CACHE_WAY 4
+// inst cache
+`define USE_ICACHE
+`define ICACHE_PIPELINE
+`define ysyx_24080020_CACHE_SIZE 4
+`define ysyx_24080020_CACHE_NUM 2
+`define ysyx_24080020_CACHE_WAY 2
 
-// branch
+// branch target buffer
+// `define USE_BTB
 `define ysyx_24080020_BRANCH_SIZE 4
-`define ysyx_24080020_BRANCH_NUM 4
-`define ysyx_24080020_BRANCH_WAY 4
+`define ysyx_24080020_BRANCH_NUM 2
+`define ysyx_24080020_BRANCH_WAY 2
 
 `define ysyx_24080020_WIDTH 32
 `define ysyx_24080020_LEN 4
 `define ysyx_24080020_MEM 10
-`define ysyx_24080020_CSR_WIDTH 12
-`define ysyx_24080020_MEPC_ADDR 12'h341
-`define ysyx_24080020_MSTATUS_ADDR 12'h300
-`define ysyx_24080020_MCAUSE_ADDR 12'h342
-`define ysyx_24080020_MTVEC_ADDR 12'h305
-`define ysyx_24080020_MVENDORID_ADDR 12'hf11
-`define ysyx_24080020_MARCHID_ADDR 12'hf12
 
 // reg
+`define ysyx_24080020_E_EXTERN
+
+`ifdef ysyx_24080020_E_EXTERN
+`define ysyx_24080020_REG_NUM 16
+`define ysyx_24080020_REG_WIDTH 4
+`define ysyx_24080020_RD 10:7
+`define ysyx_24080020_RS1 18:15
+`define ysyx_24080020_RS2 23:20     // same location as shamt
+`else
 `define ysyx_24080020_REG_NUM 32
 `define ysyx_24080020_REG_WIDTH 5
-
-// ALU OP code
-`define ysyx_24080020_ALU_OP_WIDTH 5
-`define ysyx_24080020_ALU_ADD 5'b00000
-`define ysyx_24080020_ALU_SUB 5'b00001
-`define ysyx_24080020_ALU_SLT 5'b00010
-`define ysyx_24080020_ALU_SLTU 5'b00011
-`define ysyx_24080020_ALU_OR 5'b00100
-`define ysyx_24080020_ALU_XOR 5'b00101
-`define ysyx_24080020_ALU_AND 5'b00110
-`define ysyx_24080020_ALU_SLL 5'b00111
-`define ysyx_24080020_ALU_SRL 5'b01000
-`define ysyx_24080020_ALU_SRA 5'b01001
-`define ysyx_24080020_ALU_BEQ 5'b01010
-`define ysyx_24080020_ALU_BNE 5'b01011
-`define ysyx_24080020_ALU_BLT 5'b01100
-`define ysyx_24080020_ALU_BLTU 5'b01101
-`define ysyx_24080020_ALU_BGE 5'b01110
-`define ysyx_24080020_ALU_BGEU 5'b01111
-`define ysyx_24080020_ALU_JALR 5'b10000
-
-
-
-
-`define ysyx_24080020_OPCODE 6:0
 `define ysyx_24080020_RD 11:7
-`define ysyx_24080020_FUNCT3 14:12
 `define ysyx_24080020_RS1 19:15
 `define ysyx_24080020_RS2 24:20     // same location as shamt
+`endif
+
+`define ysyx_24080020_OPCODE 6:0
+`define ysyx_24080020_FUNCT3 14:12
 `define ysyx_24080020_FUNCT7 31:25
+
+// ALU OP code
+`define ysyx_24080020_ALU_OP_WIDTH 4
+`define ysyx_24080020_ALU_ADD 4'b0000
+`define ysyx_24080020_ALU_SUB 4'b0001
+`define ysyx_24080020_ALU_SLT 4'b0010
+`define ysyx_24080020_ALU_SLTU 4'b0011
+`define ysyx_24080020_ALU_OR 4'b0100
+`define ysyx_24080020_ALU_XOR 4'b0101
+`define ysyx_24080020_ALU_AND 4'b0110
+`define ysyx_24080020_ALU_SLL 4'b0111
+`define ysyx_24080020_ALU_SRL 4'b1000
+`define ysyx_24080020_ALU_SRA 4'b1001
+// `define ysyx_24080020_ALU_BEQ 5'b01010
+// `define ysyx_24080020_ALU_BNE 5'b01011
+// `define ysyx_24080020_ALU_BLT 5'b01100
+// `define ysyx_24080020_ALU_BLTU 5'b01101
+// `define ysyx_24080020_ALU_BGE 5'b01110
+// `define ysyx_24080020_ALU_BGEU 5'b01111
+// `define ysyx_24080020_ALU_JALR 5'b10000
+
+
+
+
 
 
 // I-TYPE
@@ -90,7 +97,7 @@
 `define ysyx_24080020_SRLAI 3'b101
 
 
-`define ysyx_24080020_I_TYPEI 7'b0000011
+`define ysyx_24080020_LOAD_TYPE 7'b0000011
 `define ysyx_24080020_LB 3'b000
 `define ysyx_24080020_LH 3'b001
 `define ysyx_24080020_LW 3'b010
@@ -136,8 +143,9 @@
 
 
 // CSR-TYPE
-`define ysyx_24080020_MRET 32'b00110000001000000000000001110011
+`define ysyx_24080020_MRET 32'h30200073
 `define ysyx_24080020_ECALL 32'h00000073
+`define ysyx_24080020_EBREAK 32'h00100073
 `define ysyx_24080020_CSR_TYPE 7'b1110011
 `define ysyx_24080020_ECALL_EBREAK 3'b000
 `define ysyx_24080020_CSRRW 3'b001
@@ -147,6 +155,14 @@
 `define ysyx_24080020_CSRRSI 3'b110
 `define ysyx_24080020_CSRRCI 3'b111
 
+`define ysyx_24080020_CSR_WIDTH 12
+`define ysyx_24080020_MEPC_ADDR 12'h341
+`define ysyx_24080020_MSTATUS_ADDR 12'h300
+`define ysyx_24080020_MCAUSE_ADDR 12'h342
+`define ysyx_24080020_MTVEC_ADDR 12'h305
+`define ysyx_24080020_MVENDORID_ADDR 12'hf11
+`define ysyx_24080020_MARCHID_ADDR 12'hf12
+
 // OTHER
 `define ysyx_24080020_LUI 7'b0110111
 `define ysyx_24080020_AUIPC 7'b0010111
@@ -154,4 +170,4 @@
 `define ysyx_24080020_JALR 7'b1100111
 
 
-`define ysyx_24080020_EBREAK 7'b1110011
+// `define ysyx_24080020_EBREAK 7'b1110011

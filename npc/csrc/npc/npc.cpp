@@ -154,10 +154,10 @@ void init_npc(int argc, char **argv) {
   top = new Vysyx_24080020_NPC(contextp);
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-  tfp = new VerilatedVcdC;
-  contextp->traceEverOn(true);
-  top->trace(tfp, 0);
-  tfp->open("build/wave.vcd");
+  // tfp = new VerilatedVcdC;
+  // contextp->traceEverOn(true);
+  // top->trace(tfp, 0);
+  // tfp->open("build/wave.vcd");
 #endif
 #if NVBOARD_ENABLE
   nvboard_bind_all_pins(top);
@@ -169,8 +169,10 @@ void init_npc(int argc, char **argv) {
     toggle_clock;
     top->eval();
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-    tfp->dump(contextp->time());
-    contextp->timeInc(1);
+    if(tfp) {
+        tfp->dump(contextp->time());
+        contextp->timeInc(1);
+    }
 #endif
     if(i++ > 20) {
       set_unreset;
@@ -204,8 +206,10 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_WAVEFILE
     if(total_wave_step > CONFIG_BASE_WAVE_STEP && total_wave_step < CONFIG_BASE_WAVE_STEP + CONFIG_MAX_WAVE_STEP) {
       total_wave_step++;
-      tfp->dump(contextp->time());
-      contextp->timeInc(1);
+      if(tfp) {
+        tfp->dump(contextp->time());
+        contextp->timeInc(1);
+      }
     }
     else
       total_wave_step++;
@@ -213,8 +217,10 @@ void exec_once_npc(uint32_t pc) {
 #ifdef CONFIG_LIGHTSSS
     if(lightsss.get_flag() && lightsss.get_notgood()) {
       // total_wave_step++;
-      tfp->dump(contextp->time());
-      contextp->timeInc(1);
+      if(tfp) {
+        tfp->dump(contextp->time());
+        contextp->timeInc(1);
+      }
     }
     else {
       // total_wave_step++;
@@ -404,6 +410,14 @@ void exec_npc(uint64_t n) {
       lightsss.do_fork(); // 创建子进程快照
       last_snapshot_time = current_time;
     }
+    if(lightsss.is_child()) {
+        if(!tfp) {
+            tfp = new VerilatedVcdC;
+            contextp->traceEverOn(true);
+            top->trace(tfp, 0);
+            tfp->open("build/wave.vcd");
+        }
+    }
 #endif
 
     if (u_npc_state.state != NPC_RUNNING) break;
@@ -444,15 +458,20 @@ void exec_npc(uint64_t n) {
 }
 
 void free_npc() {
+
   if(top) {
     top->final();
     delete top;
     top = NULL;
   }
-#if defined (CONFIG_WAVEFILE) || defined (CONFIG_LIGHTSSS)
   if(tfp) {
     tfp->close();
+    delete tfp;
     tfp = NULL;
+  }
+#if defined (CONFIG_LIGHTSSS)
+  if(lightsss.is_child()) {
+    return;
   }
 #endif
   if(contextp) {
@@ -560,18 +579,22 @@ uint32_t g_get_dnpc() {
 
 uint32_t g_get_rs1() {
 #if defined (ysyxSoCFull)
-  return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 15);
+  // return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 15);
+  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__rs1;
 #elif defined (ysyx_24080020_NPC)
-  return BITS(top->rootp->ysyx_24080020_NPC__DOT__inst_ifu, 19, 15);
+  // return BITS(top->rootp->ysyx_24080020_NPC__DOT__inst_ifu, 19, 15);
+  return top->rootp->ysyx_24080020_NPC__DOT__rs1;
 #else
   return 0;
 #endif
 }
 uint32_t g_get_rd() {
 #if defined (ysyxSoCFull)
-  return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 7);
+  // return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 7);
+  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_exu__DOT__waddr_q_reg;
 #elif defined (ysyx_24080020_NPC)
-  return BITS(top->rootp->ysyx_24080020_NPC__DOT__inst_ifu, 19, 15);
+  // return BITS(top->rootp->ysyx_24080020_NPC__DOT__inst_ifu, 19, 15);
+  return top->rootp->ysyx_24080020_NPC__DOT__u_exu__DOT__waddr_q_reg;
 #else
 
 #endif
