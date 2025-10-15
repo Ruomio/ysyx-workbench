@@ -672,6 +672,106 @@ module ysyx_24080020_ICACHE(
   end
 
 
+`else       // not pipeline
+
+    //=========================================================================
+    // 1. 地址输出（组合，零缓冲）
+    //=========================================================================
+    assign raddr = araddr_o;           // 直接连 AXI 地址
+    assign special_pc_o = special_pc_i; // 直通
+
+    // ====== ICACHE 模式：零状态机 + 单拍完成 ======
+    // ---------------------------------------------------------------------
+    // 1. 参数（与原文件一致）
+    // ---------------------------------------------------------------------
+    localparam cache_way   = `ysyx_24080020_CACHE_WAY;
+    localparam cache_num   = `ysyx_24080020_CACHE_NUM;
+    localparam cache_size  = `ysyx_24080020_CACHE_SIZE;
+
+    localparam index_bits = $clog2(cache_num);
+    localparam offset_bits = $clog2(cache_size);
+    localparam tag_bits = 32 - index_bits - offset_bits;
+
+    // ---------------------------------------------------------------------
+    // 2. 缓存表项（仅锁 64 bit + 4 bit 边带）
+    // ---------------------------------------------------------------------
+    reg [31:0] cache_data [0:cache_num-1];   // 32 bit 数据
+    reg [tag_bits-1:0] cache_tag [0:cache_num-1]; // tag
+    reg [cache_way-1:0] cache_valid [0:cache_num-1]; // valid bit
+    reg [cache_way-1:0] fifo_ptr [0:cache_num-1];   // FIFO 替换指针
+
+    // ---------------------------------------------------------------------
+    // 3. 地址解码（组合）
+    // ---------------------------------------------------------------------
+    wire [index_bits-1:0] index = araddr_o[index_bits+offset_bits-1 : offset_bits];
+    wire [tag_bits-1:0]   tag   = araddr_o[31 : index_bits+offset_bits];
+
+    // ---------------------------------------------------------------------
+    // 4. 命中检测（组合，零状态机）
+    // ---------------------------------------------------------------------
+    wire [cache_way-1:0] way_hit;
+    wire        any_hit;
+    wire [31:0] hit_data;
+
+    genvar j;
+    generate
+        for (j = 0; j < cache_way; j = j + 1) begin : gen_hit
+            assign way_hit[j] = (cache_tag[index][j] == tag) & cache_valid[index][j];
+        end
+    endgenerate
+    assign any_hit = |way_hit;
+    assign hit_data = cache_data[index][way_hit]; // 多路选择器
+
+    // ---------------------------------------------------------------------
+    // 5. 输出（组合，零缓冲）
+    // ---------------------------------------------------------------------
+    assign arvalid_o = arvalid_i;           // 直通 AXI
+    assign araddr_o  = araddr_i;
+    assign arid_o    = arid_i;
+    assign arlen_o   = arlen_i;
+    assign arsize_o  = arsize_i;
+    assign arburst_o = arburst_i;
+    assign arready_i = arready_o;           // 直通 AXI
+
+    assign rready_o  = rready_i;            // 直通 AXI
+    assign rdata_i   = rdata_o;             // 直通 AXI
+    assign rresp_i   = rresp_o;
+    assign rid_i     = rid_o;
+    assign rlast_i   = rlast_o;
+    assign rvalid_i  = rvalid_o;            // 直通 AXI
+
+    // ---------------------------------------------------------------------
+    // 6. 读完成标志（组合，单拍完成）
+    // ---------------------------------------------------------------------
+    wire rdone = rvalid_o & rlast_o & rready_o;
+    wire update_en = rdone;                 // 单拍写表
+
+    // ---------------------------------------------------------------------
+    // 7. 写表（单拍完成，不等 B）
+    // ---------------------------------------------------------------------
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            for (integer i = 0; i < cache_num; i = i + 1) begin
+                cache_data[i]   <= 32'd0;
+                cache_tag[i]    <= {tag_bits{1'b0}};
+                cache_valid[i]  <= {cache_way{1'b0}};
+                fifo_ptr[i]     <= {cache_way{1'b0}};
+            end
+        end
+        else if (update_en) begin
+            integer way = fifo_ptr[index];
+            cache_data[index][(way+1)*32-1 : way*32] <= rdata_o;
+            cache_tag[index][(way+1)*tag_bits-1 : way*tag_bits] <= tag;
+            cache_valid[index][way] <= 1'b1;
+            fifo_ptr[index] <= (fifo_ptr[index] + 1) % cache_way;
+        end
+        else if (fencei_exu) begin
+            for (integer i = 0; i < cache_num; i = i + 1) begin
+                cache_valid[i] <= {cache_way{1'b0}};
+            end
+        end
+    end
+
 `endif // `ifdef ICACHE_PIPELINE
 
 `endif  // USE_ICACHE
