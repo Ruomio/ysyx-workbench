@@ -802,17 +802,17 @@ module ysyx_24080020_ICACHE(
   end
 
   // ====== 非 ICACHE 模式：加 1 级寄存器缓冲, 防止stall造成流水线与axi互相等待的死锁 ======
-      reg        valid_q;
+      reg        next_inst;
 
       always @(posedge clk) begin
           if (!rst) begin
-              valid_q      <= 1'b0;
+              next_inst      <= 1'b1;
           end
-          else if(rvalid_o & rready_i) begin
-              valid_q      <= 'b0;
+          else if(rvalid_o & rready_o) begin
+              next_inst      <= 'b1;
           end
-          else if (arvalid_i & arready_o) begin
-              valid_q      <= 'b1;
+          else if (arvalid_o & arready_o) begin
+              next_inst      <= 'b0;
           end
       end
 
@@ -824,14 +824,14 @@ module ysyx_24080020_ICACHE(
   assign arburst_o = arburst_i;
   assign arsize_o = arsize_i;
   // assign arready_i = arready_o;
-  assign arready_i = ~valid_q & rst;
+  assign arready_i = next_inst;
 
   // R
   assign rvalid_i = rvalid_o;
   assign rdata_i = rdata_o;
-  assign rlast_i = rlast_o;
   assign rresp_i = rresp_o;
   assign rid_i = rid_o;
+  assign rlast_i = rlast_o;
   assign rready_o = rready_i;
 
 `endif
