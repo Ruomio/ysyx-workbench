@@ -131,6 +131,7 @@ module ysyx_24080020_XBAR(
         else if(arvalid_arbiter) begin
             r_device_addr <= (araddr_arbiter == `ysyx_24080020_CLINT_ADDR
                 || araddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
+        end
     end
 
     always @(posedge clk) begin
