@@ -137,6 +137,7 @@ assign araddr  = addr_q;
 
 
 reg buffer_valid;
+reg [31:0] rdata_q, raddr_icache_q;
 always @(posedge clk) begin
     if (!rst) begin
         buffer_valid <= 0;
@@ -154,6 +155,7 @@ end
 assign inst             = rdata_q;
 assign inst_fin_valid   = buffer_valid;
 assign rready           = ~buffer_valid;
+assign raddr_ir   = raddr_icache_q;   // 地址直接连输入
 
 
 
