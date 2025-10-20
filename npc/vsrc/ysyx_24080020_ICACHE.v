@@ -806,7 +806,7 @@ module ysyx_24080020_ICACHE(
 
       always @(posedge clk) begin
           if (!rst) begin
-              next_inst      <= 1'b0;
+              next_inst      <= 1'b1;
           end
           else if(rvalid_o & rready_o) begin
               next_inst      <= 'b1;
@@ -817,14 +817,13 @@ module ysyx_24080020_ICACHE(
       end
 
   // AR
-  assign arvalid_o = arvalid_i;
+  assign arvalid_o = arvalid_i & next_inst;
   assign araddr_o = araddr_i;
   assign arid_o = arid_i;
   assign arlen_o = arlen_i;
   assign arburst_o = arburst_i;
   assign arsize_o = arsize_i;
   assign arready_i = arready_o;
-  // assign arready_i = next_inst;
 
   // R
   assign rvalid_i = rvalid_o;
