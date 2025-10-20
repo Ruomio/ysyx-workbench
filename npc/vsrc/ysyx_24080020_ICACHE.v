@@ -835,12 +835,12 @@ module ysyx_24080020_ICACHE(
   assign arready_i = arready_o;
 
   // R
-  // assign rvalid_i = rvalid_o;
-  // assign rdata_i = rdata_o;
-  // assign rlast_i = rlast_o;
-  assign rvalid_i = rvalid_q;
-  assign rdata_i = rdata_q;
-  assign rlast_i = rlast_q;
+  assign rvalid_i = rvalid_o;
+  assign rdata_i = rdata_o;
+  assign rlast_i = rlast_o;
+  // assign rvalid_i = rvalid_q;
+  // assign rdata_i = rdata_q;
+  // assign rlast_i = rlast_q;
   assign rresp_i = rresp_o;
   assign rid_i = rid_o;
   assign rready_o = rready_i;
