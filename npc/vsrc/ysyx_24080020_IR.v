@@ -134,6 +134,7 @@ always @(posedge clk) begin
     else if (rvalid & (~buffer_valid | inst_fin_ready )) begin
         rdata_q         <= rdata;
         raddr_icache_q  <= raddr_icache;
+        buffer_valid    <= 'b1;
     end
 end
 assign inst       =  buffer_valid ? rdata_q : rdata;
