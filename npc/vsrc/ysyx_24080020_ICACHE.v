@@ -802,26 +802,17 @@ module ysyx_24080020_ICACHE(
   end
 
   // ====== 非 ICACHE 模式：加 1 级寄存器缓冲, 防止stall造成流水线与axi互相等待的死锁 ======
-      reg        rvalid_q;
-      reg [31:0] rdata_q;
-      reg        rlast_q;
+      reg        valid_q;
 
       always @(posedge clk) begin
           if (!rst) begin
-              rvalid_q      <= 1'b0;
-              rdata_q       <= 32'd0;
-              rlast_q       <= 1'b0;
+              valid_q      <= 1'b0;
           end
-          else if(rvalid_i & rready_i) begin
-              rvalid_q      <= 'b0;
-              rdata_q       <= 'b0;
-              rlast_q       <= rlast_i;
+          else if(rvalid_o & rready_i) begin
+              valid_q      <= 'b0;
           end
-          else if (rvalid_o & rready_o) begin
-              // 握手成功才更新（经典 valid-ready）
-              rvalid_q      <= rvalid_o;
-              rdata_q       <= rdata_o;
-              rlast_q       <= rlast_o;
+          else if (arvalid_i & arready_o) begin
+              valid_q      <= 'b1;
           end
       end
 
@@ -832,15 +823,13 @@ module ysyx_24080020_ICACHE(
   assign arlen_o = arlen_i;
   assign arburst_o = arburst_i;
   assign arsize_o = arsize_i;
-  assign arready_i = arready_o;
+  // assign arready_i = arready_o;
+  assign arready_i = ~valid_q;
 
   // R
   assign rvalid_i = rvalid_o;
   assign rdata_i = rdata_o;
   assign rlast_i = rlast_o;
-  // assign rvalid_i = rvalid_q;
-  // assign rdata_i = rdata_q;
-  // assign rlast_i = rlast_q;
   assign rresp_i = rresp_o;
   assign rid_i = rid_o;
   assign rready_o = rready_i;
