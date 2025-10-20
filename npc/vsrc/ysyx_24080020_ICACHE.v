@@ -801,7 +801,7 @@ module ysyx_24080020_ICACHE(
       end
   end
 
-  // ====== 非 ICACHE 模式：加 1 级寄存器缓冲, 防止stall造成流水线与axi互相等待的死锁 ======
+  // ====== 非 ICACHE 模式：single beat ======
       reg        next_inst;
 
       always @(posedge clk) begin

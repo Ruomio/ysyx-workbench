@@ -108,7 +108,7 @@ assign araddr  = addr_q;
 //=========================================================================
 // 3. 读数据：同一拍返回（不锁 rdata）
 //=========================================================================
-assign rready = inst_fin_ready;     // 永远 ready（单 beat）
+assign rready = inst_fin_ready | ~buffer_valid;     // 永远 ready（单 beat）
 // assign rready = 1'b1;     // 永远 ready（单 beat）
 // assign rdata  = rdata;    // 直接连 ICACHE
 // assign rresp  = 2'b00;    // OKAY
@@ -116,22 +116,27 @@ assign rready = inst_fin_ready;     // 永远 ready（单 beat）
 // assign rlast  = 1'b1;     // 单 beat
 
 // 读完成标志：同一拍有效（与原文件一致）
-assign inst_fin_valid = rvalid & rlast & rready & (rresp == 2'b00);
+assign inst_fin_valid = (rvalid & rlast & rready & (rresp == 2'b00)) | buffer_valid;
 
 //=========================================================================
 // 4. 输出：直接连组合（不锁整拍，与原文件一致）
 //=========================================================================
 reg [31:0] rdata_q, raddr_icache_q;
+reg buffer_valid;
 
 always @(posedge clk) begin
     if (!rst) begin
+        buffer_valid <= 0;
     end
-    else if (rvalid & rready) begin
+    else if(buffer_valid & inst_fin_ready) begin
+        buffer_valid <= 'b0;
+    end
+    else if (rvalid & (~buffer_valid | inst_fin_ready )) begin
         rdata_q         <= rdata;
         raddr_icache_q  <= raddr_icache;
     end
 end
-assign inst       = rdata_q;
+assign inst       =  buffer_valid ? rdata_q : rdata;
 // assign pc_mem     = addr;   // PC 直接连输入
 assign raddr_ir   = raddr_icache_q;   // 地址直接连输入
 
