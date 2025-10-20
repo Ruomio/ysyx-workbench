@@ -824,7 +824,7 @@ module ysyx_24080020_ICACHE(
   assign arburst_o = arburst_i;
   assign arsize_o = arsize_i;
   // assign arready_i = arready_o;
-  assign arready_i = ~valid_q;
+  assign arready_i = ~valid_q & rst;
 
   // R
   assign rvalid_i = rvalid_o;
