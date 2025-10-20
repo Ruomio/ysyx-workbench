@@ -812,6 +812,11 @@ module ysyx_24080020_ICACHE(
               rdata_q       <= 32'd0;
               rlast_q       <= 1'b0;
           end
+          else if(rvalid_i & rready_i) begin
+              rvalid_q      <= 'b0;
+              rdata_q       <= 'b0;
+              rlast_q       <= rlast_i;
+          end
           else if (rvalid_o & rready_o) begin
               // 握手成功才更新（经典 valid-ready）
               rvalid_q      <= rvalid_o;
