@@ -199,7 +199,7 @@ module ysyx_24080020_SRAM(
                     end
                 end
             end
-            else if(arlen_cnt <= arlen) begin
+            else if((arlen_cnt <= arlen) && !rvalid) begin
                 `ifdef CONFIG_DPIC
                 // printf_info();
                 rdata <= read_memory(paddr_r, 32'd4);
