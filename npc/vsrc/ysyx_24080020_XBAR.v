@@ -210,9 +210,9 @@ module ysyx_24080020_XBAR(
         if(!rst) begin
             r_device_addr <= 'b0;
         end
-        else if(rvalid_xbar && rlast_xbar && rready_arbiter) begin
-            r_device_addr <= 3'd0;
-        end
+        // else if(rvalid_xbar && rlast_xbar && rready_arbiter) begin
+        //     r_device_addr <= 3'd0;
+        // end
         else if(arvalid_arbiter) begin
             r_device_addr <= (araddr_arbiter == `ysyx_24080020_CLINT_ADDR || araddr_arbiter == `ysyx_24080020_CLINT_ADDR + 32'h4) ? 3'd3 :
                             `ifdef ysyx_24080020_NPC
