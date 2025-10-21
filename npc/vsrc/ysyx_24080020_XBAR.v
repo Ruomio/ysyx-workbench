@@ -210,7 +210,7 @@ module ysyx_24080020_XBAR(
     assign bvalid_xbar = w_device_addr          == 'd0 ? bvalid_clint : bvalid_soc;
     assign bid_xbar = w_device_addr             == 'd0 ? bid_clint : bid_soc;
 
-    assign bready_xbar_clint = w_device_addr    == 'bready_arbiter ;
-    assign bready_xbar_soc = w_device_addr      == 'bready_arbiter ;
+    assign bready_xbar_clint = w_device_addr    == bready_arbiter ;
+    assign bready_xbar_soc = w_device_addr      == bready_arbiter ;
 
 endmodule
