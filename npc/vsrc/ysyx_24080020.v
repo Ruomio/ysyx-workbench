@@ -78,6 +78,7 @@ module ysyx_24080020(
     output [3:0] io_slave_bid
 
 );
+    wire clk = clock;
     wire rst = ~reset;
 
 
