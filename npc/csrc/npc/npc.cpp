@@ -154,10 +154,12 @@ void init_npc(int argc, char **argv) {
   top = new Vysyx_24080020_NPC(contextp);
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-  // tfp = new VerilatedVcdC;
-  // contextp->traceEverOn(true);
-  // top->trace(tfp, 0);
-  // tfp->open("build/wave.vcd");
+  if(!tfp) {
+    tfp = new VerilatedVcdC;
+    contextp->traceEverOn(true);
+    top->trace(tfp, 0);
+    tfp->open("build/wave.vcd");
+  }
 #endif
 #if NVBOARD_ENABLE
   nvboard_bind_all_pins(top);
