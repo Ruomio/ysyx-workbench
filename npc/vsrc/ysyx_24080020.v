@@ -79,7 +79,7 @@ module ysyx_24080020(
 
 );
     wire clk = clock;
-    wire rst = ~reset;
+    wire rst = reset;
 
 
 
