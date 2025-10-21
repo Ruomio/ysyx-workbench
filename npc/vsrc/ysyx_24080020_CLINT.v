@@ -58,7 +58,7 @@ end
 //=========================================================================
 wire        is_time_l = (araddr == `ysyx_24080020_CLINT_ADDR);      // 0x0200BFF8
 wire        is_time_h = (araddr == `ysyx_24080020_CLINT_ADDR + 4);  // 0x0200BFFC
-wire        is_read   = arvalid & is_time_l | is_time_h;
+wire        is_read   = arvalid & (is_time_l | is_time_h);
 
 //=========================================================================
 // 3. 读数据：同一拍返回（不锁 rdata）
@@ -86,8 +86,12 @@ assign bid     = awid;
 //=========================================================================
 `ifdef CONFIG_DPIC
 always @(posedge clk) begin
-    if (awvalid & wvalid)
+    if (awvalid & wvalid) begin
         $display("CLINT: write to 0x%08x ignored", awaddr);
+    end
+    if(arvalid & (~(is_time_h | is_time_l))) begin
+        $display("CLINT: error forward, addr is not belong to CLINT");
+    end
 end
 `endif
 
