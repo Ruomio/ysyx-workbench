@@ -378,8 +378,6 @@ module ysyx_24080020(
         .clk(clk),
         .rst(rst),
 
-        .stall(need_stall),
-
         // btb <-> ir
         .special_pc_i(special_pc_btb),
         .if_en_valid(valid_btb),

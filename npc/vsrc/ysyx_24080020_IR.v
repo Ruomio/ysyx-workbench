@@ -3,8 +3,6 @@ module ysyx_24080020_IR (
     input  wire        clk,
     input  wire        rst,
 
-    input  wire        stall,
-
     // btb <-> ir
     input  wire        special_pc_i,
     input  wire [`ysyx_24080020_WIDTH-1:0] addr,
@@ -155,7 +153,7 @@ always @(posedge clk) begin
 end
 
 assign inst             = rdata_q;
-assign inst_fin_valid   = buffer_valid & ~stall;
+assign inst_fin_valid   = buffer_valid & inst_fin_ready;
 assign rready           = ~buffer_valid;
 assign raddr_ir   = raddr_icache_q;   // 地址直接连输入
 
