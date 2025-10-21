@@ -126,7 +126,7 @@ module ysyx_24080020_XBAR(
     // always @(awvalid_arbiter or arvalid_arbiter or rvalid_xbar or rready_arbiter or rlast_xbar or bvalid_xbar or bready_arbiter) begin
     always @(posedge clk) begin
         if(!rst) begin
-            r_device_addr <= 'b0;
+            r_device_addr <= 'b1;
         end
         else if(arvalid_arbiter) begin
             r_device_addr <= (araddr_arbiter == `ysyx_24080020_CLINT_ADDR
@@ -136,7 +136,7 @@ module ysyx_24080020_XBAR(
 
     always @(posedge clk) begin
         if(!rst) begin
-            w_device_addr <= 'b0;
+            w_device_addr <= 'b1;
         end
         else if(awvalid_arbiter) begin
             w_device_addr <= (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR
