@@ -61,7 +61,7 @@ always @(posedge clk) begin
         special_pc_q    <= special_pc_i;
         addr_q          <= addr;
     end
-    else if (arready) begin
+    else if (rvalid & rready) begin
         valid_q_reg     <= 1'b0;
     end
 end
