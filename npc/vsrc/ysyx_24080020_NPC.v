@@ -76,11 +76,11 @@ wire io_slave_bvalid;
 wire [1:0] io_slave_bresp;
 wire [3:0] io_slave_bid;
 
-
+wire reset = ~rst;
 
 ysyx_24080020 u_cpu(
     .clock(clk),
-    .reset(rst),
+    .reset(reset),
 
     .io_interrupt(io_interrupt),
 
@@ -160,7 +160,7 @@ ysyx_24080020 u_cpu(
 
     ysyx_24080020_SRAM u_sram(
         .clk(clk),
-        .rst(rst),
+        .rst(reset),
 
         .arvalid(io_master_arvalid),
         .araddr(io_master_araddr),
