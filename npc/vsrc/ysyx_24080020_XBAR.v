@@ -140,7 +140,7 @@ module ysyx_24080020_XBAR(
         end
         else if(awvalid_arbiter) begin
             w_device_addr <= (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR
-                || awaddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd3 : 'd1;
+                || awaddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
         end
     end
 
