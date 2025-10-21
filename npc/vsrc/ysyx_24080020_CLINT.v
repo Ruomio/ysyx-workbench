@@ -63,30 +63,14 @@ wire        is_read   = arvalid & arready & (is_time_l | is_time_h);
 //=========================================================================
 // 3. 读数据：同一拍返回（不锁 rdata）
 //=========================================================================
-assign arready = 1'b1;      // 永远 ready（单 beat）
+assign arready = is_time_h | is_time_l;      // 永远 ready（单 beat）
 assign rdata   = is_time_l ? timel_q : timeh_q;
 assign rresp   = 2'b00;     // OKAY
 assign rid     = arid;
 assign rlast   = 1'b1;      // 单 beat
 
-reg valid_q;
-
-always @(posedge clk) begin
-    if(!rst) begin
-        valid_q <= 'b0;
-    end
-    else if(rvalid & rready) begin
-        valid_q <= 'b0;
-    end
-    else if(arvalid & arready) begin
-        valid_q <= 'b1;
-    end
-end
-
 // 读完成标志：同一拍有效
-assign rvalid  = valid_q;
-
-
+assign rvalid  = is_read;
 
 //=========================================================================
 // 4. 写通道：单拍完成（不锁 awready/wready/bvalid）
