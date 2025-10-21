@@ -89,7 +89,7 @@ always @(posedge clk) begin
     if (awvalid & wvalid) begin
         $display("CLINT: write to 0x%08x ignored", awaddr);
     end
-    if(arvalid & (~(is_time_h | is_time_l))) begin
+    if(arvalid & arready & (~(is_time_h | is_time_l))) begin
         $display("CLINT: error forward, addr is not belong to CLINT");
     end
 end
