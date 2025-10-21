@@ -66,7 +66,7 @@ always @(posedge clk) begin
     end
 end
 // 反压：本级空就能收
-assign if_en_ready = ~valid_q_reg;
+assign if_en_ready = ~valid_q_reg & rst;
 // AXI valid：组合逻辑，握手后立即拉低
 assign arvalid = valid_q_reg && !ar_sent;
 
