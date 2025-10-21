@@ -24,8 +24,8 @@
 #include "Vysyx_24080020_NPC___024root.h"
 #include "Vysyx_24080020_NPC__Dpi.h"
 
-#define set_reset top->rst = 0
-#define set_unreset top->rst = 1
+#define set_reset top->rst = 1
+#define set_unreset top->rst = 0
 #define toggle_clock top->clk ^= 1
 #define is_clk_high (top->clk == 1)
 #endif
