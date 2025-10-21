@@ -35,7 +35,7 @@ assign inst_fin_ready = (~valid_q) & (~need_stall);  // 空就能收
 // 2. 仅锁 1 bit 标志（零整拍缓冲）
 //=========================================================================
 reg valid_q;
-reg [31:0] inst_q;
+reg [31:0] inst_q, raddr_q;
 
 always @(posedge clk) begin
     if (!rst) begin
@@ -47,13 +47,14 @@ always @(posedge clk) begin
     else if(inst_fin_valid & inst_fin_ready & ~need_stall) begin
         valid_q <= 1'b1;
         inst_q <= inst;
+        raddr_q <= raddr;
     end
 end
 
 //=========================================================================
 // 3. 输出：组合路径（不锁整拍）
 //========================================================================|
-assign pc_ifu     = raddr;          // PC 直接连输入
+assign pc_ifu     = raddr_q;          // PC 直接连输入
 assign inst_ifu   = inst_q;           // 指令直接连输入
 
 //=========================================================================
