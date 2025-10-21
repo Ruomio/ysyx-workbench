@@ -79,8 +79,8 @@ wire [3:0] io_slave_bid;
 
 
 ysyx_24080020 u_cpu(
-    .clk(clock),
-    .rst(!reset),
+    .clock(clk),
+    .reset(rst),
 
     .io_interrupt(io_interrupt),
 
