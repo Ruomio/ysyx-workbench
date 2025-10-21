@@ -158,7 +158,7 @@ void init_npc(int argc, char **argv) {
     tfp = new VerilatedVcdC;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
-    tfp->open("build/wave1.vcd");
+    tfp->open("build/wave.vcd");
   }
 #endif
 #if NVBOARD_ENABLE
