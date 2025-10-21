@@ -1,3 +1,4 @@
+`ifdef CONFIG_DPIC
 `include "ysyx_24080020_DEFINE.v"
 module ysyx_24080020_SRAM(
     input clk,
@@ -237,3 +238,5 @@ module ysyx_24080020_SRAM(
     end
 
 endmodule
+
+`endif

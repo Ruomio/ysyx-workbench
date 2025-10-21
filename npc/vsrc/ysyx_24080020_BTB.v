@@ -155,7 +155,7 @@ end
 `else
 
 
-    assign in_ready = out_ready & rst_n;
+    assign in_ready = out_ready;
     assign out_valid = in_valid;
     assign out_pc = pc_addr;
     assign out_special_pc = in_special;
