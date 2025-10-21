@@ -150,67 +150,67 @@ module ysyx_24080020_XBAR(
                 |-> CLINT
     */
 
-    assign arvalid_xbar_clint = r_device_addr   == 'd0 ? arvalid_arbiter : 1'b0;
-    assign araddr_xbar_clint = r_device_addr    == araddr_arbiter  ;
-    assign arburst_xbar_clint = r_device_addr   == arburst_arbiter ;
-    assign arsize_xbar_clint = r_device_addr    == arsize_arbiter  ;
-    assign arlen_xbar_clint = r_device_addr     == arlen_arbiter   ;
-    assign arid_xbar_clint = r_device_addr      == arid_arbiter    ;
+    assign arvalid_xbar_clint   = r_device_addr     == 'd0 ? arvalid_arbiter : 1'b0;
+    assign araddr_xbar_clint    =                      araddr_arbiter  ;
+    assign arburst_xbar_clint   =                      arburst_arbiter ;
+    assign arsize_xbar_clint    =                      arsize_arbiter  ;
+    assign arlen_xbar_clint     =                      arlen_arbiter   ;
+    assign arid_xbar_clint      =                      arid_arbiter    ;
 
-    assign arvalid_xbar_soc = r_device_addr    == 'd1 ? arvalid_arbiter : 1'b0;
-    assign araddr_xbar_soc = r_device_addr     == araddr_arbiter  ;
-    assign arburst_xbar_soc = r_device_addr    == arburst_arbiter ;
-    assign arsize_xbar_soc = r_device_addr     == arsize_arbiter  ;
-    assign arlen_xbar_soc = r_device_addr      == arlen_arbiter   ;
-    assign arid_xbar_soc = r_device_addr       == arid_arbiter    ;
+    assign arvalid_xbar_soc     = r_device_addr    == 'd1 ? arvalid_arbiter : 1'b0;
+    assign araddr_xbar_soc      =                     araddr_arbiter  ;
+    assign arburst_xbar_soc     =                     arburst_arbiter ;
+    assign arsize_xbar_soc      =                     arsize_arbiter  ;
+    assign arlen_xbar_soc       =                     arlen_arbiter   ;
+    assign arid_xbar_soc        =                     arid_arbiter    ;
 
-    assign arready_xbar = r_device_addr        == 'd0 ? arready_clint : arready_soc;
-
-
-
-    assign rdata_xbar = r_device_addr        == 'd0 ? rdata_clint : rdata_soc;
-    assign rresp_xbar = r_device_addr        == 'd0 ? rresp_clint : rresp_soc;
-    assign rvalid_xbar = r_device_addr       == 'd0 ? rvalid_clint : rvalid_soc;
-    assign rid_xbar = r_device_addr          == 'd0 ? rid_clint : rid_soc;
-    assign rlast_xbar = r_device_addr        == 'd0 ? rlast_clint : rlast_soc;
-
-    assign rready_xbar_clint = r_device_addr == rready_arbiter ;
-    assign rready_xbar_soc = r_device_addr   == rready_arbiter ;
-
-    assign awaddr_xbar_clint = w_device_addr    == awaddr_arbiter  ;
-    assign awvalid_xbar_clint = w_device_addr   == awvalid_arbiter ;
-    assign awburst_xbar_clint = w_device_addr   == awburst_arbiter ;
-    assign awsize_xbar_clint = w_device_addr    == awsize_arbiter  ;
-    assign awlen_xbar_clint = w_device_addr     == awlen_arbiter   ;
-    assign awid_xbar_clint = w_device_addr      == awid_arbiter    ;
-
-    assign awvalid_xbar_soc = w_device_addr      == 'd1 ? awvalid_arbiter : 1'b0;
-    assign awaddr_xbar_soc = w_device_addr       == awaddr_arbiter  ;
-    assign awburst_xbar_soc = w_device_addr      == awburst_arbiter ;
-    assign awsize_xbar_soc = w_device_addr       == awsize_arbiter  ;
-    assign awlen_xbar_soc = w_device_addr        == awlen_arbiter   ;
-    assign awid_xbar_soc = w_device_addr         == awid_arbiter    ;
-
-    assign awready_xbar = w_device_addr         == 'd0 ? awready_clint : awready_soc;
+    assign arready_xbar         = r_device_addr    == 'd0 ? arready_clint : arready_soc;
 
 
-    assign wvalid_xbar_clint = w_device_addr    == 'd0 ? wvalid_arbiter : 1'b0;
-    assign wdata_xbar_clint = w_device_addr     == wdata_arbiter  ;
-    assign wstrb_xbar_clint = w_device_addr     == wstrb_arbiter  ;
-    assign wlast_xbar_clint = w_device_addr     == wlast_arbiter  ;
 
-    assign wvalid_xbar_soc = w_device_addr      == 'd1 ? wvalid_arbiter : 1'b0;
-    assign wdata_xbar_soc = w_device_addr       == wdata_arbiter  ;
-    assign wstrb_xbar_soc = w_device_addr       == wstrb_arbiter  ;
-    assign wlast_xbar_soc = w_device_addr       == wlast_arbiter  ;
+    assign rdata_xbar           = r_device_addr    == 'd0 ? rdata_clint : rdata_soc;
+    assign rresp_xbar           = r_device_addr    == 'd0 ? rresp_clint : rresp_soc;
+    assign rvalid_xbar          = r_device_addr    == 'd0 ? rvalid_clint : rvalid_soc;
+    assign rid_xbar             = r_device_addr    == 'd0 ? rid_clint : rid_soc;
+    assign rlast_xbar           = r_device_addr    == 'd0 ? rlast_clint : rlast_soc;
 
-    assign wready_xbar = w_device_addr          == 'd0 ? wready_clint : wready_soc;
+    assign rready_xbar_clint    =                     rready_arbiter ;
+    assign rready_xbar_soc      =                     rready_arbiter ;
 
-    assign bresp_xbar = w_device_addr           == 'd0 ? bresp_clint : bresp_soc;
-    assign bvalid_xbar = w_device_addr          == 'd0 ? bvalid_clint : bvalid_soc;
-    assign bid_xbar = w_device_addr             == 'd0 ? bid_clint : bid_soc;
+    assign awaddr_xbar_clint    =                     awaddr_arbiter  ;
+    assign awvalid_xbar_clint   =                     awvalid_arbiter ;
+    assign awburst_xbar_clint   =                     awburst_arbiter ;
+    assign awsize_xbar_clint    =                     awsize_arbiter  ;
+    assign awlen_xbar_clint     =                     awlen_arbiter   ;
+    assign awid_xbar_clint      =                     awid_arbiter    ;
 
-    assign bready_xbar_clint = w_device_addr    == bready_arbiter ;
-    assign bready_xbar_soc = w_device_addr      == bready_arbiter ;
+    assign awvalid_xbar_soc     = w_device_addr    == 'd1 ? awvalid_arbiter : 1'b0;
+    assign awaddr_xbar_soc      =                     awaddr_arbiter  ;
+    assign awburst_xbar_soc     =                     awburst_arbiter ;
+    assign awsize_xbar_soc      =                     awsize_arbiter  ;
+    assign awlen_xbar_soc       =                     awlen_arbiter   ;
+    assign awid_xbar_soc        =                     awid_arbiter    ;
+
+    assign awready_xbar         = w_device_addr    == 'd0 ? awready_clint : awready_soc;
+
+
+    assign wvalid_xbar_clint    = w_device_addr    == 'd0 ? wvalid_arbiter : 1'b0;
+    assign wdata_xbar_clint     =                     wdata_arbiter  ;
+    assign wstrb_xbar_clint     =                     wstrb_arbiter  ;
+    assign wlast_xbar_clint     =                     wlast_arbiter  ;
+
+    assign wvalid_xbar_soc      = w_device_addr    == 'd1 ? wvalid_arbiter : 1'b0;
+    assign wdata_xbar_soc       =                     wdata_arbiter  ;
+    assign wstrb_xbar_soc       =                     wstrb_arbiter  ;
+    assign wlast_xbar_soc       =                     wlast_arbiter  ;
+
+    assign wready_xbar          = w_device_addr    == 'd0 ? wready_clint : wready_soc;
+
+    assign bresp_xbar           = w_device_addr    == 'd0 ? bresp_clint : bresp_soc;
+    assign bvalid_xbar          = w_device_addr    == 'd0 ? bvalid_clint : bvalid_soc;
+    assign bid_xbar             = w_device_addr    == 'd0 ? bid_clint : bid_soc;
+
+    assign bready_xbar_clint    =                     bready_arbiter ;
+    assign bready_xbar_soc      =                     bready_arbiter ;
 
 endmodule
