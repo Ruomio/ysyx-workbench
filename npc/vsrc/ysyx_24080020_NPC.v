@@ -80,7 +80,7 @@ wire reset = ~rst;
 
 ysyx_24080020 u_cpu(
     .clock(clk),
-    .reset(reset),
+    .reset(rst),
 
     .io_interrupt(io_interrupt),
 
