@@ -160,7 +160,6 @@ assign is_ecall_lsu = mem_ecall_q;
 always @(posedge clk) begin
     if (!rst) begin
         mem_valid_q    <= 1'b0;
-        mem_result_q   <= 32'd0;
         mem_len_q      <= 3'd0;
         mem_csr_wen_q  <= 1'b0;
         mem_ecall_q    <= 1'b0;
@@ -170,16 +169,12 @@ always @(posedge clk) begin
         mem_wait_load_q<= 1'b0;
         mem_waddr_q    <= 'b0;
     end
-    else if(rvalid & rready) begin
-        mem_result_q   <= rdata; // 读/写结果
-    end
     else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
         mem_wait_load_q<= mren_exu | mwen_exu;
         mem_valid_q    <= exu_mem_valid; // 上游有数据就锁
         mem_mren_q     <= mren_exu;
         mem_mwen_q     <= mwen_exu;
         mem_maddr_q    <= maddr_exu;
-        mem_result_q   <= wdata_exu; // 读/写结果
         mem_len_q      <= mem_len_exu;
         mem_ecall_q    <= is_ecall_exu;
         mem_csr_wen_q  <= wcsren_exu;
@@ -187,6 +182,18 @@ always @(posedge clk) begin
         mem_wcsrdata_q <= wcsrdata_exu;
         mem_wen_q      <= wen_exu;
         mem_waddr_q    <= waddr_exu;
+    end
+end
+
+always @(posedge clk) begin
+    if (!rst) begin
+        mem_result_q   <= 32'd0;
+    end
+    else if(rvalid & rready) begin
+        mem_result_q   <= rdata; // 读/写结果
+    end
+    else if (exu_mem_valid && mem_exu_ready) begin        // 下游能收
+        mem_result_q   <= wdata_exu; // 读/写结果
     end
 end
 
