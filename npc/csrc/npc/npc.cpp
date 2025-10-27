@@ -2,7 +2,8 @@
 #include "define.h"
 #include "difftest-def.h"
 #include "memory/paddr.h"
-#include "verilated_vcd_c.h"
+// #include "verilated_vcd_c.h"
+#include "verilated_fst_c.h"
 #include "common.h"
 #include "ringbuffer.h"
 
@@ -68,7 +69,7 @@ VysyxSoCFull *top = NULL;
 Vysyx_24080020_NPC *top = NULL;
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-VerilatedVcdC *tfp = NULL;
+VerilatedFstC *tfp = NULL;
 #endif
 VerilatedContext *contextp = NULL;
 
@@ -155,7 +156,7 @@ void init_npc(int argc, char **argv) {
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
   // if(!tfp) {
-  //   tfp = new VerilatedVcdC;
+  //   tfp = new VerilatedFstC;
   //   contextp->traceEverOn(true);
   //   top->trace(tfp, 0);
   //   tfp->open("build/wave.vcd");
@@ -414,10 +415,10 @@ void exec_npc(uint64_t n) {
     }
     if(lightsss.is_child()) {
         if(!tfp) {
-            tfp = new VerilatedVcdC;
+            tfp = new VerilatedFstC;
             contextp->traceEverOn(true);
             top->trace(tfp, 0);
-            tfp->open("build/wave.vcd");
+            tfp->open("build/wave.fst");
         }
     }
 #endif
