@@ -253,12 +253,12 @@ assign wstrb = mwmask_mem;
 assign arid   = 4'd0;
 assign arsize = 3'b010;      // 4 字节
 assign arburst = 2'b01;      // INCR
-assign araddr = mem_maddr_q;
+assign araddr = {mem_maddr_q[31:2], 2'b0};
 
 assign awid   = 4'd0;
 assign awsize = 3'b010;
 assign awburst = 2'b01;
-assign awaddr = mem_maddr_q;
+assign awaddr = {mem_maddr_q[31:2], 2'b0};
 
 assign wdata  = (mem_maddr_q[1:0] == 2'b00) ? mem_result_q :
                 (mem_maddr_q[1:0] == 2'b01) ? mem_result_q << 8 :
