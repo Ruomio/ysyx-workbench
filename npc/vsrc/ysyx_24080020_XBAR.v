@@ -116,33 +116,39 @@ module ysyx_24080020_XBAR(
     */
 
 
-    reg r_device_addr;
-    reg w_device_addr;
+    // reg r_device_addr;
+    // reg w_device_addr;
+    wire r_device_addr;
+    wire w_device_addr;
 
     /*
      *   if clint: -> clint
      *   else: -> soc
     */
     // always @(awvalid_arbiter or arvalid_arbiter or rvalid_xbar or rready_arbiter or rlast_xbar or bvalid_xbar or bready_arbiter) begin
-    always @(posedge clk) begin
-        if(!rst) begin
-            r_device_addr <= 'b1;
-        end
-        else if(arvalid_arbiter) begin
-            r_device_addr <= (araddr_arbiter == `ysyx_24080020_CLINT_ADDR
-                || araddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         r_device_addr <= 'b1;
+    //     end
+    //     else if(arvalid_arbiter) begin
+    //         r_device_addr <= (araddr_arbiter == `ysyx_24080020_CLINT_ADDR
+    //             || araddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
+    //     end
+    // end
+    assign r_device_addr = (araddr_arbiter == `ysyx_24080020_CLINT_ADDR
+        || araddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            w_device_addr <= 'b1;
-        end
-        else if(awvalid_arbiter) begin
-            w_device_addr <= (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR
-                || awaddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
-        end
-    end
+    // always @(posedge clk) begin
+    //     if(!rst) begin
+    //         w_device_addr <= 'b1;
+    //     end
+    //     else if(awvalid_arbiter) begin
+    //         w_device_addr <= (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR
+    //             || awaddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
+    //     end
+    // end
+    assign w_device_addr = (awaddr_arbiter == `ysyx_24080020_CLINT_ADDR
+        || awaddr_arbiter == (`ysyx_24080020_CLINT_ADDR | 32'h4)) ? 'd0 : 'd1;
 
 
 
