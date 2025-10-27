@@ -252,13 +252,13 @@ assign wstrb = mwmask_mem;
 // 其余 AXI 信号直接连组合
 assign arid   = 4'd0;
 // assign arsize = 3'b010;      // 4 字节
-assign arsize = mem_len_q;      // 4 字节
+assign arsize = {1'b0, mem_len_q[1:0]};      // 4 字节
 assign arburst = 2'b01;      // INCR
 assign araddr = mem_maddr_q;
 
 assign awid   = 4'd0;
 // assign awsize = 3'b010;
-assign awsize = mem_len_q;
+assign awsize = {1'b0, mem_len_q[1:0]};
 assign awburst = 2'b01;
 assign awaddr = mem_maddr_q;
 
