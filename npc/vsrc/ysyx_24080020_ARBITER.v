@@ -148,15 +148,15 @@ module ysyx_24080020_ARBITER (
       // ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
     end else if(arvalid_ifu && arvalid_mem && !busy) begin
       // both high level
-      // ifu_or_mem <= ifu_or_mem;
-      // if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;
-      // else ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+      ifu_or_mem <= ifu_or_mem;
+      if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;
+      else ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
 
       // lsu first, because load make pipeline stall
-      ifu_or_mem   <= 1'b1;
-      mem_wait_cnt <= 3'b0;
+      // ifu_or_mem   <= 1'b1;
+      // mem_wait_cnt <= 3'b0;
 
-      ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+      // ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
     end
   end
 
