@@ -102,6 +102,8 @@ module ysyx_24080020_ARBITER (
 
   reg busy;
 
+  reg arready_q;
+
 
   always @(posedge clk) begin
       if(!rst) begin
@@ -148,28 +150,43 @@ module ysyx_24080020_ARBITER (
       // ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
     end else if(arvalid_ifu && arvalid_mem && !busy) begin
       // both high level
-      ifu_or_mem <= ifu_or_mem;
-      if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;
-      else ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+      // ifu_or_mem <= ifu_or_mem;
+      // if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;
+      // else ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
 
       // lsu first, because load make pipeline stall
-      // ifu_or_mem   <= 1'b1;
-      // mem_wait_cnt <= 3'b0;
+      ifu_or_mem   <= 1'b1;
+      mem_wait_cnt <= 3'b0;
 
-      // ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+      ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+    end
+  end
+
+  always @(posedge clk) begin
+    if(!rst) begin
+        arready_q <= 'b0;
+    end
+    else if(arvalid_arbiter & arready_q) begin
+        arready_q <= 'b0;
+    end
+    else if(~ifu_or_mem & arvalid_ifu & arready_xbar) begin
+        arready_q <= 'b1;
+    end
+    else if(ifu_or_mem & arvalid_mem & arready_xbar) begin
+        arready_q <= 'b1;
     end
   end
 
   // AR
-  assign arvalid_arbiter = ifu_or_mem == 1'b0 ? arvalid_ifu : arvalid_mem;
+  assign arvalid_arbiter = ifu_or_mem == 1'b0 ? arvalid_ifu & busy : arvalid_mem;
   assign araddr_arbiter = ifu_or_mem == 1'b0 ? araddr_ifu : araddr_mem;
   assign arid_arbiter = ifu_or_mem == 1'b0 ? arid_ifu : arid_mem;
   assign arsize_arbiter = ifu_or_mem == 1'b0 ? arsize_ifu : arsize_mem;
   assign arlen_arbiter = ifu_or_mem == 1'b0 ? arlen_ifu : arlen_mem;
   assign arburst_arbiter = ifu_or_mem == 1'b0 ? arburst_ifu : arburst_mem;
 
-  assign arready_ifu = ifu_or_mem == 1'b0 ? arready_xbar : 1'b0;
-  assign arready_mem = ifu_or_mem == 1'b0 ? 1'b0 : arready_xbar;
+  assign arready_ifu = ifu_or_mem == 1'b0 ? arready_q : 1'b0;
+  assign arready_mem = ifu_or_mem == 1'b0 ? 1'b0 : arready_q;
 
   // R
   assign rready_arbiter = ifu_or_mem == 1'b0 ? rready_ifu : rready_mem;
