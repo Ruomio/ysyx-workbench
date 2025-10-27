@@ -154,13 +154,13 @@ void init_npc(int argc, char **argv) {
 #elif defined(ysyx_24080020_NPC)
   top = new Vysyx_24080020_NPC(contextp);
 #endif
-#if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-  // if(!tfp) {
-  //   tfp = new VerilatedFstC;
-  //   contextp->traceEverOn(true);
-  //   top->trace(tfp, 0);
-  //   tfp->open("build/wave.vcd");
-  // }
+#if defined(CONFIG_WAVEFILE)
+  if(!tfp) {
+    tfp = new VerilatedFstC;
+    contextp->traceEverOn(true);
+    top->trace(tfp, 0);
+    tfp->open("build/wave.fst");
+  }
 #endif
 #if NVBOARD_ENABLE
   nvboard_bind_all_pins(top);
