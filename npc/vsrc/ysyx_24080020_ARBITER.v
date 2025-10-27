@@ -185,8 +185,8 @@ module ysyx_24080020_ARBITER (
   assign arlen_arbiter = ifu_or_mem == 1'b0 ? arlen_ifu : arlen_mem;
   assign arburst_arbiter = ifu_or_mem == 1'b0 ? arburst_ifu : arburst_mem;
 
-  assign arready_ifu = ifu_or_mem == 1'b0 ? arready_q : 1'b0;
-  assign arready_mem = ifu_or_mem == 1'b0 ? 1'b0 : arready_q;
+  assign arready_ifu = ifu_or_mem == 1'b0 ? arready_xbar : 1'b0;
+  assign arready_mem = ifu_or_mem == 1'b0 ? 1'b0 : arready_xbar;
 
   // R
   assign rready_arbiter = ifu_or_mem == 1'b0 ? rready_ifu : rready_mem;
