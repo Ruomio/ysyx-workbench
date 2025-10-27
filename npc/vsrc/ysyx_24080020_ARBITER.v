@@ -161,7 +161,7 @@ module ysyx_24080020_ARBITER (
   end
 
   // AR
-  assign arvalid_arbiter = ifu_or_mem == 1'b0 ? arvalid_ifu : arvalid_mem;
+  assign arvalid_arbiter = ifu_or_mem == 1'b0 ? arvalid_ifu & busy : arvalid_mem;
   assign araddr_arbiter = ifu_or_mem == 1'b0 ? araddr_ifu : araddr_mem;
   assign arid_arbiter = ifu_or_mem == 1'b0 ? arid_ifu : arid_mem;
   assign arsize_arbiter = ifu_or_mem == 1'b0 ? arsize_ifu : arsize_mem;
