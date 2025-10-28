@@ -396,7 +396,7 @@ module sim_top;
         integer i;
         begin
             for (i = 0; i < (1<<len); i = i + 1) begin
-                if ({4'b0, addr[27:0]} + i < memory_len) begin  // 边界检查
+                if (({4'b0, addr[27:0]} + i < memory_len) && (addr >= 32'h80000000) && (addr < 32'ha0000000)) begin  // 边界检查
                     memory[{4'b0, addr[27:0]} + i] = data[8*i +: 8];  // 小端序：bit[7:0] → {4'b0, addr[27:0]}+0
                 end
                 else begin
@@ -437,14 +437,14 @@ module sim_top;
         if(reset) begin
             pc_delay_cnt <= 32'h0;
         end
-        else if(u_cpu.u_npc.u_exu.exu_mem_valid && u_cpu.u_npc.u_exu.mem_exu_ready) begin
+        else if(u_cpu.u_exu.exu_mem_valid && u_cpu.u_exu.mem_exu_ready) begin
             pc_delay_cnt <= 'h0;
-            // $display("%h", u_cpu.u_npc.exu.pc_exu);
+            // $display("%h", u_cpu.exu.pc_exu);
         end
         else begin
             pc_delay_cnt <= pc_delay_cnt + 1'b1;
             if(pc_delay_cnt > 32'h200) begin
-                $display("EXU lag at pc: 0x%h", u_cpu.u_npc.u_exu.pc_exu);
+                $display("EXU lag at pc: 0x%h", u_cpu.u_exu.pc_exu);
                 $display("PC delay count exceeded");
                 $finish;
             end
@@ -455,19 +455,21 @@ module sim_top;
     always @(posedge clock) begin
         if(reset) begin
         end
-        else if(u_cpu.u_npc.idu_exu_valid && u_cpu.u_npc.exu_idu_ready &&
-        u_cpu.u_npc.u_idu.inst_idu == 32'h00100073) begin
+        else if(u_cpu.idu_exu_valid && u_cpu.exu_idu_ready &&
+            u_cpu.u_exu.is_ebreak_idu) begin
             $display("ebreak inst!");
             $finish;
         end
     end
 
+    wire in_uart_addr = u_cpu.io_master_araddr == 32'ha00003f8 |
+                        u_cpu.io_master_awaddr == 32'ha00003f8;
     // uart
     always @(posedge clock) begin
         if(reset) begin
         end
-        else if(u_cpu.u_npc.u_uart.wvalid  && u_cpu.u_npc.u_uart.wready ) begin
-            $write("%c", u_cpu.u_npc.u_uart.wdata[7:0] );
+        else if(u_cpu.io_master_wvalid  && u_cpu.io_master_wready ) begin
+            $write("%c", u_cpu.io_master_wdata[7:0] );
             $fflush();
         end
     end
