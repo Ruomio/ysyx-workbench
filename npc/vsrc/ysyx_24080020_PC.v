@@ -43,6 +43,7 @@ module ysyx_24080020_PC (
     always @(posedge clk) begin
         if (!rst) begin
             pc_q        <= `ysyx_24080020_MBASE;   // 初始 PC
+            update_q    <= 'b0;
         end
         else if(update_btb & (~update_next)) begin
             pc_q        <= pc_base;
