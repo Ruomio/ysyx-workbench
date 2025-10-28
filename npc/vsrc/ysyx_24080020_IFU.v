@@ -61,10 +61,11 @@ assign inst_ifu   = inst_q;           // 指令直接连输入
 // 4. DPI-C 调试接口（可选，面积可综合开关）
 //=========================================================================
 `ifdef CONFIG_DPIC
-// always @(posedge clk) begin
-//     if (inst_fin)
-//         $display("IFU: PC=0x%08x", raddr);
-// end
+import "DPI-C" function void statistics_ifu_get_inst();
+always @(posedge clk) begin
+    if (inst_fin_valid & inst_fin_ready)
+        statistics_ifu_get_inst();
+end
 `endif
 
 endmodule
