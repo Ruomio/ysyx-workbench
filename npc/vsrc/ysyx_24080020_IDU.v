@@ -199,6 +199,7 @@ assign wcsren_idu      = is_csr;         // csrrw/csrrs/ecall/mret
 //=========================================================================
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
+localparam PIPE_CTRL_W = 53;
 reg [PIPE_CTRL_W-1:0]    ctrl_q;
 wire is_r_type_idu;
 
@@ -240,7 +241,6 @@ assign imm_idu = ctrl_q[35:4];
 //=========================================================================
 // 6. 极简流水线握手 & 锁存（）
 //=========================================================================
-localparam PIPE_CTRL_W = 53;
 wire [PIPE_CTRL_W-1:0] ctrl_comb = {
     is_r_type_idu, is_mret, is_u_type, is_i_type, is_auipc,
     is_ecall, is_b_type, is_j_type, is_jr_type,
