@@ -215,7 +215,7 @@ module sim_top;
     wire [5:0] lfsr;    // the number of delay cycle
 
     assign wstrb_full = {{8{io_master_wstrb[3]}}, {8{io_master_wstrb[2]}}, {8{io_master_wstrb[1]}}, {8{io_master_wstrb[0]}}};
-    assign lfsr = 6'd32;
+    assign lfsr = 6'd1;
 
     // AR
     always @(posedge clock) begin
