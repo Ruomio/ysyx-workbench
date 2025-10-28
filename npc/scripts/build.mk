@@ -3,7 +3,7 @@
 VERILATOR=verilator
 VERILATOR_CFLAGS += -MMD -cc \
 					-j 16 --threads 1  \
-					-O3 --x-assign fast --x-initial fast --noassert --trace \
+					-O3 --x-assign fast --x-initial fast --noassert --trace-fst \
 					--timescale "1ns/1ns" --no-timing
 VERILATOR_RUNTIME_ARGS += +verilator+rand+reset+2
 
@@ -198,7 +198,7 @@ get_v_to_cpp: $(VERILOG_TARGET) $(SOC_VSRC)
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	# @echo "Write this Makefile by your self.!"
-	$(VERILATOR) -cc --exe --build --trace -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
+	$(VERILATOR) -cc --exe --build --trace-fst -j 8 -Mdir $(OBJ_DIR) $(VSRC) $(CSRC)
 
 ifeq ($(NVBOARD_ENABLE), 1)
 link: $(OBJS) $(V_OBJS) $(NVBOARD_ARCHIVE)
