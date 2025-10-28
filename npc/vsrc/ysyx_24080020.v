@@ -512,6 +512,7 @@ module ysyx_24080020(
         .clk(clk),
         .rst(rst),
 
+        .need_stall(need_stall),
         // idu <-> exu
         .idu_exu_valid(idu_exu_valid),
         .mem_exu_ready(mem_exu_ready),
