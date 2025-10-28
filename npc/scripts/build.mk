@@ -280,15 +280,27 @@ iverilog: $(VVP_FILE)
 	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
-	@vcd2fst build/tb_wave.vcd build/tb_wave.fst
-	@rm build/tb_wave.vcd
+	@if [ -f build/tb_wave.vcd ]; then \
+		echo "Converting VCD to FST..."; \
+		vcd2fst build/tb_wave.vcd build/tb_wave.fst; \
+		echo "Removing VCD file..."; \
+		rm build/tb_wave.vcd; \
+	else \
+		echo "VCD file not found, skipping conversion"; \
+	fi
 
 iverilog-netlist: $(VVP_NETLIST_FILE)
 	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
-	@vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst
-	@rm build/tb_netlist_wave.vcd
+	@if [ -f build/tb_netlist_wave.vcd ]; then \
+		echo "Converting VCD to FST..."; \
+		vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst; \
+		echo "Removing VCD file..."; \
+		rm build/tb_netlist_wave.vcd; \
+	else \
+		echo "VCD file not found, skipping conversion"; \
+	fi
 
 # CI TEST
 VVP_CI_FILE = $(BUILD_DIR)/ci_sim_top.v
