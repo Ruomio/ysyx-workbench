@@ -252,8 +252,8 @@ reg [31:0]               val1_q;
 reg [31:0]               val2_q;
 reg [31:0]               rcsr_q;
 
-assign idu_ifu_ready = ~valid_q && !need_stall;
-assign idu_exu_valid = valid_q && !flush_pipeline;
+assign idu_ifu_ready = ~valid_q & ~need_stall;
+assign idu_exu_valid = valid_q & ~flush_pipeline;
 
 // 写 CSR 第 1 拍信号（组合）
 // wire ecall_write1 = do_ecall && !ecall_phase;
@@ -285,8 +285,8 @@ always @(posedge clk) begin
         valid_q     <= 1'b1;
         pc_idu      <= pc_ifu;
         ctrl_q      <= ctrl_comb;
-        val1_q      <= val_raddr1;
-        val2_q      <= val_raddr2;
+        // val1_q      <= val_raddr1;
+        // val2_q      <= val_raddr2;
         rcsr_q      <= rcsrdata;
 
         // if (do_ecall) begin
@@ -300,8 +300,10 @@ always @(posedge clk) begin
 end
 
 assign alu_op_idu = ctrl_q[`ysyx_24080020_ALU_OP_WIDTH-1:0];
-assign val_raddr1_idu = val1_q;
-assign val_raddr2_idu = val2_q;
+// assign val_raddr1_idu = val1_q;
+// assign val_raddr2_idu = val2_q;
+assign val_raddr1_idu = val_raddr1;
+assign val_raddr2_idu = val_raddr2;
 assign rcsrdata_idu = rcsr_q;
 
 

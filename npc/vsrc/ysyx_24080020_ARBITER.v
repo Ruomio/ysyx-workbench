@@ -102,6 +102,8 @@ module ysyx_24080020_ARBITER (
 
   reg busy;
 
+  reg arready_q;
+
 
   always @(posedge clk) begin
       if(!rst) begin
@@ -151,6 +153,27 @@ module ysyx_24080020_ARBITER (
       ifu_or_mem <= ifu_or_mem;
       if (!ifu_or_mem) mem_wait_cnt <= mem_wait_cnt + 3'b1;
       else ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+
+      // lsu first, because load make pipeline stall
+      // ifu_or_mem   <= 1'b1;
+      // mem_wait_cnt <= 3'b0;
+
+      // ifu_wait_cnt <= ifu_wait_cnt + 3'b1;
+    end
+  end
+
+  always @(posedge clk) begin
+    if(!rst) begin
+        arready_q <= 'b0;
+    end
+    else if(arvalid_arbiter & arready_q) begin
+        arready_q <= 'b0;
+    end
+    else if(~ifu_or_mem & arvalid_ifu & arready_xbar) begin
+        arready_q <= 'b1;
+    end
+    else if(ifu_or_mem & arvalid_mem & arready_xbar) begin
+        arready_q <= 'b1;
     end
   end
 

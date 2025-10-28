@@ -9,6 +9,8 @@ module ysyx_24080020_EXU (
     input  wire        clk,
     input  wire        rst,          // 低电平复位
 
+    input  wire        need_stall,
+
     // IDU <---> EXU 流水线握手
     input  wire        idu_exu_valid,
     output wire        exu_idu_ready,
@@ -118,7 +120,7 @@ reg [31:0]               rcsrdata_q_reg;
 // 流水线握手逻辑（极简）
 //=========================================================================
 // assign exu_idu_ready = ~valid_q_reg || (mem_exu_ready && exu_mem_valid);
-assign exu_idu_ready = ~valid_q_reg;
+assign exu_idu_ready = ~valid_q_reg & ~need_stall;
 assign exu_mem_valid = valid_q_reg;
 
 always @(posedge clk) begin
