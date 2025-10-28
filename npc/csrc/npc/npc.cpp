@@ -715,3 +715,15 @@ extern "C" void statistics_btb_hit() {
 extern "C" void statistics_btb_err_hit() {
     btb_hit_cnt --;
 }
+
+#ifdef CONFIG_WAVEFILE
+void signal_handler_abort(int signum) {
+  printf("Aborted\n");
+  free_npc();
+}
+#else
+
+void signal_handler_abort(int signum) {
+    return;
+}
+#endif

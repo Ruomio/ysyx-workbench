@@ -120,7 +120,6 @@ module ysyx_24080020_REG
         else if(cnt) begin
             if(skip_ref_wb) begin
                 skip_ref_wb <= 1'b0;
-                // npc_difftest_skip_ref();
             end
         end
         else if(mem_wb_valid && wb_mem_ready) begin

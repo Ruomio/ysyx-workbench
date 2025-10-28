@@ -10,13 +10,7 @@ extern int is_exit_status_bad();
 // extern void init_npc(int argc, char **argv);
 extern void free_npc();
 
-void signal_handler_abort(int signum) {
-  printf("Aborted\n");
-  free_npc();
-  free_memory();
-  exit(1);
-}
-
+extern void signal_handler_abort(int signum);
 
 int main(int argc, char **argv) {
   signal(SIGABRT, signal_handler_abort);
