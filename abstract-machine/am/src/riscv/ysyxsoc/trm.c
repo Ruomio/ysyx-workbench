@@ -102,7 +102,7 @@ void show_stu_no() {
 void _trm_init() {
   fsbl();
   init_uart(115200);
-  // show_stu_no();
+  show_stu_no();
   int ret = main(mainargs);
   halt(ret);
 }
