@@ -1,6 +1,7 @@
 #include "memory/memory.h"
 #include <cstdio>
 #include <climits>
+#include <signal.h>
 
 extern int init_monitor(int argc, char *argv[]);
 extern void sdb_mainloop();
@@ -9,10 +10,16 @@ extern int is_exit_status_bad();
 // extern void init_npc(int argc, char **argv);
 extern void free_npc();
 
+void signal_handler_abort(int signum) {
+  printf("Aborted\n");
+  free_npc();
+  free_memory();
+  exit(1);
+}
 
 
 int main(int argc, char **argv) {
-
+  signal(SIGABRT, signal_handler_abort);
 
   init_monitor(argc, argv);
 
