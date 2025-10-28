@@ -2,7 +2,8 @@
 #include "define.h"
 #include "difftest-def.h"
 #include "memory/paddr.h"
-#include "verilated_vcd_c.h"
+// #include "verilated_vcd_c.h"
+#include "verilated_fst_c.h"
 #include "common.h"
 #include "ringbuffer.h"
 
@@ -24,8 +25,8 @@
 #include "Vysyx_24080020_NPC___024root.h"
 #include "Vysyx_24080020_NPC__Dpi.h"
 
-#define set_reset top->rst = 0
-#define set_unreset top->rst = 1
+#define set_reset top->rst = 1
+#define set_unreset top->rst = 0
 #define toggle_clock top->clk ^= 1
 #define is_clk_high (top->clk == 1)
 #endif
@@ -68,7 +69,7 @@ VysyxSoCFull *top = NULL;
 Vysyx_24080020_NPC *top = NULL;
 #endif
 #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-VerilatedVcdC *tfp = NULL;
+VerilatedFstC *tfp = NULL;
 #endif
 VerilatedContext *contextp = NULL;
 
@@ -153,11 +154,13 @@ void init_npc(int argc, char **argv) {
 #elif defined(ysyx_24080020_NPC)
   top = new Vysyx_24080020_NPC(contextp);
 #endif
-#if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
-  // tfp = new VerilatedVcdC;
-  // contextp->traceEverOn(true);
-  // top->trace(tfp, 0);
-  // tfp->open("build/wave.vcd");
+#if defined(CONFIG_WAVEFILE)
+  if(!tfp) {
+    tfp = new VerilatedFstC;
+    contextp->traceEverOn(true);
+    top->trace(tfp, 0);
+    tfp->open("build/wave.fst");
+  }
 #endif
 #if NVBOARD_ENABLE
   nvboard_bind_all_pins(top);
@@ -412,10 +415,10 @@ void exec_npc(uint64_t n) {
     }
     if(lightsss.is_child()) {
         if(!tfp) {
-            tfp = new VerilatedVcdC;
+            tfp = new VerilatedFstC;
             contextp->traceEverOn(true);
             top->trace(tfp, 0);
-            tfp->open("build/wave.vcd");
+            tfp->open("build/wave.fst");
         }
     }
 #endif
@@ -489,10 +492,10 @@ void update_ftrace_dpi() {
 
 void ebreak() {
   #ifdef ysyx_24080020_NPC
-  int a0 = top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[10];
+  int a0 = top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__u_reg__DOT__regs[10];
   #endif
   #ifdef ysyxSoCFull
-  int a0 = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[10];
+  int a0 = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_reg__DOT__regs[10];
   #endif
   u_npc_state.state = a0 ? NPC_ABORT : NPC_END;
   u_npc_state.ret = a0 ? true : false;
@@ -520,9 +523,9 @@ void check_trap(npc_state u_npc_state) {
 
 uint32_t g_get_pc() {
 #if defined (ysyxSoCFull)
-  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu;
+  g_pc  = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc_wbu;
 #elif defined (ysyx_24080020_NPC)
-  g_pc = top->rootp->ysyx_24080020_NPC__DOT__pc_wbu;
+  g_pc = top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__pc_wbu;
 #endif
   return g_pc;
 }
@@ -530,26 +533,26 @@ uint32_t g_get_pc() {
 void g_set_pc(uint32_t pc) {
   // top->rootp->top__DOT__u_npc__DOT__ifu__DOT__addr = pc;
 #if defined (ysyxSoCFull)
-  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__pc_wbu = pc;
+  top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc_wbu = pc;
 #elif defined (ysyx_24080020_NPC)
-  top->rootp->ysyx_24080020_NPC__DOT__pc_wbu = pc;
+  top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__pc_wbu = pc;
 #endif
 }
 
 uint32_t g_get_reg(int i) {
 #if defined (ysyxSoCFull)
-  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i]);
+  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_reg__DOT__regs[i]);
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i];
+  return top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__u_reg__DOT__regs[i];
 #else
   return 0;
 #endif
 }
 uint32_t g_get_csrs(int i) {
 #if defined (ysyxSoCFull)
-  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_csr__DOT__csrs[i]);
+  return (top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_csr__DOT__csrs[i]);
 #elif defined (ysyx_24080020_NPC)
-  return top->rootp->ysyx_24080020_NPC__DOT__u_csr__DOT__csrs[i];
+  return top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__u_csr__DOT__csrs[i];
 #else
   return 0;
 #endif
@@ -561,15 +564,15 @@ uint32_t g_get_snpc() {
 
 uint32_t g_get_dnpc() {
 #if defined (ysyxSoCFull)
-  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__is_dnpc_wb) {
-    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__dnpc_wb;
+  if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_reg__DOT__is_dnpc_wb) {
+    g_dnpc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_reg__DOT__dnpc_wb;
   }
   else
     g_dnpc = g_pc + 4;
   return g_dnpc;
 #elif defined (ysyx_24080020_NPC)
-  if(top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__is_dnpc_wb) {
-    g_dnpc = top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__dnpc_wb;
+  if(top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__u_reg__DOT__is_dnpc_wb) {
+    g_dnpc = top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__u_reg__DOT__dnpc_wb;
   }
   else
     g_dnpc = g_pc + 4;
@@ -580,10 +583,10 @@ uint32_t g_get_dnpc() {
 uint32_t g_get_rs1() {
 #if defined (ysyxSoCFull)
   // return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 15);
-  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__rs1;
+  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__rs1;
 #elif defined (ysyx_24080020_NPC)
   // return BITS(top->rootp->ysyx_24080020_NPC__DOT__inst_ifu, 19, 15);
-  return top->rootp->ysyx_24080020_NPC__DOT__rs1;
+  return top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__rs1;
 #else
   return 0;
 #endif
@@ -591,10 +594,10 @@ uint32_t g_get_rs1() {
 uint32_t g_get_rd() {
 #if defined (ysyxSoCFull)
   // return BITS(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__inst_ifu, 19, 7);
-  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_exu__DOT__waddr_q_reg;
+  return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_exu__DOT__waddr_q_reg;
 #elif defined (ysyx_24080020_NPC)
   // return BITS(top->rootp->ysyx_24080020_NPC__DOT__inst_ifu, 19, 15);
-  return top->rootp->ysyx_24080020_NPC__DOT__u_exu__DOT__waddr_q_reg;
+  return top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__u_exu__DOT__waddr_q_reg;
 #else
 
 #endif
@@ -619,9 +622,9 @@ void update_npc_cpu() {
 void update_dut() {
   for(int i=0; i<CONFIG_REGS_NUM; i++) {
 #if defined (ysyxSoCFull)
-    top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_npc__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+    top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #elif defined (ysyx_24080020_NPC)
-    top->rootp->ysyx_24080020_NPC__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
+    top->rootp->ysyx_24080020_NPC__DOT__u_cpu__DOT__u_reg__DOT__regs[i] = npc_cpu.gpr[i];
 #endif
   }
   // top->pc = npc_cpu.pc;
@@ -712,3 +715,15 @@ extern "C" void statistics_btb_hit() {
 extern "C" void statistics_btb_err_hit() {
     btb_hit_cnt --;
 }
+
+#ifdef CONFIG_WAVEFILE
+void signal_handler_abort(int signum) {
+  printf("Aborted\n");
+  free_npc();
+}
+#else
+
+void signal_handler_abort(int signum) {
+    return;
+}
+#endif
