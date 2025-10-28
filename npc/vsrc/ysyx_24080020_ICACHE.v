@@ -749,7 +749,7 @@ module ysyx_24080020_ICACHE(
     // ---------------------------------------------------------------------
     // 7. 写表（单拍完成，不等 B）
     // ---------------------------------------------------------------------
-    always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk) begin
         if (!rst_n) begin
             for (integer i = 0; i < cache_num; i = i + 1) begin
                 cache_data[i]   <= 32'd0;

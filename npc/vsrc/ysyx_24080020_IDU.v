@@ -83,17 +83,18 @@ always @(*) begin
     endcase
 end
 
-wire [31:0] imm_comb = (imm_type == 2'b00) ? IMM_I :
-                       (imm_type == 2'b01) ? IMM_S :
-                       (imm_type == 2'b10) ? IMM_B :
-                       (opcode == `ysyx_24080020_JAL) ? IMM_J : IMM_U;
-
 //=========================================================================
 // 2. opcode 译码（同上一版）
 //=========================================================================
 wire [6:0] opcode = inst_ifu[6:0];
 wire [2:0] funct3 = inst_ifu[14:12];
 wire [6:0] funct7 = inst_ifu[31:25];
+
+wire [31:0] imm_comb = (imm_type == 2'b00) ? IMM_I :
+                       (imm_type == 2'b01) ? IMM_S :
+                       (imm_type == 2'b10) ? IMM_B :
+                       (opcode == `ysyx_24080020_JAL) ? IMM_J : IMM_U;
+
 
 wire is_r_type = (opcode == `ysyx_24080020_R_TYPE);
 wire is_i_type = (opcode == `ysyx_24080020_I_TYPE) || (opcode == `ysyx_24080020_LOAD_TYPE);
@@ -198,6 +199,7 @@ assign wcsren_idu      = is_csr;         // csrrw/csrrs/ecall/mret
 //=========================================================================
 // 5. 其余控制信号（从寄存器化的ctrl_q中获取）
 //=========================================================================
+reg [PIPE_CTRL_W-1:0]    ctrl_q;
 wire is_r_type_idu;
 
 assign is_r_type_idu = ctrl_q[52];
@@ -246,7 +248,6 @@ wire [PIPE_CTRL_W-1:0] ctrl_comb = {
     funct3, imm_comb, alu_op_comb
 };
 
-reg [PIPE_CTRL_W-1:0]    ctrl_q;
 reg                      valid_q;
 reg [31:0]               val1_q;
 reg [31:0]               val2_q;

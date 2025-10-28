@@ -25,6 +25,7 @@ module ysyx_24080020_PC (
 );
 
     reg update_q;
+    reg update_q_next;
     reg [31:0] pc_q, pc_target_q;
 
 
@@ -74,7 +75,7 @@ module ysyx_24080020_PC (
             update_next    <= 'b1;
         end
     end
-    reg update_q_next;
+
     always @(posedge clk) begin
         if (!rst) begin
             update_q_next    <= 1'b0;
