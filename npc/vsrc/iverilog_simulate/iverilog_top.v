@@ -22,7 +22,7 @@ module sim_top;
     initial begin
         $dumpfile("build/tb_wave.vcd"); // 指定 VCD 文件名
         // #200000;
-        $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
+        // $dumpvars(0, sim_top); // 0 表示记录该模块及其所有子模块的所有信号。也可以指定特定层级或信号。
         // #200 $finish;
     end
 
@@ -400,7 +400,7 @@ module sim_top;
                     memory[{4'b0, addr[27:0]} + i] = data[8*i +: 8];  // 小端序：bit[7:0] → {4'b0, addr[27:0]}+0
                 end
                 else begin
-                    $display(" out of range! at: 0x%h", {4'b0, addr[27:0]} + i);
+                    // $display(" out of range! at: 0x%h", {4'b0, addr[27:0]} + i);
                 end
             end
         end
@@ -462,8 +462,6 @@ module sim_top;
         end
     end
 
-    wire in_uart_addr = u_cpu.io_master_araddr == 32'ha00003f8 |
-                        u_cpu.io_master_awaddr == 32'ha00003f8;
     // uart
     always @(posedge clock) begin
         if(reset) begin
