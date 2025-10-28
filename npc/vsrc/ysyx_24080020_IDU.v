@@ -252,8 +252,8 @@ reg [31:0]               val1_q;
 reg [31:0]               val2_q;
 reg [31:0]               rcsr_q;
 
-assign idu_ifu_ready = ~valid_q && !need_stall;
-assign idu_exu_valid = valid_q & ~flush_pipeline & ~need_stall;
+assign idu_ifu_ready = ~valid_q & ~need_stall;
+assign idu_exu_valid = valid_q & ~flush_pipeline;
 
 // 写 CSR 第 1 拍信号（组合）
 // wire ecall_write1 = do_ecall && !ecall_phase;
