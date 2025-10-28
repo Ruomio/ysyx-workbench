@@ -71,6 +71,9 @@ wire [branch_way-1:0] way_hit;
 wire        any_hit;
 wire [31:0] hit_target;
 
+reg                     valid_q_reg;
+reg                     special_pc_q;
+
 // 并行比较所有 way
 genvar j;
 generate
@@ -125,8 +128,6 @@ end
 assign out_valid = valid_q_reg;   // 有数据就向下传
 assign in_ready  = ~valid_q_reg;
 
-reg                     valid_q_reg;
-reg                     special_pc_q;
 
 always @(posedge clk) begin
     if (!rst_n) begin
