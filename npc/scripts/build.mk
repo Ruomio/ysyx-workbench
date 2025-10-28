@@ -83,14 +83,6 @@ CSRC += $(shell find csrc -name "*.c" -or -name "*.cpp")
 V_CSRC += $(notdir $(shell find $(OBJ_DIR) -name "*.cpp"))
 
 
-# iverilog simulation
-VVP_FILE += $(BUILD_DIR)/iverilog_top.vvp
-VVP_NETLIST_FILE += $(BUILD_DIR)/iverilog_netlist_top.vvp
-TB_FILE += $(shell find . -type f -name "iverilog_top.v")
-TB_NETLIST_FILE += $(shell find . -type f -name "iverilog_netlist_top.v")
-NETLIST = $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "ysyx_24080020.netlist.fixed.v")
-CELLS = $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
-
 
 # verilator system files
 VERILATOR_SYS_FILES := verilated.cpp verilated_threads.cpp verilated_vcd_c.cpp
@@ -265,6 +257,15 @@ perf: $(BIN)
 		2>&1 | grep "\\[.* statistic\\]\\|real\\|user\\|sys" | tee -a .log/perf.log
 
 
+# iverilog simulation
+VVP_FILE += $(BUILD_DIR)/iverilog_top.vvp
+VVP_NETLIST_FILE += $(BUILD_DIR)/iverilog_netlist_top.vvp
+TB_FILE += $(shell find . -type f -name "iverilog_top.v")
+TB_NETLIST_FILE += $(shell find . -type f -name "iverilog_netlist_top.v")
+NETLIST = $(shell find $(YSYX_HOME)/yosys-sta/result/ysyx_24080020-500MHz -type f -name "ysyx_24080020.netlist.fixed.v")
+CELLS = $(shell find $(YSYX_HOME)/yosys-sta/nangate45 -type f -name "cells.v")
+
+
 $(VVP_FILE): $(VERILOG_TARGET) $(TB_FILE)
 	@echo "+ iverilog -> $@"
 	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^ -I $(VINC_PATH)
@@ -280,19 +281,30 @@ iverilog: $(VVP_FILE)
 	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
+	@if [ -f build/tb_wave.vcd ]; then \
+		echo "Converting VCD to FST..."; \
+		vcd2fst build/tb_wave.vcd build/tb_wave.fst; \
+		echo "Removing VCD file..."; \
+		rm build/tb_wave.vcd; \
+	else \
+		echo "VCD file not found, skipping conversion"; \
+	fi
 
 iverilog-netlist: $(VVP_NETLIST_FILE)
 	@$(call git_commit, "iverilog NPC")
 	@echo "+ exec vvp $^"
 	@vvp $^ +MEM_FILE=$(IMG)
-	@vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst
+	@if [ -f build/tb_netlist_wave.vcd ]; then \
+		echo "Converting VCD to FST..."; \
+		vcd2fst build/tb_netlist_wave.vcd build/tb_netlist_wave.fst; \
+		echo "Removing VCD file..."; \
+		rm build/tb_netlist_wave.vcd; \
+	else \
+		echo "VCD file not found, skipping conversion"; \
+	fi
 
 # CI TEST
-VVP_CI_FILE = $(BUILD_DIR)/ci_sim_top.v
-VVP_CI_NETLIST_FILE = $(BUILD_DIR)/ci_sim_netlist_top.v
 FORMAT_IMG = $(BUILD_DIR)/$(notdir $(IMG)).hex
-TB_CI_FILE += $(shell find . -type f -name "sim_iverilog_top.v")
-TB_CI_NETLIST_FILE += $(shell find . -type f -name "sim_iverilog_netlist_top.v")
 
 verilog: $(VSRC)
 	@python3 scripts/merge_verilog.py -o $(VERILOG_TARGET) $^
@@ -301,20 +313,14 @@ verilog: $(VSRC)
 $(VERILOG_TARGET): verilog
 	@echo "get merged file: build/ysyx_24080020.v"
 
-$(VVP_CI_FILE): $(VERILOG_TARGET) $(TB_CI_FILE)
-	@iverilog -g2012 -D ysyx_24080020_NPC -o $@ $^
-
 $(FORMAT_IMG):
 	@bash scripts/format_image.sh $(IMG) $(FORMAT_IMG)
 
-sim-iverilog: $(VVP_CI_FILE) $(FORMAT_IMG)
-	@vvp $(VVP_CI_FILE) +MEM_FILE=$(FORMAT_IMG)
+sim-iverilog: $(VVP_FILE) $(FORMAT_IMG)
+	@vvp $(VVP_FILE) +MEM_FILE=$(FORMAT_IMG)
 
-$(VVP_CI_NETLIST_FILE): $(TB_CI_NETLIST_FILE)
-	@iverilog -g2012 -Dysyx_24080020_NPC -o $@ $^ $(NETLIST) $(CELLS)
-
-sim-iverilog-netlist: $(VVP_CI_NETLIST_FILE) $(FORMAT_IMG)
-	@vvp $(VVP_CI_NETLIST_FILE) +MEM_FILE=$(FORMAT_IMG)
+sim-iverilog-netlist: $(VVP_NETLIST_FILE) $(FORMAT_IMG)
+	@vvp $(VVP_NETLIST_FILE) +MEM_FILE=$(FORMAT_IMG)
 
 
 gtkwave: $(VCD_FILE)
