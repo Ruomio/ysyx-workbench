@@ -462,11 +462,13 @@ module sim_top;
         end
     end
 
+    wire in_uart_addr = u_cpu.io_master_araddr >= 32'ha00003f8 |
+                        u_cpu.io_master_awaddr >= 32'ha00003f8;
     // uart
     always @(posedge clock) begin
         if(reset) begin
         end
-        else if(u_cpu.io_master_wvalid  && u_cpu.io_master_wready ) begin
+        else if(u_cpu.io_master_wvalid  && u_cpu.io_master_wready && in_uart_addr) begin
             $write("%c", u_cpu.io_master_wdata[7:0] );
             $fflush();
         end
