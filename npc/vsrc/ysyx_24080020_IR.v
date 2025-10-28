@@ -35,6 +35,9 @@ module ysyx_24080020_IR (
     output wire        rready
 );
 
+reg valid_q_reg;
+reg special_pc_q;
+reg [31:0] addr_q;
 //=========================================================================
 // 1. 地址选择与输出（组合，与原文件 100 % 一致）
 //=========================================================================
@@ -46,10 +49,8 @@ assign special_pc_o  = special_pc_q;
 //=========================================================================
 // 2. 经典 valid-ready 握手（零状态机）
 //=========================================================================
-reg valid_q_reg;
-reg special_pc_q;
-reg [31:0] addr_q;
 
+reg ar_sent;
 
 always @(posedge clk) begin
     if (!rst) begin
@@ -70,7 +71,6 @@ assign if_en_ready = ~valid_q_reg;
 // AXI valid：组合逻辑，握手后立即拉低
 assign arvalid = valid_q_reg && !ar_sent;
 
-reg ar_sent;
 
 // AXI传输状态更新
 always @(posedge clk) begin

@@ -85,7 +85,11 @@ module ysyx_24080020_LSU (
     input  wire [3:0]  bid,
     output wire        bready
 );
-
+wire                               all_done;
+reg                                mem_valid_q;      // 1 bit
+reg                                mem_ecall_q;      // 1 bit
+reg                                axi_done;
+reg                                [31:0] mrdata_mem;
 //=========================================================================
 // 1. 经典 valid-ready 握手（无状态机）
 //=========================================================================
@@ -97,8 +101,6 @@ assign mem_wb_valid  = mem_valid_q & (all_done | axi_done);
 //=========================================================================
 // 2. 只锁 72 bit 控制向量（位宽已砍半）
 //=========================================================================
-reg                                mem_valid_q;      // 1 bit
-reg                                mem_ecall_q;      // 1 bit
 // REG
 reg                                mem_wen_q;
 reg [`ysyx_24080020_REG_WIDTH-1:0] mem_waddr_q;
@@ -202,14 +204,13 @@ end
 //=========================================================================
 // AXI传输控制寄存器
 reg ar_sent, aw_sent, w_sent;
-reg axi_done;
 
 
 
 // AXI传输完成判断
 wire read_done  = mren_mem && rvalid && rready && rlast;
 wire write_done = mwen_mem && bvalid && bready;
-wire all_done   = (~(mwen_mem | mren_mem)) ? 1'b1 :
+assign all_done   = (~(mwen_mem | mren_mem)) ? 1'b1 :
                   (mren_mem ? read_done : write_done);
 
 // AXI valid信号生成（握手成功后不再拉高）
@@ -280,7 +281,6 @@ wire [31:0] rdata_shift = (maddr_mem[1:0] == 2'b00) ? mem_result_q :
 // 5. 读数据写回（组合路径，不锁）
 //=========================================================================
 // 读数据：同一周期直接写回 mem_result_q
-reg [31:0] mrdata_mem;
 always @(*) begin
     case (mem_len_q)
         3'b000: mrdata_mem = {{24{rdata_shift[7]}},  rdata_shift[7:0]};   // LB
