@@ -37,7 +37,7 @@ menu "Build options"
 
     config NVBOARD
         bool "enable nvboard"
-        default y
+        default n
 
     config WAVEFILE
         bool "is generate wave file"

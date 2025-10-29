@@ -13,6 +13,8 @@
 !scripts/config
 !scripts/format_image.sh
 !scripts/merge_verilog.py
+!*.nxdc
+!*.sdc
 
 build/
 include/config

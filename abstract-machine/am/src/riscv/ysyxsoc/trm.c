@@ -32,7 +32,7 @@ static const char mainargs[MAINARGS_MAX_LEN] = MAINARGS_PLACEHOLDER; // defined 
 void putch(char ch) {
   // lsr, offset = 0x5
   while(!(inb(SERIAL_ADDR + 0x5) & 0x20));
-  outb(SERIAL_ADDR, ch);
+  // outb(SERIAL_ADDR, ch);
 }
 
 void __am_uart_rx(AM_UART_RX_T *rx) {

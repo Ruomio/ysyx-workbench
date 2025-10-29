@@ -142,7 +142,6 @@ all: $(BIN)
 # 	@make link
 
 $(BIN): modify-config clean_obj
-	@echo "recursion make"
 	@make classic
 
 modify-config: $(CONF)
