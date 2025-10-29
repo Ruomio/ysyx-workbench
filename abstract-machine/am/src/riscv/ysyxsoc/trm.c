@@ -63,8 +63,8 @@ __attribute__((unused, section(".ssbl"))) void ssbl() {
 
 }
 
-// __attribute__((section(".fsbl"))) void fsbl() {
-void fsbl() {
+__attribute__((section(".fsbl"))) void fsbl() {
+// void fsbl() {
   // copy ssbl from flash to sram
   memcpy((void *)(uintptr_t)&_ssbl_start, (void *)(uintptr_t)&_ssbl_load, (uintptr_t)&_ssbl_end - (uintptr_t)&_ssbl_start);
 
@@ -103,7 +103,7 @@ void show_stu_no() {
 }
 
 void _trm_init() {
-  fsbl();
+  // fsbl();
   init_uart(115200);
   show_stu_no();
   int ret = main(mainargs);

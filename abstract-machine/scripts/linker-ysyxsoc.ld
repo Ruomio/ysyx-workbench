@@ -18,6 +18,12 @@ SECTIONS {
   /* _pmem_start and _entry_offset are defined in LDFLAGS */
   . = ORIGIN(FLASH);
 
+  .fsbl : {
+    _fsbl_start = .;
+    *(.fsbl*)
+    . = ALIGN(4);
+    _fsbl_end = .;
+  } > FLASH AT> FLASH : text
 
   .text : {
     _text_start = .;
