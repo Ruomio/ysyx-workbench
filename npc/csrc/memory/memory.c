@@ -158,7 +158,11 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
   // read inst
   *data = paddr_read(addr | 0x30000000, 4);
 }
-extern "C" void flash_write(int32_t addr, int32_t strb, int32_t data) {
+extern "C" void flash_write(int32_t addr, int32_t *data) {
+  // read inst
+  paddr_write(addr | 0x30000000, *data, 4);
+}
+extern "C" void flash_write_xip(int32_t addr, int32_t strb, int32_t data) {
   int len = 0;
   if((strb & 0b1111) == 0b1111) {
     len = 4;
