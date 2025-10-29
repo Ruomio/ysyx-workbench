@@ -25,6 +25,15 @@ SECTIONS {
     _fsbl_end = .;
   } > FLASH AT> FLASH
 
+  . = ALIGN(4);
+  .ssbl : {
+    _ssbl_start = .;
+    *(.ssbl*)
+    . = ALIGN(4);
+    _ssbl_end = .;
+  } > SRAM AT> FLASH
+  _ssbl_load = LOADADDR(.ssbl);
+
   .text : {
     _text_start = .;
     *(entry)
@@ -40,17 +49,6 @@ SECTIONS {
     *(.rodata*)
     *(.srodata*)
   } > SDRAM AT> FLASH
-
-
-  . = ALIGN(4);
-  .ssbl : {
-    _ssbl_start = .;
-    *(.ssbl*)
-    . = ALIGN(4);
-    _ssbl_end = .;
-  } > SRAM AT> FLASH
-  _ssbl_load = LOADADDR(.ssbl);
-
 
   .data : {
     _data_start = .;
