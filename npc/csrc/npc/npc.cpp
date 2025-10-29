@@ -467,11 +467,13 @@ void free_npc() {
     delete top;
     top = NULL;
   }
+  #if defined(CONFIG_WAVEFILE) || defined(CONFIG_LIGHTSSS)
   if(tfp) {
     tfp->close();
     delete tfp;
     tfp = NULL;
   }
+  #endif
 #if defined (CONFIG_LIGHTSSS)
   if(lightsss.is_child()) {
     return;
