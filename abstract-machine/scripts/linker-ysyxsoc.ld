@@ -76,7 +76,7 @@ SECTIONS {
 
   /* stack are in SRAM*/
   _stack_top = ORIGIN(SRAM);
-  _stack_top = .;
+  /* _stack_top = .; */
   /* . = _stack_top + LENGTH(SRAM); */
   . = ORIGIN(SRAM) + LENGTH(SRAM);
   _stack_pointer = .;
