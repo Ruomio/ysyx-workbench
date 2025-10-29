@@ -1,0 +1,25 @@
+From 67faa1a8854ff26468f52f72d3fa0dbc43197d62 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Wed, 29 Oct 2025 16:23:18 +0800
+Subject: [PATCH] do not putchar
+
+---
+ src/term.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/term.cpp b/src/term.cpp
+index cefd816..7feee7b 100644
+--- a/src/term.cpp
++++ b/src/term.cpp
+@@ -108,7 +108,7 @@ void Term::feed_ch(uint8_t ch) {
+   if (is_cursor_on_screen()) set_dirty_char(cursor_y - screen_y, cursor_x);
+   int y = cursor_y;
+   assert(y < lines.size());
+-  putchar(ch);
++  // putchar(ch);
+   fflush(stdout);
+   if      (ch == '\n') { newline(); return; }
+   else if (ch == '\r') { _return(); return; }
+-- 
+2.51.2
+
