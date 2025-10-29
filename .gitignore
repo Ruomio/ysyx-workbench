@@ -16,7 +16,7 @@
 !patch/**
 
 # /fceux-am
-!/nvboard
+/nvboard
 /yosys-sta
 /am-kernels
 # /abstract-machine
