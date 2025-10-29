@@ -22,7 +22,7 @@ SECTIONS {
   .text : {
     *(entry)
     *(.text*)
-  } > FLASH AT> FLASH : text
+  } > SDRAM AT> FLASH : text
   etext = .;
   _etext = .;
 
