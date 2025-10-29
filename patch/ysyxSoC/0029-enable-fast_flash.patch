@@ -1,0 +1,24 @@
+From fe6f73d3776865aa122d31add7dab3c7dafa9e65 Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Wed, 29 Oct 2025 18:38:57 +0800
+Subject: [PATCH] enable fast_flash
+
+---
+ perip/spi/rtl/spi_top_apb.v | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/perip/spi/rtl/spi_top_apb.v b/perip/spi/rtl/spi_top_apb.v
+index 718bcc63..bd7db37c 100644
+--- a/perip/spi/rtl/spi_top_apb.v
++++ b/perip/spi/rtl/spi_top_apb.v
+@@ -1,6 +1,6 @@
+ // define this macro to enable fast behavior simulation
+ // for flash by skipping SPI transfers
+-//`define FAST_FLASH
++`define FAST_FLASH
+ 
+ module spi_top_apb #(
+   parameter flash_addr_start = 32'h30000000,
+-- 
+2.51.2
+
