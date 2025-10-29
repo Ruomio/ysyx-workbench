@@ -19,9 +19,9 @@ extern char _ssbl_start, _ssbl_end, _ssbl_load;
 
 extern char _sram_base, _psram_base, _flash_base, _sdram_base;
 
-extern char _pmem_start;
-#define PMEM_SIZE (128 * 1024 * 1024)
-#define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
+// extern char _pmem_start;
+// #define PMEM_SIZE (16 * 1024 * 1024)
+// #define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
 
 // Area heap = RANGE(&_heap_start, PMEM_END);
 #define HEAP_SIZE (16 * 1024 * 1024)
