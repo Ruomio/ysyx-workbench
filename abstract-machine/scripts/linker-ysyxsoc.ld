@@ -20,9 +20,13 @@ SECTIONS {
 
 
   .text : {
+    _text_start = .;
     *(entry)
     *(.text*)
+    . = ALIGN(4);
+    _text_end = .;
   } > SDRAM AT> FLASH : text
+  _text_load = LOADADDR(.text);
   etext = .;
   _etext = .;
 
