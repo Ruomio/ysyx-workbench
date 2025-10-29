@@ -49,7 +49,7 @@ else
 NVBOARD_ENABLE := 0
 endif
 
-ifeq ($(NVBOARD_ENABLE), 1)
+#ifeq ($(NVBOARD_ENABLE), 1)
 # constraint file
 SRC_AUTO_BIND = $(BUILD_DIR)/auto_bind.cpp
 $(SRC_AUTO_BIND): $(NXDC_FILES)
@@ -58,7 +58,7 @@ $(SRC_AUTO_BIND): $(NXDC_FILES)
 CSRC += $(SRC_AUTO_BIND)
 # rules for NVBoard
 include $(NVBOARD_HOME)/scripts/nvboard.mk
-endif
+#endif
 
 # include dir
 ifeq ($(SOC_EN), 1)
