@@ -1,0 +1,22 @@
+/*
+ *
+ * Automatically generated file; DO NOT EDIT.
+ * NPC Configuration
+ *
+ */
+#define CONFIG_LIGHTSSS 1
+#define CONFIG_PSRAM_BASE 0x80000000
+#define CONFIG_MSIZE 0x0
+#define CONFIG_SRAM 1
+#define CONFIG_PSRAM 1
+#define CONFIG_REGS_NUM 32
+#define CONFIG_ISA_riscv32 1
+#define CONFIG_SRAM_BASE 0x0f000000
+#define CONFIG_SRAM_SIZE 0x00002000
+#define CONFIG_MBASE 0x0
+#define CONFIG_PSRAM_SIZE 0x00400000
+#define CONFIG_SDRAM 1
+#define CONFIG_SDRAM_BASE 0xa0000000
+#define CONFIG_NVBOARD 1
+#define CONFIG_ISA "riscv32"
+#define CONFIG_SDRAM_SIZE 0x02000000

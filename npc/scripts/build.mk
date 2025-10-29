@@ -141,7 +141,8 @@ all: $(BIN)
 # $(BIN): modify-config clean_obj v_to_cpp
 # 	@make link
 
-$(BIN): modify-config clean_obj classic
+$(BIN): modify-config clean_obj
+	@make classic
 
 modify-config: $(CONF)
 ifeq ($(ARCH), riscv32e-npc)
