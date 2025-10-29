@@ -36,7 +36,7 @@
 #endif
 
 #if defined (CONFIG_NVBOARD) && defined (ysyxSoCFull)
-// #include <nvboard.h>
+#include <nvboard.h>
 
 #define NVBOARD_ENABLE 1
 
