@@ -82,7 +82,7 @@ void init_uart(int baud_rate) {
 
   // set baud rate, offset = 0x1 and 0x2
   // div = freq / (16 * baud rate)
-  uint16_t baud_div = 115200 / (16 * baud_rate);
+  uint16_t baud_div = 115200 / (32 * baud_rate);
   outb(SERIAL_ADDR, (uint8_t)baud_div);
   outb(SERIAL_ADDR+0x1, (uint8_t)(baud_div >> 8));
 
