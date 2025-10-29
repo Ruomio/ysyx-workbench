@@ -39,7 +39,7 @@ SECTIONS {
   .rodata : {
     *(.rodata*)
     *(.srodata*)
-  } > FLASH
+  } > SDRAM AT> FLASH
 
 
   . = ALIGN(4);
