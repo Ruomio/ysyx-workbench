@@ -13,7 +13,9 @@ extern void free_npc();
 extern void signal_handler_abort(int signum);
 
 int main(int argc, char **argv) {
-  // signal(SIGABRT, signal_handler_abort);
+  #ifdef CONFIG_WAVEFILE
+  signal(SIGABRT, signal_handler_abort);
+  #endif
 
   init_monitor(argc, argv);
 
