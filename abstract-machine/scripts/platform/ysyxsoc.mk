@@ -27,6 +27,7 @@ image: image-dep
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 #@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents --set-start 0x30000000 --gap-fill 0xff --pad-to 0x30000000 -O binary $(IMAGE).elf $(IMAGE).bin
+#@$(OBJCOPY) -S -j .text -j .rodata --set-start 0x30000000  -O binary $(IMAGE).elf $(IMAGE).bin
 	@$(OBJCOPY) -S -j .fsbl -O binary $(IMAGE).elf $(IMAGE)_fsbl.bin
 	@$(OBJCOPY) -S -j .ssbl -O binary $(IMAGE).elf $(IMAGE)_ssbl.bin
 	@$(OBJCOPY) -S -j .text -O binary $(IMAGE).elf $(IMAGE)_text.bin
