@@ -12,6 +12,8 @@ extern char _ssbl_start, _ssbl_end, _ssbl_load;
 
 extern char _sram_base, _psram_base, _flash_base, _sdram_base;
 
+extern char _stack_pointer;
+
 extern void _start();
 
 __attribute__((noinline, unused, section(".ssbl"))) void ssbl() {
@@ -32,6 +34,13 @@ __attribute__((noinline, unused, section(".ssbl"))) void ssbl() {
 
 __attribute__((noinline, section(".fsbl"))) void fsbl() {
 // void fsbl() {
+
+  // mv s0, zero - 将帧指针清零
+  __asm volatile("mv s0, zero");
+
+  // la sp, _stack_pointer - 加载栈指针
+  __asm volatile("la sp, %0" : : "i"(&_stack_pointer));
+
   // copy ssbl from flash to sram
   memcpy((void *)(uintptr_t)&_ssbl_start, (void *)(uintptr_t)&_ssbl_load, (uintptr_t)&_ssbl_end - (uintptr_t)&_ssbl_start);
 
