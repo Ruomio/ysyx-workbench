@@ -14,7 +14,7 @@ int main(const char *args);
 // #define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
 
 // Area heap = RANGE(&_heap_start, PMEM_END);
-#define HEAP_SIZE (32 * 1024 * 1024)
+#define HEAP_SIZE (128 * 1024 * 1024)
 #define HEAP_END ((uintptr_t)&_heap_start + HEAP_SIZE)
 Area heap = RANGE(&_heap_start, HEAP_END);
 static const char mainargs[MAINARGS_MAX_LEN] = MAINARGS_PLACEHOLDER; // defined in CFLAGS
