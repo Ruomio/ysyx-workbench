@@ -47,8 +47,11 @@ SECTIONS {
   _etext = .;
 
   .rodata : {
+    _rodata_start = .;
     *(.rodata*)
     *(.srodata*)
+    . = ALIGN(4);
+    _rodata_end = .;
   } > SDRAM AT> FLASH
 
   .data : {
