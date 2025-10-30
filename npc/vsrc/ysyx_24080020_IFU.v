@@ -63,8 +63,10 @@ assign inst_ifu   = inst_q;           // 指令直接连输入
 `ifdef CONFIG_DPIC
 import "DPI-C" function void statistics_ifu_get_inst();
 always @(posedge clk) begin
-    if (inst_fin_valid & inst_fin_ready)
+    if (inst_fin_valid & inst_fin_ready) begin
         statistics_ifu_get_inst();
+        $display("IFU: inst=%h, pc=%h", inst_q, raddr_q);
+    end
 end
 `endif
 
