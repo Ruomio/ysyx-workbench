@@ -295,7 +295,8 @@ void exec_once_npc(uint32_t pc) {
       // printf("exec pc: 0x%x\n", last_pc);
       // Assert(g_pc >= CONFIG_MBASE, "pc invalid:0x%x, last pc: 0x%x", g_pc, last_pc);
       // idu_type = None;
-      if((g_pc < CONFIG_MBASE) && (g_pc == 0xa0016c20) && 1) {
+      // if(g_pc < CONFIG_MBASE) {
+      if((g_pc == 0xa0016be0)) {
         u_npc_state.state = NPC_ABORT;
         u_npc_state.pc = pc;
         u_npc_state.ret = true;
