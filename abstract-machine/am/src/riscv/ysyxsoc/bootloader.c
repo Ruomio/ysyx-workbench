@@ -28,6 +28,13 @@ __attribute__((noinline, unused, section(".ssbl"))) void ssbl() {
   }
 
   // copy .rodata  from flash to sdram
+  char *rodata_start = &_rodata_start;
+  char *rodata_end = &_rodata_end;
+  char *rodata_load = &_rodata_load;
+  int rodata_size = rodata_end - rodata_start;
+  for(int i = 0; i < rodata_size; i++) {
+    rodata_start[i] = rodata_load[i];
+  }
 
   // copy .data  from flash to sdram
   // memcpy((void *)(uintptr_t)&_data_start, (void *)(uintptr_t)&_data_load, ((volatile uintptr_t)&_data_end - (volatile uintptr_t)&_data_start));
