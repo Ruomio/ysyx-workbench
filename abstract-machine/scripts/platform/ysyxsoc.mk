@@ -34,7 +34,8 @@ image: image-dep
 	@$(OBJCOPY) -S -j .rodata -O binary $(IMAGE).elf $(IMAGE)_rodata.bin
 	@$(OBJCOPY) -S -j .data -O binary $(IMAGE).elf $(IMAGE)_data.bin
 	@$(OBJCOPY) -S -j .bss -O binary $(IMAGE).elf $(IMAGE)_bss.bin
-	@cat $(IMAGE)_fsbl.bin $(IMAGE)_ssbl.bin $(IMAGE)_text.bin $(IMAGE)_rodata.bin $(IMAGE)_data.bin $(IMAGE)_bss.bin > $(IMAGE).bin
+	@cat $(IMAGE)_fsbl.bin $(IMAGE)_ssbl.bin $(IMAGE)_text.bin $(IMAGE)_rodata.bin $(IMAGE)_data.bin $(IMAGE)_bss.bin > $(IMAGE).bin \
+		&& rm $(IMAGE)_fsbl.bin $(IMAGE)_ssbl.bin $(IMAGE)_text.bin $(IMAGE)_rodata.bin $(IMAGE)_data.bin $(IMAGE)_bss.bin
 #@$(OBJCOPY) -j .text -j .rodata -j .data -j .bss -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
