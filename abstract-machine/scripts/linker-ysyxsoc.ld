@@ -32,7 +32,7 @@ SECTIONS {
     *(.ssbl*)
     . = ALIGN(4);
     _ssbl_end = .;
-  } > SRAM AT> FLASH
+  } > SRAM AT> FLASH : text
   _ssbl_load = LOADADDR(.ssbl);
 
   .text : {
