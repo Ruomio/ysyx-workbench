@@ -2,6 +2,7 @@
 #include <klib.h>
 
 extern char _data_start, _data_end, _data_load;
+extern char _rodata_start, _rodata_end, _rodata_load;
 
 extern char _text_start, _text_end, _text_load;
 
