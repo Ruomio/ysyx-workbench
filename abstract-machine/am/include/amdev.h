@@ -1,5 +1,6 @@
 #ifndef __AMDEV_H__
 #define __AMDEV_H__
+#include <am.h>
 
 // **MAY SUBJECT TO CHANGE IN THE FUTURE**
 
