@@ -41,9 +41,31 @@ __attribute__((naked, noinline, section(".fsbl"))) void fsbl() {
   // la sp, _stack_pointer - 加载栈指针
   __asm volatile("la sp, %0" : : "i"(&_stack_pointer));
 
+  // can not use memcpy because it not in sdram now
+  // memcpy((void *)(uintptr_t)&_ssbl_start, (void *)(uintptr_t)&_ssbl_load, (uintptr_t)&_ssbl_end - (uintptr_t)&_ssbl_start);
+
   // copy ssbl from flash to sram
-  memcpy((void *)(uintptr_t)&_ssbl_start, (void *)(uintptr_t)&_ssbl_load, (uintptr_t)&_ssbl_end - (uintptr_t)&_ssbl_start);
+  __asm volatile(
+    "la a0, _ssbl_start\n"             // 目标地址 (SRAM)
+    "la a1, _ssbl_load\n"              // 源地址 (Flash)
+    "la a2, _ssbl_end\n"               // 结束地址
+    "la a3, _ssbl_start\n"             // 开始地址
+    "sub a2, a2, a3\n"                 // 计算大小
 
-  ssbl();
+    "1:\n"                             // 循环开始
+    "beqz a2, 2f\n"                    // 如果大小为0，跳转到结束
+    "lb t0, 0(a1)\n"                   // 从源加载1字节
+    "sb t0, 0(a0)\n"                   // 存储到目标
+    "addi a0, a0, 1\n"                 // 目标地址+1
+    "addi a1, a1, 1\n"                 // 源地址+1
+    "addi a2, a2, -1\n"                // 计数器-1
+    "j 1b\n"                           // 跳回循环开始
 
+    "2:\n"                             // 复制完成
+  );
+
+  // call ssbl
+  __asm volatile(
+      "tail ssbl\n"
+  );
 }
