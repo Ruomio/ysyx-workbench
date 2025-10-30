@@ -93,6 +93,6 @@ __attribute__((naked, noinline, section(".fsbl"))) void fsbl() {
 
   // call ssbl
   __asm volatile(
-      "tail ssbl\n"
+      "tail ssbl"
   );
 }
