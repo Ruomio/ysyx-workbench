@@ -53,6 +53,7 @@ SECTIONS {
     . = ALIGN(4);
     _rodata_end = .;
   } > SDRAM AT> FLASH
+  _rodata_load = LOADADDR(.rodata);
 
   .data : {
     _data_start = .;
