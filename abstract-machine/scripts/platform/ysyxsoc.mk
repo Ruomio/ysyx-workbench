@@ -5,6 +5,7 @@ AM_SRCS := riscv/ysyxsoc/start.S \
            riscv/ysyxsoc/input.c \
            riscv/ysyxsoc/cte.c \
            riscv/ysyxsoc/gpu.c \
+           riscv/ysyxsoc/bootloader.c \
            riscv/ysyxsoc/trap.S \
            platform/dummy/vme.c \
            platform/dummy/mpe.c
@@ -13,7 +14,7 @@ CFLAGS    += -fdata-sections -ffunction-sections
 CFLAGS    += -I$(AM_HOME)/am/src/riscv/ysyxsoc/include
 LDSCRIPTS += $(AM_HOME)/scripts/linker-ysyxsoc.ld
 LDFLAGS   += --defsym=_pmem_start=0x30000000 --defsym=_entry_offset=0x0
-LDFLAGS   += --gc-sections -e _start
+LDFLAGS   += --gc-sections -e fsbl
 
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = The insert-arg rule in Makefile will insert mainargs here.

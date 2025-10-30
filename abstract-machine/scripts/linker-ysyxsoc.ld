@@ -1,4 +1,5 @@
-ENTRY(_start)
+/*ENTRY(_start)*/
+ENTRY(fsbl)
 PHDRS { text PT_LOAD; data PT_LOAD; }
 
 MEMORY

@@ -5,6 +5,4 @@
 _start:
   mv s0, zero
   la sp, _stack_pointer
-  la a0, fsbl
-  jalr a0
   call _trm_init
