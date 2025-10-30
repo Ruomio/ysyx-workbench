@@ -27,6 +27,8 @@ __attribute__((noinline, unused, section(".ssbl"))) void ssbl() {
     text_start[i] = text_load[i];
   }
 
+  // copy .rodata  from flash to sdram
+
   // copy .data  from flash to sdram
   // memcpy((void *)(uintptr_t)&_data_start, (void *)(uintptr_t)&_data_load, ((volatile uintptr_t)&_data_end - (volatile uintptr_t)&_data_start));
   char *data_start = &_data_start;
