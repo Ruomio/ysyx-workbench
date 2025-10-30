@@ -18,15 +18,32 @@ extern void _start();
 
 __attribute__((noinline, unused, section(".ssbl"))) void ssbl() {
   // copy .text  from flash to sdram
-  memcpy((void *)(uintptr_t)&_text_start, (void *)(uintptr_t)&_text_load, ((volatile uintptr_t)&_text_end - (volatile uintptr_t)&_text_start));
+  // memcpy((void *)(uintptr_t)&_text_start, (void *)(uintptr_t)&_text_load, ((volatile uintptr_t)&_text_end - (volatile uintptr_t)&_text_start));
+  char *text_start = &_text_start;
+  char *text_end = &_text_end;
+  char *text_load = &_text_load;
+  int text_size = text_end - text_start;
+  for(int i = 0; i < text_size; i++) {
+    text_start[i] = text_load[i];
+  }
 
   // copy .data  from flash to sdram
-  memcpy((void *)(uintptr_t)&_data_start, (void *)(uintptr_t)&_data_load, ((volatile uintptr_t)&_data_end - (volatile uintptr_t)&_data_start));
-
+  // memcpy((void *)(uintptr_t)&_data_start, (void *)(uintptr_t)&_data_load, ((volatile uintptr_t)&_data_end - (volatile uintptr_t)&_data_start));
+  char *data_start = &_data_start;
+  char *data_end = &_data_end;
+  char *data_load = &_data_load;
+  int data_size = data_end - data_start;
+  for(int i = 0; i < data_size; i++) {
+    data_start[i] = data_load[i];
+  }
 
   // init .bss
-  uint32_t *start = (uint32_t *)(uintptr_t)&_bss_start;
-  memset(start, 0, (uintptr_t)&_bss_end - (uintptr_t)&_bss_start);
+  char *start = (char *)(uintptr_t)&_bss_start;
+  int bss_size = (uintptr_t)&_bss_end - (uintptr_t)&_bss_start;
+  // memset(start, 0, (uintptr_t)&_bss_end - (uintptr_t)&_bss_start);
+  for(int i = 0; i < bss_size; i++) {
+    start[i] = 0;
+  }
 
   // call _start
   _start();
