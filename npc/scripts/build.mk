@@ -161,7 +161,7 @@ ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --disable CONFIG_SRAM_SIZE
 	@scripts/config --disable CONFIG_DIFFTEST
 	@scripts/config --enable CONFIG_LIGHTSSS
-	@scripts/config --disable CONFIG_NVBOARD
+	@scripts/config --enable CONFIG_NVBOARD
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --enable CONFIG_ISA_riscv32=y
