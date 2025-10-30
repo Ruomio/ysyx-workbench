@@ -67,7 +67,7 @@ always @(posedge clk) begin
 
         statistics_ifu_get_inst();
 
-        $display("ifu: inst=%h, pc=%h", inst_q, raddr_q);
+        // $display("ifu: inst=%h, pc=%h", inst_q, raddr_q);
     end
 end
 `endif
