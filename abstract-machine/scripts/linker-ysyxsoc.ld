@@ -24,7 +24,7 @@ SECTIONS {
     *(.fsbl*)
     . = ALIGN(4);
     _fsbl_end = .;
-  } > FLASH AT> FLASH : text
+  } > FLASH AT> FLASH
 
   . = ALIGN(4);
   .ssbl : {
