@@ -26,8 +26,14 @@ insert-arg: image
 image: image-dep
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
-	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
-#@$(OBJCOPY) -j .fsbl -j .ssbl -O binary $(IMAGE).elf $(IMAGE)_boot.bin
+#@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents --set-start 0x30000000 --gap-fill 0xff --pad-to 0x30000000 -O binary $(IMAGE).elf $(IMAGE).bin
+	@$(OBJCOPY) -S -j .fsbl -O binary $(IMAGE).elf $(IMAGE)_fsbl.bin
+	@$(OBJCOPY) -S -j .ssbl -O binary $(IMAGE).elf $(IMAGE)_ssbl.bin
+	@$(OBJCOPY) -S -j .text -O binary $(IMAGE).elf $(IMAGE)_text.bin
+	@$(OBJCOPY) -S -j .rodata -O binary $(IMAGE).elf $(IMAGE)_rodata.bin
+	@$(OBJCOPY) -S -j .data -O binary $(IMAGE).elf $(IMAGE)_data.bin
+	@$(OBJCOPY) -S -j .bss -O binary $(IMAGE).elf $(IMAGE)_bss.bin
+	@cat $(IMAGE)_fsbl.bin $(IMAGE)_ssbl.bin $(IMAGE)_text.bin $(IMAGE)_rodata.bin $(IMAGE)_data.bin $(IMAGE)_bss.bin > $(IMAGE).bin
 #@$(OBJCOPY) -j .text -j .rodata -j .data -j .bss -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
