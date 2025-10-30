@@ -32,7 +32,7 @@ __attribute__((noinline, unused, section(".ssbl"))) void ssbl() {
   _start();
 }
 
-__attribute__((noinline, section(".fsbl"))) void fsbl() {
+__attribute__((naked, noinline, section(".fsbl"))) void fsbl() {
 // void fsbl() {
 
   // mv s0, zero - 将帧指针清零
