@@ -177,7 +177,7 @@ ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --set-val CONFIG_SRAM_SIZE 0x00002000
 	@scripts/config --enable CONFIG_DIFFTEST
 	@scripts/config --enable CONFIG_LIGHTSSS
-	@scripts/config --enable CONFIG_NVBOARD
+	@scripts/config --disable CONFIG_NVBOARD
 endif
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 
