@@ -16,6 +16,7 @@ Area heap = RANGE(&_heap_start, HEAP_END);
 static const char mainargs[MAINARGS_MAX_LEN] = MAINARGS_PLACEHOLDER; // defined in CFLAGS
 
 void putch(char ch) {
+  if(ch == 0x00) return;
   // lsr, offset = 0x5
   while(!(inb(SERIAL_ADDR + 0x5) & 0x20));
   outb(SERIAL_ADDR, ch);
