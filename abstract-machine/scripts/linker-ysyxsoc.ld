@@ -83,7 +83,6 @@ SECTIONS {
   . = ALIGN(0x1000);
   _heap_start = .;
 
-
   /* stack are in SRAM*/
   . = ORIGIN(SRAM);
   _stack_top = .;
