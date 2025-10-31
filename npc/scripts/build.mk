@@ -160,7 +160,7 @@ ifeq ($(ARCH), riscv32e-npc)
 	@scripts/config --disable CONFIG_SRAM_BASE
 	@scripts/config --disable CONFIG_SRAM_SIZE
 	@scripts/config --disable CONFIG_DIFFTEST
-	@scripts/config --enable CONFIG_LIGHTSSS
+	@scripts/config --disable CONFIG_LIGHTSSS
 	@scripts/config --disable CONFIG_NVBOARD
 endif
 ifeq ($(ARCH), riscv32e-ysyxsoc)
@@ -177,8 +177,8 @@ ifeq ($(ARCH), riscv32e-ysyxsoc)
 	@scripts/config --set-val CONFIG_SDRAM_SIZE 0x02000000
 	@scripts/config --set-val CONFIG_SRAM_BASE 0x0f000000
 	@scripts/config --set-val CONFIG_SRAM_SIZE 0x00002000
-	@scripts/config --enable CONFIG_DIFFTEST
-	@scripts/config --enable CONFIG_LIGHTSSS
+	@scripts/config --disable CONFIG_DIFFTEST
+	@scripts/config --disable CONFIG_LIGHTSSS
 	@scripts/config --enable CONFIG_NVBOARD
 endif
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
