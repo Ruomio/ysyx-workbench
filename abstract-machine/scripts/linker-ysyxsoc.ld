@@ -78,24 +78,14 @@ SECTIONS {
   end = .;
   _end = .;
 
+  /* '.': addr counter is controlled by VMA, so _end is in SDRAM's tail */
   /* heap is in SDRAM*/
-  /* . = ORIGIN(SDRAM) + SIZEOF(.data) + SIZEOF(.bss) + SIZEOF(.ssbl); */
-  /* . = ORIGIN(SDRAM); */
-  /* _heap_start = ALIGN(0x1000); */
-  /* . = ORIGIN(SDRAM) + _end; */
   . = ALIGN(0x1000);
   _heap_start = .;
 
 
   /* stack are in SRAM*/
-  /* _stack_top = ORIGIN(SRAM); */
-  /* _stack_top = .; */
-  /* . = _stack_top + LENGTH(SRAM); */
-  /* . = ORIGIN(SRAM) + LENGTH(SRAM); */
-  /* _stack_pointer = .; */
-
   . = ORIGIN(SRAM);
   _stack_top = .;
-
   _stack_pointer = . + LENGTH(SRAM);
 }

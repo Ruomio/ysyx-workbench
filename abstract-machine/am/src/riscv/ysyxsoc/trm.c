@@ -7,6 +7,10 @@
 
 extern char _heap_start;
 extern char _sdram_base;
+
+extern char _stack_top;
+extern char _stack_pointer;
+
 int main(const char *args);
 
 
@@ -76,7 +80,8 @@ void _trm_init() {
   // fsbl();
   init_uart(115200);
   show_stu_no();
-  printf("Area.start: 0x%x, Area.end: 0x%x\n", heap.start, heap.end);
+  printf("heap.start: 0x%x, heap.end: 0x%x\n", heap.start, heap.end);
+  printf("stack.start: 0x%x, stack.end: 0x%x\n", &_stack_top, _stack_pointer);
   int ret = main(mainargs);
   halt(ret);
 }
