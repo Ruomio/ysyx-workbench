@@ -1,0 +1,32 @@
+From 22cde2bf539da24ade1fc3c8e4247ab01c3dfe0c Mon Sep 17 00:00:00 2001
+From: Ruomio <1065940593@qq.com>
+Date: Fri, 31 Oct 2025 10:15:42 +0800
+Subject: [PATCH] fix uart to adapt npc and soc
+
+---
+ bsp/abstract-machine/src/uart.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/bsp/abstract-machine/src/uart.c b/bsp/abstract-machine/src/uart.c
+index 1f78db305..d78b7cbd8 100644
+--- a/bsp/abstract-machine/src/uart.c
++++ b/bsp/abstract-machine/src/uart.c
+@@ -38,8 +38,14 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
+ }
+ 
+ static int _uart_getc(struct rt_serial_device *serial) {
+-  static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\nam_hello\n";
++  static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\n";
++  #if defined(YSYXSOC)
+   return (*p != '\0' ? *(p ++) : io_read(AM_UART_RX).data);
++  #elif defined(NPC)
++  return (*p != '\0' ? *(p ++) : io_read(AM_INPUT_KEYBRD).keycode);
++  #else
++  return (*p != '\0' ? *(p ++) : 0);
++  #endif
+ }
+ 
+ const struct rt_uart_ops _uart_ops = {
+-- 
+2.51.2
+
