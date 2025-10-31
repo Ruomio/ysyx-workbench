@@ -81,7 +81,7 @@ void _trm_init() {
   init_uart(115200);
   show_stu_no();
   printf("heap.start: 0x%x, heap.end: 0x%x\n", heap.start, heap.end);
-  printf("stack.start: 0x%x, stack.end: 0x%x\n", &_stack_top, _stack_pointer);
+  printf("stack.start: 0x%x, stack.end: 0x%x\n", &_stack_top, &_stack_pointer);
   int ret = main(mainargs);
   halt(ret);
 }

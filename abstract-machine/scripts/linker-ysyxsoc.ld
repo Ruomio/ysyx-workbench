@@ -87,5 +87,5 @@ SECTIONS {
   /* stack are in SRAM*/
   . = ORIGIN(SRAM);
   _stack_top = .;
-  _stack_pointer = ALIGN(0x2000);
+  _stack_pointer = . + LENGTH(SRAM);
 }
