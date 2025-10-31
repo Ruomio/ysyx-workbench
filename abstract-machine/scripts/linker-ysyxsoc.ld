@@ -82,7 +82,7 @@ SECTIONS {
   /* . = ORIGIN(SDRAM) + SIZEOF(.data) + SIZEOF(.bss) + SIZEOF(.ssbl); */
   /* . = ORIGIN(SDRAM); */
   /* _heap_start = ALIGN(0x1000); */
-  . = ORIGIN(SDRAM) + _end;
+  /* . = ORIGIN(SDRAM) + _end; */
   . = ALIGN(0x1000);
   _heap_start = .;
 
