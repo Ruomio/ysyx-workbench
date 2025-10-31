@@ -8,17 +8,9 @@
 extern char _heap_start;
 extern char _sdram_base;
 
-extern char _stack_top;
-extern char _stack_pointer;
-
 int main(const char *args);
 
 
-// extern char _pmem_start;
-// #define PMEM_SIZE (16 * 1024 * 1024)
-// #define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
-
-// Area heap = RANGE(&_heap_start, PMEM_END);
 #define HEAP_SIZE (32 * 1024 * 1024)
 #define HEAP_END ((uintptr_t)&_sdram_base + HEAP_SIZE)
 Area heap = RANGE(&_heap_start, HEAP_END);
@@ -77,11 +69,8 @@ void show_stu_no() {
 }
 
 void _trm_init() {
-  // fsbl();
   init_uart(115200);
   show_stu_no();
-  printf("heap.start: 0x%x, heap.end: 0x%x\n", heap.start, heap.end);
-  printf("stack.start: 0x%x, stack.end: 0x%x\n", &_stack_top, &_stack_pointer);
   int ret = main(mainargs);
   halt(ret);
 }
