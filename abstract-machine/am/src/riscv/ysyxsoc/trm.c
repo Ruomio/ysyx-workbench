@@ -76,7 +76,7 @@ void _trm_init() {
   // fsbl();
   init_uart(115200);
   show_stu_no();
-  printf("Area.start: 0x%x, Area.end: 0x%x", heap.start, heap.end);
+  printf("Area.start: 0x%x, Area.end: 0x%x\n", heap.start, heap.end);
   int ret = main(mainargs);
   halt(ret);
 }
