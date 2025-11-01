@@ -46,8 +46,8 @@ module ysyx_24080020_ICACHE(
   import "DPI-C" function void statistics_icache_miss();
   import "DPI-C" function void statistics_dcache_hit();
   `endif
-`ifdef USE_ICACHE
-`ifdef ICACHE_PIPELINE
+`ifdef ysyx_24080020_USE_ICACHE
+`ifdef ysyx_24080020_ICACHE_PIPELINE
 
   // CACHE
   // cacheway maybe not the 2^n
@@ -772,14 +772,14 @@ module ysyx_24080020_ICACHE(
         end
     end
 
-`endif // `ifdef ICACHE_PIPELINE
+`endif // `ifdef ysyx_24080020_ICACHE_PIPELINE
 
-`endif  // USE_ICACHE
-
-
+`endif  // ysyx_24080020_USE_ICACHE
 
 
-`ifndef USE_ICACHE
+
+
+`ifndef ysyx_24080020_USE_ICACHE
 
 
   // assign special_pc_o = special_pc_i;

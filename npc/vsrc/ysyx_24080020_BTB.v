@@ -26,7 +26,7 @@ module ysyx_24080020_BTB (
     output wire        out_valid,
     input  wire        out_ready
 );
-`ifdef USE_BTB
+`ifdef ysyx_24080020_USE_BTB
 //=========================================================================
 // 1. 参数与信号（与原文件一致）
 //=========================================================================
@@ -166,5 +166,5 @@ end
     assign btb_hit = 'b0;
 
 
-`endif //USE_BTB
+`endif // ysyx_24080020_USE_BTB
 endmodule

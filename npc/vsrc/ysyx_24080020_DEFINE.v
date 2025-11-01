@@ -1,13 +1,13 @@
 // `define CONFIG_DPIC // define in makefile
-// ysyxSoCFull and ysyx_24080020_NPC are defined in makefile or iverilog-default
+// ysyx_24080020_SOC and ysyx_24080020_NPC are defined in makefile or iverilog-default
 
-`ifndef ysyxSoCFull
+`ifndef ysyx_24080020_SOC
 `ifndef ysyx_24080020_NPC
 `define ysyx_24080020_NPC
 `endif
 `endif
 
-`ifdef ysyxSoCFull
+`ifdef ysyx_24080020_SOC
 `define ysyx_24080020_MBASE 32'h30000000
 // IOE
 `define ysyx_24080020_CLINT_ADDR  32'h02000000
@@ -22,14 +22,14 @@
 `endif
 
 // inst cache
-// `define USE_ICACHE
-`define ICACHE_PIPELINE
+// `define ysyx_24080020_USE_ICACHE
+`define ysyx_24080020_ICACHE_PIPELINE
 `define ysyx_24080020_CACHE_SIZE 4
 `define ysyx_24080020_CACHE_NUM 2
 `define ysyx_24080020_CACHE_WAY 2
 
 // branch target buffer
-// `define USE_BTB
+// `define ysyx_24080020_USE_BTB
 `define ysyx_24080020_BRANCH_SIZE 4
 `define ysyx_24080020_BRANCH_NUM 2
 `define ysyx_24080020_BRANCH_WAY 2

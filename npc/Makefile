@@ -24,15 +24,13 @@ LDFLAGS += -lreadline -ldl -pie $(LIBS)
 VERILATOR_CFLAGS  += -DCONFIG_DPIC
 
 ifeq ($(ARCH), riscv32e-ysyxsoc)
-VERILATOR_CFLAGS += -DysyxSoCFull
+VERILATOR_CFLAGS += -Dysyx_24080020_SOC
 SOC_EN = 1
 else ifeq ($(ARCH), riscv32e-npc)
-VERILATOR_CFLAGS += -Dysyx_24080020_NPC -UysyxSoCFull
+VERILATOR_CFLAGS += -Dysyx_24080020_NPC -Uysyx_24080020_SOC
 SOC_EN = 0
 else
-# VERILATOR_CFLAGS += -DysyxSoCFull
-# SOC_EN = 1
-VERILATOR_CFLAGS += -Dysyx_24080020_NPC -UysyxSoCFull
+VERILATOR_CFLAGS += -Dysyx_24080020_NPC -Uysyx_24080020_SOC
 SOC_EN = 0
 endif
 

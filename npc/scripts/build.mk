@@ -32,8 +32,6 @@ else ifeq ($(ARCH), riscv32e-npc)
 TOPNAME=ysyx_24080020_NPC
 CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
 else
-# TOPNAME=ysyxSoCFull
-# CXXFLAGS += -DysyxSoCFull
 TOPNAME=ysyx_24080020_NPC
 CXXFLAGS += -Dysyx_24080020_NPC -UCONFIG_NVBOARD
 $(echo "default ARCH is riscv32e-ysyxsoc")

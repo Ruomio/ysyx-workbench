@@ -326,7 +326,7 @@ always @(posedge clk) begin
         mem_skip_ref_q <= 'b0;
     end
     else if(arvalid && arready) begin
-        `ifdef ysyxSoCFull
+        `ifdef ysyx_24080020_SOC
         if(araddr >= 32'h10000000 && araddr < 32'h10001000
             || araddr >= 32'h10011000 && araddr < 32'h10011008
             || araddr >= 32'h21000000 && araddr < 32'h21200000
@@ -349,7 +349,7 @@ always @(posedge clk) begin
     end
     else if(awvalid && awready) begin
         // mwen_mem <= 1'b0;
-        `ifdef ysyxSoCFull
+        `ifdef ysyx_24080020_SOCFull
         if(awaddr >= 32'h10000000 && awaddr < 32'h10001000
             || awaddr >= 32'h10011000 && awaddr < 32'h10011008
             || awaddr >= 32'h21000000 && awaddr < 32'h21200000
