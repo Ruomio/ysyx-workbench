@@ -1,6 +1,6 @@
 /*ENTRY(_start)*/
 ENTRY(fsbl)
-PHDRS { text PT_LOAD; data PT_LOAD; }
+PHDRS { text PT_LOAD; data PT_LOAD; fsbl PT_LOAD; ssbl PT_LOAD; }
 
 MEMORY
 {
@@ -24,7 +24,7 @@ SECTIONS {
     *(.fsbl*)
     . = ALIGN(4);
     _fsbl_end = .;
-  } > FLASH AT> FLASH : text
+  } > FLASH AT> FLASH : fsbl
 
   . = ALIGN(4);
   .ssbl : {
@@ -32,7 +32,7 @@ SECTIONS {
     *(.ssbl*)
     . = ALIGN(4);
     _ssbl_end = .;
-  } > SRAM AT> FLASH : text
+  } > SRAM AT> FLASH : ssbl
   _ssbl_load = LOADADDR(.ssbl);
 
   .text : {
